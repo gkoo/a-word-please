@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { submitMessage } from '../store/actions';
+import { useSelector } from 'react-redux';
+//import { submitMessage } from '../store/actions';
 
 function MessageLog() {
   const [typedMessage, setTypedMessage] = useState('');
-  const messages = useSelector(state => {
-    return state.messages;
-  });
-  const dispatch = useDispatch();
+  const socket = useSelector(state => state.socket);
+  const messages = useSelector(state => state.messages);
 
   const onTypedMessageChange = (e) => {
     setTypedMessage(e.target.value);
@@ -15,7 +13,7 @@ function MessageLog() {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    dispatch(submitMessage(typedMessage));
+    socket.emit('chatMessage', typedMessage);
     setTypedMessage('');
   }
 

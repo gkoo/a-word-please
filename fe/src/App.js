@@ -1,30 +1,20 @@
-import { connect } from 'react-redux';
-import React, { Component } from 'react';
-import socketIOClient from 'socket.io-client';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import MessageLog from './components/MessageLog';
+import { playerMessage } from './store/actions';
 
-class App extends Component {
-  componentDidMount() {
-    const socket = socketIOClient('http://localhost:5000');
-    socket.on('message', function(data) {
-      console.log(data);
+function App() {
+  const socket = useSelector(state => state.socket);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    socket.on('playerMessage', data => {
+      dispatch(playerMessage(data));
     });
-  }
+  });
 
-  render() {
-    return <MessageLog />;
-  }
+  return <MessageLog />;
 }
 
-const mapStateToProps = state => {
-  return {
-  };
-};
-
-const mapDispatchToProps = dispatch => {
-  return {
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default App;

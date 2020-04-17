@@ -1,10 +1,10 @@
 // Action Types
-export const SUBMIT_MESSAGE = 'SUBMIT_MESSAGE';
+export const PLAYER_MESSAGE = 'PLAYER_MESSAGE';
 
 // Actions
-export function submitMessage(message) {
+export function playerMessage(message) {
   return {
     payload: { message },
-    type: SUBMIT_MESSAGE,
+    type: PLAYER_MESSAGE,
   }
 }
