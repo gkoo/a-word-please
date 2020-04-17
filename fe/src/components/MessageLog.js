@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-//import { submitMessage } from '../store/actions';
+import Button from 'react-bootstrap/Button';
 
 function MessageLog() {
   const [typedMessage, setTypedMessage] = useState('');
   const socket = useSelector(state => state.socket);
   const messages = useSelector(state => state.messages);
 
-  const onTypedMessageChange = (e) => {
-    setTypedMessage(e.target.value);
-  };
+  const onTypedMessageChange = e => setTypedMessage(e.target.value);
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -26,7 +24,7 @@ function MessageLog() {
       </div>
       <form onSubmit={onSubmit}>
         <input type="text" value={typedMessage} onChange={onTypedMessageChange}/>
-        <input type="submit" value="Submit"/>
+        <Button onClick={onSubmit}>Submit</Button>
       </form>
     </div>
   );
