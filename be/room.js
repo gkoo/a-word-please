@@ -1,19 +1,23 @@
 const Player = require('./Player');
 function Room() {
-  const players = {};
-  const messages = ['here are', 'your first', 'messages'];
+  this.players = {};
+  this.messages = ['here are', 'your first', 'messages'];
 
   this.addPlayer = (id) => {
     const player = new Player(id);
-    players[id] = player;
+    this.players[id] = player;
   };
 
   this.removePlayer = id => {
-    delete players[id];
+    delete this.players[id];
   };
 
   this.setPlayerName = (id, name) => {
-    players[id].setName(name);
+    this.players[id].setName(name);
+  };
+
+  this.handleMessage = msg => {
+    this.messages.push(msg);
   };
 }
 

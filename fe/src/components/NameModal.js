@@ -21,7 +21,7 @@ function NameModal({ show }) {
 
   return (
     <Modal show={show}>
-      <Modal.Header closeButton>
+      <Modal.Header>
         <Modal.Title>Please enter a name</Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -33,7 +33,7 @@ function NameModal({ show }) {
       </Modal.Body>
       <Modal.Footer>
         <Button variant="primary" onClick={handleSave}>
-          Save Changes
+          Save
         </Button>
       </Modal.Footer>
     </Modal>

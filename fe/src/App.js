@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+import Board from './components/Board';
 import MessageLog from './components/MessageLog';
 import NameModal from './components/NameModal';
+import PlayerList from './components/PlayerList';
 import {
   newPlayer,
   playerMessage,
+  receiveInitData,
 } from './store/actions';
 
 function App() {
@@ -16,27 +19,18 @@ function App() {
   const players = useSelector(state => state.players);
   const dispatch = useDispatch();
 
+  // Include second arg to prevent this from running multiple times
   useEffect(() => {
+    socket.on('initData', data => dispatch(receiveInitData(data)));
     socket.on('newPlayer', player => dispatch(newPlayer(player)));
     socket.on('playerMessage', message => dispatch(playerMessage(message)));
-  });
+  }, [socket, dispatch]);
 
   return (
     <>
-      {
-        name && (
-          <p>Your name is {name}</p>
-        )
-      }
+      <Board />
       <MessageLog/>
-      <h3>Players</h3>
-      <ul>
-        {
-          Object.values(players).map(
-            playerData => <li>{playerData.name}</li>
-          )
-        }
-      </ul>
+      <PlayerList players={players} />
       <NameModal show={!name} />
     </>
   );

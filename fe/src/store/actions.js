@@ -1,6 +1,7 @@
 // Action Types
 export const NEW_PLAYER = 'NEW_PLAYER';
 export const PLAYER_MESSAGE = 'PLAYER_MESSAGE';
+export const RECEIVE_INIT_DATA = 'RECEIVE_INIT_DATA';
 export const SAVE_NAME = 'SAVE_NAME';
 
 // Actions
@@ -15,6 +16,13 @@ export function playerMessage(message) {
   return {
     payload: { message },
     type: PLAYER_MESSAGE,
+  }
+}
+
+export function receiveInitData({ messages, players }) {
+  return {
+    payload: { messages, players },
+    type: RECEIVE_INIT_DATA,
   }
 }
 

@@ -16,7 +16,7 @@ function MessageLog() {
   }
 
   return (
-    <div>
+    <>
       <div className='message-log'>
         <ul>
           {messages.map(message => <li>{message}</li>)}
@@ -26,7 +26,7 @@ function MessageLog() {
         <input type="text" value={typedMessage} onChange={onTypedMessageChange}/>
         <Button onClick={onSubmit}>Submit</Button>
       </form>
-    </div>
+    </>
   );
 }
 

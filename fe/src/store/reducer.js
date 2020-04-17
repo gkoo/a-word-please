@@ -22,10 +22,18 @@ export default function reducer(state = initialState, action) {
         players: newPlayers,
       };
     case actions.PLAYER_MESSAGE:
-      const messages = [...state.messages, action.payload.message];
+      const newMessages = [...state.messages, action.payload.message];
+      return {
+        ...state,
+        messages: newMessages,
+      };
+    case actions.RECEIVE_INIT_DATA:
+      const { players } = action.payload;
+      const messages = action.payload.messages;
       return {
         ...state,
         messages,
+        players,
       };
     case actions.SAVE_NAME:
       return {
