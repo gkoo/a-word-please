@@ -9,6 +9,7 @@ import NameModal from './components/NameModal';
 import PlayerList from './components/PlayerList';
 import {
   newPlayer,
+  playerDisconnect,
   playerMessage,
   receiveInitData,
 } from './store/actions';
@@ -24,6 +25,7 @@ function App() {
     socket.on('initData', data => dispatch(receiveInitData(data)));
     socket.on('newPlayer', player => dispatch(newPlayer(player)));
     socket.on('playerMessage', message => dispatch(playerMessage(message)));
+    socket.on('playerDisconnect', playerId => dispatch(playerDisconnect(playerId)));
   }, [socket, dispatch]);
 
   return (

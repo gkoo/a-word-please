@@ -28,6 +28,7 @@ const handleDisconnect = (id) => {
   const displayName = name ? `(${name})` : '';
   room.removePlayer(id);
   console.log(`Client ${id} ${displayName} disconnected`);
+  io.emit('playerDisconnect', id);
 }
 
 server.listen(5000, () => {

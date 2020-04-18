@@ -11,9 +11,10 @@ const initialState = {
 };
 
 export default function reducer(state = initialState, action) {
+  let newPlayers;
   switch(action.type) {
     case actions.NEW_PLAYER:
-      const newPlayers = {
+      newPlayers = {
         ...state.players,
       };
       newPlayers[action.payload.id] = { name: action.payload.name };
@@ -21,12 +22,27 @@ export default function reducer(state = initialState, action) {
         ...state,
         players: newPlayers,
       };
+
+    case actions.PLAYER_DISCONNECT:
+      const disconnectedPlayerId = action.payload.playerId;
+      newPlayers = {};
+      Object.keys(state.players).forEach(playerId => {
+        if (playerId !== disconnectedPlayerId) {
+          newPlayers[playerId] = state.players[playerId];
+        }
+      });
+      return {
+        ...state,
+        players: newPlayers,
+      }
+
     case actions.PLAYER_MESSAGE:
       const newMessages = [...state.messages, action.payload.message];
       return {
         ...state,
         messages: newMessages,
       };
+
     case actions.RECEIVE_INIT_DATA:
       const { players } = action.payload;
       const messages = action.payload.messages;
@@ -35,6 +51,7 @@ export default function reducer(state = initialState, action) {
         messages,
         players,
       };
+
     case actions.SAVE_NAME:
       return {
         ...state,
