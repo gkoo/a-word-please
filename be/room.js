@@ -52,14 +52,13 @@ function Room({ broadcast, emitToPlayer }) {
     this.game = new Game({ playerIds });
     this.game.setup();
 
-    const gameDataForPlayers = {};
-    playerIds.forEach(playerId => {
-      emitToPlayer(
-        playerId,
-        'gameData',
-        this.game.serializeForPlayer(playerId),
-      );
-    });
+    broadcastGameDataToPlayers();
+    setTimeout(this.nextTurn, 100);
+  };
+
+  this.nextTurn = () => {
+    this.game.nextTurn();
+    broadcastGameDataToPlayers();
   };
 
   this.endGame = (gameInitiatorId) => {
@@ -72,6 +71,17 @@ function Room({ broadcast, emitToPlayer }) {
   this.playerIsLeader = (playerId) => {
     const player = this.getPlayerById(playerId);
     return player.isLeader;
+  };
+
+  const broadcastGameDataToPlayers = () => {
+    const playerIds = this.getPlayers().map(player => player.id);
+    playerIds.forEach(playerId =>
+      emitToPlayer(
+        playerId,
+        'gameData',
+        this.game.serializeForPlayer(playerId),
+      )
+    );
   };
 }
 

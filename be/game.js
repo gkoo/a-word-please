@@ -16,7 +16,6 @@ function Game({ playerIds }) {
     throw 'Only 2-4 player games are currently supported';
   }
 
-
   this.setup = () => {
     this.state = 'STARTED';
     this.players = {};
@@ -25,21 +24,19 @@ function Game({ playerIds }) {
       this.players[playerId] = player;
     });
     this.roundNum = 0;
+    determinePlayerOrder();
     newRound();
   };
 
   const newRound = () => {
     ++this.roundNum;
     playerIds.forEach(playerId => this.players[playerId].resetCards());
+
+    // keeps track of how far through the deck we are
     this.deckCursor = 0;
 
     createDeck();
     dealCards();
-
-    // keeps track of how far through the deck we are
-
-    // keeps track of whose turn it is.
-    this.playerOrderCursor = -1;
   };
 
   const createDeck = () => {
@@ -72,6 +69,29 @@ function Game({ playerIds }) {
 
   const determinePlayerOrder = () => {
     this.playerOrder = _.shuffle(playerIds);
+
+    // keeps track of whose turn it is.
+    this.playerOrderCursor = 0;
+  };
+
+  this.nextTurn = () => {
+    if (this.deckCursor >= this.deck.length) {
+      // No more cards in the deck, the round is over.
+      this.end();
+      return;
+    }
+
+    const nextCard = this.deck[this.deckCursor++];
+    const nextPlayerId = this.playerOrder[this.playerOrderCursor];
+
+    // Advance the playerOrderCursor
+    this.playerOrderCursor = (++this.playerOrderCursor) % playerIds.length;
+
+    // Add the next card into the hand of the player
+    this.players[nextPlayerId].hand.push(nextCard);
+
+    // Id of the player whose turn it is
+    this.currPlayerTurn = nextPlayerId;
   };
 
   this.end = () => {
@@ -79,8 +99,9 @@ function Game({ playerIds }) {
   };
 
   this.serializeForPlayer = playerIdToSerializeFor => {
-    const { roundNum, state } = this;
+    const { currPlayerTurn, roundNum, state } = this;
     const playerData = {};
+
     Object.keys(this.players).forEach(playerId => {
       const { discardPile, hand, id, numTokens } = this.players[playerId];
       const handToInclude = playerIdToSerializeFor === playerId ? hand : undefined;
@@ -91,7 +112,9 @@ function Game({ playerIds }) {
         numTokens,
       }
     });
+
     return {
+      currPlayerTurn,
       players: playerData,
       roundNum,
       state,

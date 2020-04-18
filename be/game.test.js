@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 const Game = require('./game');
 
 let game;
@@ -18,12 +20,36 @@ describe('setup', () => {
   });
 });
 
+describe('nextTurn', () => {
+  const subject = () => game.nextTurn();
+
+  beforeEach(() => {
+    game.setup();
+  });
+
+  it('changes the player turn', () => {
+    subject();
+    const { currPlayerTurn } = game;
+    subject();
+    const newPlayerTurn = game.currPlayerTurn;
+    expect(newPlayerTurn).not.toEqual(currPlayerTurn);
+  });
+
+  it('adds a card to the hand of the player', () => {
+    const oldPlayers = _.cloneDeep(game.players);
+    subject();
+    const oldHand = oldPlayers[game.currPlayerTurn].hand;
+    const newHand = game.players[game.currPlayerTurn].hand;
+    expect(newHand.length).toBeGreaterThan(oldHand.length);
+  });
+});
+
 describe('serializeForPlayer', () => {
   beforeEach(() => {
     game.setup();
   });
 
-  test.only('serializes correctly', () => {
+  it('serializes correctly', () => {
     const { players, roundNum, state } = game.serializeForPlayer('1');
     expect(roundNum).toEqual(game.roundNum);
     expect(state).toEqual(game.state);
