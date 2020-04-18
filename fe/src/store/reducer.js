@@ -49,10 +49,10 @@ export default function reducer(state = initialState, action) {
       };
 
     case actions.RECEIVE_INIT_DATA:
-      const { players } = action.payload;
-      const messages = action.payload.messages;
+      const { currPlayerId, messages, players } = action.payload;
       return {
         ...state,
+        currPlayerId,
         messages,
         players,
       };

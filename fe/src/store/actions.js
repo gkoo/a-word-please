@@ -20,9 +20,9 @@ export function playerMessage(message) {
   }
 }
 
-export function receiveInitData({ messages, players }) {
+export function receiveInitData({ currPlayerId, messages, players }) {
   return {
-    payload: { messages, players },
+    payload: { currPlayerId, messages, players },
     type: RECEIVE_INIT_DATA,
   }
 }

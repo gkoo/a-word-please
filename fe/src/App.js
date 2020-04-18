@@ -1,9 +1,13 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import 'bootstrap/dist/css/bootstrap.min.css';
+import './bootstrap.min.css';
+import Col from 'react-bootstrap/Col';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
 
 import Board from './components/Board';
+import LeaderPanel from './components/LeaderPanel';
 import MessageLog from './components/MessageLog';
 import NameModal from './components/NameModal';
 import PlayerList from './components/PlayerList';
@@ -13,11 +17,12 @@ import {
   playerMessage,
   receiveInitData,
 } from './store/actions';
+import * as selectors from './store/selectors';
 
 function App() {
-  const socket = useSelector(state => state.socket);
-  const name = useSelector(state => state.name);
-  const players = useSelector(state => state.players);
+  const socket = useSelector(selectors.socket);
+  const name = useSelector(selectors.name);
+  const players = useSelector(selectors.players);
   const dispatch = useDispatch();
 
   // Include second arg to prevent this from running multiple times
@@ -30,9 +35,18 @@ function App() {
 
   return (
     <>
-      <Board />
-      <MessageLog/>
-      <PlayerList players={players} />
+      <Container fluid>
+        <Row>
+          <Col>
+            <Board />
+          </Col>
+          <Col>
+            <LeaderPanel/>
+            <PlayerList players={players} />
+            <MessageLog/>
+          </Col>
+        </Row>
+      </Container>
       <NameModal show={!name} />
     </>
   );

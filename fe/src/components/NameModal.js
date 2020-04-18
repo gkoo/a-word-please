@@ -5,10 +5,11 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
 import { saveName } from '../store/actions';
+import * as selectors from '../store/selectors';
 
 function NameModal({ show }) {
   const [name, setName] = useState('Gordon');
-  const socket = useSelector(state => state.socket);
+  const socket = useSelector(selectors.socket);
   const dispatch = useDispatch();
 
   const onNameChange = e => setName(e.target.value);
