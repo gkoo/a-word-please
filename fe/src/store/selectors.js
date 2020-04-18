@@ -1,5 +1,13 @@
-export const players = state => state.players;
-export const messages = state => state.messages;
-export const name = state => state.name;
-export const socket = state => state.socket;
-export const currPlayer = state => state.players[state.currPlayerId];
+import { createSelector } from 'reselect';
+
+export const playersSelector = state => state.players;
+export const messagesSelector = state => state.messages;
+export const nameSelector = state => state.name;
+export const socketSelector = state => state.socket;
+export const currPlayerIdSelector = state => state.currPlayerId;
+export const currPlayerSelector = state => state.players[state.currPlayerId];
+
+export const currPlayerHandSelector = createSelector(
+  currPlayerSelector,
+  currPlayer => currPlayer && currPlayer.hand,
+);

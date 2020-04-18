@@ -4,11 +4,11 @@ import { useSelector } from 'react-redux';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 
-import * as selectors from '../store/selectors';
+import { currPlayerSelector, socketSelector } from '../store/selectors';
 
 function LeaderPanel() {
-  const currPlayer = useSelector(selectors.currPlayer);
-  const socket = useSelector(selectors.socket);
+  const currPlayer = useSelector(currPlayerSelector);
+  const socket = useSelector(socketSelector);
 
   if (!currPlayer || !currPlayer.isLeader) {
     return <div/>;

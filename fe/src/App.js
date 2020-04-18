@@ -12,25 +12,25 @@ import MessageLog from './components/MessageLog';
 import NameModal from './components/NameModal';
 import PlayerList from './components/PlayerList';
 import {
-  gameStart,
+  receiveGameData,
   newPlayer,
   playerDisconnect,
   playerMessage,
   systemMessage,
   receiveInitData,
 } from './store/actions';
-import * as selectors from './store/selectors';
+import { nameSelector, playersSelector, socketSelector } from './store/selectors';
 
 function App() {
-  const socket = useSelector(selectors.socket);
-  const name = useSelector(selectors.name);
-  const players = useSelector(selectors.players);
+  const socket = useSelector(socketSelector);
+  const name = useSelector(nameSelector);
+  const players = useSelector(playersSelector);
   const dispatch = useDispatch();
 
   // Include second arg to prevent this from running multiple times
   useEffect(() => {
     socket.on('initData', data => dispatch(receiveInitData(data)));
-    socket.on('gameStart', gameData => dispatch(gameStart(gameData)));
+    socket.on('gameData', gameData => dispatch(receiveGameData(gameData)));
     socket.on('newPlayer', player => dispatch(newPlayer(player)));
     socket.on('playerMessage', message => dispatch(playerMessage(message)));
     socket.on('playerDisconnect', playerId => dispatch(playerDisconnect(playerId)));

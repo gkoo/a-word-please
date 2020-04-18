@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import Button from 'react-bootstrap/Button';
 
-import * as selectors from '../store/selectors';
+import { messagesSelector, socketSelector } from '../store/selectors';
 
 function MessageLog() {
   const [typedMessage, setTypedMessage] = useState('');
-  const socket = useSelector(selectors.socket);
-  const messages = useSelector(selectors.messages);
+  const socket = useSelector(socketSelector);
+  const messages = useSelector(messagesSelector);
 
   const onTypedMessageChange = e => setTypedMessage(e.target.value);
 

@@ -1,5 +1,5 @@
 // Action Types
-export const GAME_START = 'GAME_START';
+export const GAME_DATA = 'GAME_DATA';
 export const NEW_PLAYER = 'NEW_PLAYER';
 export const PLAYER_DISCONNECT = 'PLAYER_DISCONNECT';
 export const PLAYER_MESSAGE = 'PLAYER_MESSAGE';
@@ -8,10 +8,10 @@ export const SAVE_NAME = 'SAVE_NAME';
 export const SYSTEM_MESSAGE = 'SYSTEM_MESSAGE';
 
 // Actions
-export function gameStart(gameData) {
+export function receiveGameData(gameData) {
   return {
     payload: gameData,
-    type: GAME_START,
+    type: GAME_DATA,
   }
 }
 
