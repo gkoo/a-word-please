@@ -11,7 +11,7 @@ function MessageLog() {
 
   const onTypedMessageChange = e => setTypedMessage(e.target.value);
 
-  const onSubmit = (e) => {
+  const onSubmit = e => {
     e.preventDefault();
     socket.emit('chatMessage', typedMessage);
     setTypedMessage('');

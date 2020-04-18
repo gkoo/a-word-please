@@ -12,9 +12,11 @@ import MessageLog from './components/MessageLog';
 import NameModal from './components/NameModal';
 import PlayerList from './components/PlayerList';
 import {
+  gameStart,
   newPlayer,
   playerDisconnect,
   playerMessage,
+  systemMessage,
   receiveInitData,
 } from './store/actions';
 import * as selectors from './store/selectors';
@@ -28,9 +30,11 @@ function App() {
   // Include second arg to prevent this from running multiple times
   useEffect(() => {
     socket.on('initData', data => dispatch(receiveInitData(data)));
+    socket.on('gameStart', gameData => dispatch(gameStart(gameData)));
     socket.on('newPlayer', player => dispatch(newPlayer(player)));
     socket.on('playerMessage', message => dispatch(playerMessage(message)));
     socket.on('playerDisconnect', playerId => dispatch(playerDisconnect(playerId)));
+    socket.on('systemMessage', message => dispatch(systemMessage(message)));
   }, [socket, dispatch]);
 
   return (

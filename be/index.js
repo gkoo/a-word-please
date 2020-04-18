@@ -51,8 +51,19 @@ const sendInitRoomData = (socket, room) => {
   const initData = {
     players,
     messages,
+    currPlayerId: socket.id,
   };
   socket.emit('initData', initData);
+};
+
+const handleStartGame = socketId => {
+  const initGameData = room.startGame(socketId);
+  if (!initGameData) {
+    console.log('Couldn\'t start game: no game data');
+    return;
+  }
+  io.emit('gameStart', initGameData);
+  io.emit('systemMessage', 'Game started');
 };
 
 io.on('connection', socket => {
@@ -62,7 +73,7 @@ io.on('connection', socket => {
   socket.on('chatMessage', handleMessage);
   socket.on('disconnect', () => handleDisconnect(socket.id));
   socket.on('saveName', (name) => handleSetName(socket.id, name));
-  //socket.emit('initMessages', sendInitMessages);
+  socket.on('startGame', () => handleStartGame(socket.id));
 });
 
 setInterval(() => io.sockets.emit('message', 'hi!'), 1000);

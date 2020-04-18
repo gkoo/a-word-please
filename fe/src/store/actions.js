@@ -1,11 +1,20 @@
 // Action Types
+export const GAME_START = 'GAME_START';
 export const NEW_PLAYER = 'NEW_PLAYER';
 export const PLAYER_DISCONNECT = 'PLAYER_DISCONNECT';
 export const PLAYER_MESSAGE = 'PLAYER_MESSAGE';
 export const RECEIVE_INIT_DATA = 'RECEIVE_INIT_DATA';
 export const SAVE_NAME = 'SAVE_NAME';
+export const SYSTEM_MESSAGE = 'SYSTEM_MESSAGE';
 
 // Actions
+export function gameStart(gameData) {
+  return {
+    payload: gameData,
+    type: GAME_START,
+  }
+}
+
 export function newPlayer({ id, name, isLeader }) {
   return {
     payload: { id, name, isLeader },
@@ -24,6 +33,13 @@ export function receiveInitData({ currPlayerId, messages, players }) {
   return {
     payload: { currPlayerId, messages, players },
     type: RECEIVE_INIT_DATA,
+  }
+}
+
+export function systemMessage(message) {
+  return {
+    payload: { message },
+    type: SYSTEM_MESSAGE,
   }
 }
 

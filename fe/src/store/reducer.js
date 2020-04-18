@@ -5,14 +5,27 @@ import * as actions from './actions';
 const socketIoServerUrl = 'http://localhost:5000';
 
 const initialState = {
+  gameData: {},
   players: {},
   messages: [],
   socket: io(socketIoServerUrl),
 };
 
 export default function reducer(state = initialState, action) {
-  let newPlayers;
+  let newMessages, newPlayers;
+
   switch(action.type) {
+    case actions.GAME_START:
+      console.log(action.payload);
+      const newGameData = {
+        ...state.gameData,
+        state: action.payload.state,
+      };
+      return {
+        ...state,
+        gameData: newGameData,
+      };
+
     case actions.NEW_PLAYER:
       const { id, name, isLeader } = action.payload;
       newPlayers = {
@@ -42,7 +55,7 @@ export default function reducer(state = initialState, action) {
       }
 
     case actions.PLAYER_MESSAGE:
-      const newMessages = [...state.messages, action.payload.message];
+      newMessages = [...state.messages, action.payload.message];
       return {
         ...state,
         messages: newMessages,
@@ -62,6 +75,14 @@ export default function reducer(state = initialState, action) {
         ...state,
         name: action.payload.name,
       };
+
+    case actions.SYSTEM_MESSAGE:
+      newMessages = [...state.messages, action.payload.message];
+      return {
+        ...state,
+        messages: newMessages,
+      };
+
     default:
       return state;
   }

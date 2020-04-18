@@ -1,3 +1,4 @@
+const Game = require('./Game');
 const Player = require('./Player');
 
 function Room() {
@@ -44,6 +45,24 @@ function Room() {
 
   // returns an array of players
   this.getPlayers = () => Object.values(this.players);
+
+  this.startGame = (gameInitiatorId) => {
+    if (!this.playerIsLeader(gameInitiatorId)) { return; }
+    this.game = new Game();
+    const initGameData = this.game.setup();
+    return initGameData;
+  };
+
+  this.endGame = (gameInitiatorId) => {
+    if (!this.playerIsLeader(gameInitiatorId)) { return; }
+    if (!this.game) { return; }
+    this.game.end();
+  }
+
+  this.playerIsLeader = (playerId) => {
+    const player = this.getPlayerById(playerId);
+    return player.isLeader;
+  };
 }
 
 module.exports = Room;
