@@ -66,3 +66,15 @@ describe('removePlayer', () => {
     });
   });
 });
+
+describe('startGame', () => {
+  test('returns game data for each player', () => {
+    room.addPlayer('123');
+    room.addPlayer('456');
+    const gameData = room.startGame('123');
+    playerData1 = gameData['123'];
+    playerData2 = gameData['456'];
+    expect(playerData1.players).toBeTruthy();
+    expect(playerData2.players).toBeTruthy();
+  });
+});

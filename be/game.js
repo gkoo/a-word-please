@@ -28,7 +28,6 @@ function Game({ playerIds }) {
     });
     this.roundNum = 0;
     newRound();
-    return this.serialize();
   };
 
   const newRound = () => {
@@ -70,21 +69,21 @@ function Game({ playerIds }) {
     this.state = 'ENDED';
   };
 
-  this.serialize = () => {
-    const {
-      burnCard,
-      deck,
-      deckCursor,
-      players,
-      roundNum,
-      state,
-    } = this;
-
+  this.serializeForPlayer = playerIdToSerializeFor => {
+    const { roundNum, state } = this;
+    const playerData = {};
+    Object.keys(this.players).forEach(playerId => {
+      const { discardPile, hand, id, numTokens } = this.players[playerId];
+      const handToInclude = playerIdToSerializeFor === playerId ? hand : undefined;
+      playerData[playerId] = {
+        discardPile,
+        hand: handToInclude,
+        id,
+        numTokens,
+      }
+    });
     return {
-      burnCard,
-      deck,
-      deckCursor,
-      players,
+      players: playerData,
       roundNum,
       state,
     };

@@ -7,14 +7,13 @@ const app = express();
 const server = http.Server(app);
 const io = socketIO(server);
 
-const index = require('./routes/index');
-
 const Player = require('./Player');
 const Room = require('./Room');
 
 app.set('port', 5000);
 app.use('/static', express.static(__dirname + '/static'));
-app.use(index)
+
+const sockets = {};
 
 const room = new Room();
 
@@ -26,6 +25,7 @@ const handleMessage = msg => {
 const handleDisconnect = (id) => {
   const name = room.players[id].name;
   const displayName = name ? `(${name})` : '';
+  delete sockets[id];
   room.removePlayer(id);
   console.log(`Client ${id} ${displayName} disconnected`);
   io.emit('playerDisconnect', id);
@@ -57,14 +57,18 @@ const sendInitRoomData = (socket, room) => {
 };
 
 const handleStartGame = socketId => {
-  const initGameData = room.startGame(socketId);
-  if (!initGameData) {
+  const gameDataForPlayers = room.startGame(socketId);
+  if (!gameDataForPlayers) {
     console.log('Couldn\'t start game: no game data');
     return;
   }
-  console.log('starting game');
-  io.emit('gameStart', initGameData);
+
   io.emit('systemMessage', 'Game started');
+  Object.keys(gameDataForPlayers).forEach(playerId => {
+    const socket = sockets[playerId];
+    socket.emit('gameData', gameDataForPlayers[playerId]);
+  });
+  console.log('starting game');
 };
 
 const handleEndGame = socketId => {
@@ -80,6 +84,7 @@ const handleEndGame = socketId => {
 
 io.on('connection', socket => {
   console.log('New client connected');
+  sockets[socket.id] = socket;
   room.addPlayer(socket.id);
   sendInitRoomData(socket, room);
   socket.on('chatMessage', handleMessage);

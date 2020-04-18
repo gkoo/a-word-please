@@ -11,7 +11,7 @@ function Room() {
     const player = new Player(id);
     this.players[id] = player;
     if (this.getPlayers().length === 1) {
-      this.promoteRandomLeader();
+      promoteRandomLeader();
     }
   };
 
@@ -19,11 +19,11 @@ function Room() {
     const player = this.players[id];
     delete this.players[id];
     if (player.isLeader) {
-      this.promoteRandomLeader();
+      promoteRandomLeader();
     }
   };
 
-  this.promoteRandomLeader = () => {
+  const promoteRandomLeader = () => {
     const players = this.getPlayers();
 
     if (players.length === 0) {
@@ -50,8 +50,14 @@ function Room() {
     const playerIds = this.getPlayers().map(player => player.id);
     if (!this.playerIsLeader(gameInitiatorId)) { return; }
     this.game = new Game({ playerIds });
-    const initGameData = this.game.setup();
-    return initGameData;
+    this.game.setup();
+
+    const gameDataForPlayers = {};
+    playerIds.forEach(playerId => {
+      gameDataForPlayers[playerId] = this.game.serializeForPlayer(playerId);
+    });
+
+    return gameDataForPlayers;
   };
 
   this.endGame = (gameInitiatorId) => {
