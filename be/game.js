@@ -13,8 +13,7 @@ function Game({ playerIds }) {
   const CARD_PRINCESS = 7;
 
   if (playerIds.length < 2 || playerIds.length > 4) {
-    console.log('Only 2-4 player games are currently supported');
-    return;
+    throw 'Only 2-4 player games are currently supported';
   }
 
   // keeps track of how far through the deck we are
