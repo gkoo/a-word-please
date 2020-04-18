@@ -1,9 +1,12 @@
 const Player = require('./Player');
+
 function Room() {
   this.players = {};
   this.messages = ['here are', 'your first', 'messages'];
 
-  this.addPlayer = (id) => {
+  this.getPlayerById = id => this.players[id];
+
+  this.addPlayer = id => {
     const player = new Player(id);
     this.players[id] = player;
     if (this.getPlayers().length === 1) {
@@ -33,9 +36,7 @@ function Room() {
     }
   }
 
-  this.setPlayerName = (id, name) => {
-    this.players[id].setName(name);
-  };
+  this.setPlayerName = (id, name) => this.players[id].setName(name);
 
   this.handleMessage = msg => {
     this.messages.push(msg);

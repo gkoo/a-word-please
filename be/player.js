@@ -13,6 +13,15 @@ function Player(id) {
   this.unpromoteFromLeader = () => {
     this.isLeader = false;
   }
+
+  this.serialize = () => {
+    const { id, isLeader, name } = this;
+    return {
+      id,
+      isLeader,
+      name,
+    };
+  }
 }
 
 module.exports = Player;

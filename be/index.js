@@ -38,7 +38,7 @@ server.listen(5000, () => {
 const handleSetName = (id, name) => {
   console.log(`Client ${id} set name to: ${name}`);
   room.setPlayerName(id, name);
-  io.emit('newPlayer', { id, name });
+  io.emit('newPlayer', room.getPlayerById(id).serialize());
 };
 
 const sendInitRoomData = (socket, room) => {
@@ -46,7 +46,7 @@ const sendInitRoomData = (socket, room) => {
   const { messages } = room;
   const roomPlayers = Object.keys(room.players).map(id => room.players[id]);
   roomPlayers.forEach(player => {
-    players[player.id] = { name: player.name };
+    players[player.id] = player.serialize();
   });
   const initData = {
     players,
@@ -57,8 +57,8 @@ const sendInitRoomData = (socket, room) => {
 
 io.on('connection', socket => {
   console.log('New client connected');
-  sendInitRoomData(socket, room);
   room.addPlayer(socket.id);
+  sendInitRoomData(socket, room);
   socket.on('chatMessage', handleMessage);
   socket.on('disconnect', () => handleDisconnect(socket.id));
   socket.on('saveName', (name) => handleSetName(socket.id, name));

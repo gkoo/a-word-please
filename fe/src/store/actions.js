@@ -6,9 +6,9 @@ export const RECEIVE_INIT_DATA = 'RECEIVE_INIT_DATA';
 export const SAVE_NAME = 'SAVE_NAME';
 
 // Actions
-export function newPlayer({ id, name }) {
+export function newPlayer({ id, name, isLeader }) {
   return {
-    payload: { id, name },
+    payload: { id, name, isLeader },
     type: NEW_PLAYER,
   }
 }
