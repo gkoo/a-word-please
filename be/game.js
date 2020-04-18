@@ -16,8 +16,6 @@ function Game({ playerIds }) {
     throw 'Only 2-4 player games are currently supported';
   }
 
-  // keeps track of how far through the deck we are
-  this.deckCursor = 0;
 
   this.setup = () => {
     this.state = 'STARTED';
@@ -33,8 +31,15 @@ function Game({ playerIds }) {
   const newRound = () => {
     ++this.roundNum;
     playerIds.forEach(playerId => this.players[playerId].resetCards());
+    this.deckCursor = 0;
+
     createDeck();
     dealCards();
+
+    // keeps track of how far through the deck we are
+
+    // keeps track of whose turn it is.
+    this.playerOrderCursor = -1;
   };
 
   const createDeck = () => {
@@ -63,6 +68,10 @@ function Game({ playerIds }) {
       const card = this.deck[this.deckCursor++];
       this.players[playerId].addCardToHand(card);
     }
+  };
+
+  const determinePlayerOrder = () => {
+    this.playerOrder = _.shuffle(playerIds);
   };
 
   this.end = () => {

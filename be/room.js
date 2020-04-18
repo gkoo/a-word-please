@@ -1,7 +1,7 @@
 const Game = require('./Game');
 const Player = require('./Player');
 
-function Room() {
+function Room({ broadcast, emitToPlayer }) {
   this.players = {};
   this.messages = ['here are', 'your first', 'messages'];
 
@@ -54,10 +54,12 @@ function Room() {
 
     const gameDataForPlayers = {};
     playerIds.forEach(playerId => {
-      gameDataForPlayers[playerId] = this.game.serializeForPlayer(playerId);
+      emitToPlayer(
+        playerId,
+        'gameData',
+        this.game.serializeForPlayer(playerId),
+      );
     });
-
-    return gameDataForPlayers;
   };
 
   this.endGame = (gameInitiatorId) => {
