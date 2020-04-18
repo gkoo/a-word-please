@@ -1,5 +1,7 @@
 const _ = require('lodash');
 
+const GamePlayer = require('./gamePlayer');
+
 function Game({ playerIds }) {
   const CARD_GUARD = 0;
   const CARD_PRIEST = 1;
@@ -10,21 +12,34 @@ function Game({ playerIds }) {
   const CARD_COUNTESS = 6;
   const CARD_PRINCESS = 7;
 
-  this.playerIds = playerIds;
+  if (playerIds.length < 2 || playerIds.length > 4) {
+    console.log('Only 2-4 player games are currently supported');
+    return;
+  }
+
+  // keeps track of how far through the deck we are
+  this.deckCursor = 0;
 
   this.setup = () => {
     this.state = 'STARTED';
-    this.hands = {};
-    dealCards();
+    this.players = {};
+    playerIds.forEach(playerId => {
+      const player = new GamePlayer({ id: playerId });
+      this.players[playerId] = player;
+    });
+    this.roundNum = 0;
+    newRound();
     return this.serialize();
   };
 
-  const dealCards = () => {
-    if (playerIds.length < 2 || playerIds.length > 4) {
-      console.log('Only 2-4 player games are currently supported');
-      return;
-    }
+  const newRound = () => {
+    ++this.roundNum;
+    playerIds.forEach(playerId => this.players[playerId].resetCards());
+    createDeck();
+    dealCards();
+  };
 
+  const createDeck = () => {
     const tmpDeck = [CARD_PRINCESS, CARD_COUNTESS, CARD_KING];
     let i;
     for (i=0; i<2; ++i) {
@@ -44,15 +59,36 @@ function Game({ playerIds }) {
     this.burnCard = this.deck.splice(burnCardIdx, 1)[0];
   };
 
+  const dealCards = () => {
+    for (let i=0; i<playerIds.length; ++i) {
+      const playerId = playerIds[i];
+      const card = this.deck[this.deckCursor++];
+      this.players[playerId].addCardToHand(card);
+    }
+  };
+
   this.end = () => {
     this.state = 'ENDED';
   };
 
   this.serialize = () => {
-    const { state } = this;
-    return {
+    const {
+      burnCard,
+      deck,
+      deckCursor,
+      players,
+      roundNum,
       state,
-    }
+    } = this;
+
+    return {
+      burnCard,
+      deck,
+      deckCursor,
+      players,
+      roundNum,
+      state,
+    };
   };
 }
 
