@@ -62,9 +62,21 @@ const handleStartGame = socketId => {
     console.log('Couldn\'t start game: no game data');
     return;
   }
+  console.log('starting game');
   io.emit('gameStart', initGameData);
   io.emit('systemMessage', 'Game started');
 };
+
+const handleEndGame = socketId => {
+  const success = room.endGame(socketId);
+  if (!success) {
+    console.log('Couldn\'t end game');
+    return;
+  }
+  console.log('ending game');
+  io.emit('gameEnd');
+  io.emit('systemMessage', 'Game ended');
+}
 
 io.on('connection', socket => {
   console.log('New client connected');
@@ -74,6 +86,5 @@ io.on('connection', socket => {
   socket.on('disconnect', () => handleDisconnect(socket.id));
   socket.on('saveName', (name) => handleSetName(socket.id, name));
   socket.on('startGame', () => handleStartGame(socket.id));
+  socket.on('endGame', () => handleEndGame(socket.id));
 });
-
-setInterval(() => io.sockets.emit('message', 'hi!'), 1000);

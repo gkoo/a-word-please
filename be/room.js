@@ -47,16 +47,18 @@ function Room() {
   this.getPlayers = () => Object.values(this.players);
 
   this.startGame = (gameInitiatorId) => {
+    const playerIds = this.getPlayers().map(player => player.id);
     if (!this.playerIsLeader(gameInitiatorId)) { return; }
-    this.game = new Game();
+    this.game = new Game({ playerIds });
     const initGameData = this.game.setup();
     return initGameData;
   };
 
   this.endGame = (gameInitiatorId) => {
-    if (!this.playerIsLeader(gameInitiatorId)) { return; }
-    if (!this.game) { return; }
+    if (!this.playerIsLeader(gameInitiatorId)) { return false; }
+    if (!this.game) { return false; }
     this.game.end();
+    return true;
   }
 
   this.playerIsLeader = (playerId) => {
