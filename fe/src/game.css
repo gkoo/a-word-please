@@ -16,3 +16,10 @@
   background-color: #aaa;
   width: 50px;
 }
+
+.message-log {
+  border: 1px solid #000;
+  height: 200px;
+  overflow-y: scroll;
+  width: 200px;
+}
