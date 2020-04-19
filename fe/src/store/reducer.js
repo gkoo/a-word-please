@@ -14,6 +14,20 @@ export default function reducer(state = initialState, action) {
   let newMessages, newPlayers, players;
 
   switch(action.type) {
+    case actions.NEW_LEADER:
+      const { playerId } = action.payload;
+      const player = {
+        ...state.players[playerId],
+        isLeader: true,
+      };
+      newPlayers = {
+        ...state.players,
+        [playerId]: player,
+      };
+      return {
+        ...state,
+        players: newPlayers,
+      };
     case actions.NEW_PLAYER:
       const { id, name, isLeader } = action.payload;
       newPlayers = {

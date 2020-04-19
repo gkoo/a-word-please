@@ -69,3 +69,16 @@ describe('removePlayer', () => {
     });
   });
 });
+
+describe('getLeader', () => {
+  const subject = () => room.getLeader();
+
+  beforeEach(() => {
+    room.addPlayer('123');
+    room.addPlayer('456');
+  });
+
+  it('returns the leader', () => {
+    expect(subject().id).toEqual('123');
+  });
+});

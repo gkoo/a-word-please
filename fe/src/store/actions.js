@@ -1,5 +1,6 @@
 // Action Types
 export const RECEIVE_GAME_DATA = 'RECEIVE_GAME_DATA';
+export const NEW_LEADER = 'NEW_LEADER';
 export const NEW_PLAYER = 'NEW_PLAYER';
 export const PLAYER_DISCONNECT = 'PLAYER_DISCONNECT';
 export const PLAYER_MESSAGE = 'PLAYER_MESSAGE';
@@ -13,6 +14,13 @@ export function receiveGameData(gameData) {
   return {
     payload: gameData,
     type: RECEIVE_GAME_DATA,
+  }
+}
+
+export function newLeader(playerId) {
+  return {
+    payload: { playerId },
+    type: NEW_LEADER,
   }
 }
 

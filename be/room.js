@@ -26,16 +26,16 @@ function Room({ broadcast, emitToPlayer }) {
   const promoteRandomLeader = () => {
     const players = this.getPlayers();
 
-    if (players.length === 0) {
-      return;
-    }
+    if (players.length === 0) { return; }
 
     players[0].promoteToLeader();
     console.log(`${players[0].name || players[0].id} is the new leader`);
     for (let i = 1; i < players.length; ++i) {
       players[i].unpromoteFromLeader();
     }
-  }
+  };
+
+  this.getLeader = () => Object.values(this.players).find(player => player.isLeader);
 
   this.setPlayerName = (id, name) => this.players[id].setName(name);
 

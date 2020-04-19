@@ -13,6 +13,7 @@ import NameModal from './components/NameModal';
 import PlayerList from './components/PlayerList';
 import {
   newPlayer,
+  newLeader,
   playerDisconnect,
   playerMessage,
   receiveDebugInfo,
@@ -34,6 +35,7 @@ function App() {
     socket.on('initData', data => dispatch(receiveInitData(data)));
     socket.on('gameData', gameData => dispatch(receiveGameData(gameData)));
     socket.on('newPlayer', player => dispatch(newPlayer(player)));
+    socket.on('newLeader', playerId => dispatch(newLeader(playerId)));
     socket.on('playerMessage', message => dispatch(playerMessage(message)));
     socket.on('playerDisconnect', playerId => dispatch(playerDisconnect(playerId)));
     socket.on('systemMessage', message => dispatch(systemMessage(message)));

@@ -27,10 +27,18 @@ const handleMessage = msg => {
 
 const handleDisconnect = (id) => {
   const name = room.players[id].name;
-  const displayName = name ? `(${name})` : '';
+  const displayName = name ? ` (${name})` : '';
+  console.log(`Client ${id}${displayName} disconnected`);
+
   room.removePlayer(id);
-  console.log(`Client ${id} ${displayName} disconnected`);
+
+  const leader = room.getLeader();
   io.emit('playerDisconnect', id);
+
+  if (!leader) { return; }
+
+  console.log('emitting new leader');
+  io.emit('newLeader', leader.id);
 }
 
 server.listen(5000, () => {
