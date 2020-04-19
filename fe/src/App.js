@@ -1,8 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import './bootstrap.min.css';
-import './game.css';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -22,13 +20,23 @@ import {
   receiveInitData,
   systemMessage,
 } from './store/actions';
-import { nameSelector, playersSelector, socketSelector } from './store/selectors';
+import { STATE_PENDING } from './constants';
+import {
+  gameStateSelector,
+  nameSelector,
+  playersSelector,
+  socketSelector,
+} from './store/selectors';
+
+import './bootstrap.min.css';
+import './game.css';
 
 function App() {
-  const socket = useSelector(socketSelector);
+  const dispatch = useDispatch();
+  const gameState = useSelector(gameStateSelector);
   const name = useSelector(nameSelector);
   const players = useSelector(playersSelector);
-  const dispatch = useDispatch();
+  const socket = useSelector(socketSelector);
 
   // Include second arg to prevent this from running multiple times
   useEffect(() => {
@@ -47,11 +55,17 @@ function App() {
       <Container fluid>
         <Row>
           <Col>
-            <Board />
+            {
+              gameState === STATE_PENDING &&
+                <PlayerList players={players} />
+            }
+            {
+              gameState !== STATE_PENDING &&
+                <Board />
+            }
           </Col>
           <Col>
             <LeaderPanel/>
-            <PlayerList players={players} />
             <MessageLog/>
           </Col>
         </Row>
