@@ -131,7 +131,13 @@ function Game({ playerIds }) {
       throw 'Player tried to play a card when it wasn\'t their turn! Aborting...';
     }
 
+    const player = this.players[playerId];
+    const { hand } = player;
+    if (card === CARD_COUNTESS && (hand.includes(CARD_KING) || hand.includes(CARD_PRINCE))) {
+      return;
+    }
     this.players[playerId].discard(card);
+    this.performCardEffect(card);
 
     // If one or zero players are left alive, end the round.
     if (this.getAlivePlayers().length < 2) {
@@ -169,9 +175,38 @@ function Game({ playerIds }) {
     return winners.map(winner => winner.id);
   };
 
+  this.getAlivePlayers = () => Object.values(this.players).filter(player => !player.isKnockedOut);
+
   this.isRoundOver = () => this.state !== STATE_STARTED;
 
   this.isGameOver = () => this.state === STATE_GAME_END;
+
+  this.performCardEffect = (card) => {
+    const activePlayer = this.players[this.activePlayerId];
+
+    switch (card) {
+      case CARD_GUARD:
+        // TODO
+        break;
+      case CARD_PRIEST:
+        // TODO
+        break;
+      case CARD_BARON:
+        // TODO
+        break;
+      case CARD_PRINCE:
+        // TODO
+        break;
+      case CARD_KING:
+        // TODO
+        break;
+      case CARD_PRINCESS:
+        activePlayer.knockOut();
+        break;
+      default:
+        throw `unknown card played: ${card}`;
+    }
+  };
 
   this.serializeForPlayer = playerIdToSerializeFor => {
     const { activePlayerId, roundNum, state } = this;
