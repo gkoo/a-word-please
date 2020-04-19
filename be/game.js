@@ -98,6 +98,8 @@ function Game({ playerIds }) {
   };
 
   this.nextTurn = () => {
+    if (this.state !== STATE_STARTED) { return; }
+
     if (this.deckCursor >= this.deck.length) {
       // No more cards in the deck, the round is over.
       this.endRound();
@@ -130,6 +132,11 @@ function Game({ playerIds }) {
     }
 
     this.players[playerId].discard(card);
+
+    // If one or zero players are left alive, end the round.
+    if (this.getAlivePlayers().length < 2) {
+      this.endRound();
+    }
   };
 
   this.endRound = () => {
@@ -137,7 +144,12 @@ function Game({ playerIds }) {
 
     // Determine winner
     const playerList = Object.values(this.players);
-    const alivePlayers = playerList.filter(player => !player.isKnockedOut);
+    const alivePlayers = this.getAlivePlayers();
+
+    if (alivePlayers.length === 0) {
+      return;
+    }
+
     alivePlayers.sort(player => player.hand[0]);
     this.roundWinner = alivePlayers[alivePlayers.length - 1];
 
@@ -173,7 +185,7 @@ function Game({ playerIds }) {
         hand: handToInclude,
         id,
         numTokens,
-      }
+      };
     });
 
     return {

@@ -7,11 +7,11 @@ let playerIds = ['1', '2', '3'];
 
 beforeEach(() => {
   game = new Game({ playerIds });
+  game.setup();
 });
 
 describe('setup', () => {
   it('deals cards', () => {
-    game.setup();
     expect(game.deck).toHaveLength(15);
     Object.values(game.players).forEach(player => {
       expect(player.hand).toHaveLength(1);
@@ -22,10 +22,6 @@ describe('setup', () => {
 
 describe('nextTurn', () => {
   const subject = () => game.nextTurn();
-
-  beforeEach(() => {
-    game.setup();
-  });
 
   it('changes the player turn', () => {
     subject();
@@ -59,10 +55,6 @@ describe('nextTurn', () => {
 });
 
 describe('serializeForPlayer', () => {
-  beforeEach(() => {
-    game.setup();
-  });
-
   it('serializes correctly', () => {
     const { players, roundNum, state } = game.serializeForPlayer('1');
     expect(roundNum).toEqual(game.roundNum);
@@ -76,10 +68,17 @@ describe('serializeForPlayer', () => {
 
 describe('endRound', () => {
   it('decides the winner of the round', () => {
-    game.setup();
     game.players['1'].hand = [0];
     game.players['2'].hand = [9];
     game.endRound();
     expect(game.roundWinner.id).toEqual('2');
+  });
+});
+
+describe('getAlivePlayers', () => {
+  const subject = () => game.getAlivePlayers();
+
+  it('gets all alive players', () => {
+    expect(subject()).toHaveLength(3);
   });
 });

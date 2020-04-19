@@ -57,8 +57,14 @@ function Room({ broadcast, emitToPlayer }) {
   this.nextTurn = () => {
     this.game.nextTurn();
     if (this.game.isRoundOver()) {
-      const winnerName = this.players[this.game.roundWinner.id].name;
-      broadcast('systemMessage', `${winnerName} won the round!`);
+      let roundEndMsg;
+      if (this.game.roundWinner) {
+        const winnerName = this.players[this.game.roundWinner.id].name;
+        roundEndMsg = `${winnerName} won the round!`;
+      } else {
+        roundEndMsg = 'No one won the round...';
+      }
+      broadcast('systemMessage', roundEndMsg);
     }
     broadcastGameDataToPlayers();
   };
