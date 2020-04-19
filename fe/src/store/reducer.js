@@ -34,14 +34,17 @@ export default function reducer(state = initialState, action) {
 
     case actions.NEW_PLAYER:
       const { id, name, isLeader } = action.payload;
-      newPlayers = {
-        ...state.players,
-      };
-      newPlayers[action.payload.id] = {
+      const oldPlayer = state.players[id] || {};
+      const newPlayer = {
+        ...oldPlayer,
         id,
         name,
         isLeader,
       };
+      newPlayers = {
+        ...state.players,
+      };
+      newPlayers[id] = newPlayer;
       return {
         ...state,
         players: newPlayers,
