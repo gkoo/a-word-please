@@ -28,6 +28,7 @@ export default function reducer(state = initialState, action) {
         ...state,
         players: newPlayers,
       };
+
     case actions.NEW_PLAYER:
       const { id, name, isLeader } = action.payload;
       newPlayers = {
