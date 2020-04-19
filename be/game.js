@@ -133,7 +133,8 @@ function Game({ playerIds }) {
 
     const player = this.players[playerId];
     const { hand } = player;
-    if (card === CARD_COUNTESS && (hand.includes(CARD_KING) || hand.includes(CARD_PRINCE))) {
+    if ([CARD_KING, CARD_PRINCE].includes(card) && hand.includes(CARD_COUNTESS)) {
+      // If you have the King or Prince in your hand, you must discard the Countess.
       return;
     }
     this.players[playerId].discard(card);
@@ -202,6 +203,10 @@ function Game({ playerIds }) {
         break;
       case CARD_PRINCESS:
         activePlayer.knockOut();
+        break;
+      case CARD_HANDMAID:
+      case CARD_COUNTESS:
+        // effects handled elsewhere
         break;
       default:
         throw `unknown card played: ${card}`;

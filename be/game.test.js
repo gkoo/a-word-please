@@ -54,6 +54,23 @@ describe('nextTurn', () => {
   });
 });
 
+describe('playCard', () => {
+  beforeEach(() => {
+    game.nextTurn();
+    game.players[game.activePlayerId].hand = [5, 6];
+  });
+
+  describe('when both Countess and King are in hand', () => {
+    it('prohibits playing the King', () => {
+      game.playCard(game.activePlayerId, 5);
+      const player = game.players[game.activePlayerId];
+      expect(player.hand).toHaveLength(2);
+      expect(player.hand).toContain(5);
+      expect(player.hand).toContain(6);
+    });
+  });
+});
+
 describe('serializeForPlayer', () => {
   it('serializes correctly', () => {
     const { players, roundNum, state } = game.serializeForPlayer('1');
