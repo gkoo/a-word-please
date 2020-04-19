@@ -29,17 +29,17 @@ describe('nextTurn', () => {
 
   it('changes the player turn', () => {
     subject();
-    const { currPlayerTurn } = game;
+    const { activePlayerId } = game;
     subject();
-    const newPlayerTurn = game.currPlayerTurn;
-    expect(newPlayerTurn).not.toEqual(currPlayerTurn);
+    const newActivePlayerId = game.activePlayerId;
+    expect(newActivePlayerId).not.toEqual(activePlayerId);
   });
 
   it('adds a card to the hand of the player', () => {
     const oldPlayers = _.cloneDeep(game.players);
     subject();
-    const oldHand = oldPlayers[game.currPlayerTurn].hand;
-    const newHand = game.players[game.currPlayerTurn].hand;
+    const oldHand = oldPlayers[game.activePlayerId].hand;
+    const newHand = game.players[game.activePlayerId].hand;
     expect(newHand.length).toBeGreaterThan(oldHand.length);
   });
 });
