@@ -6,9 +6,10 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 
 import { currPlayerSelector, socketSelector } from '../store/selectors';
 import {
+  STATE_GAME_END,
   STATE_PENDING,
-  STATE_STARTED,
   STATE_ROUND_END,
+  STATE_STARTED,
 } from '../constants';
 import { gameStateSelector } from '../store/selectors';
 
@@ -45,7 +46,7 @@ function LeaderPanel() {
     <div>
       <ButtonGroup aria-label="Basic example">
         {
-          gameState === STATE_PENDING &&
+          [STATE_PENDING, STATE_GAME_END].includes(gameState) &&
             <Button onClick={startGame}>Start game</Button>
         }
         {
@@ -53,7 +54,7 @@ function LeaderPanel() {
             <Button onClick={nextRound}>Next round</Button>
         }
         {
-          (gameState === STATE_STARTED || gameState === STATE_ROUND_END) &&
+          [STATE_STARTED, STATE_ROUND_END].includes(gameState) &&
             <Button onClick={endGame}>End game</Button>
         }
         <Button onClick={debug}>Debug</Button>

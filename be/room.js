@@ -67,6 +67,11 @@ function Room({ broadcast, emitToPlayer }) {
     this.game.playCard(playerId, card);
     broadcast('systemMessage', `${this.players[playerId].name} played ${card}`);
     this.nextTurn();
+
+    if (this.game.isGameOver()) {
+      const winnerNames = this.game.getWinnerIds().map(winnerId => this.players[winnerId].name);
+      broadcast('systemMessage', `${winnerNames.join(' and ')} won the game!`);
+    }
   };
 
   this.nextRound = playerId => {
@@ -79,7 +84,7 @@ function Room({ broadcast, emitToPlayer }) {
   this.endGame = (gameInitiatorId) => {
     if (!this.isPlayerLeader(gameInitiatorId)) { return false; }
     if (!this.game) { return false; }
-    this.game.end();
+    this.game.endGame();
     broadcast('systemMessage', 'Game ended!');
     return true;
   }

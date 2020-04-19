@@ -17,7 +17,9 @@ function Game({ playerIds }) {
   const STATE_ROUND_END = 2;
   const STATE_GAME_END = 3;
 
-  if (playerIds.length < 2 || playerIds.length > 4) {
+  const numPlayers = playerIds.length;
+
+  if (numPlayers < 2 || numPlayers > 4) {
     throw 'Only 2-4 player games are currently supported';
   }
 
@@ -30,6 +32,7 @@ function Game({ playerIds }) {
     });
     this.roundNum = 0;
     determinePlayerOrder();
+    determineMaxTokens();
     this.newRound();
   };
 
@@ -66,7 +69,7 @@ function Game({ playerIds }) {
   };
 
   const dealCards = () => {
-    for (let i=0; i<playerIds.length; ++i) {
+    for (let i=0; i<numPlayers; ++i) {
       const playerId = playerIds[i];
       const card = this.deck[this.deckCursor++];
       this.players[playerId].addCardToHand(card);
@@ -80,6 +83,20 @@ function Game({ playerIds }) {
     this.playerOrderCursor = 0;
   };
 
+  const determineMaxTokens = () => {
+    switch (numPlayers) {
+      case 2:
+        this.maxTokens = 7;
+        break;
+      case 3:
+        this.maxTokens = 5;
+        break;
+      case 4:
+      default:
+        this.maxTokens = 4;
+    }
+  };
+
   this.nextTurn = () => {
     if (this.deckCursor >= this.deck.length) {
       // No more cards in the deck, the round is over.
@@ -91,7 +108,7 @@ function Game({ playerIds }) {
     const nextPlayerId = this.playerOrder[this.playerOrderCursor];
 
     // Advance the playerOrderCursor
-    this.playerOrderCursor = (++this.playerOrderCursor) % playerIds.length;
+    this.playerOrderCursor = (++this.playerOrderCursor) % numPlayers;
 
     // Add the next card into the hand of the player
     this.players[nextPlayerId].hand.push(nextCard);
@@ -116,11 +133,21 @@ function Game({ playerIds }) {
     const alivePlayers = playerList.filter(player => !player.isKnockedOut);
     alivePlayers.sort(player => player.hand[0]);
     this.roundWinner = alivePlayers[alivePlayers.length - 1];
-    ++this.roundWinner.numTokens;
+
+    if (++this.roundWinner.numTokens >= this.maxTokens) {
+      this.endGame();
+    }
   };
 
-  this.end = () => {
+  this.endGame = () => {
     this.state = STATE_GAME_END;
+  };
+
+  this.getWinnerIds = () => {
+    const winners = Object.values(this.players).filter(
+      player => player.numTokens >= this.maxTokens
+    );
+    return winners.map(winner => winner.id);
   };
 
   this.isRoundOver = () => this.state !== STATE_STARTED;
