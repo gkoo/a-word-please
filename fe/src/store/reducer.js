@@ -14,17 +14,6 @@ export default function reducer(state = initialState, action) {
   let newMessages, newPlayers, players;
 
   switch(action.type) {
-    case actions.GAME_DATA:
-      const { roundNum } = action.payload;
-      const gameState = action.payload.state;
-      players = action.payload.players;
-      return {
-        ...state,
-        gameState,
-        players,
-        roundNum,
-      };
-
     case actions.NEW_PLAYER:
       const { id, name, isLeader } = action.payload;
       newPlayers = {
@@ -58,6 +47,31 @@ export default function reducer(state = initialState, action) {
       return {
         ...state,
         messages: newMessages,
+      };
+
+    case actions.RECEIVE_DEBUG_INFO:
+      console.log(action.payload);
+      return state;
+
+    case actions.RECEIVE_GAME_DATA:
+      const { activePlayerId, roundNum } = action.payload;
+      const gameState = action.payload.state;
+      players = action.payload.players;
+
+      newPlayers = {};
+      Object.keys(players).forEach(playerId => {
+        newPlayers[playerId] = {
+          ...state.players[playerId],
+          ...players[playerId],
+        }
+      });
+
+      return {
+        ...state,
+        activePlayerId,
+        gameState,
+        players: newPlayers,
+        roundNum,
       };
 
     case actions.RECEIVE_INIT_DATA:

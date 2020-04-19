@@ -1,8 +1,9 @@
 // Action Types
-export const GAME_DATA = 'GAME_DATA';
+export const RECEIVE_GAME_DATA = 'RECEIVE_GAME_DATA';
 export const NEW_PLAYER = 'NEW_PLAYER';
 export const PLAYER_DISCONNECT = 'PLAYER_DISCONNECT';
 export const PLAYER_MESSAGE = 'PLAYER_MESSAGE';
+export const RECEIVE_DEBUG_INFO = 'RECEIVE_DEBUG_INFO';
 export const RECEIVE_INIT_DATA = 'RECEIVE_INIT_DATA';
 export const SAVE_NAME = 'SAVE_NAME';
 export const SYSTEM_MESSAGE = 'SYSTEM_MESSAGE';
@@ -11,7 +12,7 @@ export const SYSTEM_MESSAGE = 'SYSTEM_MESSAGE';
 export function receiveGameData(gameData) {
   return {
     payload: gameData,
-    type: GAME_DATA,
+    type: RECEIVE_GAME_DATA,
   }
 }
 
@@ -26,6 +27,13 @@ export function playerMessage(message) {
   return {
     payload: { message },
     type: PLAYER_MESSAGE,
+  }
+}
+
+export function receiveDebugInfo(data) {
+  return {
+    payload: data,
+    type: RECEIVE_DEBUG_INFO,
   }
 }
 

@@ -12,12 +12,13 @@ import MessageLog from './components/MessageLog';
 import NameModal from './components/NameModal';
 import PlayerList from './components/PlayerList';
 import {
-  receiveGameData,
   newPlayer,
   playerDisconnect,
   playerMessage,
-  systemMessage,
+  receiveDebugInfo,
+  receiveGameData,
   receiveInitData,
+  systemMessage,
 } from './store/actions';
 import { nameSelector, playersSelector, socketSelector } from './store/selectors';
 
@@ -29,6 +30,7 @@ function App() {
 
   // Include second arg to prevent this from running multiple times
   useEffect(() => {
+    socket.on('debugInfo', data => dispatch(receiveDebugInfo(data)));
     socket.on('initData', data => dispatch(receiveInitData(data)));
     socket.on('gameData', gameData => dispatch(receiveGameData(gameData)));
     socket.on('newPlayer', player => dispatch(newPlayer(player)));

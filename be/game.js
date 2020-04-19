@@ -91,7 +91,7 @@ function Game({ playerIds }) {
     this.players[nextPlayerId].hand.push(nextCard);
 
     // Id of the player whose turn it is
-    this.currPlayerTurn = nextPlayerId;
+    this.activePlayerId = nextPlayerId;
   };
 
   this.end = () => {
@@ -99,7 +99,7 @@ function Game({ playerIds }) {
   };
 
   this.serializeForPlayer = playerIdToSerializeFor => {
-    const { currPlayerTurn, roundNum, state } = this;
+    const { activePlayerId, roundNum, state } = this;
     const playerData = {};
 
     Object.keys(this.players).forEach(playerId => {
@@ -114,12 +114,35 @@ function Game({ playerIds }) {
     });
 
     return {
-      currPlayerTurn,
+      activePlayerId,
       players: playerData,
       roundNum,
       state,
     };
   };
+
+  this.serialize = () => {
+    const {
+      activePlayerId,
+      deck,
+      deckCursor,
+      players,
+      playerOrder,
+      playerOrderCursor,
+      roundNum,
+      state
+    } = this;
+    return {
+      activePlayerId,
+      deck,
+      deckCursor,
+      players,
+      playerOrder,
+      playerOrderCursor,
+      roundNum,
+      state,
+    };
+  }
 }
 
 module.exports = Game;

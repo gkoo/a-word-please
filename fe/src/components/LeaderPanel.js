@@ -24,11 +24,17 @@ function LeaderPanel() {
     socket.emit('endGame');
   };
 
+  const debug = e => {
+    e.preventDefault();
+    socket.emit('debug');
+  };
+
   return (
     <div>
       <ButtonGroup aria-label="Basic example">
         <Button onClick={startGame}>Start game</Button>
         <Button onClick={endGame}>End game</Button>
+        <Button onClick={debug}>Debug</Button>
       </ButtonGroup>
     </div>
   );

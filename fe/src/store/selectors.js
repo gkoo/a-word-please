@@ -6,6 +6,13 @@ export const nameSelector = state => state.name;
 export const socketSelector = state => state.socket;
 export const currPlayerIdSelector = state => state.currPlayerId;
 export const currPlayerSelector = state => state.players[state.currPlayerId];
+// the id of the player whose turn it is
+export const activePlayerIdSelector = state => state.activePlayerId;
+export const activePlayerSelector = createSelector(
+  playersSelector,
+  activePlayerIdSelector,
+  (players, activePlayerId) => players[activePlayerId]
+);
 
 export const currPlayerHandSelector = createSelector(
   currPlayerSelector,

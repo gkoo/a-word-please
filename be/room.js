@@ -83,6 +83,10 @@ function Room({ broadcast, emitToPlayer }) {
       )
     );
   };
+
+  this.sendGameState = socketId => {
+    emitToPlayer(socketId, 'debugInfo', this.game.serialize());
+  };
 }
 
 module.exports = Room;

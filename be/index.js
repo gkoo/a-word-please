@@ -84,4 +84,5 @@ io.on('connection', socket => {
   socket.on('saveName', (name) => handleSetName(socket.id, name));
   socket.on('startGame', () => handleStartGame(socket.id));
   socket.on('endGame', () => handleEndGame(socket.id));
+  socket.on('debug', () => room.sendGameState(socket.id));
 });
