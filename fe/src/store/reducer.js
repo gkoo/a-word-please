@@ -2,9 +2,12 @@ import io from 'socket.io-client';
 
 import * as actions from './actions';
 
+import { STATE_PENDING } from '../constants';
+
 const socketIoServerUrl = 'http://localhost:5000';
 
 const initialState = {
+  gameState: STATE_PENDING,
   players: {},
   messages: [],
   socket: io(socketIoServerUrl),

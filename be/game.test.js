@@ -58,3 +58,13 @@ describe('serializeForPlayer', () => {
     expect(players['2'].hand).toBeUndefined();
   });
 });
+
+describe('endRound', () => {
+  it('decides the winner of the round', () => {
+    game.setup();
+    game.players['1'].hand = [0];
+    game.players['2'].hand = [9];
+    game.endRound();
+    expect(game.roundWinner.id).toEqual('2');
+  });
+});

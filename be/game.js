@@ -12,12 +12,17 @@ function Game({ playerIds }) {
   const CARD_COUNTESS = 6;
   const CARD_PRINCESS = 7;
 
-  //if (playerIds.length < 2 || playerIds.length > 4) {
-    //throw 'Only 2-4 player games are currently supported';
-  //}
+  const STATE_PENDING = 0;
+  const STATE_STARTED = 1;
+  const STATE_ROUND_END = 2;
+  const STATE_GAME_END = 3;
+
+  if (playerIds.length < 2 || playerIds.length > 4) {
+    throw 'Only 2-4 player games are currently supported';
+  }
 
   this.setup = () => {
-    this.state = 'STARTED';
+    this.state = STATE_STARTED;
     this.players = {};
     playerIds.forEach(playerId => {
       const player = new GamePlayer({ id: playerId });
@@ -30,6 +35,7 @@ function Game({ playerIds }) {
 
   const newRound = () => {
     ++this.roundNum;
+    this.roundWinnerId = undefined;
     playerIds.forEach(playerId => this.players[playerId].resetCards());
 
     // keeps track of how far through the deck we are
@@ -77,7 +83,7 @@ function Game({ playerIds }) {
   this.nextTurn = () => {
     if (this.deckCursor >= this.deck.length) {
       // No more cards in the deck, the round is over.
-      this.end();
+      this.endRound();
       return;
     }
 
@@ -102,9 +108,24 @@ function Game({ playerIds }) {
     this.players[playerId].discard(card);
   };
 
-  this.end = () => {
-    this.state = 'ENDED';
+  this.endRound = () => {
+    this.state = STATE_ROUND_END;
+
+    // Determine winner
+    const playerList = Object.values(this.players);
+    const alivePlayers = playerList.filter(player => !player.isKnockedOut);
+    alivePlayers.sort(player => player.hand[0]);
+    this.roundWinner = alivePlayers[alivePlayers.length - 1];
+    ++this.roundWinner.numTokens;
   };
+
+  this.end = () => {
+    this.state = STATE_GAME_END;
+  };
+
+  this.isRoundOver = () => this.state !== STATE_STARTED;
+
+  this.isGameOver = () => this.state === STATE_GAME_END;
 
   this.serializeForPlayer = playerIdToSerializeFor => {
     const { activePlayerId, roundNum, state } = this;

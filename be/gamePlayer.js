@@ -3,6 +3,7 @@ function GamePlayer({ id }) {
   this.hand = [];
   this.discardPile = [];
   this.numTokens = 0;
+  this.isKnockedOut = false;
 
   this.addCardToHand = card => this.hand.push(card);
 
@@ -15,11 +16,17 @@ function GamePlayer({ id }) {
 
     this.hand.splice(cardIdx, 1);
     this.discardPile.push(card);
-  }
+  };
 
   this.resetCards = () => {
     this.hand = [];
     this.discardPile = [];
+    this.isKnockedOut = false;
+  };
+
+  // Take the player out of the round
+  this.knockOut = () => {
+    this.isKnockedOut = true;
   };
 }
 

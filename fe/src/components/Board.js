@@ -7,13 +7,14 @@ import {
   playersSelector,
 } from '../store/selectors';
 import PlayerView from './PlayerView';
+import { STATE_PENDING } from '../constants';
 
 function Board() {
   const activePlayerId = useSelector(activePlayerIdSelector);
   const gameState = useSelector(gameStateSelector);
   const players = useSelector(playersSelector);
 
-  if (gameState !== 'STARTED') {
+  if (gameState === STATE_PENDING) {
     return (
       <>
         <h1>Waiting for game to start...</h1>
@@ -24,12 +25,11 @@ function Board() {
   return (
     <>
       {
-        gameState === 'STARTED' &&
-          Object.values(players).map(player => {
-            return (
-              <PlayerView player={player} active={player.id === activePlayerId}/>
-            )
-          })
+        Object.values(players).map(player => {
+          return (
+            <PlayerView player={player} active={player.id === activePlayerId}/>
+          )
+        })
       }
     </>
   );

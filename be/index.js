@@ -80,7 +80,6 @@ const handleEndGame = socketId => {
   }
   console.log('ending game');
   io.emit('gameEnd');
-  io.emit('systemMessage', 'Game ended');
 };
 
 const playCard = (socketId, card) => {
