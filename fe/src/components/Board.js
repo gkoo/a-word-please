@@ -29,6 +29,7 @@ function Board() {
           return (
             <PlayerView
               player={player}
+              allPlayers={players}
               active={player.id === activePlayerId}
             />
           )

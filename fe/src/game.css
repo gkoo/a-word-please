@@ -1,13 +1,9 @@
-.player-view {
-  clear: left;
-}
-
 .card {
   background-color: #fff;
   border: 5px solid #f00;
   color: #000;
   cursor: pointer;
-  float: left;
+  display: inline-block;
   width: 200px;
   height: 325px;
 }
