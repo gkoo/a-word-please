@@ -5,9 +5,16 @@ import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 
 import { currPlayerSelector, socketSelector } from '../store/selectors';
+import {
+  STATE_PENDING,
+  STATE_STARTED,
+  STATE_ROUND_END,
+} from '../constants';
+import { gameStateSelector } from '../store/selectors';
 
 function LeaderPanel() {
   const currPlayer = useSelector(currPlayerSelector);
+  const gameState = useSelector(gameStateSelector);
   const socket = useSelector(socketSelector);
 
   if (!currPlayer || !currPlayer.isLeader) {
@@ -17,6 +24,11 @@ function LeaderPanel() {
   const startGame = e => {
     e.preventDefault();
     socket.emit('startGame');
+  };
+
+  const nextRound = e => {
+    e.preventDefault();
+    socket.emit('nextRound');
   };
 
   const endGame = e => {
@@ -32,8 +44,18 @@ function LeaderPanel() {
   return (
     <div>
       <ButtonGroup aria-label="Basic example">
-        <Button onClick={startGame}>Start game</Button>
-        <Button onClick={endGame}>End game</Button>
+        {
+          gameState === STATE_PENDING &&
+            <Button onClick={startGame}>Start game</Button>
+        }
+        {
+          gameState === STATE_ROUND_END &&
+            <Button onClick={nextRound}>Next round</Button>
+        }
+        {
+          (gameState === STATE_STARTED || gameState === STATE_ROUND_END) &&
+            <Button onClick={endGame}>End game</Button>
+        }
         <Button onClick={debug}>Debug</Button>
       </ButtonGroup>
     </div>

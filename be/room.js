@@ -51,8 +51,6 @@ function Room({ broadcast, emitToPlayer }) {
     if (!this.isPlayerLeader(gameInitiatorId)) { return; }
     this.game = new Game({ playerIds });
     this.game.setup();
-
-    broadcastGameDataToPlayers();
     this.nextTurn();
   };
 
@@ -70,6 +68,13 @@ function Room({ broadcast, emitToPlayer }) {
     broadcast('systemMessage', `${this.players[playerId].name} played ${card}`);
     this.nextTurn();
   };
+
+  this.nextRound = playerId => {
+    if (!this.isPlayerLeader(playerId)) { return false; }
+    if (!this.game) { return false; }
+    this.game.newRound();
+    this.nextTurn();
+  }
 
   this.endGame = (gameInitiatorId) => {
     if (!this.isPlayerLeader(gameInitiatorId)) { return false; }

@@ -30,10 +30,10 @@ function Game({ playerIds }) {
     });
     this.roundNum = 0;
     determinePlayerOrder();
-    newRound();
+    this.newRound();
   };
 
-  const newRound = () => {
+  this.newRound = () => {
     ++this.roundNum;
     this.roundWinnerId = undefined;
     playerIds.forEach(playerId => this.players[playerId].resetCards());

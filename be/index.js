@@ -72,6 +72,11 @@ const handleStartGame = socketId => {
   io.emit('systemMessage', 'Game started');
 };
 
+const handleNextRound = socketId => {
+  console.log('starting next round');
+  room.nextRound(socketId);
+};
+
 const handleEndGame = socketId => {
   const success = room.endGame(socketId);
   if (!success) {
@@ -96,6 +101,7 @@ io.on('connection', socket => {
   socket.on('playCard', card => playCard(socket.id, card));
   socket.on('saveName', (name) => handleSetName(socket.id, name));
   socket.on('startGame', () => handleStartGame(socket.id));
+  socket.on('nextRound', () => handleNextRound(socket.id));
   socket.on('endGame', () => handleEndGame(socket.id));
   socket.on('debug', () => room.sendGameState(socket.id));
 });
