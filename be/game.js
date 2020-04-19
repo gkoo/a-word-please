@@ -12,9 +12,9 @@ function Game({ playerIds }) {
   const CARD_COUNTESS = 6;
   const CARD_PRINCESS = 7;
 
-  if (playerIds.length < 2 || playerIds.length > 4) {
-    throw 'Only 2-4 player games are currently supported';
-  }
+  //if (playerIds.length < 2 || playerIds.length > 4) {
+    //throw 'Only 2-4 player games are currently supported';
+  //}
 
   this.setup = () => {
     this.state = 'STARTED';
