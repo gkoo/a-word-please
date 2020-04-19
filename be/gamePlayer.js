@@ -6,7 +6,7 @@ function GamePlayer({ id }) {
 
   this.addCardToHand = card => this.hand.push(card);
 
-  this.moveCardFromHandToPile = card => {
+  this.discard = card => {
     const cardIdx = this.hand.indexOf(card);
 
     if (this.hand.indexOf(card) === -1) {
@@ -14,7 +14,7 @@ function GamePlayer({ id }) {
     }
 
     this.hand.splice(cardIdx, 1);
-    this.discardPile.push(cardIdx);
+    this.discardPile.push(card);
   }
 
   this.resetCards = () => {

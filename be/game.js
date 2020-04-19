@@ -94,6 +94,14 @@ function Game({ playerIds }) {
     this.activePlayerId = nextPlayerId;
   };
 
+  this.playCard = (playerId, card) => {
+    if (this.activePlayerId !== playerId) {
+      throw 'Player tried to play a card when it wasn\'t their turn! Aborting...';
+    }
+
+    this.players[playerId].discard(card);
+  };
+
   this.end = () => {
     this.state = 'ENDED';
   };

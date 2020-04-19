@@ -1,8 +1,18 @@
+.player-view {
+  clear: left;
+}
+
 .card {
   background-color: #fff;
   border: 5px solid #f00;
   color: #000;
+  cursor: pointer;
   float: left;
   width: 200px;
   height: 325px;
+}
+
+.card.discard {
+  background-color: #aaa;
+  width: 50px;
 }

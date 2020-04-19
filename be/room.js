@@ -53,12 +53,17 @@ function Room({ broadcast, emitToPlayer }) {
     this.game.setup();
 
     broadcastGameDataToPlayers();
-    setTimeout(this.nextTurn, 100);
+    this.nextTurn();
   };
 
   this.nextTurn = () => {
     this.game.nextTurn();
     broadcastGameDataToPlayers();
+  };
+
+  this.playCard = (playerId, card) => {
+    this.game.playCard(playerId, card);
+    this.nextTurn();
   };
 
   this.endGame = (gameInitiatorId) => {
