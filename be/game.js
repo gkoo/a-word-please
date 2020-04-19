@@ -105,16 +105,23 @@ function Game({ playerIds }) {
     }
 
     const nextCard = this.deck[this.deckCursor++];
-    const nextPlayerId = this.playerOrder[this.playerOrderCursor];
 
     // Advance the playerOrderCursor
-    this.playerOrderCursor = (++this.playerOrderCursor) % numPlayers;
+    let nextPlayer;
+    while (true) {
+      const nextPlayerId = this.playerOrder[this.playerOrderCursor];
+      this.playerOrderCursor = (++this.playerOrderCursor) % numPlayers;
+      nextPlayer = this.players[nextPlayerId];
+
+      // Skip players who have been knocked out
+      if (!nextPlayer.isKnockedOut) { break; }
+    }
 
     // Add the next card into the hand of the player
-    this.players[nextPlayerId].hand.push(nextCard);
+    nextPlayer.hand.push(nextCard);
 
     // Id of the player whose turn it is
-    this.activePlayerId = nextPlayerId;
+    this.activePlayerId = nextPlayer.id;
   };
 
   this.playCard = (playerId, card) => {

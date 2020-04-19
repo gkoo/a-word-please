@@ -3,7 +3,7 @@ const _ = require('lodash');
 const Game = require('./game');
 
 let game;
-let playerIds = ['1', '2'];
+let playerIds = ['1', '2', '3'];
 
 beforeEach(() => {
   game = new Game({ playerIds });
@@ -42,6 +42,20 @@ describe('nextTurn', () => {
     const newHand = game.players[game.activePlayerId].hand;
     expect(newHand.length).toBeGreaterThan(oldHand.length);
   });
+
+  describe('when a player has been knocked out', () => {
+    beforeEach(() => {
+      const secondPlayerId = game.playerOrder[1];
+      game.players[secondPlayerId].isKnockedOut = true;
+    });
+
+    it('skips the knocked out player', () => {
+      const thirdPlayerId = game.playerOrder[2];
+      subject();
+      subject();
+      expect(game.activePlayerId).toEqual(thirdPlayerId);
+    });
+  });
 });
 
 describe('serializeForPlayer', () => {
@@ -54,8 +68,9 @@ describe('serializeForPlayer', () => {
     expect(roundNum).toEqual(game.roundNum);
     expect(state).toEqual(game.state);
     expect(players['1'].hand).toHaveLength(1);
-    // Shouldn't reveal player 2's hand
+    // Shouldn't reveal other players' hands
     expect(players['2'].hand).toBeUndefined();
+    expect(players['3'].hand).toBeUndefined();
   });
 });
 
