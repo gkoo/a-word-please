@@ -13,9 +13,20 @@ function PlayerView({ player, active }) {
     socket.emit('playCard', card);
   };
 
+  const renderTokens = () => {
+    const tokens = [];
+    for (let i=0; i < player.numTokens; ++i) {
+      tokens.push('❤️');
+    }
+    return tokens.join('');
+  };
+
   return (
     <div className='player-view'>
-      <h3>{player.name}{active && '*'}</h3>
+      <div className='player-name'>
+        <h3>{player.name}{active && '*'}</h3>
+        <p>{renderTokens()}</p>
+      </div>
       {
         player.discardPile && player.discardPile.map(
           discardCard => <Card card={discardCard} isDiscard={true}/>

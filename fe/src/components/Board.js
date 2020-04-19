@@ -27,7 +27,10 @@ function Board() {
       {
         Object.values(players).map(player => {
           return (
-            <PlayerView player={player} active={player.id === activePlayerId}/>
+            <PlayerView
+              player={player}
+              active={player.id === activePlayerId}
+            />
           )
         })
       }
