@@ -121,13 +121,17 @@ function Card({ card, isDiscard, clickCallback, allPlayers, currPlayerId }) {
     clickCallback({ card, effectData: { targetPlayerId: playerId } })
   };
 
-  const getPlayerButtons = ({ includeSelfTarget }) => {
+  const getTargetButtons = ({ includeSelfTarget }) => {
     let targetCandidates;
     if (includeSelfTarget) {
       targetCandidates = alivePlayers;
     } else {
       targetCandidates = alivePlayers.filter(player => player.id !== currPlayerId);
     }
+    // Remove handmaid from targets
+    targetCandidates = targetCandidates.filter(
+      player => player.discardPile[player.discardPile.length - 1] !== CARD_HANDMAID,
+    );
     return targetCandidates.map(
       player => <Button onClick={() => targetPlayer(player.id)}>{player.name}</Button>
     );
@@ -165,7 +169,7 @@ function Card({ card, isDiscard, clickCallback, allPlayers, currPlayerId }) {
           <Popover.Title as="h3">{label}</Popover.Title>
           <Popover.Content>
             <p>{getTargetInstructions(card)}</p>
-            {getPlayerButtons({ includeSelfTarget })}
+            {getTargetButtons({ includeSelfTarget })}
             {maybeRenderGuardNumberGuess()}
           </Popover.Content>
         </Popover>
