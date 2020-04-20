@@ -2,7 +2,7 @@ const _ = require('lodash');
 
 const GamePlayer = require('./gamePlayer');
 
-function Game({ playerIds }) {
+function Game({ broadcast, emitToPlayer, players }) {
   const CARD_GUARD = 0;
   const CARD_PRIEST = 1;
   const CARD_BARON = 2;
@@ -17,6 +17,7 @@ function Game({ playerIds }) {
   const STATE_ROUND_END = 2;
   const STATE_GAME_END = 3;
 
+  const playerIds = Object.keys(players);
   const numPlayers = playerIds.length;
 
   if (numPlayers < 2 || numPlayers > 4) {
@@ -26,9 +27,9 @@ function Game({ playerIds }) {
   this.setup = () => {
     this.state = STATE_STARTED;
     this.players = {};
-    playerIds.forEach(playerId => {
-      const player = new GamePlayer({ id: playerId });
-      this.players[playerId] = player;
+    Object.values(players).forEach(roomPlayer => {
+      const gamePlayer = new GamePlayer({ id: roomPlayer.id, name: roomPlayer.name });
+      this.players[roomPlayer.id] = gamePlayer;
     });
     this.roundNum = 0;
     determinePlayerOrder();
@@ -97,6 +98,19 @@ function Game({ playerIds }) {
     }
   };
 
+  const drawCard = ({ player, canUseBurnCard }) => {
+    let nextCard;
+
+    if (this.deckCursor >= this.deck.length && canUseBurnCard) {
+      // For the Prince card effect
+      nextCard = this.burnCard;
+    } else {
+      nextCard = this.deck[this.deckCursor++];
+    }
+
+    player.addCardToHand(nextCard);
+  };
+
   this.nextTurn = () => {
     if (this.state !== STATE_STARTED) { return; }
 
@@ -105,8 +119,6 @@ function Game({ playerIds }) {
       this.endRound();
       return;
     }
-
-    const nextCard = this.deck[this.deckCursor++];
 
     // Advance the playerOrderCursor
     let nextPlayer;
@@ -120,25 +132,32 @@ function Game({ playerIds }) {
     }
 
     // Add the next card into the hand of the player
-    nextPlayer.hand.push(nextCard);
+    drawCard({ player: nextPlayer, canUseBurnCard: false });
 
     // Id of the player whose turn it is
     this.activePlayerId = nextPlayer.id;
   };
 
-  this.playCard = (playerId, card) => {
+  this.playCard = (playerId, card, effectData) => {
+    const player = this.players[playerId];
+
     if (this.activePlayerId !== playerId) {
       throw 'Player tried to play a card when it wasn\'t their turn! Aborting...';
     }
 
-    const player = this.players[playerId];
-    const { hand } = player;
-    if ([CARD_KING, CARD_PRINCE].includes(card) && hand.includes(CARD_COUNTESS)) {
+    if (!player.hasCardInHand(card)) {
+      throw 'Player tried to play a card when it wasn\'t in their hand! Aborting...';
+    }
+
+    if ([CARD_KING, CARD_PRINCE].includes(card) && player.hasCardInHand(CARD_COUNTESS)) {
       // If you have the King or Prince in your hand, you must discard the Countess.
+      const message = `(Only visible to you) You cannot discard the ` +
+        `${labelForCard(CARD_COUNTESS)} when you have the ${labelForCard(card)} in your hand`;
+      emitToPlayer(playerId, 'systemMessage', message);
       return;
     }
-    this.players[playerId].discard(card);
-    this.performCardEffect(card);
+    this.performCardEffect(card, effectData);
+    player.discard(card);
 
     // If one or zero players are left alive, end the round.
     if (this.getAlivePlayers().length < 2) {
@@ -182,8 +201,15 @@ function Game({ playerIds }) {
 
   this.isGameOver = () => this.state === STATE_GAME_END;
 
-  this.performCardEffect = (card) => {
+  this.performCardEffect = (card, effectData) => {
     const activePlayer = this.players[this.activePlayerId];
+    const targetPlayer = this.players[effectData.targetPlayerId];
+
+    if (targetPlayer.isKnockedOut) {
+      throw 'Can\'t target a player who is knocked out';
+    }
+
+    const broadcastMessage = [`${activePlayer.name} played ${labelForCard(card)}`];
 
     switch (card) {
       case CARD_GUARD:
@@ -196,20 +222,64 @@ function Game({ playerIds }) {
         // TODO
         break;
       case CARD_PRINCE:
-        // TODO
+        const targetPlayerCard = targetPlayer.hand[0];
+        targetPlayer.discard(targetPlayerCard);
+        drawCard({ player: targetPlayer, canUseBurnCard: true });
+        broadcastMessage.push(
+          `and forced ${targetPlayer.name} to discard their card and draw a new one.`,
+        );
         break;
       case CARD_KING:
         // TODO
         break;
       case CARD_PRINCESS:
+        // effects handled elsewhere
+        broadcastMessage.push('... oops!');
         activePlayer.knockOut();
         break;
       case CARD_HANDMAID:
+        // effects handled elsewhere
+        broadcastMessage.push(
+          `${activePlayer.name} played ${card} and is immune from card effects ` +
+            'until their next turn'
+        );
+        break;
       case CARD_COUNTESS:
         // effects handled elsewhere
         break;
       default:
         throw `unknown card played: ${card}`;
+    }
+
+    broadcast('systemMessage', broadcastMessage.join(' '));
+  };
+
+  const labelForCard = card => {
+    switch (card) {
+      case CARD_GUARD:
+        return 'Guard';
+        break;
+      case CARD_PRIEST:
+        return 'Priest';
+        break;
+      case CARD_BARON:
+        return 'Baron';
+        break;
+      case CARD_HANDMAID:
+        return 'Handmaid';
+        break;
+      case CARD_PRINCE:
+        return 'Prince';
+        break;
+      case CARD_KING:
+        return 'King';
+        break;
+      case CARD_COUNTESS:
+        return 'Countess';
+        break;
+      case CARD_PRINCESS:
+        return 'Princess';
+        break;
     }
   };
 
@@ -218,14 +288,10 @@ function Game({ playerIds }) {
     const playerData = {};
 
     Object.keys(this.players).forEach(playerId => {
-      const { discardPile, hand, id, numTokens } = this.players[playerId];
-      const handToInclude = playerIdToSerializeFor === playerId ? hand : undefined;
-      playerData[playerId] = {
-        discardPile,
-        hand: handToInclude,
-        id,
-        numTokens,
-      };
+      const serialized = this.players[playerId].serialize({
+        includeHand: playerIdToSerializeFor === playerId,
+      });
+      playerData[playerId] = serialized;
     });
 
     return {

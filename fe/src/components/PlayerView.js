@@ -11,10 +11,10 @@ function PlayerView({ player, active, allPlayers }) {
   const socket = useSelector(socketSelector);
   const currPlayerId = useSelector(currPlayerIdSelector);
 
-  const handleClick = (card) => {
+  const handleClick = ({ card, effectData }) => {
     if (!active) { return; }
 
-    socket.emit('playCard', card);
+    socket.emit('playCard', { card, effectData });
   };
 
   const renderTokens = () => {

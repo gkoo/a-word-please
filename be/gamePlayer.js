@@ -1,5 +1,6 @@
-function GamePlayer({ id }) {
+function GamePlayer({ id, name }) {
   this.id = id;
+  this.name = name;
   this.hand = [];
   this.discardPile = [];
   this.numTokens = 0;
@@ -10,7 +11,7 @@ function GamePlayer({ id }) {
   this.discard = card => {
     const cardIdx = this.hand.indexOf(card);
 
-    if (this.hand.indexOf(card) === -1) {
+    if (!this.hasCardInHand(card)) {
       throw `Tried to discard card ${card} but it isn't in hand`;
     }
 
@@ -27,6 +28,26 @@ function GamePlayer({ id }) {
   // Take the player out of the round
   this.knockOut = () => {
     this.isKnockedOut = true;
+  };
+
+  this.hasCardInHand = card => this.hand.includes(card);
+
+  this.serialize = ({ includeHand }) => {
+    const {
+      discardPile,
+      hand,
+      id,
+      isKnockedOut,
+      numTokens,
+    } = this;
+
+    return {
+      discardPile,
+      hand: includeHand ? hand : undefined,
+      id,
+      isKnockedOut,
+      numTokens,
+    }
   };
 }
 

@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 
 import Button from 'react-bootstrap/Button';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Overlay from 'react-bootstrap/Overlay';
 import Popover from 'react-bootstrap/Popover';
 
 import {
@@ -16,33 +16,17 @@ import {
 } from '../constants';
 
 function Card({ card, isDiscard, clickCallback, allPlayers, currPlayerId }) {
-  const cardTypesWithTargets = [
+  const [guardNumberGuess, setGuardNumberGuess] = useState('');
+  const [showTargetOptions, setShowTargetOptions] = useState(false);
+  const classNames = ['card'];
+  const popoverTarget = useRef(null);
+  const hasTargetEffect = [
     CARD_GUARD,
     CARD_PRIEST,
     CARD_BARON,
     CARD_PRINCE,
     CARD_KING,
-  ];
-  const alivePlayers = Object.values(allPlayers).filter(player => !player.isKnockedOut);
-
-  const classNames = ['card'];
-  if (isDiscard) {
-    classNames.push('discard');
-  }
-
-  const handleClick = card => {
-    if (isDiscard || cardTypesWithTargets.includes(card)) { return; }
-
-    clickCallback(card);
-  };
-
-  const renderCard = () => {
-    return (
-      <div className={classNames.join(' ')} onClick={() => handleClick(card)}>
-        <h3>{value}{ !isDiscard && <span>: {label}</span> }</h3>
-      </div>
-    );
-  };
+  ].includes(card);
 
   let label;
   let value;
@@ -84,6 +68,32 @@ function Card({ card, isDiscard, clickCallback, allPlayers, currPlayerId }) {
       console.error(`Unrecognized card ${card}`);
   }
 
+  const handleClick = card => {
+    if (isDiscard) { return; }
+
+    if (hasTargetEffect) {
+      setShowTargetOptions(!showTargetOptions);
+      return;
+    }
+
+    clickCallback({ card, effectData: {} });
+  };
+
+  const renderCard = () => {
+    return (
+      <div className={classNames.join(' ')} ref={popoverTarget} onClick={() => handleClick(card)}>
+        <h3>{value}{ !isDiscard && <span>: {label}</span> }</h3>
+      </div>
+    );
+  };
+
+  if (isDiscard) {
+    classNames.push('discard');
+    return renderCard();
+  }
+
+  const alivePlayers = Object.values(allPlayers).filter(player => !player.isKnockedOut);
+
   const getTargetInstructions = () => {
     switch (card) {
       case CARD_GUARD:
@@ -107,6 +117,8 @@ function Card({ card, isDiscard, clickCallback, allPlayers, currPlayerId }) {
 
   // Choose to target this person with the card's effect
   const targetPlayer = playerId => {
+    hideTargetOptions();
+    clickCallback({ card, effectData: { targetPlayerId: playerId } })
   };
 
   const getPlayerButtons = ({ includeSelfTarget }) => {
@@ -121,29 +133,44 @@ function Card({ card, isDiscard, clickCallback, allPlayers, currPlayerId }) {
     );
   };
 
-  const includeSelfTarget = card === CARD_PRINCE;
-  const popover = (
-    <Popover>
-      <Popover.Title as="h3">{label}</Popover.Title>
-      <Popover.Content>
-        <p>{getTargetInstructions(card)}</p>
-        {getPlayerButtons({ includeSelfTarget })}
-      </Popover.Content>
-    </Popover>
-  );
+  const maybeRenderGuardNumberGuess = () => {
+    if (card !== CARD_GUARD) { return; }
 
-  if (!cardTypesWithTargets.includes(card)) {
+    return (
+      <div><input value={guardNumberGuess} onChange={setGuardNumberGuess}/></div>
+    );
+  };
+
+  const includeSelfTarget = (card === CARD_PRINCE);
+
+  const hideTargetOptions = () => setShowTargetOptions(false);
+
+  if (!hasTargetEffect) {
+    // For cards without target effects
     return renderCard();
   }
 
+  // For cards with target effects
   return (
-    <OverlayTrigger
-      placement='right'
-      trigger='click'
-      overlay={popover}
-    >
+    <>
       {renderCard()}
-    </OverlayTrigger>
+      <Overlay
+        onHide={hideTargetOptions}
+        placement='right'
+        rootClose={true}
+        show={showTargetOptions}
+        target={popoverTarget.current}
+      >
+        <Popover>
+          <Popover.Title as="h3">{label}</Popover.Title>
+          <Popover.Content>
+            <p>{getTargetInstructions(card)}</p>
+            {getPlayerButtons({ includeSelfTarget })}
+            {maybeRenderGuardNumberGuess()}
+          </Popover.Content>
+        </Popover>
+      </Overlay>
+    </>
   );
 }
 

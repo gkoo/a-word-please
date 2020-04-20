@@ -1,12 +1,24 @@
 const _ = require('lodash');
 
 const Game = require('./game');
+const Player = require('./Player');
 
 let game;
-let playerIds = ['1', '2', '3'];
+let players = {
+  '1': new Player('1'),
+  '2': new Player('2'),
+  '3': new Player('3'),
+};
+
+const mockBroadcast = jest.fn();
+const mockEmitToPlayer = jest.fn();
 
 beforeEach(() => {
-  game = new Game({ playerIds });
+  game = new Game({
+    broadcast: mockBroadcast,
+    emitToPlayer: mockEmitToPlayer,
+    players: players,
+  });
   game.setup();
 });
 

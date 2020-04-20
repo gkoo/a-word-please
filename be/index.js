@@ -87,18 +87,13 @@ const handleEndGame = socketId => {
   io.emit('gameEnd');
 };
 
-const playCard = (socketId, card) => {
-  console.log(`${socketId} is playing card ${card}`);
-  room.playCard(socketId, card);
-};
-
 io.on('connection', socket => {
   console.log('New client connected');
   room.addPlayer(socket.id);
   sendInitRoomData(socket, room);
   socket.on('chatMessage', handleMessage);
   socket.on('disconnect', () => handleDisconnect(socket.id));
-  socket.on('playCard', card => playCard(socket.id, card));
+  socket.on('playCard', ({ card, effectData }) => room.playCard(socket.id, card, effectData));
   socket.on('saveName', (name) => handleSetName(socket.id, name));
   socket.on('startGame', () => handleStartGame(socket.id));
   socket.on('nextRound', () => handleNextRound(socket.id));

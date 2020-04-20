@@ -47,31 +47,35 @@ function Room({ broadcast, emitToPlayer }) {
   this.getPlayers = () => Object.values(this.players);
 
   this.startGame = (gameInitiatorId) => {
-    const playerIds = this.getPlayers().map(player => player.id);
     if (!this.isPlayerLeader(gameInitiatorId)) { return; }
-    this.game = new Game({ playerIds });
+    this.game = new Game({ broadcast, emitToPlayer, players: this.players });
     this.game.setup();
     this.nextTurn();
   };
 
   this.nextTurn = () => {
     this.game.nextTurn();
-    if (this.game.isRoundOver()) {
-      let roundEndMsg;
-      if (this.game.roundWinner) {
-        const winnerName = this.players[this.game.roundWinner.id].name;
-        roundEndMsg = `${winnerName} won the round!`;
-      } else {
-        roundEndMsg = 'No one won the round...';
-      }
-      broadcast('systemMessage', roundEndMsg);
+
+    if (!this.game.isRoundOver()) {
+      broadcastGameDataToPlayers();
+      return;
     }
+
+    // Round is over
+    let roundEndMsg;
+    if (this.game.roundWinner) {
+      const winnerName = this.players[this.game.roundWinner.id].name;
+      roundEndMsg = `${winnerName} won the round!`;
+    } else {
+      roundEndMsg = 'No one won the round...';
+    }
+    broadcast('systemMessage', roundEndMsg);
     broadcastGameDataToPlayers();
   };
 
-  this.playCard = (playerId, card) => {
-    this.game.playCard(playerId, card);
-    broadcast('systemMessage', `${this.players[playerId].name} played ${card}`);
+  this.playCard = (playerId, card, effectData) => {
+    this.game.playCard(playerId, card, effectData);
+
     this.nextTurn();
 
     if (this.game.isGameOver()) {
