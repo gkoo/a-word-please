@@ -76,18 +76,50 @@ describe('nextTurn', () => {
 });
 
 describe('playCard', () => {
-  beforeEach(() => {
-    game.nextTurn();
-    game.players[game.activePlayerId].hand = [5, 6];
-  });
 
-  describe('when both Countess and King are in hand', () => {
-    it('prohibits playing the King', () => {
-      game.playCard(game.activePlayerId, 5);
-      const player = game.players[game.activePlayerId];
-      expect(player.hand).toHaveLength(2);
-      expect(player.hand).toContain(5);
-      expect(player.hand).toContain(6);
+  describe('illegal moves', () => {
+    describe('when both Countess and King are in hand', () => {
+      beforeEach(() => {
+        game.activePlayerId = '1';
+        game.players['1'].hand = [CARD_COUNTESS, CARD_KING];
+      });
+
+      it('prohibits playing the King', () => {
+        game.playCard(game.activePlayerId, CARD_KING);
+        const player = game.players[game.activePlayerId];
+        expect(player.hand).toHaveLength(2);
+        expect(player.hand).toContain(CARD_KING);
+        expect(player.hand).toContain(CARD_COUNTESS);
+      });
+    });
+
+    describe('targeting the handmaid', () => {
+      beforeEach(() => {
+        game.activePlayerId = '1';
+        game.players['1'].hand = [CARD_GUARD, CARD_KING];
+        game.players['2'].hand = [CARD_PRINCESS];
+        game.players['2'].discardPile = [CARD_HANDMAID];
+      });
+
+      it('has no effect', () => {
+        game.playCard('1', CARD_KING, { targetPlayerId: '2' });
+        expect(game.players['1'].hand).toContain(CARD_GUARD);
+        expect(game.players['2'].hand).toContain(CARD_PRINCESS);
+      });
+    });
+
+    describe('targeting the a knocked out player', () => {
+      beforeEach(() => {
+        game.activePlayerId = '1';
+        game.players['1'].hand = [CARD_GUARD, CARD_KING];
+        game.players['2'].isKnockedOut;
+      });
+
+      it('has no effect', () => {
+        game.playCard('1', CARD_KING, { targetPlayerId: '2' });
+        expect(game.players['1'].hand).toContain(CARD_KING);
+        expect(game.players['1'].hand).toContain(CARD_GUARD);
+      });
     });
   });
 });

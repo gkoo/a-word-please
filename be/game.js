@@ -138,7 +138,7 @@ function Game({ broadcast, emitToPlayer, players }) {
     this.activePlayerId = nextPlayer.id;
   };
 
-  this.playCard = (playerId, card, effectData) => {
+  this.playCard = (playerId, card, effectData = {}) => {
     const player = this.players[playerId];
 
     if (this.activePlayerId !== playerId) {
@@ -149,13 +149,10 @@ function Game({ broadcast, emitToPlayer, players }) {
       throw 'Player tried to play a card when it wasn\'t in their hand! Aborting...';
     }
 
-    if ([CARD_KING, CARD_PRINCE].includes(card) && player.hasCardInHand(CARD_COUNTESS)) {
-      // If you have the King or Prince in your hand, you must discard the Countess.
-      const message = `(Only visible to you) You cannot discard the ` +
-        `${labelForCard(CARD_COUNTESS)} when you have the ${labelForCard(card)} in your hand`;
-      emitToPlayer(playerId, 'systemMessage', message);
+    if (!isLegalMove(player, card, effectData)) {
       return;
     }
+
     this.performCardEffect(card, effectData);
     player.discard(card);
 
@@ -164,6 +161,44 @@ function Game({ broadcast, emitToPlayer, players }) {
       this.endRound();
     }
   };
+
+  const isLegalMove = (player, card, effectData = {}) => {
+    // Check Countess card effect
+    if ([CARD_KING, CARD_PRINCE].includes(card) && player.hasCardInHand(CARD_COUNTESS)) {
+      // If you have the King or Prince in your hand, you must discard the Countess.
+      const message = `(Only visible to you) You cannot discard the ` +
+        `${labelForCard(CARD_COUNTESS)} when you have the ${labelForCard(card)} in your hand`;
+      emitToPlayer(player.id, 'systemMessage', message);
+      return false;
+    }
+
+    const { targetPlayerId } = effectData;
+    const targetPlayer = targetPlayerId ? this.players[targetPlayerId] : null;
+
+    if (!targetPlayer) { return true; }
+
+    // Moves involving targeted players
+
+    // Prohibit targeting knocked out players
+    if (targetPlayer.isKnockedOut) {
+      emitToPlayer(
+        player.id,
+        'systemMessage',
+        '(Only visible to you) Cannot target knocked out players',
+      );
+      return false;
+    }
+
+    // Check Handmaid card effect
+    if (targetPlayer.discardPile[targetPlayer.discardPile.length-1] === CARD_HANDMAID) {
+      const message = '(Only visible to you) You can\'t target someone who played ' +
+        `${labelForCard(CARD_HANDMAID)} last turn`;
+      emitToPlayer(player.id, 'systemMessage', message);
+      return false;
+    }
+
+    return true;
+  }
 
   this.endRound = () => {
     this.state = STATE_ROUND_END;
@@ -204,10 +239,6 @@ function Game({ broadcast, emitToPlayer, players }) {
   this.performCardEffect = (card, effectData) => {
     const activePlayer = this.players[this.activePlayerId];
     const targetPlayer = this.players[effectData.targetPlayerId];
-
-    if (targetPlayer.isKnockedOut) {
-      throw 'Can\'t target a player who is knocked out';
-    }
 
     const broadcastMessage = [`${activePlayer.name} played ${labelForCard(card)}`];
     let targetPlayerCard;
