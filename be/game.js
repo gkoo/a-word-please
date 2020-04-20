@@ -17,6 +17,41 @@ function Game({ broadcast, emitToPlayer, players }) {
   const STATE_ROUND_END = 2;
   const STATE_GAME_END = 3;
 
+  const enumsToValues = {
+    [CARD_GUARD]: {
+      label: 'Guard',
+      value: '1',
+    },
+    [CARD_PRIEST]: {
+      label: 'Priest',
+      value: '2',
+    },
+    [CARD_BARON]: {
+      label: 'Baron',
+      value: '3',
+    },
+    [CARD_HANDMAID]: {
+      label: 'Handmaid',
+      value: '4',
+    },
+    [CARD_PRINCE]: {
+      label: 'Prince',
+      value: '5',
+    },
+    [CARD_KING]: {
+      label: 'King',
+      value: '6',
+    },
+    [CARD_COUNTESS]: {
+      label: 'Countess',
+      value: '7',
+    },
+    [CARD_PRINCESS]: {
+      label: 'Princess',
+      value: '8',
+    },
+  };
+
   const playerIds = Object.keys(players);
   const numPlayers = playerIds.length;
 
@@ -245,7 +280,19 @@ function Game({ broadcast, emitToPlayer, players }) {
 
     switch (card) {
       case CARD_GUARD:
-        // TODO
+        const { guardNumberGuess } = effectData;
+        const guardGuessCards = Object.keys(enumsToValues).filter(card => {
+          return guardNumberGuess === enumsToValues[card].value;
+        });
+        broadcastMessage.push(`and guessed ${targetPlayer.name} has a ${guardNumberGuess} card`);
+        if (guardGuessCards.includes(targetPlayer.hand[0])) {
+          // Dead!
+          broadcast('systemMessage', broadcastMessage.join(' '));
+          knockOut(targetPlayer);
+          return;
+        } else {
+          broadcastMessage.push('but was wrong');
+        }
         break;
       case CARD_PRIEST:
         // TODO
@@ -275,7 +322,7 @@ function Game({ broadcast, emitToPlayer, players }) {
       case CARD_PRINCESS:
         // effects handled elsewhere
         broadcastMessage.push('... oops!');
-        activePlayer.knockOut();
+        knockOut(activePlayer);
         break;
       case CARD_HANDMAID:
         // effects handled elsewhere
@@ -292,6 +339,11 @@ function Game({ broadcast, emitToPlayer, players }) {
     }
 
     broadcast('systemMessage', broadcastMessage.join(' '));
+  };
+
+  const knockOut = player => {
+    player.knockOut();
+    broadcast(`${player.name} was knocked out of the round!`);
   };
 
   const labelForCard = card => {

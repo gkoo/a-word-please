@@ -17,7 +17,6 @@ function MessageLog() {
     // hack to get messagesRef
     setTimeout(() => {
       const messagesEl = messagesRef.current;
-      console.log(messagesRef);
       if (!messagesEl) { return; }
       messagesEl.scrollTop = messagesEl.scrollHeight;
     }, 500);

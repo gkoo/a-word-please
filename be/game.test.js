@@ -76,7 +76,6 @@ describe('nextTurn', () => {
 });
 
 describe('playCard', () => {
-
   describe('illegal moves', () => {
     describe('when both Countess and King are in hand', () => {
       beforeEach(() => {
@@ -108,11 +107,11 @@ describe('playCard', () => {
       });
     });
 
-    describe('targeting the a knocked out player', () => {
+    describe('targeting a knocked out player', () => {
       beforeEach(() => {
         game.activePlayerId = '1';
         game.players['1'].hand = [CARD_GUARD, CARD_KING];
-        game.players['2'].isKnockedOut;
+        game.players['2'].isKnockedOut = true;
       });
 
       it('has no effect', () => {

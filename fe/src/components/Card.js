@@ -3,6 +3,8 @@ import React, { useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Overlay from 'react-bootstrap/Overlay';
 import Popover from 'react-bootstrap/Popover';
+import ToggleButton from 'react-bootstrap/ToggleButton';
+import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup'
 
 import {
   CARD_GUARD,
@@ -16,6 +18,7 @@ import {
 } from '../constants';
 
 function Card({ card, isDiscard, clickCallback, allPlayers, currPlayerId }) {
+  const [guardTargetId, setGuardTargetId] = useState('');
   const [guardNumberGuess, setGuardNumberGuess] = useState('');
   const [showTargetOptions, setShowTargetOptions] = useState(false);
   const classNames = ['card'];
@@ -28,45 +31,42 @@ function Card({ card, isDiscard, clickCallback, allPlayers, currPlayerId }) {
     CARD_KING,
   ].includes(card);
 
-  let label;
-  let value;
+  const enumsToValues = {
+    [CARD_GUARD]: {
+      label: 'Guard',
+      value: '1',
+    },
+    [CARD_PRIEST]: {
+      label: 'Priest',
+      value: '2',
+    },
+    [CARD_BARON]: {
+      label: 'Baron',
+      value: '3',
+    },
+    [CARD_HANDMAID]: {
+      label: 'Handmaid',
+      value: '4',
+    },
+    [CARD_PRINCE]: {
+      label: 'Prince',
+      value: '5',
+    },
+    [CARD_KING]: {
+      label: 'King',
+      value: '6',
+    },
+    [CARD_COUNTESS]: {
+      label: 'Countess',
+      value: '7',
+    },
+    [CARD_PRINCESS]: {
+      label: 'Princess',
+      value: '8',
+    },
+  };
 
-  switch (card) {
-    case CARD_GUARD:
-      label = 'Guard';
-      value = '1';
-      break;
-    case CARD_PRIEST:
-      label = 'Priest';
-      value = '2';
-      break;
-    case CARD_BARON:
-      label = 'Baron';
-      value = '3';
-      break;
-    case CARD_HANDMAID:
-      label = 'Handmaid';
-      value = '4';
-      break;
-    case CARD_PRINCE:
-      label = 'Prince';
-      value = '5';
-      break;
-    case CARD_KING:
-      label = 'King';
-      value = '6';
-      break;
-    case CARD_COUNTESS:
-      label = 'Countess';
-      value = '7';
-      break;
-    case CARD_PRINCESS:
-      label = 'Princess';
-      value = '8';
-      break;
-    default:
-      console.error(`Unrecognized card ${card}`);
-  }
+  const { label, value } = enumsToValues[card];
 
   const handleClick = card => {
     if (isDiscard) { return; }
@@ -132,17 +132,53 @@ function Card({ card, isDiscard, clickCallback, allPlayers, currPlayerId }) {
     targetCandidates = targetCandidates.filter(
       player => player.discardPile[player.discardPile.length - 1] !== CARD_HANDMAID,
     );
+
+    if (card === CARD_GUARD) {
+      return getGuardTargetButtons({ targetCandidates });
+    }
+
     return targetCandidates.map(
       player => <Button onClick={() => targetPlayer(player.id)}>{player.name}</Button>
     );
   };
 
-  const maybeRenderGuardNumberGuess = () => {
-    if (card !== CARD_GUARD) { return; }
+  const onTargetedPlayerChange = value => setGuardTargetId(value);
+  const onGuardNumberGuessChange = value => setGuardNumberGuess(value);
+  const targetPlayerForGuard = () => {
+    hideTargetOptions();
+    clickCallback({
+      card,
+      effectData: {
+        guardNumberGuess,
+        targetPlayerId: guardTargetId,
+      },
+    });
+  };
 
+  const getGuardTargetButtons = ({ targetCandidates }) => {
+    const possibleNumbers = [2, 3, 4, 5, 6, 7, 8];
     return (
-      <div><input value={guardNumberGuess} onChange={setGuardNumberGuess}/></div>
-    );
+      <>
+        <ToggleButtonGroup name='playerToggle' onChange={onTargetedPlayerChange}>
+          {
+            targetCandidates.map(
+              player =>
+                <ToggleButton name='playerToggle' value={player.id}>
+                  {player.name}
+                </ToggleButton>
+            )
+          }
+        </ToggleButtonGroup>
+        <ToggleButtonGroup name="radio" onChange={onGuardNumberGuessChange}>
+          {
+            possibleNumbers.map(number =>
+              <ToggleButton type="radio" name="radio" value={number}>{number}</ToggleButton>
+            )
+          }
+        </ToggleButtonGroup>
+        <Button onClick={targetPlayerForGuard}>OK</Button>
+      </>
+    )
   };
 
   const includeSelfTarget = (card === CARD_PRINCE);
@@ -170,7 +206,6 @@ function Card({ card, isDiscard, clickCallback, allPlayers, currPlayerId }) {
           <Popover.Content>
             <p>{getTargetInstructions(card)}</p>
             {getTargetButtons({ includeSelfTarget })}
-            {maybeRenderGuardNumberGuess()}
           </Popover.Content>
         </Popover>
       </Overlay>
