@@ -3,6 +3,15 @@ const _ = require('lodash');
 const Game = require('./game');
 const Player = require('./Player');
 
+const CARD_GUARD = 0;
+const CARD_PRIEST = 1;
+const CARD_BARON = 2;
+const CARD_HANDMAID = 3;
+const CARD_PRINCE = 4;
+const CARD_KING = 5;
+const CARD_COUNTESS = 6;
+const CARD_PRINCESS = 7;
+
 let game;
 let players = {
   '1': new Player('1'),
@@ -109,5 +118,30 @@ describe('getAlivePlayers', () => {
 
   it('gets all alive players', () => {
     expect(subject()).toHaveLength(3);
+  });
+});
+
+describe('performCardEffect', () => {
+  describe('prince', () => {
+    it('moves the hand card to the discard pile', () => {
+      game.activePlayerId = '1';
+      const fakeCard = -1;
+      game.players['3'].hand = [fakeCard];
+      game.performCardEffect(CARD_PRINCE, { targetPlayerId: 3 })
+      expect(game.players['3'].discardPile).toContain(fakeCard);
+      expect(game.players['3'].hand).toHaveLength(1);
+      expect(game.players['3'].hand).not.toContain(fakeCard);
+    });
+  });
+
+  describe('king', () => {
+    it('switches cards with the target player', () => {
+      game.activePlayerId = '1';
+      game.players['1'].hand = [CARD_BARON, CARD_KING];
+      game.players['3'].hand = [CARD_GUARD];
+      game.performCardEffect(CARD_KING, { targetPlayerId: 3 })
+      expect(game.players['3'].hand).toContain(CARD_BARON);
+      expect(game.players['1'].hand).toContain(CARD_GUARD);
+    });
   });
 });

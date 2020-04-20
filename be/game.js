@@ -210,6 +210,7 @@ function Game({ broadcast, emitToPlayer, players }) {
     }
 
     const broadcastMessage = [`${activePlayer.name} played ${labelForCard(card)}`];
+    let targetPlayerCard;
 
     switch (card) {
       case CARD_GUARD:
@@ -222,15 +223,23 @@ function Game({ broadcast, emitToPlayer, players }) {
         // TODO
         break;
       case CARD_PRINCE:
-        const targetPlayerCard = targetPlayer.hand[0];
+        targetPlayerCard = targetPlayer.hand[0];
         targetPlayer.discard(targetPlayerCard);
         drawCard({ player: targetPlayer, canUseBurnCard: true });
         broadcastMessage.push(
-          `and forced ${targetPlayer.name} to discard their card and draw a new one.`,
+          `and forced ${targetPlayer.name} to discard their card and draw a new one`,
         );
         break;
       case CARD_KING:
-        // TODO
+        targetPlayerCard = targetPlayer.hand[0];
+        // Get the non-King card from the active player
+        activePlayerCardIdx = (activePlayer.hand[0] === CARD_KING) ? 1 : 0;
+        // Switch the cards!
+        targetPlayer.hand[0] = activePlayer.hand[activePlayerCardIdx];
+        activePlayer.hand[activePlayerCardIdx] = targetPlayerCard;
+        broadcastMessage.push(
+          `and switched cards with ${targetPlayer.name}`,
+        );
         break;
       case CARD_PRINCESS:
         // effects handled elsewhere
