@@ -28,6 +28,7 @@ function Board() {
         Object.values(players).map(player => {
           return (
             <PlayerView
+              key={player.id}
               player={player}
               allPlayers={players}
               active={player.id === activePlayerId}

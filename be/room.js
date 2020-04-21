@@ -1,9 +1,11 @@
-const Game = require('./Game');
-const Player = require('./Player');
+const Game = require('./game');
+const Message = require('./message');
+const Player = require('./player');
+const uuid = require('uuid');
 
 function Room({ broadcast, emitToPlayer }) {
   this.players = {};
-  this.messages = ['here are', 'your first', 'messages'];
+  this.messages = [];
 
   this.getPlayerById = id => this.players[id];
 
@@ -39,8 +41,25 @@ function Room({ broadcast, emitToPlayer }) {
 
   this.setPlayerName = (id, name) => this.players[id].setName(name);
 
-  this.handleMessage = msg => {
-    this.messages.push(msg);
+  this.handleMessage = (senderId, msg) => {
+    const messageObj = new Message({
+      id: uuid.v4(),
+      senderName: this.players[senderId].name,
+      text: msg,
+      type: 'player',
+    })
+    this.messages.push(messageObj);
+    broadcast('message', messageObj);
+  };
+
+  const broadcastSystemMessage = (msg) => {
+    const messageObj = {
+      id: uuid.v4(),
+      text: msg,
+      type: 'system',
+    };
+    this.messages.push(messageObj);
+    broadcast('message', messageObj);
   };
 
   // returns an array of players
@@ -48,7 +67,11 @@ function Room({ broadcast, emitToPlayer }) {
 
   this.startGame = (gameInitiatorId) => {
     if (!this.isPlayerLeader(gameInitiatorId)) { return; }
-    this.game = new Game({ broadcast, emitToPlayer, players: this.players });
+    this.game = new Game({
+      broadcastSystemMessage,
+      emitToPlayer,
+      players: this.players,
+    });
     this.game.setup();
     this.nextTurn();
   };
@@ -69,7 +92,7 @@ function Room({ broadcast, emitToPlayer }) {
     } else {
       roundEndMsg = 'No one won the round...';
     }
-    broadcast('systemMessage', roundEndMsg);
+    broadcastSystemMessage(roundEndMsg);
     broadcastGameDataToPlayers();
   };
 
@@ -80,7 +103,7 @@ function Room({ broadcast, emitToPlayer }) {
 
     if (this.game.isGameOver()) {
       const winnerNames = this.game.getWinnerIds().map(winnerId => this.players[winnerId].name);
-      broadcast('systemMessage', `${winnerNames.join(' and ')} won the game!`);
+      broadcastSystemMessage(`${winnerNames.join(' and ')} won the game!`);
     }
   };
 
@@ -95,7 +118,7 @@ function Room({ broadcast, emitToPlayer }) {
     if (!this.isPlayerLeader(gameInitiatorId)) { return false; }
     if (!this.game) { return false; }
     this.game.endGame();
-    broadcast('systemMessage', 'Game ended!');
+    broadcastSystemMessage('Game ended!');
     return true;
   }
 
@@ -115,8 +138,25 @@ function Room({ broadcast, emitToPlayer }) {
     );
   };
 
+  this.sendInitRoomData = socket => {
+    const players = {};
+    const { messages } = this;
+    const roomPlayers = Object.keys(this.players).map(id => this.players[id]);
+    roomPlayers.forEach(player => {
+      players[player.id] = player.serialize();
+    });
+    const initData = {
+      players,
+      messages,
+      currPlayerId: socket.id,
+    };
+    socket.emit('initData', initData);
+  }
+
   this.sendGameState = socketId => {
-    emitToPlayer(socketId, 'debugInfo', this.game.serialize());
+    if (this.game) {
+      emitToPlayer(socketId, 'debugInfo', this.game.serialize());
+    }
   };
 }
 

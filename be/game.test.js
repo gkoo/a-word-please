@@ -24,7 +24,7 @@ const mockEmitToPlayer = jest.fn();
 
 beforeEach(() => {
   game = new Game({
-    broadcast: mockBroadcast,
+    broadcastSystemMessage: mockBroadcast,
     emitToPlayer: mockEmitToPlayer,
     players: players,
   });

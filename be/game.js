@@ -2,7 +2,7 @@ const _ = require('lodash');
 
 const GamePlayer = require('./gamePlayer');
 
-function Game({ broadcast, emitToPlayer, players }) {
+function Game({ broadcastSystemMessage, emitToPlayer, players }) {
   const CARD_GUARD = 0;
   const CARD_PRIEST = 1;
   const CARD_BARON = 2;
@@ -287,7 +287,7 @@ function Game({ broadcast, emitToPlayer, players }) {
         broadcastMessage.push(`and guessed ${targetPlayer.name} has a ${guardNumberGuess} card`);
         if (guardGuessCards.includes(targetPlayer.hand[0])) {
           // Dead!
-          broadcast('systemMessage', broadcastMessage.join(' '));
+          broadcastSystemMessage('systemMessage', broadcastMessage.join(' '));
           knockOut(targetPlayer);
           return;
         } else {
@@ -338,12 +338,12 @@ function Game({ broadcast, emitToPlayer, players }) {
         throw `unknown card played: ${card}`;
     }
 
-    broadcast('systemMessage', broadcastMessage.join(' '));
+    broadcastSystemMessage('systemMessage', broadcastMessage.join(' '));
   };
 
   const knockOut = player => {
     player.knockOut();
-    broadcast(`${player.name} was knocked out of the round!`);
+    broadcastSystemMessage(`${player.name} was knocked out of the round!`);
   };
 
   const labelForCard = card => {

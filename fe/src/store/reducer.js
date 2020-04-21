@@ -63,7 +63,7 @@ export default function reducer(state = initialState, action) {
         players: newPlayers,
       }
 
-    case actions.PLAYER_MESSAGE:
+    case actions.NEW_MESSAGE:
       newMessages = [...state.messages, action.payload.message];
       return {
         ...state,
@@ -109,13 +109,6 @@ export default function reducer(state = initialState, action) {
       return {
         ...state,
         name: action.payload.name,
-      };
-
-    case actions.SYSTEM_MESSAGE:
-      newMessages = [...state.messages, action.payload.message];
-      return {
-        ...state,
-        messages: newMessages,
       };
 
     default:

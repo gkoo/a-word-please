@@ -13,16 +13,16 @@ import PlayerList from './components/PlayerList';
 import {
   newPlayer,
   newLeader,
+  newMessage,
   playerDisconnect,
-  playerMessage,
   receiveDebugInfo,
   receiveGameData,
   receiveInitData,
-  systemMessage,
 } from './store/actions';
 import { STATE_PENDING } from './constants';
 import {
   gameStateSelector,
+  messagesSelector,
   nameSelector,
   playersSelector,
   socketSelector,
@@ -34,6 +34,7 @@ import './game.css';
 function App() {
   const dispatch = useDispatch();
   const gameState = useSelector(gameStateSelector);
+  const messages = useSelector(messagesSelector);
   const name = useSelector(nameSelector);
   const players = useSelector(playersSelector);
   const socket = useSelector(socketSelector);
@@ -45,9 +46,8 @@ function App() {
     socket.on('gameData', gameData => dispatch(receiveGameData(gameData)));
     socket.on('newPlayer', player => dispatch(newPlayer(player)));
     socket.on('newLeader', playerId => dispatch(newLeader(playerId)));
-    socket.on('playerMessage', message => dispatch(playerMessage(message)));
+    socket.on('message', message => dispatch(newMessage(message)));
     socket.on('playerDisconnect', playerId => dispatch(playerDisconnect(playerId)));
-    socket.on('systemMessage', message => dispatch(systemMessage(message)));
   }, [socket, dispatch]);
 
   return (
@@ -66,7 +66,11 @@ function App() {
           </Col>
           <Col>
             <LeaderPanel/>
-            <MessageLog/>
+            <MessageLog
+              messages={messages}
+              players={players}
+              socket={socket}
+            />
           </Col>
         </Row>
       </Container>

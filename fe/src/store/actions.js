@@ -1,13 +1,12 @@
 // Action Types
 export const RECEIVE_GAME_DATA = 'RECEIVE_GAME_DATA';
+export const NEW_MESSAGE = 'NEW_MESSAGE';
 export const NEW_LEADER = 'NEW_LEADER';
 export const NEW_PLAYER = 'NEW_PLAYER';
 export const PLAYER_DISCONNECT = 'PLAYER_DISCONNECT';
-export const PLAYER_MESSAGE = 'PLAYER_MESSAGE';
 export const RECEIVE_DEBUG_INFO = 'RECEIVE_DEBUG_INFO';
 export const RECEIVE_INIT_DATA = 'RECEIVE_INIT_DATA';
 export const SAVE_NAME = 'SAVE_NAME';
-export const SYSTEM_MESSAGE = 'SYSTEM_MESSAGE';
 
 // Actions
 export function receiveGameData(gameData) {
@@ -24,17 +23,17 @@ export function newLeader(playerId) {
   }
 }
 
+export function newMessage(message) {
+  return {
+    payload: { message },
+    type: NEW_MESSAGE,
+  }
+}
+
 export function newPlayer({ id, name, isLeader }) {
   return {
     payload: { id, name, isLeader },
     type: NEW_PLAYER,
-  }
-}
-
-export function playerMessage(message) {
-  return {
-    payload: { message },
-    type: PLAYER_MESSAGE,
   }
 }
 
@@ -49,13 +48,6 @@ export function receiveInitData({ currPlayerId, messages, players }) {
   return {
     payload: { currPlayerId, messages, players },
     type: RECEIVE_INIT_DATA,
-  }
-}
-
-export function systemMessage(message) {
-  return {
-    payload: { message },
-    type: SYSTEM_MESSAGE,
   }
 }
 

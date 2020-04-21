@@ -82,3 +82,19 @@ describe('getLeader', () => {
     expect(subject().id).toEqual('123');
   });
 });
+
+describe('handleMessage', () => {
+  beforeEach(() => {
+    room.addPlayer('1');
+    room.setPlayerName('1', 'Bilbo Baggins');
+  });
+
+  it('adds the message to the messages list', () => {
+    const senderId = '1';
+    const messageText = 'hello world!';
+    room.handleMessage(senderId, messageText);
+    expect(room.messages).toHaveLength(1);
+    expect(room.messages[0].text).toEqual(messageText);
+    expect(room.messages[0].senderName).toEqual('Bilbo Baggins');
+  });
+});

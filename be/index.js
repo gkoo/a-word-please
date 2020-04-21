@@ -20,11 +20,6 @@ const emitToSocket = (socketId, eventName, data) =>
 
 const room = new Room({ broadcast, emitToPlayer: emitToSocket });
 
-const handleMessage = msg => {
-  room.handleMessage(msg);
-  io.emit('playerMessage', msg);
-};
-
 const handleDisconnect = (id) => {
   const name = room.players[id].name;
   const displayName = name ? ` (${name})` : '';
@@ -90,11 +85,11 @@ const handleEndGame = socketId => {
 io.on('connection', socket => {
   console.log('New client connected');
   room.addPlayer(socket.id);
-  sendInitRoomData(socket, room);
-  socket.on('chatMessage', handleMessage);
+  room.sendInitRoomData(socket);
+  socket.on('chatMessage', msg => room.handleMessage(socket.id, msg));
   socket.on('disconnect', () => handleDisconnect(socket.id));
   socket.on('playCard', ({ card, effectData }) => room.playCard(socket.id, card, effectData));
-  socket.on('saveName', (name) => handleSetName(socket.id, name));
+  socket.on('saveName', name => handleSetName(socket.id, name));
   socket.on('startGame', () => handleStartGame(socket.id));
   socket.on('nextRound', () => handleNextRound(socket.id));
   socket.on('endGame', () => handleEndGame(socket.id));

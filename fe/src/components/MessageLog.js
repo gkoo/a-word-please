@@ -1,13 +1,9 @@
 import React, { useState, useEffect, useRef, } from 'react';
-import { useSelector } from 'react-redux';
 import Button from 'react-bootstrap/Button';
 
-import { messagesSelector, socketSelector } from '../store/selectors';
-
-function MessageLog() {
+function MessageLog({ messages, players, socket }) {
   const [typedMessage, setTypedMessage] = useState('');
-  const socket = useSelector(socketSelector);
-  const messages = useSelector(messagesSelector);
+
   const messagesRef = useRef(null);
 
   const onTypedMessageChange = e => setTypedMessage(e.target.value);
@@ -37,12 +33,26 @@ function MessageLog() {
     setTypedMessage('');
   }
 
+  const renderMessage = ({ id, senderName, text, type }) => {
+    if (type === 'system') {
+      return (
+        <div key={id}>
+          {text}
+        </div>
+      );
+    }
+
+    return (
+      <div key={id}>
+        <strong>{senderName}</strong>: {text}
+      </div>
+    );
+  };
+
   return (
     <>
       <div className='message-log' ref={messagesRef}>
-        <ul>
-          {messages.map(message => <li>{message}</li>)}
-        </ul>
+        <>{messages.map(renderMessage)}</>
       </div>
       <form onSubmit={onSubmit}>
         <input type="text" value={typedMessage} onChange={onTypedMessageChange}/>
