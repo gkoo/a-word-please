@@ -35,7 +35,8 @@ describe('setup', () => {
   it('deals cards', () => {
     expect(game.deck).toHaveLength(15);
     Object.values(game.players).forEach(player => {
-      expect(player.hand).toHaveLength(1);
+      const numCards = (player.id === game.activePlayerId) ? 2 : 1;
+      expect(player.hand).toHaveLength(numCards);
       expect(player.hand[0]).toBeGreaterThanOrEqual(0);
     });
   });
@@ -68,7 +69,6 @@ describe('nextTurn', () => {
 
     it('skips the knocked out player', () => {
       const thirdPlayerId = game.playerOrder[2];
-      subject();
       subject();
       expect(game.activePlayerId).toEqual(thirdPlayerId);
     });
@@ -136,11 +136,13 @@ describe('serializeForPlayer', () => {
 });
 
 describe('endRound', () => {
-  it('decides the winner of the round', () => {
+  it('assigns a token to the winner', () => {
     game.players['1'].hand = [0];
     game.players['2'].hand = [9];
+    game.players['3'].hand = [0];
     game.endRound();
-    expect(game.roundWinner.id).toEqual('2');
+    expect(game.players['1'].numTokens).toEqual(0);
+    expect(game.players['2'].numTokens).toEqual(1);
   });
 });
 

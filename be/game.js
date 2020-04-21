@@ -1,8 +1,14 @@
 const _ = require('lodash');
+const uuid = require('uuid');
 
 const GamePlayer = require('./gamePlayer');
 
-function Game({ broadcastSystemMessage, emitToPlayer, players }) {
+function Game({
+  broadcast,
+  broadcastSystemMessage,
+  emitToPlayer,
+  players,
+}) {
   const CARD_GUARD = 0;
   const CARD_PRIEST = 1;
   const CARD_BARON = 2;
@@ -71,6 +77,7 @@ function Game({ broadcastSystemMessage, emitToPlayer, players }) {
     determineMaxTokens();
     this.newRound();
     broadcastSystemMessage('Game has started!');
+    broadcastGameDataToPlayers();
   };
 
   this.newRound = () => {
@@ -83,6 +90,7 @@ function Game({ broadcastSystemMessage, emitToPlayer, players }) {
 
     createDeck();
     dealCards();
+    this.nextTurn();
   };
 
   const createDeck = () => {
@@ -150,6 +158,12 @@ function Game({ broadcastSystemMessage, emitToPlayer, players }) {
   this.nextTurn = () => {
     if (this.state !== STATE_STARTED) { return; }
 
+    // If one or zero players are left alive, end the round.
+    if (this.getAlivePlayers().length < 2) {
+      this.endRound();
+      return;
+    }
+
     if (this.deckCursor >= this.deck.length) {
       // No more cards in the deck, the round is over.
       this.endRound();
@@ -192,9 +206,13 @@ function Game({ broadcastSystemMessage, emitToPlayer, players }) {
     this.performCardEffect(card, effectData);
     player.discard(card);
 
-    // If one or zero players are left alive, end the round.
-    if (this.getAlivePlayers().length < 2) {
-      this.endRound();
+    if (card === CARD_PRIEST) { return; }
+
+    this.nextTurn();
+
+    if (!this.isRoundOver()) {
+      broadcastGameDataToPlayers();
+      return;
     }
   };
 
@@ -204,7 +222,7 @@ function Game({ broadcastSystemMessage, emitToPlayer, players }) {
       // If you have the King or Prince in your hand, you must discard the Countess.
       const message = `(Only visible to you) You cannot discard the ` +
         `${labelForCard(CARD_COUNTESS)} when you have the ${labelForCard(card)} in your hand`;
-      emitToPlayer(player.id, 'systemMessage', message);
+      emitSystemMessage(player.id, message);
       return false;
     }
 
@@ -217,9 +235,8 @@ function Game({ broadcastSystemMessage, emitToPlayer, players }) {
 
     // Prohibit targeting knocked out players
     if (targetPlayer.isKnockedOut) {
-      emitToPlayer(
+      emitSystemMessage(
         player.id,
-        'systemMessage',
         '(Only visible to you) Cannot target knocked out players',
       );
       return false;
@@ -229,7 +246,7 @@ function Game({ broadcastSystemMessage, emitToPlayer, players }) {
     if (targetPlayer.discardPile[targetPlayer.discardPile.length-1] === CARD_HANDMAID) {
       const message = '(Only visible to you) You can\'t target someone who played ' +
         `${labelForCard(CARD_HANDMAID)} last turn`;
-      emitToPlayer(player.id, 'systemMessage', message);
+      emitSystemMessage(player.id, message);
       return false;
     }
 
@@ -244,15 +261,60 @@ function Game({ broadcastSystemMessage, emitToPlayer, players }) {
     const alivePlayers = this.getAlivePlayers();
 
     if (alivePlayers.length === 0) {
+      broadcastSystemMessage('No one won the round...');
+      broadcastGameDataToPlayers();
       return;
     }
 
     alivePlayers.sort(player => player.hand[0]);
-    this.roundWinner = alivePlayers[alivePlayers.length - 1];
+    const finalists = [];
+    const highestCard = alivePlayers[alivePlayers.length - 1].hand[0];
+    for (let i = alivePlayers.length - 1; i >= 0; --i) {
+      const player = alivePlayers[i]
+      if (player.hand[0] < highestCard) {
+        break;
+      }
+      finalists.push(player);
+    }
 
-    if (++this.roundWinner.numTokens >= this.maxTokens) {
+    let roundWinners = [];
+
+    if (finalists.length > 1) {
+      // Tie-break. Add up the discard piles
+      let maxDiscardTotal = 0;
+
+      finalists.forEach(finalist => {
+        const discardTotal = _.reduce(
+          finalist.discardPile,
+          (sum, discardCard) => sum + enumsToValues[discardCard].value,
+          0,
+        );
+        if (discardTotal > maxDiscardTotal) {
+          maxDiscardTotal = discardTotal;
+          roundWinners = [finalist];
+        } else if (discardTotal === maxDiscardTotal) {
+          roundWinners.push(finalist);
+        }
+      });
+    } else {
+      roundWinners = finalists;
+    }
+
+    const roundEndMsg = `${roundWinners.map(winner => winner.name).join(' and ')} won the round!`;
+    broadcastSystemMessage(roundEndMsg);
+
+    const isGameOver = false;
+    finalists.forEach(finalist => {
+      if (++finalist.numTokens > this.maxTokens) {
+        isGameOver = true;
+      }
+    });
+
+    if (isGameOver) {
       this.endGame();
     }
+
+    broadcastGameDataToPlayers();
   };
 
   this.endGame = () => {
@@ -277,7 +339,7 @@ function Game({ broadcastSystemMessage, emitToPlayer, players }) {
     const targetPlayer = this.players[effectData.targetPlayerId];
 
     const broadcastMessage = [`${activePlayer.name} played ${labelForCard(card)}`];
-    let targetPlayerCard;
+    const targetPlayerCard = targetPlayer && targetPlayer.hand[0];
 
     switch (card) {
       case CARD_GUARD:
@@ -296,13 +358,13 @@ function Game({ broadcastSystemMessage, emitToPlayer, players }) {
         }
         break;
       case CARD_PRIEST:
-        // TODO
+        emitToPlayer(activePlayer.id, 'priestReveal', targetPlayerCard);
+        broadcastMessage.push(`and is looking at ${targetPlayer.name}'s card`);
         break;
       case CARD_BARON:
         // TODO
         break;
       case CARD_PRINCE:
-        targetPlayerCard = targetPlayer.hand[0];
         targetPlayer.discard(targetPlayerCard);
         drawCard({ player: targetPlayer, canUseBurnCard: true });
         broadcastMessage.push(
@@ -310,7 +372,6 @@ function Game({ broadcastSystemMessage, emitToPlayer, players }) {
         );
         break;
       case CARD_KING:
-        targetPlayerCard = targetPlayer.hand[0];
         // Get the non-King card from the active player
         activePlayerCardIdx = (activePlayer.hand[0] === CARD_KING) ? 1 : 0;
         // Switch the cards!
@@ -371,6 +432,25 @@ function Game({ broadcastSystemMessage, emitToPlayer, players }) {
         return 'Princess';
         break;
     }
+  };
+
+  const emitSystemMessage = (playerId, msg) => {
+    const messageObj = {
+      id: uuid.v4(),
+      text: msg,
+      type: 'system',
+    };
+    emitToPlayer(playerId, 'message', messageObj);
+  };
+
+  const broadcastGameDataToPlayers = () => {
+    Object.keys(this.players).forEach(playerId =>
+      emitToPlayer(
+        playerId,
+        'gameData',
+        this.serializeForPlayer(playerId),
+      )
+    );
   };
 
   this.serializeForPlayer = playerIdToSerializeFor => {

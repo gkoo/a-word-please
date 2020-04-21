@@ -1,7 +1,8 @@
+const uuid = require('uuid');
+
 const Game = require('./game');
 const Message = require('./message');
 const Player = require('./player');
-const uuid = require('uuid');
 
 function Room({ broadcast, emitToPlayer }) {
   this.players = {};
@@ -52,7 +53,7 @@ function Room({ broadcast, emitToPlayer }) {
     broadcast('message', messageObj);
   };
 
-  const broadcastSystemMessage = (msg) => {
+  const broadcastSystemMessage = msg => {
     const messageObj = {
       id: uuid.v4(),
       text: msg,
@@ -68,38 +69,16 @@ function Room({ broadcast, emitToPlayer }) {
   this.startGame = (gameInitiatorId) => {
     if (!this.isPlayerLeader(gameInitiatorId)) { return; }
     this.game = new Game({
+      broadcast,
       broadcastSystemMessage,
       emitToPlayer,
       players: this.players,
     });
     this.game.setup();
-    this.nextTurn();
-  };
-
-  this.nextTurn = () => {
-    this.game.nextTurn();
-
-    if (!this.game.isRoundOver()) {
-      broadcastGameDataToPlayers();
-      return;
-    }
-
-    // Round is over
-    let roundEndMsg;
-    if (this.game.roundWinner) {
-      const winnerName = this.players[this.game.roundWinner.id].name;
-      roundEndMsg = `${winnerName} won the round!`;
-    } else {
-      roundEndMsg = 'No one won the round...';
-    }
-    broadcastSystemMessage(roundEndMsg);
-    broadcastGameDataToPlayers();
   };
 
   this.playCard = (playerId, card, effectData) => {
     this.game.playCard(playerId, card, effectData);
-
-    this.nextTurn();
 
     if (this.game.isGameOver()) {
       const winnerNames = this.game.getWinnerIds().map(winnerId => this.players[winnerId].name);
@@ -111,7 +90,6 @@ function Room({ broadcast, emitToPlayer }) {
     if (!this.isPlayerLeader(playerId)) { return false; }
     if (!this.game) { return false; }
     this.game.newRound();
-    this.nextTurn();
   }
 
   this.endGame = (gameInitiatorId) => {
@@ -125,17 +103,6 @@ function Room({ broadcast, emitToPlayer }) {
   this.isPlayerLeader = (playerId) => {
     const player = this.getPlayerById(playerId);
     return player.isLeader;
-  };
-
-  const broadcastGameDataToPlayers = () => {
-    const playerIds = this.getPlayers().map(player => player.id);
-    playerIds.forEach(playerId =>
-      emitToPlayer(
-        playerId,
-        'gameData',
-        this.game.serializeForPlayer(playerId),
-      )
-    );
   };
 
   this.sendInitRoomData = socket => {
