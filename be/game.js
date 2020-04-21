@@ -20,35 +20,35 @@ function Game({ broadcastSystemMessage, emitToPlayer, players }) {
   const enumsToValues = {
     [CARD_GUARD]: {
       label: 'Guard',
-      value: '1',
+      value: 1,
     },
     [CARD_PRIEST]: {
       label: 'Priest',
-      value: '2',
+      value: 2,
     },
     [CARD_BARON]: {
       label: 'Baron',
-      value: '3',
+      value: 3,
     },
     [CARD_HANDMAID]: {
       label: 'Handmaid',
-      value: '4',
+      value: 4,
     },
     [CARD_PRINCE]: {
       label: 'Prince',
-      value: '5',
+      value: 5,
     },
     [CARD_KING]: {
       label: 'King',
-      value: '6',
+      value: 6,
     },
     [CARD_COUNTESS]: {
       label: 'Countess',
-      value: '7',
+      value: 7,
     },
     [CARD_PRINCESS]: {
       label: 'Princess',
-      value: '8',
+      value: 8,
     },
   };
 
@@ -70,6 +70,7 @@ function Game({ broadcastSystemMessage, emitToPlayer, players }) {
     determinePlayerOrder();
     determineMaxTokens();
     this.newRound();
+    broadcastSystemMessage('Game has started!');
   };
 
   this.newRound = () => {
@@ -283,7 +284,7 @@ function Game({ broadcastSystemMessage, emitToPlayer, players }) {
         const { guardNumberGuess } = effectData;
         const guardGuessCards = Object.keys(enumsToValues).filter(card => {
           return guardNumberGuess === enumsToValues[card].value;
-        });
+        }).map(card => parseInt(card, 10)); // for some reason it gets turned into a string
         broadcastMessage.push(`and guessed ${targetPlayer.name} has a ${guardNumberGuess} card`);
         if (guardGuessCards.includes(targetPlayer.hand[0])) {
           // Dead!
@@ -326,10 +327,7 @@ function Game({ broadcastSystemMessage, emitToPlayer, players }) {
         break;
       case CARD_HANDMAID:
         // effects handled elsewhere
-        broadcastMessage.push(
-          `${activePlayer.name} played ${card} and is immune from card effects ` +
-            'until their next turn'
-        );
+        broadcastMessage.push('and is immune from card effects until their next turn');
         break;
       case CARD_COUNTESS:
         // effects handled elsewhere
@@ -338,7 +336,7 @@ function Game({ broadcastSystemMessage, emitToPlayer, players }) {
         throw `unknown card played: ${card}`;
     }
 
-    broadcastSystemMessage('systemMessage', broadcastMessage.join(' '));
+    broadcastSystemMessage(broadcastMessage.join(' '));
   };
 
   const knockOut = player => {

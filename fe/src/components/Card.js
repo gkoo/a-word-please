@@ -106,7 +106,7 @@ function Card({ card, isDiscard, clickCallback, allPlayers, currPlayerId }) {
         return 'Choose another player. The two of you will compare hands and the player with ' +
           'the lower number is knocked out of the round.';
       case CARD_PRINCE:
-        return 'Choose a player (including yourself). That player discards his or her hand ' +
+        return 'Choose a player, including yourself. That player discards his or her hand ' +
           '(but doesn’t apply its effect, unless it is the Princess) and draws a new one.';
       case CARD_KING:
         return 'Trade the card in your hand with the card held by another player of your choice.';
@@ -149,7 +149,7 @@ function Card({ card, isDiscard, clickCallback, allPlayers, currPlayerId }) {
     clickCallback({
       card,
       effectData: {
-        guardNumberGuess,
+        guardNumberGuess: parseInt(guardNumberGuess, 10),
         targetPlayerId: guardTargetId,
       },
     });
@@ -176,7 +176,10 @@ function Card({ card, isDiscard, clickCallback, allPlayers, currPlayerId }) {
             )
           }
         </ToggleButtonGroup>
-        <Button onClick={targetPlayerForGuard}>OK</Button>
+        {
+          guardTargetId && guardNumberGuess &&
+            <Button onClick={targetPlayerForGuard}>OK</Button>
+        }
       </>
     )
   };
