@@ -87,7 +87,10 @@ function Room({ broadcast, emitToPlayer }) {
   };
 
   this.nextRound = playerId => {
-    if (!this.isPlayerLeader(playerId)) { return false; }
+    if (!this.isPlayerLeader(playerId)) {
+      console.log(`player ${playerId} tried to start next round but is not the leader`);
+      return false;
+    }
     if (!this.game) { return false; }
     this.game.newRound();
   }

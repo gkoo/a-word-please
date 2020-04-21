@@ -206,18 +206,28 @@ function Game({
     this.performCardEffect(card, effectData);
     player.discard(card);
 
-    if (card === CARD_PRIEST) { return; }
+    const endActions = () => {
+      // Tell the clients to dismiss their revealed cards
+      broadcast('dismissReveal');
 
-    this.nextTurn();
+      this.nextTurn();
 
-    if (!this.isRoundOver()) {
-      broadcastGameDataToPlayers();
-      return;
+      if (!this.isRoundOver()) {
+        broadcastGameDataToPlayers();
+        return;
+      }
+    };
+
+    if ([CARD_PRIEST, CARD_BARON].includes(card)) {
+      setTimeout(endActions, 3000);
+    } else {
+      endActions();
     }
   };
 
   const isLegalMove = (player, card, effectData = {}) => {
     // Check Countess card effect
+    // TODO: alert this error instead of putting in chat
     if ([CARD_KING, CARD_PRINCE].includes(card) && player.hasCardInHand(CARD_COUNTESS)) {
       // If you have the King or Prince in your hand, you must discard the Countess.
       const message = `(Only visible to you) You cannot discard the ` +
@@ -359,6 +369,9 @@ function Game({
         break;
       case CARD_PRIEST:
         emitToPlayer(activePlayer.id, 'priestReveal', targetPlayerCard);
+        const priestRevealMessage = `(Only visible to you) ${targetPlayer.name} is holding the ` +
+          `${enumsToValues[targetPlayerCard].label}!`;
+        emitSystemMessage(activePlayer.id, priestRevealMessage);
         broadcastMessage.push(`and is looking at ${targetPlayer.name}'s card`);
         break;
       case CARD_BARON:

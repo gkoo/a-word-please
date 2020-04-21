@@ -5,6 +5,7 @@ import Overlay from 'react-bootstrap/Overlay';
 import Popover from 'react-bootstrap/Popover';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup'
+import cx from 'classnames';
 
 import {
   CARD_GUARD,
@@ -17,11 +18,10 @@ import {
   CARD_PRINCESS,
 } from '../constants';
 
-function Card({ card, isDiscard, clickCallback, allPlayers, currPlayerId }) {
+function Card({ card, clickable, isDiscard, clickCallback, allPlayers, currPlayerId }) {
   const [guardTargetId, setGuardTargetId] = useState('');
   const [guardNumberGuess, setGuardNumberGuess] = useState('');
   const [showTargetOptions, setShowTargetOptions] = useState(false);
-  const classNames = ['card'];
   const popoverTarget = useRef(null);
   const hasTargetEffect = [
     CARD_GUARD,
@@ -69,6 +69,7 @@ function Card({ card, isDiscard, clickCallback, allPlayers, currPlayerId }) {
   const { label, value } = enumsToValues[card];
 
   const handleClick = card => {
+    if (!clickable) { return; }
     if (isDiscard) { return; }
 
     if (hasTargetEffect) {
@@ -79,18 +80,22 @@ function Card({ card, isDiscard, clickCallback, allPlayers, currPlayerId }) {
     clickCallback({ card, effectData: {} });
   };
 
+  const classNames = cx('card', {
+    discard: isDiscard,
+    clickable,
+  });
+
   const renderCard = () => {
     return (
-      <div className={classNames.join(' ')} ref={popoverTarget} onClick={() => handleClick(card)}>
+      <div className={classNames} ref={popoverTarget} onClick={() => handleClick(card)}>
         <h3>{value}{ !isDiscard && <span>: {label}</span> }</h3>
       </div>
     );
   };
 
-  if (isDiscard) {
-    classNames.push('discard');
-    return renderCard();
-  }
+  if (isDiscard) { return renderCard(); }
+  if (!hasTargetEffect) { return renderCard(); }
+  if (!clickable) { return renderCard(); }
 
   const alivePlayers = Object.values(allPlayers).filter(player => !player.isKnockedOut);
 
@@ -187,11 +192,6 @@ function Card({ card, isDiscard, clickCallback, allPlayers, currPlayerId }) {
   const includeSelfTarget = (card === CARD_PRINCE);
 
   const hideTargetOptions = () => setShowTargetOptions(false);
-
-  if (!hasTargetEffect) {
-    // For cards without target effects
-    return renderCard();
-  }
 
   // For cards with target effects
   return (

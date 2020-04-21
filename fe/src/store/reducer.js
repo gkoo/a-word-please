@@ -17,6 +17,12 @@ export default function reducer(state = initialState, action) {
   let newMessages, newPlayers, players;
 
   switch(action.type) {
+    case actions.DISMISS_REVEAL:
+      return {
+        ...state,
+        priestRevealCard: null,
+      };
+
     case actions.NEW_LEADER:
       const { playerId } = action.payload;
       const player = {
@@ -68,6 +74,12 @@ export default function reducer(state = initialState, action) {
       return {
         ...state,
         messages: newMessages,
+      };
+
+    case actions.PRIEST_REVEAL:
+      return {
+        ...state,
+        priestRevealCard: action.payload.card,
       };
 
     case actions.RECEIVE_DEBUG_INFO:

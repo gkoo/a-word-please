@@ -11,10 +11,12 @@ import MessageLog from './components/MessageLog';
 import NameModal from './components/NameModal';
 import PlayerList from './components/PlayerList';
 import {
+  dismissReveal,
   newPlayer,
   newLeader,
   newMessage,
   playerDisconnect,
+  priestReveal,
   receiveDebugInfo,
   receiveGameData,
   receiveInitData,
@@ -42,11 +44,13 @@ function App() {
   // Include second arg to prevent this from running multiple times
   useEffect(() => {
     socket.on('debugInfo', data => dispatch(receiveDebugInfo(data)));
+    socket.on('dismissReveal', () => dispatch(dismissReveal()));
     socket.on('initData', data => dispatch(receiveInitData(data)));
     socket.on('gameData', gameData => dispatch(receiveGameData(gameData)));
     socket.on('newPlayer', player => dispatch(newPlayer(player)));
     socket.on('newLeader', playerId => dispatch(newLeader(playerId)));
     socket.on('message', message => dispatch(newMessage(message)));
+    socket.on('priestReveal', card => dispatch(priestReveal(card)));
     socket.on('playerDisconnect', playerId => dispatch(playerDisconnect(playerId)));
   }, [socket, dispatch]);
 

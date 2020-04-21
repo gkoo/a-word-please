@@ -14,8 +14,8 @@ export const activePlayerSelector = createSelector(
   activePlayerIdSelector,
   (players, activePlayerId) => players[activePlayerId]
 );
-
 export const currPlayerHandSelector = createSelector(
   currPlayerSelector,
   currPlayer => currPlayer && currPlayer.hand,
 );
+export const priestRevealCardSelector = state => state.priestRevealCard;

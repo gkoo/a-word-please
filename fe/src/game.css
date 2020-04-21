@@ -2,10 +2,13 @@
   background-color: #fff;
   border: 5px solid #f00;
   color: #000;
-  cursor: pointer;
   display: inline-block;
   width: 200px;
   height: 325px;
+}
+
+.card.clickable {
+  cursor: pointer;
 }
 
 .card.discard {
@@ -18,4 +21,8 @@
   height: 200px;
   overflow-y: scroll;
   width: 200px;
+}
+
+.priest-reveal-modal-body {
+  text-align: center;
 }
