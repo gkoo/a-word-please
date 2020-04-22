@@ -126,6 +126,22 @@ function Card({ card, clickable, isDiscard, clickCallback, allPlayers, currPlaye
     clickCallback({ card, effectData: { targetPlayerId: playerId } })
   };
 
+  const onDiscard = () => {
+    clickCallback({ card, effectData: {} });
+  };
+
+  const discardCardButton = () => {
+    return (
+      <>
+        <p>
+          There are no valid players to target. If you would still like to play this card,
+          it will have no effect.
+        </p>
+        <Button onClick={onDiscard}>Discard</Button>
+      </>
+    );
+  };
+
   const getTargetButtons = ({ includeSelfTarget }) => {
     let targetCandidates;
     if (includeSelfTarget) {
@@ -138,12 +154,17 @@ function Card({ card, clickable, isDiscard, clickCallback, allPlayers, currPlaye
       player => player.discardPile[player.discardPile.length - 1] !== CARD_HANDMAID,
     );
 
+    if (targetCandidates.length === 0) {
+      // Everyone else has a handmaid
+      return discardCardButton();
+    }
+
     if (card === CARD_GUARD) {
       return getGuardTargetButtons({ targetCandidates });
     }
 
     return targetCandidates.map(
-      player => <Button onClick={() => targetPlayer(player.id)}>{player.name}</Button>
+      player => <Button key={player.id} onClick={() => targetPlayer(player.id)}>{player.name}</Button>
     );
   };
 

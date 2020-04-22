@@ -155,6 +155,20 @@ describe('getAlivePlayers', () => {
 });
 
 describe('performCardEffect', () => {
+  describe('when all other alive players have a handmaid', () => {
+    it('has no effect', () => {
+      game.activePlayerId = '1';
+      const card = CARD_PRINCE;
+      game.players['1'].hand = [card];
+      game.players['2'].discardPile = [CARD_HANDMAID];
+      game.players['3'].hand = [CARD_PRINCESS];
+      game.players['3'].discardPile = [CARD_HANDMAID];
+      game.performCardEffect(card, { targetPlayerId: '3' });
+      expect(game.players['3'].hand).toHaveLength(1);
+      expect(game.players['3'].hand[0]).toEqual(CARD_PRINCESS);
+    });
+  });
+
   describe('prince', () => {
     it('moves the hand card to the discard pile', () => {
       game.activePlayerId = '1';

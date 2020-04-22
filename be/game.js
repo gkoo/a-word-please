@@ -346,9 +346,16 @@ function Game({
 
   this.performCardEffect = (card, effectData) => {
     const activePlayer = this.players[this.activePlayerId];
+
+    const cardLabel = labelForCard(card);
+    if (allAlivePlayersHaveHandmaids()) {
+      broadcastSystemMessage(`${activePlayer.name} discarded ${cardLabel}`);
+      return;
+    }
+
     const targetPlayer = this.players[effectData.targetPlayerId];
 
-    const broadcastMessage = [`${activePlayer.name} played ${labelForCard(card)}`];
+    const broadcastMessage = [`${activePlayer.name} played ${cardLabel}`];
     const targetPlayerCard = targetPlayer && targetPlayer.hand[0];
 
     switch (card) {
@@ -411,6 +418,16 @@ function Game({
     }
 
     broadcastSystemMessage(broadcastMessage.join(' '));
+  };
+
+  const allAlivePlayersHaveHandmaids = () => {
+    const players = Object.values(this.players);
+    return !players.find(
+      player => {
+        if (player.id === this.activePlayerId) { return false; } // skip the active player
+        return player.discardPile[player.discardPile.length - 1] !== CARD_HANDMAID;
+      }
+    );
   };
 
   const knockOut = player => {
