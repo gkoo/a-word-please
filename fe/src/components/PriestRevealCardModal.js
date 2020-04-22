@@ -4,9 +4,9 @@ import Modal from 'react-bootstrap/Modal';
 
 import Card from './Card';
 
-function PriestRevealCardModal({ priestRevealCard }) {
+function PriestRevealCardModal({ hasPriestRevealCard, priestRevealCard }) {
   return (
-    <Modal show={!!priestRevealCard}>
+    <Modal show={hasPriestRevealCard}>
       <Modal.Body className='priest-reveal-modal-body'>
         <Card card={priestRevealCard} isDiscard={false} clickable={false} />
       </Modal.Body>

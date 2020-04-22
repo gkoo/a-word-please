@@ -26,6 +26,8 @@ function Board() {
     );
   }
 
+  const hasPriestRevealCard = typeof priestRevealCard === 'number';
+
   return (
     <>
       {
@@ -41,8 +43,11 @@ function Board() {
         })
       }
       {
-        priestRevealCard &&
-          <PriestRevealCardModal priestRevealCard={priestRevealCard}/>
+        hasPriestRevealCard &&
+          <PriestRevealCardModal
+            hasPriestRevealCard={hasPriestRevealCard}
+            priestRevealCard={priestRevealCard}
+          />
       }
     </>
   );
