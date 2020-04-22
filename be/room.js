@@ -87,6 +87,7 @@ function Room({ broadcast, emitToPlayer }) {
   };
 
   this.nextRound = playerId => {
+    console.log('starting next round');
     if (!this.isPlayerLeader(playerId)) {
       console.log(`player ${playerId} tried to start next round but is not the leader`);
       return false;

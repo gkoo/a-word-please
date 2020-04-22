@@ -1,5 +1,7 @@
 import React, { useRef, useState } from 'react';
 
+import Modal from 'react-bootstrap/Modal';
+
 import Button from 'react-bootstrap/Button';
 import Overlay from 'react-bootstrap/Overlay';
 import Popover from 'react-bootstrap/Popover';
@@ -18,7 +20,16 @@ import {
   CARD_PRINCESS,
 } from '../constants';
 
-function Card({ card, clickable, isDiscard, clickCallback, allPlayers, currPlayerId }) {
+function Card({
+  allPlayers,
+  card,
+  clickable,
+  clickCallback,
+  currPlayerId,
+  currHand,
+  isDiscard,
+}) {
+  const [showCountessWarning, setShowCountessWarning] = useState(false);
   const [guardTargetId, setGuardTargetId] = useState('');
   const [guardNumberGuess, setGuardNumberGuess] = useState('');
   const [showTargetOptions, setShowTargetOptions] = useState(false);
@@ -71,6 +82,13 @@ function Card({ card, clickable, isDiscard, clickCallback, allPlayers, currPlaye
   const handleClick = card => {
     if (!clickable) { return; }
     if (isDiscard) { return; }
+
+    if (currHand.includes(CARD_COUNTESS) && (currHand.includes(CARD_KING) || currHand.includes(CARD_PRINCE))) {
+      if (card !== CARD_COUNTESS) {
+        setShowCountessWarning(true);
+        return;
+      }
+    }
 
     if (hasTargetEffect) {
       setShowTargetOptions(!showTargetOptions);
@@ -214,6 +232,8 @@ function Card({ card, clickable, isDiscard, clickCallback, allPlayers, currPlaye
 
   const hideTargetOptions = () => setShowTargetOptions(false);
 
+  const hideCountessWarningModal = () => setShowCountessWarning(false);
+
   // For cards with target effects
   return (
     <>
@@ -233,6 +253,17 @@ function Card({ card, clickable, isDiscard, clickCallback, allPlayers, currPlaye
           </Popover.Content>
         </Popover>
       </Overlay>
+      <Modal show={showCountessWarning}>
+        <Modal.Body>
+          <p>
+            If you ever have the Countess and either the King or Prince in your hand,
+            you must discard the Countess.
+          </p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="primary" onClick={hideCountessWarningModal}>OK</Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 }

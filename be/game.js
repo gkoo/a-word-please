@@ -82,7 +82,6 @@ function Game({
 
   this.newRound = () => {
     ++this.roundNum;
-    this.roundWinnerId = undefined;
     playerIds.forEach(playerId => this.players[playerId].resetCards());
 
     // keeps track of how far through the deck we are
@@ -186,6 +185,8 @@ function Game({
 
     // Id of the player whose turn it is
     this.activePlayerId = nextPlayer.id;
+
+    broadcastGameDataToPlayers();
   };
 
   this.playCard = (playerId, card, effectData = {}) => {
@@ -211,11 +212,6 @@ function Game({
       broadcast('dismissReveal');
 
       this.nextTurn();
-
-      if (!this.isRoundOver()) {
-        broadcastGameDataToPlayers();
-        return;
-      }
     };
 
     if ([CARD_PRIEST, CARD_BARON].includes(card)) {

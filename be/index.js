@@ -68,7 +68,6 @@ const handleStartGame = socketId => {
 };
 
 const handleNextRound = socketId => {
-  console.log('starting next round');
   room.nextRound(socketId);
 };
 

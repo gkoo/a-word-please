@@ -47,6 +47,7 @@ function PlayerView({ player, active, allPlayers }) {
               clickable={activePlayerId === currPlayerId}
               clickCallback={handleClick}
               currPlayerId={currPlayerId}
+              currHand={player.hand}
               isDiscard={false}
             />
           )

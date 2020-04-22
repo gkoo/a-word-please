@@ -7,7 +7,7 @@ import Card from './Card';
 function PriestRevealCardModal({ hasPriestRevealCard, priestRevealCard }) {
   return (
     <Modal show={hasPriestRevealCard}>
-      <Modal.Body className='priest-reveal-modal-body'>
+      <Modal.Body className='reveal-modal-body'>
         <Card card={priestRevealCard} isDiscard={false} clickable={false} />
       </Modal.Body>
     </Modal>
