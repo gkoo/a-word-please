@@ -203,8 +203,8 @@ function Game({
       return;
     }
 
-    this.performCardEffect(card, effectData);
     player.discard(card);
+    this.performCardEffect(card, effectData);
 
     const endActions = () => {
       // Tell the clients to dismiss their revealed cards
@@ -367,7 +367,7 @@ function Game({
         broadcastMessage.push(`and guessed ${targetPlayer.name} has a ${guardNumberGuess} card`);
         if (guardGuessCards.includes(targetPlayer.hand[0])) {
           // Dead!
-          broadcastSystemMessage('systemMessage', broadcastMessage.join(' '));
+          broadcastSystemMessage(broadcastMessage.join(' '));
           knockOut(targetPlayer);
           return;
         } else {
@@ -382,8 +382,27 @@ function Game({
         broadcastMessage.push(`and is looking at ${targetPlayer.name}'s card`);
         break;
       case CARD_BARON:
-        // TODO
-        break;
+        const baronRevealData = [{
+          playerId: activePlayer.id,
+          card: activePlayer.hand[0],
+        }, {
+          playerId: targetPlayer.id,
+          card: targetPlayer.hand[0],
+        }];
+        emitToPlayer(activePlayer.id, 'baronReveal', baronRevealData);
+        emitToPlayer(targetPlayer.id, 'baronReveal', baronRevealData);
+        broadcastMessage.push(`and compared cards with ${targetPlayer.name}`);
+
+        // Who died?
+        broadcastSystemMessage(broadcastMessage.join(' '));
+        if (activePlayer.hand[0] === targetPlayer.hand[0]) {
+          broadcastSystemMessage('Nothing happened...');
+          return;
+        }
+
+        const loser = activePlayer.hand[0] < targetPlayer.hand[0] ? activePlayer : targetPlayer;
+        knockOut(loser);
+        return;
       case CARD_PRINCE:
         targetPlayer.discard(targetPlayerCard);
         drawCard({ player: targetPlayer, canUseBurnCard: true });
@@ -392,11 +411,9 @@ function Game({
         );
         break;
       case CARD_KING:
-        // Get the non-King card from the active player
-        activePlayerCardIdx = (activePlayer.hand[0] === CARD_KING) ? 1 : 0;
         // Switch the cards!
-        targetPlayer.hand[0] = activePlayer.hand[activePlayerCardIdx];
-        activePlayer.hand[activePlayerCardIdx] = targetPlayerCard;
+        targetPlayer.hand[0] = activePlayer.hand[0];
+        activePlayer.hand[0] = targetPlayerCard;
         broadcastMessage.push(
           `and switched cards with ${targetPlayer.name}`,
         );

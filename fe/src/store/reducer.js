@@ -17,10 +17,18 @@ export default function reducer(state = initialState, action) {
   let newMessages, newPlayers, players;
 
   switch(action.type) {
+    case actions.BARON_REVEAL:
+      const baronRevealData = action.payload;
+      return {
+        ...state,
+        baronRevealData,
+      };
+
     case actions.DISMISS_REVEAL:
       return {
         ...state,
-        priestRevealCard: null,
+        baronRevealData: undefined,
+        priestRevealCard: undefined,
       };
 
     case actions.NEW_LEADER:

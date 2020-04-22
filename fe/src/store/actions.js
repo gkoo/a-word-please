@@ -1,4 +1,5 @@
 // Action Types
+export const BARON_REVEAL = 'BARON_REVEAL';
 export const DISMISS_REVEAL = 'DISMISS_REVEAL';
 export const RECEIVE_GAME_DATA = 'RECEIVE_GAME_DATA';
 export const NEW_MESSAGE = 'NEW_MESSAGE';
@@ -11,6 +12,13 @@ export const RECEIVE_INIT_DATA = 'RECEIVE_INIT_DATA';
 export const SAVE_NAME = 'SAVE_NAME';
 
 // Actions
+export function baronReveal(baronData) {
+  return {
+    payload: baronData,
+    type: BARON_REVEAL,
+  }
+}
+
 export function dismissReveal() {
   return {
     type: DISMISS_REVEAL,

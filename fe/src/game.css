@@ -23,6 +23,10 @@
   width: 200px;
 }
 
-.priest-reveal-modal-body {
+.reveal-modal-body {
   text-align: center;
+}
+
+.baron-reveal-card {
+  display: inline-block;
 }

@@ -11,6 +11,7 @@ import MessageLog from './components/MessageLog';
 import NameModal from './components/NameModal';
 import PlayerList from './components/PlayerList';
 import {
+  baronReveal,
   dismissReveal,
   newPlayer,
   newLeader,
@@ -43,6 +44,7 @@ function App() {
 
   // Include second arg to prevent this from running multiple times
   useEffect(() => {
+    socket.on('baronReveal', baronData => dispatch(baronReveal(baronData)));
     socket.on('debugInfo', data => dispatch(receiveDebugInfo(data)));
     socket.on('dismissReveal', () => dispatch(dismissReveal()));
     socket.on('initData', data => dispatch(receiveInitData(data)));

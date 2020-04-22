@@ -18,4 +18,5 @@ export const currPlayerHandSelector = createSelector(
   currPlayerSelector,
   currPlayer => currPlayer && currPlayer.hand,
 );
+export const baronRevealDataSelector = state => state.baronRevealData;
 export const priestRevealCardSelector = state => state.priestRevealCard;

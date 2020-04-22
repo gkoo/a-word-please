@@ -1,10 +1,12 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
+import BaronRevealModal from './BaronRevealModal';
 import PriestRevealCardModal from './PriestRevealCardModal';
 
 import {
   activePlayerIdSelector,
+  baronRevealDataSelector,
   gameStateSelector,
   playersSelector,
   priestRevealCardSelector,
@@ -14,6 +16,7 @@ import { STATE_PENDING } from '../constants';
 
 function Board() {
   const activePlayerId = useSelector(activePlayerIdSelector);
+  const baronRevealData = useSelector(baronRevealDataSelector);
   const gameState = useSelector(gameStateSelector);
   const players = useSelector(playersSelector);
   const priestRevealCard = useSelector(priestRevealCardSelector);
@@ -41,6 +44,10 @@ function Board() {
             />
           )
         })
+      }
+      {
+        !!baronRevealData &&
+          <BaronRevealModal baronRevealData={baronRevealData} players={players} />
       }
       {
         hasPriestRevealCard &&
