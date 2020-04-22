@@ -24,11 +24,25 @@ export default function reducer(state = initialState, action) {
         baronRevealData,
       };
 
+    case actions.CLOSE_END_GAME_MODAL:
+      return {
+        ...state,
+        showEndGameModal: false,
+      };
+
     case actions.DISMISS_REVEAL:
       return {
         ...state,
         baronRevealData: undefined,
         priestRevealCard: undefined,
+      };
+
+    case actions.END_GAME:
+      const winnerIds = action.payload;
+      return {
+        ...state,
+        showEndGameModal: true,
+        winnerIds,
       };
 
     case actions.NEW_LEADER:

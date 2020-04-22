@@ -1,6 +1,8 @@
 // Action Types
 export const BARON_REVEAL = 'BARON_REVEAL';
+export const CLOSE_END_GAME_MODAL = 'CLOSE_END_GAME_MODAL';
 export const DISMISS_REVEAL = 'DISMISS_REVEAL';
+export const END_GAME = 'END_GAME';
 export const RECEIVE_GAME_DATA = 'RECEIVE_GAME_DATA';
 export const NEW_MESSAGE = 'NEW_MESSAGE';
 export const NEW_LEADER = 'NEW_LEADER';
@@ -19,9 +21,22 @@ export function baronReveal(baronData) {
   }
 }
 
+export function closeEndGameModal() {
+  return {
+    type: CLOSE_END_GAME_MODAL,
+  }
+}
+
 export function dismissReveal() {
   return {
     type: DISMISS_REVEAL,
+  }
+}
+
+export function endGame(winnerIds) {
+  return {
+    payload: winnerIds,
+    type: END_GAME,
   }
 }
 

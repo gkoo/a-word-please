@@ -1,8 +1,10 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import BaronRevealModal from './BaronRevealModal';
 import PriestRevealCardModal from './PriestRevealCardModal';
+import WinnerModal from './WinnerModal';
+import { closeEndGameModal } from '../store/actions';
 
 import {
   activePlayerIdSelector,
@@ -10,6 +12,8 @@ import {
   gameStateSelector,
   playersSelector,
   priestRevealCardSelector,
+  showEndGameModalSelector,
+  winnerIdsSelector,
 } from '../store/selectors';
 import PlayerView from './PlayerView';
 import { STATE_PENDING } from '../constants';
@@ -20,6 +24,10 @@ function Board() {
   const gameState = useSelector(gameStateSelector);
   const players = useSelector(playersSelector);
   const priestRevealCard = useSelector(priestRevealCardSelector);
+  const showEndGameModal = useSelector(showEndGameModalSelector);
+  const winnerIds = useSelector(winnerIdsSelector);
+
+  const dispatch = useDispatch();
 
   if (gameState === STATE_PENDING) {
     return (
@@ -30,6 +38,7 @@ function Board() {
   }
 
   const hasPriestRevealCard = typeof priestRevealCard === 'number';
+  const onCloseEndGameModal = () => dispatch(closeEndGameModal());
 
   return (
     <>
@@ -55,6 +64,10 @@ function Board() {
             hasPriestRevealCard={hasPriestRevealCard}
             priestRevealCard={priestRevealCard}
           />
+      }
+      {
+        winnerIds && showEndGameModal &&
+          <WinnerModal show={showEndGameModal} players={players} winnerIds={winnerIds} onClose={onCloseEndGameModal}/>
       }
     </>
   );
