@@ -121,7 +121,7 @@ function Card({
     switch (card) {
       case CARD_GUARD:
         return 'Choose a player and a number other than 1. If that player has that number ' +
-          'in their hand, that player is knocked out of the round';
+          'in their hand, that player is knocked out of the round.';
       case CARD_PRIEST:
         return 'Choose another player. You will be able to look at their hand. Do not reveal ' +
           'the hand to any other players.';

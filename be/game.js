@@ -66,7 +66,7 @@ function Game({
   }
 
   this.setup = () => {
-    this.state = STATE_STARTED;
+    this.state = STATE_PENDING;
     this.players = {};
     Object.values(players).forEach(roomPlayer => {
       const gamePlayer = new GamePlayer({ id: roomPlayer.id, name: roomPlayer.name });
@@ -81,6 +81,9 @@ function Game({
   };
 
   this.newRound = () => {
+    if (![STATE_PENDING, STATE_ROUND_END].includes(this.state)) { return; }
+
+    this.state = STATE_STARTED;
     ++this.roundNum;
     playerIds.forEach(playerId => this.players[playerId].resetCards());
 
@@ -310,20 +313,25 @@ function Game({
     broadcastSystemMessage(roundEndMsg);
 
     const isGameOver = false;
-    finalists.forEach(finalist => {
-      if (++finalist.numTokens > this.maxTokens) {
-        isGameOver = true;
-      }
-    });
+    const gameWinners = roundWinners.filter(
+      roundWinner => ++roundWinner.numTokens >= this.maxTokens
+    );
 
-    if (isGameOver) {
-      this.endGame();
+    if (gameWinners.length > 0) {
+      this.endGame(gameWinners);
+      return;
     }
 
     broadcastGameDataToPlayers();
   };
 
-  this.endGame = () => {
+  this.endGame = (winners) => {
+    console.log('end game');
+    if (winners) {
+      broadcast('endGame', { winnerIds: winners.map(winner => winner.id) });
+    }
+
+    broadcastSystemMessage('Game is over!');
     this.state = STATE_GAME_END;
   };
 
@@ -401,9 +409,17 @@ function Game({
         return;
       case CARD_PRINCE:
         targetPlayer.discard(targetPlayerCard);
+        broadcastMessage.push(
+          `and forced ${targetPlayer.name} to discard their card`,
+        );
+        if (targetPlayerCard === CARD_PRINCESS) {
+          broadcastSystemMessage(broadcastMessage);
+          knockOut(targetPlayer);
+          return;
+        }
         drawCard({ player: targetPlayer, canUseBurnCard: true });
         broadcastMessage.push(
-          `and forced ${targetPlayer.name} to discard their card and draw a new one`,
+          'and draw a new one',
         );
         break;
       case CARD_KING:
