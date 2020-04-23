@@ -27,6 +27,8 @@ function GamePlayer({ id, name }) {
 
   // Take the player out of the round
   this.knockOut = () => {
+    this.discardPile = this.discardPile.concat(this.hand);
+    this.hand = [];
     this.isKnockedOut = true;
   };
 
