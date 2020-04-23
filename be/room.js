@@ -26,16 +26,28 @@ function Room({ broadcast, emitToPlayer }) {
     }
   };
 
+  this.onPlayerDisconnect = id => {
+    const { name } = this.players[id];
+
+    this.removePlayer(id);
+    broadcast('playerDisconnect', id);
+    const leader = this.getLeader();
+
+    if (!name) { return; }
+    broadcastSystemMessage(`${name} disconnected`);
+  };
+
   const promoteRandomLeader = () => {
     const players = this.getPlayers();
 
     if (players.length === 0) { return; }
 
-    players[0].promoteToLeader();
-    console.log(`${players[0].name || players[0].id} is the new leader`);
+    const newLeader = players[0];
+    newLeader.promoteToLeader();
     for (let i = 1; i < players.length; ++i) {
       players[i].unpromoteFromLeader();
     }
+    broadcast('newLeader', newLeader.id);
   };
 
   this.getLeader = () => Object.values(this.players).find(player => player.isLeader);

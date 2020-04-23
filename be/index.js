@@ -20,22 +20,6 @@ const emitToSocket = (socketId, eventName, data) =>
 
 const room = new Room({ broadcast, emitToPlayer: emitToSocket });
 
-const handleDisconnect = (id) => {
-  const name = room.players[id].name;
-  const displayName = name ? ` (${name})` : '';
-  console.log(`Client ${id}${displayName} disconnected`);
-
-  room.removePlayer(id);
-
-  const leader = room.getLeader();
-  io.emit('playerDisconnect', id);
-
-  if (!leader) { return; }
-
-  console.log('emitting new leader');
-  io.emit('newLeader', leader.id);
-}
-
 server.listen(5000, () => {
   console.log('Starting the server on port 5000');
 });
@@ -86,7 +70,7 @@ io.on('connection', socket => {
   room.addPlayer(socket.id);
   room.sendInitRoomData(socket);
   socket.on('chatMessage', msg => room.handleMessage(socket.id, msg));
-  socket.on('disconnect', () => handleDisconnect(socket.id));
+  socket.on('disconnect', () => room.onPlayerDisconnect(socket.id));
   socket.on('playCard', ({ card, effectData }) => room.playCard(socket.id, card, effectData));
   socket.on('saveName', name => handleSetName(socket.id, name));
   socket.on('startGame', () => handleStartGame(socket.id));
