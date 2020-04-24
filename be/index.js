@@ -71,7 +71,7 @@ io.on('connection', socket => {
   room.sendInitRoomData(socket);
   socket.on('chatMessage', msg => room.handleMessage(socket.id, msg));
   socket.on('disconnect', () => room.onPlayerDisconnect(socket.id));
-  socket.on('playCard', ({ card, effectData }) => room.playCard(socket.id, card, effectData));
+  socket.on('playCard', ({ cardId, effectData }) => room.playCard(socket.id, cardId, effectData));
   socket.on('saveName', name => handleSetName(socket.id, name));
   socket.on('startGame', () => handleStartGame(socket.id));
   socket.on('nextRound', () => handleNextRound(socket.id));

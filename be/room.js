@@ -89,8 +89,8 @@ function Room({ broadcast, emitToPlayer }) {
     this.game.setup();
   };
 
-  this.playCard = (playerId, card, effectData) => {
-    this.game.playCard(playerId, card, effectData);
+  this.playCard = (playerId, cardId, effectData) => {
+    this.game.playCard(playerId, cardId, effectData);
 
     if (this.game.isGameOver()) {
       const winnerNames = this.game.getWinnerIds().map(winnerId => this.players[winnerId].name);

@@ -187,6 +187,30 @@ describe('performCardEffect', () => {
     });
   });
 
+  describe('guard', () => {
+    describe('when the guess is correct', () => {
+      it('knocks out the player', () => {
+        game.activePlayerId = '1';
+        game.players['3'].hand = [new Card({ id: 1, type: cards.BARON })];
+        const guardCard = new Card({ id: 0, type: cards.GUARD });
+        const effectData = { targetPlayerId: '3', guardNumberGuess: 3 };
+        game.performCardEffect(guardCard, effectData);
+        expect(game.players['3'].isKnockedOut).toEqual(true);
+      });
+    });
+
+    describe('when the guess is correct', () => {
+      it('doesn\'t knock out the player', () => {
+        game.activePlayerId = '1';
+        game.players['3'].hand = [new Card({ id: 1, type: cards.BARON })];
+        const guardCard = new Card({ id: 0, type: cards.GUARD });
+        const effectData = { targetPlayerId: '3', guardNumberGuess: 8 };
+        game.performCardEffect(guardCard, effectData);
+        expect(game.players['3'].isKnockedOut).toEqual(false);
+      });
+    });
+  });
+
   describe('prince', () => {
     it('moves the hand card to the discard pile', () => {
       game.activePlayerId = '1';
@@ -215,6 +239,18 @@ describe('performCardEffect', () => {
       game.performCardEffect(kingCard, { targetPlayerId: 3 })
       expect(game.players['1'].hand[0].type).toEqual(cards.GUARD);
       expect(game.players['3'].hand[0].type).toEqual(cards.BARON);
+    });
+  });
+
+  describe('princess', () => {
+    it('knocks out the player', () => {
+      game.activePlayerId = '1';
+      const princessCard = new Card({ id: 2, type: cards.PRINCESS });
+      const player = game.players['1'];
+      player.hand = [princessCard];
+      expect(player.isKnockedOut).toEqual(false);
+      game.performCardEffect(princessCard);
+      expect(player.isKnockedOut).toEqual(true);
     });
   });
 });

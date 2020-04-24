@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const uuid = require('uuid');
 
-const { cards, cardLabels } = require('./constants');
+const { cards, cardLabels, cardNumbers } = require('./constants');
 const Card = require('./card');
 const GamePlayer = require('./gamePlayer');
 
@@ -333,7 +333,7 @@ function Game({
       return;
     }
 
-    const targetPlayer = this.players[effectData.targetPlayerId];
+    const targetPlayer = effectData.targetPlayerId ? this.players[effectData.targetPlayerId] : undefined;
 
     const broadcastMessage = [`${activePlayer.name} played ${card.getLabel()}`];
     const targetPlayerCard = targetPlayer && targetPlayer.hand[0];
