@@ -8,15 +8,15 @@ function GamePlayer({ id, name }) {
 
   this.addCardToHand = card => this.hand.push(card);
 
-  this.discard = card => {
-    const cardIdx = this.hand.indexOf(card);
+  this.discardCardById = cardId => {
+    const cardIdx = this.hand.findIndex(card => card.id === cardId);
 
-    if (!this.hasCardInHand(card)) {
-      throw `Tried to discard card ${card} but it isn't in hand`;
+    if (cardIdx === -1) {
+      throw `Tried to discard card but it isn't in hand`;
     }
 
-    this.hand.splice(cardIdx, 1);
-    this.discardPile.push(card);
+    const discardedCards = this.hand.splice(cardIdx, 1);
+    this.discardPile = this.discardPile.concat(discardedCards);
   };
 
   this.resetCards = () => {
@@ -32,7 +32,9 @@ function GamePlayer({ id, name }) {
     this.isKnockedOut = true;
   };
 
-  this.hasCardInHand = card => this.hand.includes(card);
+  this.getCard = cardId => this.hand.find(card => card.id === cardId);
+
+  this.hasCard = cardType => !!this.hand.find(card => card.type === cardType);
 
   this.serialize = ({ includeHand }) => {
     const {

@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const uuid = require('uuid');
 
-const { cards } = require('./constants');
+const { cards, cardLabels } = require('./constants');
 const Card = require('./card');
 const GamePlayer = require('./gamePlayer');
 
@@ -65,18 +65,22 @@ function Game({
   };
 
   const createDeck = () => {
-    let id = 0;
+    let nextId = 0;
     let i;
-    const tmpDeck = [cards.PRINCESS, cards.COUNTESS, cards.KING];
+    const tmpDeck = [
+      new Card({ id: nextId++, type: cards.PRINCESS}),
+      new Card({ id: nextId++, type: cards.COUNTESS}),
+      new Card({ id: nextId++, type: cards.KING})
+    ];
 
     for (i=0; i<2; ++i) {
-      tmpDeck.push(cards.PRINCE);
-      tmpDeck.push(cards.HANDMAID);
-      tmpDeck.push(cards.BARON);
-      tmpDeck.push(cards.PRIEST);
+      tmpDeck.push(new Card({ id: nextId++, type: cards.PRINCE }));
+      tmpDeck.push(new Card({ id: nextId++, type: cards.HANDMAID }));
+      tmpDeck.push(new Card({ id: nextId++, type: cards.BARON }));
+      tmpDeck.push(new Card({ id: nextId++, type: cards.PRIEST }));
     }
     for (i=0; i<5; ++i) {
-      tmpDeck.push(cards.GUARD);
+      tmpDeck.push(new Card({ id: nextId++, type: cards.GUARD }));
     }
 
     this.deck = _.shuffle(tmpDeck);
@@ -163,14 +167,15 @@ function Game({
     broadcastGameDataToPlayers();
   };
 
-  this.playCard = (playerId, card, effectData = {}) => {
+  this.playCard = (playerId, cardId, effectData = {}) => {
     const player = this.players[playerId];
 
     if (this.activePlayerId !== playerId) {
       throw 'Player tried to play a card when it wasn\'t their turn! Aborting...';
     }
 
-    if (!player.hasCardInHand(card)) {
+    const card = player.getCard(cardId);
+    if (!card) {
       throw 'Player tried to play a card when it wasn\'t in their hand! Aborting...';
     }
 
@@ -178,7 +183,7 @@ function Game({
       return;
     }
 
-    player.discard(card);
+    player.discardCardById(card.id);
     this.performCardEffect(card, effectData);
 
     const endActions = () => {
@@ -188,7 +193,7 @@ function Game({
       this.nextTurn();
     };
 
-    if ([cards.PRIEST, cards.BARON].includes(card)) {
+    if ([cards.PRIEST, cards.BARON].includes(card.type)) {
       setTimeout(endActions, 3000);
     } else {
       endActions();
@@ -198,10 +203,10 @@ function Game({
   const isLegalMove = (player, card, effectData = {}) => {
     // Check Countess card effect
     // TODO: alert this error instead of putting in chat
-    if ([cards.KING, cards.PRINCE].includes(card) && player.hasCardInHand(cards.COUNTESS)) {
+    if ([cards.KING, cards.PRINCE].includes(card.type) && player.hasCard(cards.COUNTESS)) {
       // If you have the King or Prince in your hand, you must discard the Countess.
       const message = `(Only visible to you) You cannot discard the ` +
-        `${labelForCard(cards.COUNTESS)} when you have the ${labelForCard(card)} in your hand`;
+        `${cardLabels[cards.COUNTESS]} when you have the ${card.getLabel()} in your hand`;
       emitSystemMessage(player.id, message);
       return false;
     }
@@ -223,9 +228,10 @@ function Game({
     }
 
     // Check Handmaid card effect
-    if (targetPlayer.discardPile[targetPlayer.discardPile.length-1] === cards.HANDMAID) {
+    const numDiscard = targetPlayer.discardPile.length;
+    if (numDiscard > 0 && targetPlayer.discardPile[numDiscard-1].type === cards.HANDMAID) {
       const message = '(Only visible to you) You can\'t target someone who played ' +
-        `${labelForCard(cards.HANDMAID)} last turn`;
+        `${cardLabels[cards.HANDMAID]} last turn`;
       emitSystemMessage(player.id, message);
       return false;
     }
@@ -322,25 +328,26 @@ function Game({
   this.performCardEffect = (card, effectData) => {
     const activePlayer = this.players[this.activePlayerId];
 
-    const cardLabel = labelForCard(card);
     if (allAlivePlayersHaveHandmaids()) {
-      broadcastSystemMessage(`${activePlayer.name} discarded ${cardLabel}`);
+      broadcastSystemMessage(`${activePlayer.name} discarded ${card.getLabel()}`);
       return;
     }
 
     const targetPlayer = this.players[effectData.targetPlayerId];
 
-    const broadcastMessage = [`${activePlayer.name} played ${cardLabel}`];
+    const broadcastMessage = [`${activePlayer.name} played ${card.getLabel()}`];
     const targetPlayerCard = targetPlayer && targetPlayer.hand[0];
 
-    switch (card) {
+    switch (card.type) {
       case cards.GUARD:
         const { guardNumberGuess } = effectData;
-        const guardGuessCards = Object.keys(enumsToValues).filter(card => {
-          return guardNumberGuess === enumsToValues[card].value;
-        }).map(card => parseInt(card, 10)); // for some reason it gets turned into a string
         broadcastMessage.push(`and guessed ${targetPlayer.name} has a ${guardNumberGuess} card`);
-        if (guardGuessCards.includes(targetPlayer.hand[0])) {
+
+        const guardGuessCardTypes = Object.keys(cardNumbers).filter(cardType => {
+          return guardNumberGuess === cardNumbers[cardType];
+        }).map(card => parseInt(card, 10)); // for some reason it gets turned into a string
+
+        if (guardGuessCardTypes.includes(targetPlayer.hand[0].type)) {
           // Dead!
           broadcastSystemMessage(broadcastMessage.join(' '));
           knockOut(targetPlayer);
@@ -352,7 +359,7 @@ function Game({
       case cards.PRIEST:
         emitToPlayer(activePlayer.id, 'priestReveal', targetPlayerCard);
         const priestRevealMessage = `(Only visible to you) ${targetPlayer.name} is holding the ` +
-          `${enumsToValues[targetPlayerCard].label}!`;
+          `${targetPlayerCard.getLabel()}!`;
         emitSystemMessage(activePlayer.id, priestRevealMessage);
         broadcastMessage.push(`and is looking at ${targetPlayer.name}'s card`);
         break;
@@ -375,11 +382,16 @@ function Game({
           return;
         }
 
-        const loser = activePlayer.hand[0] < targetPlayer.hand[0] ? activePlayer : targetPlayer;
+        let loser;
+        if (activePlayer.hand[0].getNumber() < targetPlayer.hand[0].getNumber()) {
+          loser = activePlayer;
+        } else {
+          loser = targetPlayer;
+        }
         knockOut(loser);
         return;
       case cards.PRINCE:
-        targetPlayer.discard(targetPlayerCard);
+        targetPlayer.discardCardById(targetPlayerCard.id);
         broadcastMessage.push(
           `and forced ${targetPlayer.name} to discard their card`,
         );
@@ -422,46 +434,19 @@ function Game({
 
   const allAlivePlayersHaveHandmaids = () => {
     const players = Object.values(this.players);
-    return !players.find(
+    const playerWithoutHandmaid = players.find(
       player => {
         if (player.id === this.activePlayerId) { return false; } // skip the active player
-        return player.discardPile[player.discardPile.length - 1] !== cards.HANDMAID;
+        if (player.discardPile.length === 0) { return true; } // no discard pile cards
+        return player.discardPile[player.discardPile.length - 1].type !== cards.HANDMAID;
       }
     );
+    return !playerWithoutHandmaid;
   };
 
   const knockOut = player => {
     player.knockOut();
     broadcastSystemMessage(`${player.name} was knocked out of the round!`);
-  };
-
-  const labelForCard = card => {
-    switch (card) {
-      case cards.GUARD:
-        return 'Guard';
-        break;
-      case cards.PRIEST:
-        return 'Priest';
-        break;
-      case cards.BARON:
-        return 'Baron';
-        break;
-      case cards.HANDMAID:
-        return 'Handmaid';
-        break;
-      case cards.PRINCE:
-        return 'Prince';
-        break;
-      case cards.KING:
-        return 'King';
-        break;
-      case cards.COUNTESS:
-        return 'Countess';
-        break;
-      case cards.PRINCESS:
-        return 'Princess';
-        break;
-    }
   };
 
   const emitSystemMessage = (playerId, msg) => {
