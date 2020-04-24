@@ -1,16 +1,9 @@
 const _ = require('lodash');
 
+const Card = require('./card');
 const Game = require('./game');
 const Player = require('./Player');
-
-const CARD_GUARD = 0;
-const CARD_PRIEST = 1;
-const CARD_BARON = 2;
-const CARD_HANDMAID = 3;
-const CARD_PRINCE = 4;
-const CARD_KING = 5;
-const CARD_COUNTESS = 6;
-const CARD_PRINCESS = 7;
+const { cards } = require('./constants');
 
 let game;
 let players;
@@ -100,44 +93,44 @@ describe('playCard', () => {
     describe('when both Countess and King are in hand', () => {
       beforeEach(() => {
         game.activePlayerId = '1';
-        game.players['1'].hand = [CARD_COUNTESS, CARD_KING];
+        game.players['1'].hand = [cards.COUNTESS, cards.KING];
       });
 
       it('prohibits playing the King', () => {
-        game.playCard(game.activePlayerId, CARD_KING);
+        game.playCard(game.activePlayerId, cards.KING);
         const player = game.players[game.activePlayerId];
         expect(player.hand).toHaveLength(2);
-        expect(player.hand).toContain(CARD_KING);
-        expect(player.hand).toContain(CARD_COUNTESS);
+        expect(player.hand).toContain(cards.KING);
+        expect(player.hand).toContain(cards.COUNTESS);
       });
     });
 
     describe('targeting the handmaid', () => {
       beforeEach(() => {
         game.activePlayerId = '1';
-        game.players['1'].hand = [CARD_GUARD, CARD_KING];
-        game.players['2'].hand = [CARD_PRINCESS];
-        game.players['2'].discardPile = [CARD_HANDMAID];
+        game.players['1'].hand = [cards.GUARD, cards.KING];
+        game.players['2'].hand = [cards.PRINCESS];
+        game.players['2'].discardPile = [cards.HANDMAID];
       });
 
       it('has no effect', () => {
-        game.playCard('1', CARD_KING, { targetPlayerId: '2' });
-        expect(game.players['1'].hand).toContain(CARD_GUARD);
-        expect(game.players['2'].hand).toContain(CARD_PRINCESS);
+        game.playCard('1', cards.KING, { targetPlayerId: '2' });
+        expect(game.players['1'].hand).toContain(cards.GUARD);
+        expect(game.players['2'].hand).toContain(cards.PRINCESS);
       });
     });
 
     describe('targeting a knocked out player', () => {
       beforeEach(() => {
         game.activePlayerId = '1';
-        game.players['1'].hand = [CARD_GUARD, CARD_KING];
+        game.players['1'].hand = [cards.GUARD, cards.KING];
         game.players['2'].isKnockedOut = true;
       });
 
       it('has no effect', () => {
-        game.playCard('1', CARD_KING, { targetPlayerId: '2' });
-        expect(game.players['1'].hand).toContain(CARD_KING);
-        expect(game.players['1'].hand).toContain(CARD_GUARD);
+        game.playCard('1', cards.KING, { targetPlayerId: '2' });
+        expect(game.players['1'].hand).toContain(cards.KING);
+        expect(game.players['1'].hand).toContain(cards.GUARD);
       });
     });
   });
@@ -178,14 +171,14 @@ describe('performCardEffect', () => {
   describe('when all other alive players have a handmaid', () => {
     it('has no effect', () => {
       game.activePlayerId = '1';
-      const card = CARD_PRINCE;
+      const card = cards.PRINCE;
       game.players['1'].hand = [card];
-      game.players['2'].discardPile = [CARD_HANDMAID];
-      game.players['3'].hand = [CARD_PRINCESS];
-      game.players['3'].discardPile = [CARD_HANDMAID];
+      game.players['2'].discardPile = [cards.HANDMAID];
+      game.players['3'].hand = [cards.PRINCESS];
+      game.players['3'].discardPile = [cards.HANDMAID];
       game.performCardEffect(card, { targetPlayerId: '3' });
       expect(game.players['3'].hand).toHaveLength(1);
-      expect(game.players['3'].hand[0]).toEqual(CARD_PRINCESS);
+      expect(game.players['3'].hand[0]).toEqual(cards.PRINCESS);
     });
   });
 
@@ -194,7 +187,7 @@ describe('performCardEffect', () => {
       game.activePlayerId = '1';
       const fakeCard = -1;
       game.players['3'].hand = [fakeCard];
-      game.performCardEffect(CARD_PRINCE, { targetPlayerId: 3 })
+      game.performCardEffect(cards.PRINCE, { targetPlayerId: 3 })
       expect(game.players['3'].discardPile).toContain(fakeCard);
       expect(game.players['3'].hand).toHaveLength(1);
       expect(game.players['3'].hand).not.toContain(fakeCard);
@@ -204,11 +197,11 @@ describe('performCardEffect', () => {
   describe('king', () => {
     it('switches cards with the target player', () => {
       game.activePlayerId = '1';
-      game.players['1'].hand = [CARD_BARON, CARD_KING];
-      game.players['3'].hand = [CARD_GUARD];
-      game.performCardEffect(CARD_KING, { targetPlayerId: 3 })
-      expect(game.players['3'].hand).toContain(CARD_BARON);
-      expect(game.players['1'].hand).toContain(CARD_GUARD);
+      game.players['1'].hand = [cards.BARON, cards.KING];
+      game.players['3'].hand = [cards.GUARD];
+      game.performCardEffect(cards.KING, { targetPlayerId: 3 })
+      expect(game.players['3'].hand).toContain(cards.BARON);
+      expect(game.players['1'].hand).toContain(cards.GUARD);
     });
   });
 });

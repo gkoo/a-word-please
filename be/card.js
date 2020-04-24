@@ -1,23 +1,26 @@
-function Card(id, type) {
+const { cards } = require('./constants');
+
+function Card({ id, type }) {
   this.id = id;
   this.type = type;
+
   this.getLabel = () => {
     switch (this.type) {
-      case Card.GUARD:
+      case cards.GUARD:
         return 'Guard';
-      case Card.PRIEST:
+      case cards.PRIEST:
         return 'Priest';
-      case Card.BARON:
+      case cards.BARON:
         return 'Baron';
-      case Card.HANDMAID:
+      case cards.HANDMAID:
         return 'Handmaid';
-      case Card.PRINCE:
+      case cards.PRINCE:
         return 'Prince';
-      case Card.KING:
+      case cards.KING:
         return 'King';
-      case Card.COUNTESS:
+      case cards.COUNTESS:
         return 'Countess';
-      case Card.PRINCESS:
+      case cards.PRINCESS:
         return 'Princess';
       default:
         throw 'Unknown card';
@@ -27,35 +30,26 @@ function Card(id, type) {
   this.getNumber = () => {
     // This is the user-facing number on the card
     switch (this.type) {
-      case Card.GUARD:
+      case cards.GUARD:
         return 1;
-      case Card.PRIEST:
+      case cards.PRIEST:
         return 2;
-      case Card.BARON:
+      case cards.BARON:
         return 3;
-      case Card.HANDMAID:
+      case cards.HANDMAID:
         return 4;
-      case Card.PRINCE:
+      case cards.PRINCE:
         return 5;
-      case Card.KING:
+      case cards.KING:
         return 6;
-      case Card.COUNTESS:
+      case cards.COUNTESS:
         return 7;
-      case Card.PRINCESS:
+      case cards.PRINCESS:
         return 8;
       default:
         throw 'Unknown card';
     };
   };
 }
-
-Card.prototype.GUARD = 0;
-Card.prototype.PRIEST = 1;
-Card.prototype.BARON = 2;
-Card.prototype.HANDMAID = 3;
-Card.prototype.PRINCE = 4;
-Card.prototype.KING = 5;
-Card.prototype.COUNTESS = 6;
-Card.prototype.PRINCESS = 7;
 
 module.exports = Card;
