@@ -5,18 +5,21 @@ import Card from './Card';
 import {
   activePlayerIdSelector,
   currPlayerIdSelector,
+  gameStateSelector,
   socketSelector,
 } from '../store/selectors';
+import { STATE_GAME_END } from '../constants';
 
 function PlayerView({ player, active, allPlayers }) {
   const activePlayerId = useSelector(activePlayerIdSelector);
   const currPlayerId = useSelector(currPlayerIdSelector);
+  const gameState = useSelector(gameStateSelector);
   const socket = useSelector(socketSelector);
 
   const handleClick = ({ card, effectData }) => {
     if (!active) { return; }
 
-    socket.emit('playCard', { card, effectData });
+    socket.emit('playCard', { cardId: card.id, effectData });
   };
 
   const renderTokens = () => {
@@ -35,7 +38,7 @@ function PlayerView({ player, active, allPlayers }) {
       </div>
       {
         player.discardPile && player.discardPile.map(
-          discardCard => <Card card={discardCard} isDiscard={true}/>
+          discardCard => <Card key={discardCard.id} card={discardCard} isDiscard={true}/>
         )
       }
       {
@@ -44,11 +47,12 @@ function PlayerView({ player, active, allPlayers }) {
             <Card
               allPlayers={allPlayers}
               card={card}
-              clickable={activePlayerId === currPlayerId}
+              clickable={activePlayerId === currPlayerId && gameState != STATE_GAME_END}
               clickCallback={handleClick}
               currPlayerId={currPlayerId}
               currHand={player.hand}
               isDiscard={false}
+              key={card.id}
             />
           )
         )

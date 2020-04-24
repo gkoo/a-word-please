@@ -37,7 +37,6 @@ function Board() {
     );
   }
 
-  const hasPriestRevealCard = typeof priestRevealCard === 'number';
   const onCloseEndGameModal = () => dispatch(closeEndGameModal());
 
   return (
@@ -59,11 +58,8 @@ function Board() {
           <BaronRevealModal baronRevealData={baronRevealData} players={players} />
       }
       {
-        hasPriestRevealCard &&
-          <PriestRevealCardModal
-            hasPriestRevealCard={hasPriestRevealCard}
-            priestRevealCard={priestRevealCard}
-          />
+        priestRevealCard &&
+          <PriestRevealCardModal priestRevealCard={priestRevealCard} />
       }
       {
         winnerIds && showEndGameModal &&

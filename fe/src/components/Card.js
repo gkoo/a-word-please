@@ -40,7 +40,7 @@ function Card({
     CARD_BARON,
     CARD_PRINCE,
     CARD_KING,
-  ].includes(card);
+  ].includes(card.type);
 
   const enumsToValues = {
     [CARD_GUARD]: {
@@ -77,14 +77,19 @@ function Card({
     },
   };
 
-  const { label, value } = enumsToValues[card];
+  const { label, value } = enumsToValues[card.type];
 
   const handleClick = card => {
     if (!clickable) { return; }
     if (isDiscard) { return; }
 
-    if (currHand.includes(CARD_COUNTESS) && (currHand.includes(CARD_KING) || currHand.includes(CARD_PRINCE))) {
-      if (card !== CARD_COUNTESS) {
+    const currHandTypes = currHand.map(card => card.type);
+    const hasCountess = currHandTypes.includes(CARD_COUNTESS);
+    const hasKing = currHandTypes.includes(CARD_KING);
+    const hasPrince = currHandTypes.includes(CARD_PRINCE);
+
+    if (hasCountess && (hasKing || hasPrince)) {
+      if (card.type !== CARD_COUNTESS) {
         setShowCountessWarning(true);
         return;
       }
@@ -118,7 +123,7 @@ function Card({
   const alivePlayers = Object.values(allPlayers).filter(player => !player.isKnockedOut);
 
   const getTargetInstructions = () => {
-    switch (card) {
+    switch (card.type) {
       case CARD_GUARD:
         return 'Choose a player and a number other than 1. If that player has that number ' +
           'in their hand, that player is knocked out of the round.';
@@ -134,7 +139,7 @@ function Card({
       case CARD_KING:
         return 'Trade the card in your hand with the card held by another player of your choice.';
       default:
-        console.error(`Unexpected card ${card} for getTargetInstructions`);
+        console.error(`Unexpected card ${card.type} for getTargetInstructions`);
     }
   };
 
@@ -169,7 +174,7 @@ function Card({
     }
     // Remove handmaid from targets
     targetCandidates = targetCandidates.filter(
-      player => player.discardPile[player.discardPile.length - 1] !== CARD_HANDMAID,
+      player => !player.discardPile.length || player.discardPile[player.discardPile.length - 1].type !== CARD_HANDMAID,
     );
 
     if (targetCandidates.length === 0) {
@@ -177,7 +182,7 @@ function Card({
       return discardCardButton();
     }
 
-    if (card === CARD_GUARD) {
+    if (card.type === CARD_GUARD) {
       return getGuardTargetButtons({ targetCandidates });
     }
 
@@ -228,7 +233,7 @@ function Card({
     )
   };
 
-  const includeSelfTarget = (card === CARD_PRINCE);
+  const includeSelfTarget = (card.type === CARD_PRINCE);
 
   const hideTargetOptions = () => setShowTargetOptions(false);
 
@@ -248,7 +253,7 @@ function Card({
         <Popover>
           <Popover.Title as="h3">{label}</Popover.Title>
           <Popover.Content>
-            <p>{getTargetInstructions(card)}</p>
+            <p>{getTargetInstructions()}</p>
             {getTargetButtons({ includeSelfTarget })}
           </Popover.Content>
         </Popover>

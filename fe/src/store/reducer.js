@@ -2,7 +2,7 @@ import io from 'socket.io-client';
 
 import * as actions from './actions';
 
-import { STATE_PENDING } from '../constants';
+import { STATE_PENDING, STATE_GAME_END } from '../constants';
 
 const socketIoServerUrl = 'http://localhost:5000';
 
@@ -41,6 +41,7 @@ export default function reducer(state = initialState, action) {
       const winnerIds = action.payload;
       return {
         ...state,
+        gameState: STATE_GAME_END,
         showEndGameModal: true,
         winnerIds,
       };

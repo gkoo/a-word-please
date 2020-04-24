@@ -183,8 +183,9 @@ function Game({
       return;
     }
 
-    player.discardCardById(card.id);
     this.performCardEffect(card, effectData);
+
+    if (!player.isKnockedOut) { player.discardCardById(card.id); }
 
     const endActions = () => {
       // Tell the clients to dismiss their revealed cards
@@ -337,6 +338,8 @@ function Game({
 
     const broadcastMessage = [`${activePlayer.name} played ${card.getLabel()}`];
     const targetPlayerCard = targetPlayer && targetPlayer.hand[0];
+    // the card that the active player did not play
+    const activePlayerOtherCard = activePlayer.hand.find(handCard => handCard.id !== card.id);
 
     switch (card.type) {
       case cards.GUARD:
@@ -366,7 +369,7 @@ function Game({
       case cards.BARON:
         const baronRevealData = [{
           playerId: activePlayer.id,
-          card: activePlayer.hand[0],
+          card: activePlayerOtherCard,
         }, {
           playerId: targetPlayer.id,
           card: targetPlayer.hand[0],
@@ -407,7 +410,7 @@ function Game({
         break;
       case cards.KING:
         // Switch the cards!
-        targetPlayer.hand[0] = activePlayer.hand[0];
+        targetPlayer.hand[0] = activePlayerOtherCard;
         activePlayer.hand[0] = targetPlayerCard;
         broadcastMessage.push(
           `and switched cards with ${targetPlayer.name}`,
