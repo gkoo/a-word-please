@@ -13,16 +13,17 @@ const CARD_COUNTESS = 6;
 const CARD_PRINCESS = 7;
 
 let game;
-let players = {
-  '1': new Player('1'),
-  '2': new Player('2'),
-  '3': new Player('3'),
-};
+let players;
 
 const mockBroadcast = jest.fn();
 const mockEmitToPlayer = jest.fn();
 
 beforeEach(() => {
+  players = {
+    '1': new Player('1'),
+    '2': new Player('2'),
+    '3': new Player('3'),
+  };
   game = new Game({
     broadcastSystemMessage: mockBroadcast,
     emitToPlayer: mockEmitToPlayer,
@@ -32,6 +33,25 @@ beforeEach(() => {
 });
 
 describe('setup', () => {
+  it('enforces max players', () => {
+    players = {
+      '1': new Player('1'),
+      '2': new Player('2'),
+      '3': new Player('3'),
+      '4': new Player('4'),
+      '5': new Player('5'),
+      '6': new Player('6'),
+      '7': new Player('7'),
+      '8': new Player('8'),
+    };
+    game = new Game({
+      broadcastSystemMessage: mockBroadcast,
+      emitToPlayer: mockEmitToPlayer,
+      players: players,
+    });
+    game.setup();
+  });
+
   it('deals cards', () => {
     expect(game.deck).toHaveLength(15);
     Object.values(game.players).forEach(player => {
@@ -128,7 +148,7 @@ describe('serializeForPlayer', () => {
     const { players, roundNum, state } = game.serializeForPlayer('1');
     expect(roundNum).toEqual(game.roundNum);
     expect(state).toEqual(game.state);
-    expect(players['1'].hand).toHaveLength(1);
+    expect(players['1'].hand).toHaveLength(2);
     // Shouldn't reveal other players' hands
     expect(players['2'].hand).toBeUndefined();
     expect(players['3'].hand).toBeUndefined();

@@ -58,17 +58,28 @@ function Game({
     },
   };
 
+  const MIN_PLAYERS = 2;
+  const MAX_PLAYERS = 4;
+
   const playerIds = Object.keys(players);
   const numPlayers = playerIds.length;
 
-  if (numPlayers < 2 || numPlayers > 4) {
-    throw 'Only 2-4 player games are currently supported';
-  }
-
   this.setup = () => {
+    const playerList = Object.values(players);
     this.state = STATE_PENDING;
     this.players = {};
-    Object.values(players).forEach(roomPlayer => {
+    this.spectators = {};
+
+    const numPlayers = playerList.length;
+    if (numPlayers < MIN_PLAYERS) {
+      broadcastSystemMessage(`Cannot start the game with less than ${MIN_PLAYERS} players`);
+      return;
+    }
+    if (numPlayers > MAX_PLAYERS) {
+      broadcastSystemMessage(`Cannot start the game with over ${MAX_PLAYERS} players`);
+      return;
+    }
+    playerList.forEach(roomPlayer => {
       const gamePlayer = new GamePlayer({ id: roomPlayer.id, name: roomPlayer.name });
       this.players[roomPlayer.id] = gamePlayer;
     });
