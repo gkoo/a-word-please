@@ -183,7 +183,7 @@ function Game({
       return;
     }
 
-    this.performCardEffect(card, effectData);
+    const success = this.performCardEffect(card, effectData);
 
     if (!player.isKnockedOut) { player.discardCardById(card.id); }
 
@@ -194,7 +194,8 @@ function Game({
       this.nextTurn();
     };
 
-    if ([cards.PRIEST, cards.BARON].includes(card.type)) {
+    // Don't delay next turn if card was discarded
+    if (success && [cards.PRIEST, cards.BARON].includes(card.type)) {
       setTimeout(endActions, 3000);
     } else {
       endActions();
@@ -326,6 +327,7 @@ function Game({
 
   this.isGameOver = () => this.state === STATE_GAME_END;
 
+  // Returns true if card effect was performed successfully, false otherwise.
   this.performCardEffect = (card, effectData) => {
     const activePlayer = this.players[this.activePlayerId];
 
@@ -335,9 +337,10 @@ function Game({
         undefined
     );
 
-    if (targetPlayer && allAlivePlayersHaveHandmaids()) {
+    if (allAlivePlayersHaveHandmaids()) {
+      console.log('all players have handmaids. discarding...');
       broadcastSystemMessage(`${activePlayer.name} discarded ${card.getLabel()}`);
-      return;
+      return false;
     }
 
     const broadcastMessage = [`${activePlayer.name} played ${card.getLabel()}`];
@@ -360,12 +363,13 @@ function Game({
           // Dead!
           broadcastSystemMessage(broadcastMessage.join(' '));
           knockOut(targetPlayer);
-          return;
+          return true;
         } else {
           broadcastMessage.push('but was wrong');
         }
         break;
       case cards.PRIEST:
+        console.log('revealing for priest');
         emitToPlayer(activePlayer.id, 'priestReveal', targetPlayerCard);
         const priestRevealMessage = `(Only visible to you) ${targetPlayer.name} is holding the ` +
           `${targetPlayerCard.getLabel()}!`;
@@ -388,7 +392,7 @@ function Game({
         broadcastSystemMessage(broadcastMessage.join(' '));
         if (activePlayer.hand[0] === targetPlayer.hand[0]) {
           broadcastSystemMessage('Nothing happened...');
-          return;
+          return true;
         }
 
         let loser;
@@ -398,7 +402,7 @@ function Game({
           loser = targetPlayer;
         }
         knockOut(loser);
-        return;
+        return true;
       case cards.PRINCE:
         targetPlayer.discardCardById(targetPlayerCard.id);
         broadcastMessage.push(
@@ -407,7 +411,7 @@ function Game({
         if (targetPlayerCard === cards.PRINCESS) {
           broadcastSystemMessage(broadcastMessage);
           knockOut(targetPlayer);
-          return;
+          return true;
         }
         drawCard({ player: targetPlayer, canUseBurnCard: true });
         broadcastMessage.push(
@@ -439,6 +443,7 @@ function Game({
     }
 
     broadcastSystemMessage(broadcastMessage.join(' '));
+    return true;
   };
 
   const allAlivePlayersHaveHandmaids = () => {

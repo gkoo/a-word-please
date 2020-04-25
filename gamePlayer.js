@@ -43,6 +43,7 @@ function GamePlayer({ id, name }) {
     const {
       discardPile,
       hand,
+      handmaidActive,
       id,
       isKnockedOut,
       numTokens,
@@ -51,6 +52,7 @@ function GamePlayer({ id, name }) {
     return {
       discardPile,
       hand: includeHand ? hand : undefined,
+      handmaidActive,
       id,
       isKnockedOut,
       numTokens,
