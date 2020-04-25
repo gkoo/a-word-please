@@ -12,6 +12,7 @@ const Room = require('./room');
 
 app.set('port', 5000);
 app.use('/static', express.static(__dirname + '/static'));
+app.get('/', (req, res) => res.send('Hello World!'))
 
 // Callbacks to pass to room
 const broadcast = (eventName, data) => io.emit(eventName, data);
