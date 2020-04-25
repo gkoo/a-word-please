@@ -7,8 +7,8 @@ const app = express();
 const server = http.Server(app);
 const io = socketIO(server);
 
-const Player = require('./Player');
-const Room = require('./Room');
+const Player = require('./player');
+const Room = require('./room');
 
 app.set('port', 5000);
 app.use('/static', express.static(__dirname + '/static'));
