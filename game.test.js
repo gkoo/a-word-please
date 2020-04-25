@@ -171,15 +171,11 @@ describe('performCardEffect', () => {
       game.activePlayerId = '1';
       const card = new Card({ id: 0, type: cards.PRINCE });
       game.players['1'].hand = [card];
-      game.players['2'].discardPile = [
-        new Card({ id: 1, type: cards.HANDMAID }),
-      ];
+      game.players['2'].handmaidActive = true;
       game.players['3'].hand = [
         new Card({ id: 2, type: cards.PRINCESS }),
       ];
-      game.players['3'].discardPile = [
-        new Card({ id: 3, type: cards.HANDMAID }),
-      ];
+      game.players['3'].handmaidActive = true;
       game.performCardEffect(card, { targetPlayerId: '3' });
       expect(game.players['3'].hand).toHaveLength(1);
       expect(game.players['3'].hand[0].type).toEqual(cards.PRINCESS);
@@ -208,6 +204,18 @@ describe('performCardEffect', () => {
         game.performCardEffect(guardCard, effectData);
         expect(game.players['3'].isKnockedOut).toEqual(false);
       });
+    });
+  });
+
+  describe('handmaid', () => {
+    it('sets handmaid status to active', () => {
+      game.activePlayerId = '1';
+      const handmaidCard = new Card({ id: 2, type: cards.HANDMAID });
+      const player = game.players['1'];
+      player.hand = [handmaidCard];
+      expect(player.handmaidActive).toEqual(false);
+      game.performCardEffect(handmaidCard);
+      expect(player.handmaidActive).toEqual(true);
     });
   });
 

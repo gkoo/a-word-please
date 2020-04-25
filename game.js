@@ -329,17 +329,23 @@ function Game({
   this.performCardEffect = (card, effectData) => {
     const activePlayer = this.players[this.activePlayerId];
 
-    if (allAlivePlayersHaveHandmaids()) {
+    const targetPlayer = (
+      effectData && effectData.targetPlayerId ?
+        this.players[effectData.targetPlayerId] :
+        undefined
+    );
+
+    if (targetPlayer && allAlivePlayersHaveHandmaids()) {
       broadcastSystemMessage(`${activePlayer.name} discarded ${card.getLabel()}`);
       return;
     }
-
-    const targetPlayer = effectData.targetPlayerId ? this.players[effectData.targetPlayerId] : undefined;
 
     const broadcastMessage = [`${activePlayer.name} played ${card.getLabel()}`];
     const targetPlayerCard = targetPlayer && targetPlayer.hand[0];
     // the card that the active player did not play
     const activePlayerOtherCard = activePlayer.hand.find(handCard => handCard.id !== card.id);
+
+    activePlayer.setHandmaid(false);
 
     switch (card.type) {
       case cards.GUARD:
@@ -422,7 +428,7 @@ function Game({
         knockOut(activePlayer);
         break;
       case cards.HANDMAID:
-        // effects handled elsewhere
+        activePlayer.setHandmaid(true);
         broadcastMessage.push('and is immune from card effects until their next turn');
         break;
       case cards.COUNTESS:
@@ -438,11 +444,7 @@ function Game({
   const allAlivePlayersHaveHandmaids = () => {
     const players = Object.values(this.players);
     const playerWithoutHandmaid = players.find(
-      player => {
-        if (player.id === this.activePlayerId) { return false; } // skip the active player
-        if (player.discardPile.length === 0) { return true; } // no discard pile cards
-        return player.discardPile[player.discardPile.length - 1].type !== cards.HANDMAID;
-      }
+      player => !player.handmaidActive && (player.id !== this.activePlayerId)
     );
     return !playerWithoutHandmaid;
   };

@@ -5,6 +5,7 @@ function GamePlayer({ id, name }) {
   this.discardPile = [];
   this.numTokens = 0;
   this.isKnockedOut = false;
+  this.handmaidActive = false;
 
   this.addCardToHand = card => this.hand.push(card);
 
@@ -35,6 +36,8 @@ function GamePlayer({ id, name }) {
   this.getCard = cardId => this.hand.find(card => card.id === cardId);
 
   this.hasCard = cardType => !!this.hand.find(card => card.type === cardType);
+
+  this.setHandmaid = (enabled) => this.handmaidActive = enabled;
 
   this.serialize = ({ includeHand }) => {
     const {
