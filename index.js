@@ -10,7 +10,8 @@ const io = socketIO(server);
 const Player = require('./player');
 const Room = require('./room');
 
-app.set('port', 5000);
+const port = process.env.PORT || 5000;
+app.set('port', port);
 app.use('/static', express.static(__dirname + '/static'));
 app.get('/', (req, res) => res.send('Hello World!'))
 
@@ -21,8 +22,8 @@ const emitToSocket = (socketId, eventName, data) =>
 
 const room = new Room({ broadcast, emitToPlayer: emitToSocket });
 
-server.listen(5000, () => {
-  console.log('Starting the server on port 5000');
+server.listen(port, () => {
+  console.log(`Starting the server on port ${port}`);
 });
 
 const handleSetName = (id, name) => {
