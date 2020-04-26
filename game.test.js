@@ -239,6 +239,24 @@ describe('performCardEffect', () => {
       expect(game.players['1'].isKnockedOut).toEqual(false);
       expect(game.players['2'].isKnockedOut).toEqual(true);
     });
+
+    describe('when the baron is the first card in the hand', () => {
+      it('knocks out the player with the lower card', () => {
+        const baronCard = new Card({ id: 1, type: cards.BARON });
+        game.players['1'].hand = [
+          baronCard,
+          new Card({ id: 0, type: cards.PRINCESS }),
+        ];
+        game.players['2'].hand = [
+          new Card({ id: 2, type: cards.KING }),
+        ];
+        game.activePlayerId = '1';
+        success = game.performCardEffect(baronCard, { targetPlayerId: '2' });
+        expect(success).toEqual(true);
+        expect(game.players['1'].isKnockedOut).toEqual(false);
+        expect(game.players['2'].isKnockedOut).toEqual(true);
+      });
+    });
   });
 
   describe('handmaid', () => {
@@ -325,6 +343,22 @@ describe('performCardEffect', () => {
       game.performCardEffect(kingCard, { targetPlayerId: 3 })
       expect(game.players['1'].hand[0].type).toEqual(cards.GUARD);
       expect(game.players['3'].hand[0].type).toEqual(cards.BARON);
+    });
+
+    describe('when player has princess', () => {
+      it('switches cards with the target player', () => {
+        game.activePlayerId = '1';
+        const princessCard = new Card({ id: 100, type: cards.PRINCESS });
+        const kingCard = new Card({ id: 101, type: cards.KING });
+        const guardCard = new Card({ id: 102, type: cards.GUARD });
+
+        game.players['1'].hand = [princessCard, kingCard];
+        game.players['3'].hand = [guardCard];
+
+        game.performCardEffect(kingCard, { targetPlayerId: 3 })
+        expect(game.players['1'].hand[0].type).toEqual(cards.GUARD);
+        expect(game.players['3'].hand[0].type).toEqual(cards.PRINCESS);
+      });
     });
   });
 

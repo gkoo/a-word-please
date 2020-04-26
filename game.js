@@ -382,7 +382,7 @@ function Game({
           card: activePlayerOtherCard,
         }, {
           playerId: targetPlayer.id,
-          card: targetPlayer.hand[0],
+          card: targetPlayerCard,
         }];
         emitToPlayer(activePlayer.id, 'baronReveal', baronRevealData);
         emitToPlayer(targetPlayer.id, 'baronReveal', baronRevealData);
@@ -390,13 +390,13 @@ function Game({
 
         // Who died?
         broadcastSystemMessage(broadcastMessage.join(' '));
-        if (activePlayer.hand[0] === targetPlayer.hand[0]) {
+        if (activePlayerOtherCard === targetPlayerCard) {
           broadcastSystemMessage('Nothing happened...');
           return true;
         }
 
         let loser;
-        if (activePlayer.hand[0].getNumber() < targetPlayer.hand[0].getNumber()) {
+        if (activePlayerOtherCard.getNumber() < targetPlayerCard.getNumber()) {
           loser = activePlayer;
         } else {
           loser = targetPlayer;
