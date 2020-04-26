@@ -331,19 +331,24 @@ function Game({
   this.performCardEffect = (card, effectData) => {
     const activePlayer = this.players[this.activePlayerId];
 
+    const statusMessage = `${activePlayer.name} played ${card.getLabel()}`;
+    console.log(statusMessage);
+
     const targetPlayer = (
       effectData && effectData.targetPlayerId ?
         this.players[effectData.targetPlayerId] :
         undefined
     );
 
-    if (allAlivePlayersHaveHandmaids()) {
+    const cardsWithoutTargets = [cards.PRINCESS, cards.COUNTESS, cards.HANDMAID];
+
+    if (!cardsWithoutTargets.includes(card.type) && allAlivePlayersHaveHandmaids()) {
       console.log('all players have handmaids. discarding...');
       broadcastSystemMessage(`${activePlayer.name} discarded ${card.getLabel()}`);
       return false;
     }
 
-    const broadcastMessage = [`${activePlayer.name} played ${card.getLabel()}`];
+    const broadcastMessage = [statusMessage];
     const targetPlayerCard = targetPlayer && targetPlayer.hand[0];
     // the card that the active player did not play
     const activePlayerOtherCardIdx = activePlayer.hand.findIndex(handCard => handCard.id !== card.id)
@@ -450,7 +455,7 @@ function Game({
   const allAlivePlayersHaveHandmaids = () => {
     const players = Object.values(this.players);
     const playerWithoutHandmaid = players.find(
-      player => !player.handmaidActive && (player.id !== this.activePlayerId)
+      player => !player.isKnockedOut && !player.handmaidActive && (player.id !== this.activePlayerId)
     );
     return !playerWithoutHandmaid;
   };

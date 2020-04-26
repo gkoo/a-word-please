@@ -166,7 +166,7 @@ describe('getAlivePlayers', () => {
 });
 
 describe('performCardEffect', () => {
-  describe('when all other alive players have a handmaid', () => {
+  describe('when all other players have a handmaid', () => {
     it('has no effect', () => {
       game.activePlayerId = '1';
       const card = new Card({ id: 0, type: cards.PRINCE });
@@ -176,6 +176,26 @@ describe('performCardEffect', () => {
         new Card({ id: 2, type: cards.PRINCESS }),
       ];
       game.players['3'].handmaidActive = true;
+      const success = game.performCardEffect(card, { targetPlayerId: '3' });
+      expect(success).toEqual(false);
+      expect(game.players['3'].hand).toHaveLength(1);
+      expect(game.players['3'].hand[0].type).toEqual(cards.PRINCESS);
+      expect(game.players['1'].hand[0].type).toEqual(cards.PRINCE);
+    });
+  });
+
+  describe('when one player doesn\'t have a handmaid but they are already knocked out', () => {
+    it('has no effect', () => {
+      game.activePlayerId = '1';
+      const card = new Card({ id: 0, type: cards.PRINCE });
+      game.players['1'].hand = [card];
+      game.players['2'].handmaidActive = true;
+      game.players['2'].hand = [
+        new Card({ id: 2, type: cards.PRINCESS }),
+      ];
+      game.players['3'].handmaidActive = false;
+      game.players['3'].isKnockedOut = true;
+
       const success = game.performCardEffect(card, { targetPlayerId: '3' });
       expect(success).toEqual(false);
       expect(game.players['3'].hand).toHaveLength(1);
@@ -268,6 +288,22 @@ describe('performCardEffect', () => {
       expect(player.handmaidActive).toEqual(false);
       game.performCardEffect(handmaidCard);
       expect(player.handmaidActive).toEqual(true);
+    });
+
+    describe('when the only other remaining player has played a handmaid', () => {
+      it('sets handmaid status to active', () => {
+        game.activePlayerId = '1';
+        game.players['2'].discardPile.push(new Card({ id: 100, type: cards.HANDMAID }));
+        game.players['2'].handmaidActive = true;
+        game.players['3'].isKnockedOut = true;
+        const handmaidCard = new Card({ id: 101, type: cards.HANDMAID });
+        const activePlayer = game.players['1'];
+        activePlayer.hand = [handmaidCard];
+        expect(activePlayer.handmaidActive).toEqual(false);
+        const success = game.performCardEffect(handmaidCard);
+        expect(success).toEqual(true);
+        expect(activePlayer.handmaidActive).toEqual(true);
+      });
     });
   });
 
