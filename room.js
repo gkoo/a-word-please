@@ -4,6 +4,8 @@ const Game = require('./game');
 const Message = require('./message');
 const Player = require('./player');
 
+const MAX_MESSAGES = 50;
+
 function Room({ broadcast, emitToPlayer }) {
   this.players = {};
   this.messages = [];
@@ -55,13 +57,15 @@ function Room({ broadcast, emitToPlayer }) {
   this.setPlayerName = (id, name) => this.players[id].setName(name);
 
   this.handleMessage = (senderId, msg) => {
+    const { messages } = this;
     const messageObj = new Message({
       id: uuid.v4(),
       senderName: this.players[senderId].name,
       text: msg,
       type: 'player',
     })
-    this.messages.push(messageObj);
+    if (messages.length > MAX_MESSAGES) { messages.shift(); }
+    messages.push(messageObj);
     broadcast('message', messageObj);
   };
 
