@@ -164,12 +164,13 @@ describe('serializeForPlayer', () => {
 
 describe('endRound', () => {
   it('assigns a token to the winner', () => {
-    game.players['1'].hand = [0];
-    game.players['2'].hand = [9];
-    game.players['3'].hand = [0];
+    game.players['1'].hand = [new Card({ id: 100, type: cards.GUARD})];
+    game.players['2'].hand = [new Card({ id: 101, type: cards.PRINCESS})];
+    game.players['3'].hand = [new Card({ id: 102, type: cards.GUARD})];
     game.endRound();
     expect(game.players['1'].numTokens).toEqual(0);
     expect(game.players['2'].numTokens).toEqual(1);
+    expect(game.players['3'].numTokens).toEqual(0);
   });
 });
 

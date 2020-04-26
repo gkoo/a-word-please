@@ -200,7 +200,7 @@ function Game({
 
     const success = this.performCardEffect(card, effectData);
 
-    if (!player.isKnockedOut) { player.discardCardById(card.id); }
+    if (!player.isKnockedOut || targetedSelfWithPrince) { player.discardCardById(card.id); }
 
     const endActions = () => {
       // Tell the clients to dismiss their revealed cards
@@ -269,14 +269,19 @@ function Game({
       return;
     }
 
-    alivePlayers.sort(player => player.hand[0]);
+    // Sort by card number descending
+    alivePlayers.sort(
+      (player1, player2) => player1.hand[0].getNumber() - player2.hand[0].getNumber()
+    );
+
     const finalists = [];
-    const highestCard = alivePlayers[alivePlayers.length - 1].hand[0];
+    const highestCardNumber = alivePlayers[alivePlayers.length - 1].hand[0].getNumber();
     for (let i = alivePlayers.length - 1; i >= 0; --i) {
       const player = alivePlayers[i]
-      if (player.hand[0] < highestCard) {
+      if (player.hand[0].getNumber() < highestCardNumber) {
         break;
       }
+      console.log(`${player.name} is a finalist with a card number of ${player.hand[0].getNumber()}`);
       finalists.push(player);
     }
 
@@ -289,7 +294,7 @@ function Game({
       finalists.forEach(finalist => {
         const discardTotal = _.reduce(
           finalist.discardPile,
-          (sum, discardCard) => sum + enumsToValues[discardCard].value,
+          (sum, discardCard) => sum + discardCard.getNumber(),
           0,
         );
         if (discardTotal > maxDiscardTotal) {
