@@ -396,7 +396,7 @@ function Game({
 
         // Who died?
         broadcastSystemMessage(broadcastMessage.join(' '));
-        if (activePlayerOtherCard === targetPlayerCard) {
+        if (activePlayerOtherCard.getNumber() === targetPlayerCard.getNumber()) {
           broadcastSystemMessage('Nothing happened...');
           return true;
         }

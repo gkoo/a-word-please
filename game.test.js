@@ -184,23 +184,25 @@ describe('performCardEffect', () => {
     });
   });
 
-  describe('when one player doesn\'t have a handmaid but they are already knocked out', () => {
-    it('has no effect', () => {
-      game.activePlayerId = '1';
-      const card = new Card({ id: 0, type: cards.PRINCE });
-      game.players['1'].hand = [card];
-      game.players['2'].handmaidActive = true;
-      game.players['2'].hand = [
-        new Card({ id: 2, type: cards.PRINCESS }),
-      ];
-      game.players['3'].handmaidActive = false;
-      game.players['3'].isKnockedOut = true;
+  describe('when one player has a handmaid', () => {
+    describe('and one player doesn\'t have a handmaid but they are already knocked out', () => {
+      it('has no effect', () => {
+        game.activePlayerId = '1';
+        const card = new Card({ id: 0, type: cards.PRINCE });
+        game.players['1'].hand = [card];
+        game.players['2'].handmaidActive = true;
+        game.players['2'].hand = [
+          new Card({ id: 2, type: cards.PRINCESS }),
+        ];
+        game.players['3'].handmaidActive = false;
+        game.players['3'].isKnockedOut = true;
 
-      const success = game.performCardEffect(card, { targetPlayerId: '3' });
-      expect(success).toEqual(false);
-      expect(game.players['3'].hand).toHaveLength(1);
-      expect(game.players['3'].hand[0].type).toEqual(cards.PRINCESS);
-      expect(game.players['1'].hand[0].type).toEqual(cards.PRINCE);
+        const success = game.performCardEffect(card, { targetPlayerId: '2' });
+        expect(success).toEqual(false);
+        expect(game.players['2'].hand).toHaveLength(1);
+        expect(game.players['2'].hand[0].type).toEqual(cards.PRINCESS);
+        expect(game.players['1'].hand[0].type).toEqual(cards.PRINCE);
+      });
     });
   });
 
@@ -258,6 +260,24 @@ describe('performCardEffect', () => {
       expect(success).toEqual(true);
       expect(game.players['1'].isKnockedOut).toEqual(false);
       expect(game.players['2'].isKnockedOut).toEqual(true);
+    });
+
+    describe('when the cards are equal', () => {
+      it('doesn\'t kill anyone', () => {
+        const baronCard = new Card({ id: 100, type: cards.BARON });
+        game.players['1'].hand = [
+          new Card({ id: 0, type: cards.PRINCE }),
+          baronCard,
+        ];
+        game.players['2'].hand = [
+          new Card({ id: 2, type: cards.PRINCE }),
+        ];
+        game.activePlayerId = '1';
+        success = game.performCardEffect(baronCard, { targetPlayerId: '2' });
+        expect(success).toEqual(true);
+        expect(game.players['1'].isKnockedOut).toEqual(false);
+        expect(game.players['2'].isKnockedOut).toEqual(false);
+      });
     });
 
     describe('when the baron is the first card in the hand', () => {
