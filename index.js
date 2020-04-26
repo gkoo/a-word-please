@@ -7,7 +7,6 @@ const app = express();
 const server = http.Server(app);
 const io = socketIO(server);
 
-const Player = require('./player');
 const Room = require('./room');
 
 const port = process.env.PORT || 5000;
@@ -20,7 +19,7 @@ const broadcast = (eventName, data) => io.emit(eventName, data);
 const emitToSocket = (socketId, eventName, data) =>
   io.sockets.connected[socketId].emit(eventName, data);
 
-const room = new Room({ broadcast, emitToPlayer: emitToSocket });
+const room = new Room({ broadcast, emitToUser: emitToSocket });
 
 server.listen(port, () => {
   console.log(`Starting the server on port ${port}`);
@@ -28,23 +27,7 @@ server.listen(port, () => {
 
 const handleSetName = (id, name) => {
   console.log(`Client ${id} set name to: ${name}`);
-  room.setPlayerName(id, name);
-  io.emit('newPlayer', room.getPlayerById(id).serialize());
-};
-
-const sendInitRoomData = (socket, room) => {
-  const players = {};
-  const { messages } = room;
-  const roomPlayers = Object.keys(room.players).map(id => room.players[id]);
-  roomPlayers.forEach(player => {
-    players[player.id] = player.serialize();
-  });
-  const initData = {
-    players,
-    messages,
-    currPlayerId: socket.id,
-  };
-  socket.emit('initData', initData);
+  room.setUserName(id, name);
 };
 
 const handleStartGame = socketId => {
@@ -69,10 +52,10 @@ const handleEndGame = socketId => {
 
 io.on('connection', socket => {
   console.log('New client connected');
-  room.addPlayer(socket.id);
+  room.addUser(socket.id);
   room.sendInitRoomData(socket);
   socket.on('chatMessage', msg => room.handleMessage(socket.id, msg));
-  socket.on('disconnect', () => room.onPlayerDisconnect(socket.id));
+  socket.on('disconnect', () => room.onUserDisconnect(socket.id));
   socket.on('playCard', ({ cardId, effectData }) => room.playCard(socket.id, cardId, effectData));
   socket.on('saveName', name => handleSetName(socket.id, name));
   socket.on('startGame', () => handleStartGame(socket.id));

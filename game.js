@@ -3,13 +3,13 @@ const uuid = require('uuid');
 
 const { cards, cardLabels, cardNumbers } = require('./constants');
 const Card = require('./card');
-const GamePlayer = require('./gamePlayer');
+const Player = require('./player');
 
 function Game({
   broadcast,
   broadcastSystemMessage,
-  emitToPlayer,
-  players,
+  emitToUser,
+  users,
 }) {
   const STATE_PENDING = 0;
   const STATE_STARTED = 1;
@@ -19,16 +19,13 @@ function Game({
   const MIN_PLAYERS = 2;
   const MAX_PLAYERS = 4;
 
-  const playerIds = Object.keys(players);
-  const numPlayers = playerIds.length;
-
   this.setup = () => {
-    const playerList = Object.values(players);
+    const userList = Object.values(users);
     this.state = STATE_PENDING;
     this.players = {};
     this.spectators = {};
 
-    const numPlayers = playerList.length;
+    const numPlayers = userList.length;
     if (numPlayers < MIN_PLAYERS) {
       broadcastSystemMessage(`Cannot start the game with less than ${MIN_PLAYERS} players`);
       return;
@@ -37,9 +34,9 @@ function Game({
       broadcastSystemMessage(`Cannot start the game with over ${MAX_PLAYERS} players`);
       return;
     }
-    playerList.forEach(roomPlayer => {
-      const gamePlayer = new GamePlayer({ id: roomPlayer.id, name: roomPlayer.name });
-      this.players[roomPlayer.id] = gamePlayer;
+    userList.forEach(user => {
+      const player = new Player({ id: user.id, name: user.name });
+      this.players[user.id] = player;
     });
     this.roundNum = 0;
     determinePlayerOrder();
@@ -49,12 +46,16 @@ function Game({
     broadcastGameDataToPlayers();
   };
 
+  this.getPlayers = () => {
+    return Object.values(this.players);
+  };
+
   this.newRound = () => {
     if (![STATE_PENDING, STATE_ROUND_END].includes(this.state)) { return; }
 
     this.state = STATE_STARTED;
     ++this.roundNum;
-    playerIds.forEach(playerId => this.players[playerId].resetCards());
+    this.getPlayers().forEach(player => player.resetCards());
 
     // keeps track of how far through the deck we are
     this.deckCursor = 0;
@@ -91,7 +92,9 @@ function Game({
   };
 
   const dealCards = () => {
-    for (let i=0; i<numPlayers; ++i) {
+    const players = this.getPlayers();
+    const playerIds = players.map(player => player.id);
+    for (let i=0; i < players.length; ++i) {
       const playerId = playerIds[i];
       const card = this.deck[this.deckCursor++];
       this.players[playerId].addCardToHand(card);
@@ -99,6 +102,7 @@ function Game({
   };
 
   const determinePlayerOrder = () => {
+    const playerIds = this.getPlayers().map(player => player.id);
     this.playerOrder = _.shuffle(playerIds);
 
     // keeps track of whose turn it is.
@@ -106,7 +110,7 @@ function Game({
   };
 
   const determineMaxTokens = () => {
-    switch (numPlayers) {
+    switch (this.getPlayers().length) {
       case 2:
         this.maxTokens = 7;
         break;
@@ -151,7 +155,7 @@ function Game({
     let nextPlayer;
     while (true) {
       const nextPlayerId = this.playerOrder[this.playerOrderCursor];
-      this.playerOrderCursor = (++this.playerOrderCursor) % numPlayers;
+      this.playerOrderCursor = (++this.playerOrderCursor) % this.getPlayers().length;
       nextPlayer = this.players[nextPlayerId];
 
       // Skip players who have been knocked out
@@ -376,7 +380,7 @@ function Game({
         break;
       case cards.PRIEST:
         console.log('revealing for priest');
-        emitToPlayer(activePlayer.id, 'priestReveal', targetPlayerCard);
+        emitToUser(activePlayer.id, 'priestReveal', targetPlayerCard);
         const priestRevealMessage = `(Only visible to you) ${targetPlayer.name} is holding the ` +
           `${targetPlayerCard.getLabel()}!`;
         emitSystemMessage(activePlayer.id, priestRevealMessage);
@@ -390,8 +394,8 @@ function Game({
           playerId: targetPlayer.id,
           card: targetPlayerCard,
         }];
-        emitToPlayer(activePlayer.id, 'baronReveal', baronRevealData);
-        emitToPlayer(targetPlayer.id, 'baronReveal', baronRevealData);
+        emitToUser(activePlayer.id, 'baronReveal', baronRevealData);
+        emitToUser(targetPlayer.id, 'baronReveal', baronRevealData);
         broadcastMessage.push(`and compared cards with ${targetPlayer.name}`);
 
         // Who died?
@@ -471,12 +475,12 @@ function Game({
       text: msg,
       type: 'system',
     };
-    emitToPlayer(playerId, 'message', messageObj);
+    emitToUser(playerId, 'message', messageObj);
   };
 
   const broadcastGameDataToPlayers = (includeHands = false) => {
     Object.keys(this.players).forEach(playerId =>
-      emitToPlayer(
+      emitToUser(
         playerId,
         'gameData',
         this.serializeForPlayer(playerId, includeHands),

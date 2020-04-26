@@ -2,7 +2,7 @@ const _ = require('lodash');
 
 const Card = require('./card');
 const Game = require('./game');
-const Player = require('./Player');
+const User = require('./User');
 const { cards } = require('./constants');
 
 let game;
@@ -10,19 +10,19 @@ let players;
 
 const mockBroadcast = jest.fn();
 const mockBroadcastSystemMessage = jest.fn();
-const mockEmitToPlayer = jest.fn();
+const mockEmitToUser = jest.fn();
 
 beforeEach(() => {
-  players = {
-    '1': new Player('1'),
-    '2': new Player('2'),
-    '3': new Player('3'),
+  users = {
+    '1': new User('1'),
+    '2': new User('2'),
+    '3': new User('3'),
   };
   game = new Game({
     broadcast: mockBroadcast,
     broadcastSystemMessage: mockBroadcastSystemMessage,
-    emitToPlayer: mockEmitToPlayer,
-    players: players,
+    emitToPlayer: mockEmitToUser,
+    users,
   });
   game.setup();
 });

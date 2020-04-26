@@ -2,38 +2,38 @@ const uuid = require('uuid');
 
 const Game = require('./game');
 const Message = require('./message');
-const Player = require('./player');
+const User = require('./user');
 
 const MAX_MESSAGES = 50;
 const MAX_MESSAGE_LENGTH = 200;
 
-function Room({ broadcast, emitToPlayer }) {
-  this.players = {};
+function Room({ broadcast, emitToUser }) {
+  this.users = {};
   this.messages = [];
 
-  this.getPlayerById = id => this.players[id];
+  this.getUserById = id => this.users[id];
 
-  this.addPlayer = id => {
-    const player = new Player(id);
-    this.players[id] = player;
-    if (this.getPlayers().length === 1) {
+  this.addUser = id => {
+    const user = new User(id);
+    this.users[id] = user;
+    if (this.getUsers().length === 1) {
       promoteRandomLeader();
     }
   };
 
-  this.removePlayer = id => {
-    const player = this.players[id];
-    delete this.players[id];
-    if (player.isLeader) {
+  this.removeUser = id => {
+    const user = this.users[id];
+    delete this.users[id];
+    if (user.isLeader) {
       promoteRandomLeader();
     }
   };
 
-  this.onPlayerDisconnect = id => {
-    const { name } = this.players[id];
+  this.onUserDisconnect = id => {
+    const { name } = this.users[id];
 
-    this.removePlayer(id);
-    broadcast('playerDisconnect', id);
+    this.removeUser(id);
+    broadcast('userDisconnect', id);
     const leader = this.getLeader();
 
     if (!name) { return; }
@@ -41,29 +41,34 @@ function Room({ broadcast, emitToPlayer }) {
   };
 
   const promoteRandomLeader = () => {
-    const players = this.getPlayers();
+    const users = this.getUsers();
 
-    if (players.length === 0) { return; }
+    if (users.length === 0) { return; }
 
-    const newLeader = players[0];
+    const newLeader = users[0];
     newLeader.promoteToLeader();
-    for (let i = 1; i < players.length; ++i) {
-      players[i].unpromoteFromLeader();
+    for (let i = 1; i < users.length; ++i) {
+      users[i].unpromoteFromLeader();
     }
     broadcast('newLeader', newLeader.id);
   };
 
-  this.getLeader = () => Object.values(this.players).find(player => player.isLeader);
+  this.getLeader = () => Object.values(this.users).find(user => user.isLeader);
 
-  this.setPlayerName = (id, name) => this.players[id].setName(name);
+  this.setUserName = (id, name) => {
+    const user = this.users[id];
+    user.setName(name);
+    broadcastSystemMessage(`${name} connected`);
+    broadcast('newUser', user.serialize());
+  };
 
   this.handleMessage = (senderId, msg) => {
     const { messages } = this;
     const messageObj = new Message({
       id: uuid.v4(),
-      senderName: this.players[senderId].name,
+      senderName: this.users[senderId].name,
       text: msg.substring(0, MAX_MESSAGE_LENGTH),
-      type: 'player',
+      type: 'user',
     })
     if (messages.length > MAX_MESSAGES) { messages.shift(); }
     messages.push(messageObj);
@@ -80,33 +85,28 @@ function Room({ broadcast, emitToPlayer }) {
     broadcast('message', messageObj);
   };
 
-  // returns an array of players
-  this.getPlayers = () => Object.values(this.players);
+  // returns an array of users
+  this.getUsers = () => Object.values(this.users);
 
   this.startGame = (gameInitiatorId) => {
-    if (!this.isPlayerLeader(gameInitiatorId)) { return; }
+    if (!this.isUserLeader(gameInitiatorId)) { return; }
     this.game = new Game({
       broadcast,
       broadcastSystemMessage,
-      emitToPlayer,
-      players: this.players,
+      emitToUser,
+      users: this.users,
     });
     this.game.setup();
   };
 
-  this.playCard = (playerId, cardId, effectData) => {
-    this.game.playCard(playerId, cardId, effectData);
-
-    if (this.game.isGameOver()) {
-      const winnerNames = this.game.getWinnerIds().map(winnerId => this.players[winnerId].name);
-      broadcastSystemMessage(`${winnerNames.join(' and ')} won the game!`);
-    }
+  this.playCard = (userId, cardId, effectData) => {
+    this.game.playCard(userId, cardId, effectData);
   };
 
-  this.nextRound = playerId => {
+  this.nextRound = userId => {
     console.log('starting next round');
-    if (!this.isPlayerLeader(playerId)) {
-      console.log(`player ${playerId} tried to start next round but is not the leader`);
+    if (!this.isUserLeader(userId)) {
+      console.log(`user ${userId} tried to start next round but is not the leader`);
       return false;
     }
     if (!this.game) { return false; }
@@ -114,35 +114,34 @@ function Room({ broadcast, emitToPlayer }) {
   }
 
   this.endGame = (gameInitiatorId) => {
-    if (!this.isPlayerLeader(gameInitiatorId)) { return false; }
+    if (!this.isUserLeader(gameInitiatorId)) { return false; }
     if (!this.game) { return false; }
     this.game.endGame();
     return true;
   }
 
-  this.isPlayerLeader = (playerId) => {
-    const player = this.getPlayerById(playerId);
-    return player.isLeader;
+  this.isUserLeader = (userId) => {
+    const user = this.getUserById(userId);
+    return user.isLeader;
   };
 
   this.sendInitRoomData = socket => {
-    const players = {};
+    const users = {};
     const { messages } = this;
-    const roomPlayers = Object.keys(this.players).map(id => this.players[id]);
-    roomPlayers.forEach(player => {
-      players[player.id] = player.serialize();
+    Object.values(this.users).forEach(user => {
+      users[user.id] = user.serialize();
     });
     const initData = {
-      players,
+      users,
       messages,
-      currPlayerId: socket.id,
+      currUserId: socket.id,
     };
     socket.emit('initData', initData);
   }
 
   this.sendGameState = socketId => {
     if (this.game) {
-      emitToPlayer(socketId, 'debugInfo', this.game.serialize());
+      emitToUser(socketId, 'debugInfo', this.game.serialize());
     }
   };
 }

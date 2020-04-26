@@ -3,69 +3,69 @@ const Room = require('./room');
 let room;
 
 const mockBroadcast = jest.fn();
-const mockEmitToPlayer = jest.fn();
+const mockEmitToUser = jest.fn();
 
 beforeEach(() => {
-  room = new Room({ broadcast: mockBroadcast, emitToPlayer: mockEmitToPlayer });
+  room = new Room({ broadcast: mockBroadcast, emitToUser: mockEmitToUser });
 });
 
-const playerId = '123';
+const userId = '123';
 
-describe('addPlayer', () => {
-  it('adds a player', () => {
-    room.addPlayer(playerId);
-    expect(Object.keys(room.players)).toHaveLength(1);
-    expect(room.players[playerId]).toBeTruthy();
+describe('addUser', () => {
+  it('adds a user', () => {
+    room.addUser(userId);
+    expect(Object.keys(room.users)).toHaveLength(1);
+    expect(room.users[userId]).toBeTruthy();
   });
 
-  describe('when there is only one player', () => {
-    it('promotes the player to leader', () => {
-      expect(Object.keys(room.players)).toHaveLength(0);
-      room.addPlayer(playerId);
-      expect(Object.keys(room.players)).toHaveLength(1);
-      const player = room.getPlayerById(playerId);
-      expect(player.isLeader).toEqual(true);
+  describe('when there is only one user', () => {
+    it('promotes the user to leader', () => {
+      expect(Object.keys(room.users)).toHaveLength(0);
+      room.addUser(userId);
+      expect(Object.keys(room.users)).toHaveLength(1);
+      const user = room.getUserById(userId);
+      expect(user.isLeader).toEqual(true);
     });
   });
 
-  describe('when there are two players', () => {
+  describe('when there are two users', () => {
     it('does not change the leader', () => {
-      const newPlayerId = '456';
-      room.addPlayer(playerId);
-      room.addPlayer(newPlayerId);
-      const player = room.getPlayerById(playerId);
-      expect(player.isLeader).toEqual(true);
-      const newPlayer = room.getPlayerById(newPlayerId);
-      expect(newPlayer.isLeader).toEqual(false);
+      const newUserId = '456';
+      room.addUser(userId);
+      room.addUser(newUserId);
+      const user = room.getUserById(userId);
+      expect(user.isLeader).toEqual(true);
+      const newUser = room.getUserById(newUserId);
+      expect(newUser.isLeader).toEqual(false);
     });
   });
 });
 
-describe('getPlayerById', () => {
-  it('gets the correct player', () => {
-    room.addPlayer(playerId);
-    const player = room.getPlayerById(playerId);
-    expect(player.id).toEqual(playerId);
+describe('getUserById', () => {
+  it('gets the correct user', () => {
+    room.addUser(userId);
+    const user = room.getUserById(userId);
+    expect(user.id).toEqual(userId);
   });
 });
 
-describe('removePlayer', () => {
-  it('removes the player', () => {
-    room.addPlayer(playerId);
-    expect(Object.keys(room.players)).toHaveLength(1);
-    const player = room.removePlayer(playerId);
-    expect(Object.keys(room.players)).toHaveLength(0);
+describe('removeUser', () => {
+  it('removes the user', () => {
+    room.addUser(userId);
+    expect(Object.keys(room.users)).toHaveLength(1);
+    const user = room.removeUser(userId);
+    expect(Object.keys(room.users)).toHaveLength(0);
   });
 
   describe('when the leader is removed', () => {
-    it('promotes a random player', () => {
-      room.addPlayer(playerId); // initial leader
-      expect(room.getPlayerById(playerId).isLeader).toEqual(true);
-      room.addPlayer('456');
-      room.addPlayer('789');
-      room.addPlayer('abc');
-      room.removePlayer(playerId);
-      expect(room.getPlayerById('456').isLeader).toEqual(true);
+    it('promotes a random user', () => {
+      room.addUser(userId); // initial leader
+      expect(room.getUserById(userId).isLeader).toEqual(true);
+      room.addUser('456');
+      room.addUser('789');
+      room.addUser('abc');
+      room.removeUser(userId);
+      expect(room.getUserById('456').isLeader).toEqual(true);
     });
   });
 });
@@ -74,8 +74,8 @@ describe('getLeader', () => {
   const subject = () => room.getLeader();
 
   beforeEach(() => {
-    room.addPlayer('123');
-    room.addPlayer('456');
+    room.addUser('123');
+    room.addUser('456');
   });
 
   it('returns the leader', () => {
@@ -85,8 +85,8 @@ describe('getLeader', () => {
 
 describe('handleMessage', () => {
   beforeEach(() => {
-    room.addPlayer('1');
-    room.setPlayerName('1', 'Bilbo Baggins');
+    room.addUser('1');
+    room.setUserName('1', 'Bilbo Baggins');
   });
 
   it('adds the message to the messages list', () => {
