@@ -369,16 +369,29 @@ function Game({
         undefined
     );
 
-    const cardsWithoutTargets = [cards.PRINCESS, cards.COUNTESS, cards.HANDMAID];
+    const cardsWithTargets = [cards.GUARD, cards.PRIEST, cards.BARON, cards.PRINCE, cards.KING];
 
-    if (!cardsWithoutTargets.includes(card.type) && allAlivePlayersHaveHandmaids()) {
-      console.log('all players have handmaids. discarding...');
-      broadcastSystemMessage(`${activePlayer.name} discarded ${card.getLabel()}`);
-      return false;
+    // Do all alive players have handmaids?
+    if (cardsWithTargets.includes(card.type) && allAlivePlayersHaveHandmaids()) {
+      // Prince card is allowed to target self
+      if (card.type !== cards.PRINCE || targetPlayer.id !== activePlayer.id) {
+        console.log('all players have handmaids. discarding...');
+        broadcastSystemMessage(`${activePlayer.name} discarded ${card.getLabel()}`);
+        return false;
+      }
     }
 
     const broadcastMessage = [statusMessage];
-    const targetPlayerCard = targetPlayer && targetPlayer.hand[0];
+
+    let targetPlayerCard;
+    if (targetPlayer) {
+      // Prince is allowed to target self. Choose the correct target card
+      if (targetPlayer.id === activePlayer.id) {
+        targetPlayerCard = activePlayer.hand.find(handCard => handCard.id !== card.id);
+      } else {
+        targetPlayerCard = targetPlayer.hand[0];
+      }
+    }
     // the card that the active player did not play
     const activePlayerOtherCardIdx = activePlayer.hand.findIndex(handCard => handCard.id !== card.id)
     const activePlayerOtherCard = activePlayer.hand[activePlayerOtherCardIdx];

@@ -377,6 +377,32 @@ describe('performCardEffect', () => {
       });
     });
 
+    describe('when all other alive players have a Handmaid', () => {
+      describe('and targeting self', () => {
+        it('discards own card', () => {
+          const activePlayer = game.players['1'];
+          game.activePlayerId = '1';
+          const card = new Card({ id: 100, type: cards.PRINCE });
+          activePlayer.hand = [
+            card,
+            new Card({ id: 101, type: cards.GUARD }),
+          ];
+          game.players['2'].handmaidActive = true;
+          game.players['3'].handmaidActive = true;
+          const success = game.performCardEffect(card, { targetPlayerId: '1' });
+          expect(success).toEqual(true);
+
+          expect(activePlayer.discardPile.find(
+            discardCard => discardCard.id === 101),
+          ).toBeTruthy();
+
+          expect(activePlayer.hand.find(
+            handCard => handCard.id === 101
+          )).toBeFalsy();
+        });
+      });
+    });
+
     describe('when the hand card is the Princess', () => {
       beforeEach(() => {
         targetedCardType = cards.PRINCESS;
