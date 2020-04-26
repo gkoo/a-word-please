@@ -306,12 +306,12 @@ function Game({
 
   this.endGame = (winners) => {
     console.log('end game');
-    if (winners) {
-      broadcast('endGame', { winnerIds: winners.map(winner => winner.id) });
-    }
-
+    const winnerIds = winners && winners.map(winner => winner.id);
+    broadcast('endGame', winnerIds);
     broadcastSystemMessage('Game is over!');
     this.state = STATE_GAME_END;
+
+    broadcastGameDataToPlayers(true);
   };
 
   this.getWinnerIds = () => {
@@ -468,23 +468,23 @@ function Game({
     emitToPlayer(playerId, 'message', messageObj);
   };
 
-  const broadcastGameDataToPlayers = () => {
+  const broadcastGameDataToPlayers = (includeHands = false) => {
     Object.keys(this.players).forEach(playerId =>
       emitToPlayer(
         playerId,
         'gameData',
-        this.serializeForPlayer(playerId),
+        this.serializeForPlayer(playerId, includeHands),
       )
     );
   };
 
-  this.serializeForPlayer = playerIdToSerializeFor => {
+  this.serializeForPlayer = (playerIdToSerializeFor, includeHands) => {
     const { activePlayerId, roundNum, state } = this;
     const playerData = {};
 
     Object.keys(this.players).forEach(playerId => {
       const serialized = this.players[playerId].serialize({
-        includeHand: playerIdToSerializeFor === playerId,
+        includeHand: includeHands || (playerIdToSerializeFor === playerId),
       });
       playerData[playerId] = serialized;
     });
