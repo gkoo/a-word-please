@@ -93,8 +93,9 @@ describe('handleMessage', () => {
     const senderId = '1';
     const messageText = 'hello world!';
     room.handleMessage(senderId, messageText);
-    expect(room.messages).toHaveLength(1);
-    expect(room.messages[0].text).toEqual(messageText);
-    expect(room.messages[0].senderName).toEqual('Bilbo Baggins');
+    message = room.messages.find(msg => msg.text === messageText);
+    expect(message).toBeTruthy();
+    expect(message.senderName).toEqual('Bilbo Baggins');
+    expect(message.id).toBeTruthy();
   });
 });

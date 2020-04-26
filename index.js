@@ -58,6 +58,7 @@ io.on('connection', socket => {
   socket.on('disconnect', () => room.onUserDisconnect(socket.id));
   socket.on('playCard', ({ cardId, effectData }) => room.playCard(socket.id, cardId, effectData));
   socket.on('saveName', name => handleSetName(socket.id, name));
+  socket.on('setPending', room.setPending);
   socket.on('startGame', () => handleStartGame(socket.id));
   socket.on('nextRound', () => handleNextRound(socket.id));
   socket.on('endGame', () => handleEndGame(socket.id));

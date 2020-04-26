@@ -2,7 +2,7 @@ const _ = require('lodash');
 
 const Card = require('./card');
 const Game = require('./game');
-const User = require('./User');
+const User = require('./user');
 const { cards } = require('./constants');
 
 let game;
@@ -21,20 +21,36 @@ beforeEach(() => {
   game = new Game({
     broadcast: mockBroadcast,
     broadcastSystemMessage: mockBroadcastSystemMessage,
-    emitToPlayer: mockEmitToUser,
+    emitToUser: mockEmitToUser,
     users,
   });
   game.setup();
 });
 
-describe('setup', () => {
-  it('deals cards', () => {
+describe('newRound', () => {
+  it('creates a deck', () => {
+    game.newRound();
     expect(game.deck).toHaveLength(15);
+  });
+
+  it('deals cards', () => {
+    game.newRound();
     Object.values(game.players).forEach(player => {
       const numCards = (player.id === game.activePlayerId) ? 2 : 1;
       expect(player.hand).toHaveLength(numCards);
       expect(player.hand[0].type).toBeGreaterThanOrEqual(0);
     });
+  });
+});
+
+describe('removeUser', () => {
+  it('removes the user from player list', () => {
+    const id = '123'
+    game.players = { [id]: {} };
+    game.spectatorIds = [id];
+    game.removeUser(id);
+    expect(game.players[id]).toBeFalsy();
+    expect(game.spectatorIds.find(spectatorId => spectatorId === id)).toBeFalsy();
   });
 });
 

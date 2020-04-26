@@ -21,7 +21,7 @@ function Game({
 
   this.setup = () => {
     const userList = Object.values(users);
-    this.state = STATE_PENDING;
+    this.state = STATE_STARTED;
     this.players = {};
     this.spectatorIds = userList.slice(MAX_PLAYERS);
 
@@ -51,8 +51,15 @@ function Game({
     this.spectatorIds.push(id)
   };
 
+  this.removeUser = id => {
+    // Remove from `players` and `users`
+    if (this.players[id]) { delete this.players[id]; }
+    const idx = this.spectatorIds.findIndex(spectatorId => spectatorId === id);
+    if (idx >= 0) { this.spectatorIds.splice(idx, 1) }
+  };
+
   this.newRound = () => {
-    if (![STATE_PENDING, STATE_ROUND_END].includes(this.state)) { return; }
+    if (![STATE_STARTED, STATE_ROUND_END].includes(this.state)) { return; }
 
     this.state = STATE_STARTED;
     ++this.roundNum;
@@ -317,6 +324,20 @@ function Game({
     this.state = STATE_GAME_END;
 
     broadcastGameDataToPlayers(true);
+  };
+
+  // Send all players back to the lobby
+  this.setPending = () => {
+    this.state = STATE_PENDING;
+
+    // move all players to spectators
+    Object.keys(this.players).forEach(playerId => {
+      if (!this.spectatorIds.includes(playerId)) {
+        this.spectatorIds.push(playerId);
+      }
+    });
+    this.players = {};
+    broadcastGameDataToPlayers();
   };
 
   this.getWinnerIds = () => {

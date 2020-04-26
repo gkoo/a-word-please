@@ -30,6 +30,7 @@ function Room({ broadcast, emitToUser }) {
     if (user.isLeader) {
       promoteRandomLeader();
     }
+    if (this.game) { this.game.removeUser(id); }
   };
 
   this.onUserDisconnect = id => {
@@ -114,14 +115,16 @@ function Room({ broadcast, emitToUser }) {
     }
     if (!this.game) { return false; }
     this.game.newRound();
-  }
+  };
 
   this.endGame = (gameInitiatorId) => {
     if (!this.isUserLeader(gameInitiatorId)) { return false; }
     if (!this.game) { return false; }
     this.game.endGame();
     return true;
-  }
+  };
+
+  this.setPending = () => this.game && this.game.setPending();
 
   this.isUserLeader = (userId) => {
     const user = this.getUserById(userId);
