@@ -200,7 +200,7 @@ function Game({
 
     const success = this.performCardEffect(card, effectData);
 
-    if (!player.isKnockedOut || targetedSelfWithPrince) { player.discardCardById(card.id); }
+    if (!player.isKnockedOut) { player.discardCardById(card.id); }
 
     const endActions = () => {
       // Tell the clients to dismiss their revealed cards
