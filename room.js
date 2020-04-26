@@ -112,7 +112,6 @@ function Room({ broadcast, emitToPlayer }) {
     if (!this.isPlayerLeader(gameInitiatorId)) { return false; }
     if (!this.game) { return false; }
     this.game.endGame();
-    broadcastSystemMessage('Game ended!');
     return true;
   }
 
