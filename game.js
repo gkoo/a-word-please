@@ -20,17 +20,18 @@ function Game({
   const MAX_PLAYERS = 4;
 
   this.setup = () => {
-    const userList = Object.values(users).slice(0, MAX_PLAYERS);
+    const userList = Object.values(users);
     this.state = STATE_PENDING;
     this.players = {};
-    this.spectators = {};
+    this.spectatorIds = userList.slice(MAX_PLAYERS);
 
-    const numPlayers = userList.length;
+    const usersToConvertToPlayers = userList.slice(0, MAX_PLAYERS);
+    const numPlayers = usersToConvertToPlayers.length;
     if (numPlayers < MIN_PLAYERS) {
       broadcastSystemMessage(`Cannot start the game with less than ${MIN_PLAYERS} players`);
       return;
     }
-    userList.forEach(user => {
+    usersToConvertToPlayers.forEach(user => {
       const player = new Player({ id: user.id, name: user.name });
       this.players[user.id] = player;
     });
@@ -44,6 +45,10 @@ function Game({
 
   this.getPlayers = () => {
     return Object.values(this.players);
+  };
+
+  this.addSpectator = id => {
+    this.spectatorIds.push(id)
   };
 
   this.newRound = () => {
@@ -482,6 +487,7 @@ function Game({
         this.serializeForPlayer(playerId, includeHands),
       )
     );
+    this.spectatorIds.forEach(id => emitToUser(id, 'gameData', this.serializeForSpectator()));
   };
 
   this.serializeForPlayer = (playerIdToSerializeFor, includeHands) => {
@@ -503,6 +509,8 @@ function Game({
     };
   };
 
+  this.serializeForSpectator = () => this.serializeForPlayer(null, true);
+
   this.serialize = () => {
     const {
       activePlayerId,
@@ -512,6 +520,7 @@ function Game({
       playerOrder,
       playerOrderCursor,
       roundNum,
+      spectatorIds,
       state
     } = this;
     return {
@@ -522,6 +531,7 @@ function Game({
       playerOrder,
       playerOrderCursor,
       roundNum,
+      spectatorIds,
       state,
     };
   }

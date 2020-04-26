@@ -19,6 +19,9 @@ function Room({ broadcast, emitToUser }) {
     if (this.getUsers().length === 1) {
       promoteRandomLeader();
     }
+    if (!this.game) { return; }
+
+    this.game.addSpectator(id);
   };
 
   this.removeUser = id => {
@@ -136,13 +139,17 @@ function Room({ broadcast, emitToUser }) {
       messages,
       currUserId: socket.id,
     };
-    socket.emit('initData', initData);
+    emitToUser(socket.id, 'initData', initData);
+
+    if (!this.game) { return; }
+
+    emitToUser(socket.id, 'gameData', this.game.serializeForSpectator());
   }
 
   this.sendGameState = socketId => {
-    if (this.game) {
-      emitToUser(socketId, 'debugInfo', this.game.serialize());
-    }
+    if (!this.game) { return; }
+
+    emitToUser(socketId, 'debugInfo', this.game.serialize());
   };
 }
 
