@@ -20,7 +20,7 @@ function Game({
   const MAX_PLAYERS = 4;
 
   this.setup = () => {
-    const userList = Object.values(users);
+    const userList = Object.values(users).slice(0, MAX_PLAYERS);
     this.state = STATE_PENDING;
     this.players = {};
     this.spectators = {};
@@ -28,10 +28,6 @@ function Game({
     const numPlayers = userList.length;
     if (numPlayers < MIN_PLAYERS) {
       broadcastSystemMessage(`Cannot start the game with less than ${MIN_PLAYERS} players`);
-      return;
-    }
-    if (numPlayers > MAX_PLAYERS) {
-      broadcastSystemMessage(`Cannot start the game with over ${MAX_PLAYERS} players`);
       return;
     }
     userList.forEach(user => {
