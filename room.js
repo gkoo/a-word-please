@@ -5,6 +5,7 @@ const Message = require('./message');
 const Player = require('./player');
 
 const MAX_MESSAGES = 50;
+const MAX_MESSAGE_LENGTH = 200;
 
 function Room({ broadcast, emitToPlayer }) {
   this.players = {};
@@ -61,7 +62,7 @@ function Room({ broadcast, emitToPlayer }) {
     const messageObj = new Message({
       id: uuid.v4(),
       senderName: this.players[senderId].name,
-      text: msg,
+      text: msg.substring(0, MAX_MESSAGE_LENGTH),
       type: 'player',
     })
     if (messages.length > MAX_MESSAGES) { messages.shift(); }
