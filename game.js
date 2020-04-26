@@ -408,7 +408,7 @@ function Game({
         broadcastMessage.push(
           `and forced ${targetPlayer.name} to discard their card`,
         );
-        if (targetPlayerCard === cards.PRINCESS) {
+        if (targetPlayerCard.type === cards.PRINCESS) {
           broadcastSystemMessage(broadcastMessage);
           knockOut(targetPlayer);
           return true;

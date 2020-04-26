@@ -176,10 +176,26 @@ describe('performCardEffect', () => {
         new Card({ id: 2, type: cards.PRINCESS }),
       ];
       game.players['3'].handmaidActive = true;
-      game.performCardEffect(card, { targetPlayerId: '3' });
+      const success = game.performCardEffect(card, { targetPlayerId: '3' });
+      expect(success).toEqual(false);
       expect(game.players['3'].hand).toHaveLength(1);
       expect(game.players['3'].hand[0].type).toEqual(cards.PRINCESS);
       expect(game.players['1'].hand[0].type).toEqual(cards.PRINCE);
+    });
+  });
+
+  describe('when handmaid is in discard but didn\'t have its effect applied', () => {
+    it('does not protect the player', () => {
+      game.activePlayerId = '1';
+      const { players } = game;
+      players['1'].discardPile = new Card({ id: 100, type: cards.HANDMAID });
+      players['1'].hand = [new Card({ id: 101, type: cards.PRINCESS })];
+      players['1'].handmaidActive = false;
+      const priestCard = new Card({ id: 102, type: cards.PRINCE });
+      players['2'].hand[0] = new Card(priestCard);
+      const success = game.performCardEffect(priestCard, { targetPlayerId: '2' });
+      expect(success).toEqual(true);
+      expect(players['2'].hand[0].id).not.toEqual(101);
     });
   });
 
@@ -207,6 +223,24 @@ describe('performCardEffect', () => {
     });
   });
 
+  describe('baron', () => {
+    it('knocks out the player with the lower card', () => {
+      const baronCard = new Card({ id: 1, type: cards.BARON });
+      game.players['1'].hand = [
+        new Card({ id: 0, type: cards.PRINCESS }),
+        baronCard,
+      ];
+      game.players['2'].hand = [
+        new Card({ id: 2, type: cards.KING }),
+      ];
+      game.activePlayerId = '1';
+      success = game.performCardEffect(baronCard, { targetPlayerId: '2' });
+      expect(success).toEqual(true);
+      expect(game.players['1'].isKnockedOut).toEqual(false);
+      expect(game.players['2'].isKnockedOut).toEqual(true);
+    });
+  });
+
   describe('handmaid', () => {
     it('sets handmaid status to active', () => {
       game.activePlayerId = '1';
@@ -220,17 +254,61 @@ describe('performCardEffect', () => {
   });
 
   describe('prince', () => {
-    it('moves the hand card to the discard pile', () => {
+    let targetedCard;
+    let targetedCardType;
+
+    subject = () => {
+      targetedCard = new Card({ id: 100, type: targetedCardType });
       game.activePlayerId = '1';
-      const targetedCard = new Card({ id: 0, type: cards.BARON });
       game.players['3'].hand = [targetedCard];
       game.performCardEffect(
-        new Card({ id: 1, type: cards.PRINCE }),
-        { targetPlayerId: 3 },
-      )
-      expect(game.players['3'].discardPile).toContain(targetedCard);
-      expect(game.players['3'].hand).toHaveLength(1);
-      expect(game.players['3'].hand).not.toContain(targetedCard);
+        new Card({ id: 101, type: cards.PRINCE }),
+        { targetPlayerId: '3' },
+      );
+    };
+
+    describe('for a non-Princess card', () => {
+      beforeEach(() => {
+        targetedCardType = cards.BARON;
+      });
+
+      it('moves the hand card to the discard pile', () => {
+        subject();
+        const targetedPlayer = game.players['3'];
+        expect(targetedPlayer.discardPile).toContain(targetedCard);
+        expect(targetedPlayer.hand).toHaveLength(1);
+        expect(targetedPlayer.hand).not.toContain(targetedCard);
+      });
+
+      it('doesn\'t knock the player out of the game', () => {
+        subject();
+        const targetedPlayer = game.players['3'];
+        expect(targetedPlayer.isKnockedOut).toEqual(false);
+      });
+    });
+
+    describe('when the hand card is the Princess', () => {
+      beforeEach(() => {
+        targetedCardType = cards.PRINCESS;
+      });
+
+      it('knocks the player out of the game', () => {
+        subject();
+        expect(game.players['3'].isKnockedOut).toEqual(true);
+      });
+    });
+
+    describe('when there are no cards left in the deck', () => {
+      beforeEach(() => {
+        targetedCardType = cards.HANDMAID;
+      });
+
+      it('draws the burn card', () => {
+        const { burnCard } = game;
+        game.deckCursor = game.deck.length;
+        subject();
+        expect(game.players['3'].hand[0].id).toEqual(burnCard.id);
+      });
     });
   });
 
