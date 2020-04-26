@@ -533,7 +533,13 @@ function Game({
   };
 
   this.serializeForPlayer = (playerIdToSerializeFor, includeHands) => {
-    const { activePlayerId, roundNum, state } = this;
+    const {
+      activePlayerId,
+      playerOrder,
+      roundNum,
+      state,
+    } = this;
+
     const playerData = {};
 
     Object.keys(this.players).forEach(playerId => {
@@ -546,6 +552,7 @@ function Game({
     return {
       activePlayerId,
       players: playerData,
+      playerOrder,
       roundNum,
       state,
     };
