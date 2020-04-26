@@ -70,6 +70,9 @@ function Game({
 
     createDeck();
     dealCards();
+
+    broadcastSystemMessage('New round starting...');
+
     this.nextTurn();
   };
 
