@@ -345,6 +345,25 @@ describe('performCardEffect', () => {
       expect(game.players['3'].hand[0].type).toEqual(cards.BARON);
     });
 
+    describe('when king is the first card in hand', () => {
+      it('switches cards with the target player', () => {
+        game.activePlayerId = '1';
+        const baronCard = new Card({ id: 0, type: cards.BARON });
+        const kingCard = new Card({ id: 1, type: cards.KING });
+        const guardCard = new Card({ id: 2, type: cards.GUARD });
+        const activePlayer = game.players['1'];
+
+        activePlayer.hand = [kingCard, baronCard];
+        game.players['3'].hand = [guardCard];
+
+        game.performCardEffect(kingCard, { targetPlayerId: 3 })
+        // make sure we still have both the guard and the king
+        expect(activePlayer.hand.find(card => card.type === cards.GUARD)).toBeTruthy();
+        expect(activePlayer.hand.find(card => card.type === cards.KING)).toBeTruthy();
+        expect(game.players['3'].hand[0].type).toEqual(cards.BARON);
+      });
+    });
+
     describe('when player has princess', () => {
       it('switches cards with the target player', () => {
         game.activePlayerId = '1';

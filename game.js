@@ -346,7 +346,8 @@ function Game({
     const broadcastMessage = [`${activePlayer.name} played ${card.getLabel()}`];
     const targetPlayerCard = targetPlayer && targetPlayer.hand[0];
     // the card that the active player did not play
-    const activePlayerOtherCard = activePlayer.hand.find(handCard => handCard.id !== card.id);
+    const activePlayerOtherCardIdx = activePlayer.hand.findIndex(handCard => handCard.id !== card.id)
+    const activePlayerOtherCard = activePlayer.hand[activePlayerOtherCardIdx];
 
     activePlayer.setHandmaid(false);
 
@@ -421,7 +422,7 @@ function Game({
       case cards.KING:
         // Switch the cards!
         targetPlayer.hand[0] = activePlayerOtherCard;
-        activePlayer.hand[0] = targetPlayerCard;
+        activePlayer.hand[activePlayerOtherCardIdx] = targetPlayerCard;
         broadcastMessage.push(
           `and switched cards with ${targetPlayer.name}`,
         );
