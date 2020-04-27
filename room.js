@@ -30,7 +30,11 @@ function Room({ broadcast, emitToUser }) {
     if (user.isLeader) {
       promoteRandomLeader();
     }
-    if (this.game) { this.game.removeUser(id); }
+    if (this.game) {
+      this.game.removeUser(id);
+      const connectedPlayer = Object.values(this.game.players).find(player => player.connected);
+      if (!connectedPlayer) { this.game = null; }
+    }
   };
 
   this.onUserDisconnect = id => {

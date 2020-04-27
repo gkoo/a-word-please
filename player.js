@@ -6,6 +6,7 @@ function Player({ id, name }) {
   this.numTokens = 0;
   this.isKnockedOut = false;
   this.handmaidActive = false;
+  this.connected = true;
 
   this.addCardToHand = card => this.hand.push(card);
 

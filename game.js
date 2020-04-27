@@ -53,7 +53,7 @@ function Game({
 
   this.removeUser = id => {
     // Remove from `players` and `users`
-    if (this.players[id]) { delete this.players[id]; }
+    if (this.players[id]) { this.players[id].connected = false; }
     const idx = this.spectatorIds.findIndex(spectatorId => spectatorId === id);
     if (idx >= 0) { this.spectatorIds.splice(idx, 1) }
   };

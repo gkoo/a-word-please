@@ -68,6 +68,19 @@ describe('removeUser', () => {
       expect(room.getUserById('456').isLeader).toEqual(true);
     });
   });
+
+  describe('when there are no players left in the game', () => {
+    it('destroys the game', () => {
+      room.addUser('123');
+      room.addUser('456');
+      room.startGame('123');
+      expect(Object.keys(room.users)).toHaveLength(2);
+      const user = room.removeUser('123');
+      const user = room.removeUser('456');
+      expect(Object.keys(room.users)).toHaveLength(0);
+      expect(room.game).toBeFalsy();
+    });
+  });
 });
 
 describe('getLeader', () => {
