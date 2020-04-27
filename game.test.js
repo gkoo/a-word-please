@@ -112,6 +112,9 @@ describe('playCard', () => {
         new Card({ id: 0, type: cards.PRINCE }),
         new Card({ id: 1, type: cards.GUARD }),
       ];
+      player.discardPile = [
+        new Card({ id: 2, type: cards.HANDMAID }),
+      ];
       player.handmaidActive = true;
       game.playCard('1', 0, { targetPlayerId: '1' });
       expect(player.hand.find(card => card.id === 1)).toBeFalsy();

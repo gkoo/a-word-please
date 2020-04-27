@@ -245,8 +245,7 @@ function Game({
     }
 
     // Check Handmaid card effect
-    const numDiscard = targetPlayer.discardPile.length;
-    if (numDiscard > 0 && targetPlayer.discardPile[numDiscard-1].type === cards.HANDMAID) {
+    if (targetPlayerId !== this.activePlayerId && targetPlayer.handmaidActive) {
       const message = '(Only visible to you) You can\'t target someone who played ' +
         `${cardLabels[cards.HANDMAID]} last turn`;
       emitSystemMessage(player.id, message);
