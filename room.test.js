@@ -53,7 +53,7 @@ describe('removeUser', () => {
   it('removes the user', () => {
     room.addUser(userId);
     expect(Object.keys(room.users)).toHaveLength(1);
-    const user = room.removeUser(userId);
+    const user = room.onUserDisconnect(userId);
     expect(Object.keys(room.users)).toHaveLength(0);
   });
 
@@ -64,7 +64,7 @@ describe('removeUser', () => {
       room.addUser('456');
       room.addUser('789');
       room.addUser('abc');
-      room.removeUser(userId);
+      room.onUserDisconnect(userId);
       expect(room.getUserById('456').isLeader).toEqual(true);
     });
   });
@@ -75,8 +75,8 @@ describe('removeUser', () => {
       room.addUser('456');
       room.startGame('123');
       expect(Object.keys(room.users)).toHaveLength(2);
-      const user = room.removeUser('123');
-      const user = room.removeUser('456');
+      room.onUserDisconnect('123');
+      room.onUserDisconnect('456');
       expect(Object.keys(room.users)).toHaveLength(0);
       expect(room.game).toBeFalsy();
     });

@@ -49,7 +49,7 @@ describe('removeUser', () => {
     game.players = { [id]: {} };
     game.spectatorIds = [id];
     game.removeUser(id);
-    expect(game.players[id]).toBeFalsy();
+    expect(game.players[id].connected).toEqual(false);
     expect(game.spectatorIds.find(spectatorId => spectatorId === id)).toBeFalsy();
   });
 });
@@ -102,6 +102,23 @@ describe('playCard', () => {
     expect(player.discardPile.find(discardCard => discardCard.id === 0)).toBeTruthy();
   });
 
+  describe('when targeting self with prince and previously played handmaid', () => {
+    it('counts as a legal move', () => {
+      game.playerOrder = ['1', '2'];
+      game.playerOrderCursor = 1;
+      game.activePlayerId = '1';
+      const player = game.players['1'];
+      player.hand = [
+        new Card({ id: 0, type: cards.PRINCE }),
+        new Card({ id: 1, type: cards.GUARD }),
+      ];
+      player.handmaidActive = true;
+      game.playCard('1', 0, { targetPlayerId: '1' });
+      expect(player.hand.find(card => card.id === 1)).toBeFalsy();
+      expect(player.discardPile.find(card => card.id === 1)).toBeTruthy();
+    });
+  });
+
   describe('illegal moves', () => {
     describe('when both Countess and King are in hand', () => {
       it('prohibits playing the King', () => {
@@ -128,9 +145,7 @@ describe('playCard', () => {
         game.players['2'].hand = [
           new Card({ id: 2, type: cards.PRINCESS }),
         ];
-        game.players['2'].discardPile = [
-          new Card({ id: 3, type: cards.HANDMAID }),
-        ];
+        game.players['2'].handmaidActive = true;
       });
 
       it('has no effect', () => {
