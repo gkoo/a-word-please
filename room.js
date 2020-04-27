@@ -68,9 +68,15 @@ function Room({ broadcast, emitToUser }) {
 
   this.handleMessage = (senderId, msg) => {
     const { messages } = this;
+    let senderName;
+    if (this.users[senderId]) {
+      senderName = this.users[senderId].name || 'anonymous';
+    } else {
+      senderName = '';
+    }
     const messageObj = new Message({
       id: uuid.v4(),
-      senderName: this.users[senderId].name,
+      senderName,
       text: msg.substring(0, MAX_MESSAGE_LENGTH),
       type: 'user',
     })

@@ -88,11 +88,22 @@ describe('nextTurn', () => {
 });
 
 describe('playCard', () => {
+  it('plays the card', () => {
+    game.playerOrder = ['1', '2'];
+    game.playerOrderCursor = 1;
+    game.activePlayerId = '1';
+    game.players['1'].hand = [
+      new Card({ id: 0, type: cards.HANDMAID }),
+      new Card({ id: 1, type: cards.GUARD }),
+    ];
+    game.playCard(game.activePlayerId, 0);
+    const player = game.players['1'];
+    expect(player.hand).toHaveLength(1);
+    expect(player.discardPile.find(discardCard => discardCard.id === 0)).toBeTruthy();
+  });
+
   describe('illegal moves', () => {
     describe('when both Countess and King are in hand', () => {
-      beforeEach(() => {
-      });
-
       it('prohibits playing the King', () => {
         game.activePlayerId = '1';
         game.players['1'].hand = [
