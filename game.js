@@ -376,6 +376,8 @@ function Game({
 
     const cardsWithTargets = [cards.GUARD, cards.PRIEST, cards.BARON, cards.PRINCE, cards.KING];
 
+    activePlayer.setHandmaid(false);
+
     // Do all alive players have handmaids?
     if (cardsWithTargets.includes(card.type) && allAlivePlayersHaveHandmaids()) {
       // Prince card is allowed to target self
@@ -400,8 +402,6 @@ function Game({
     // the card that the active player did not play
     const activePlayerOtherCardIdx = activePlayer.hand.findIndex(handCard => handCard.id !== card.id)
     const activePlayerOtherCard = activePlayer.hand[activePlayerOtherCardIdx];
-
-    activePlayer.setHandmaid(false);
 
     switch (card.type) {
       case cards.GUARD:

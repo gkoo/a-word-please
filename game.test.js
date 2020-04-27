@@ -210,6 +210,20 @@ describe('performCardEffect', () => {
       expect(game.players['3'].hand[0].type).toEqual(cards.PRINCESS);
       expect(game.players['1'].hand[0].type).toEqual(cards.PRINCE);
     });
+
+    describe('and the active player had handmaid status from previous turn', () => {
+      it('removes the active player\'s handmaid status', () => {
+        game.activePlayerId = '1';
+        const card = new Card({ id: 0, type: cards.GUARD });
+        game.players['1'].hand = [card];
+        game.players['1'].handmaidActive = true;
+        game.players['2'].handmaidActive = true;
+        game.players['3'].handmaidActive = true;
+        const success = game.performCardEffect(card);
+        expect(success).toEqual(false);
+        expect(game.players['1'].handmaidActive).toEqual(false);
+      });
+    });
   });
 
   describe('when one player has a handmaid', () => {
