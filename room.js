@@ -24,8 +24,10 @@ function Room({ broadcast, emitToUser }) {
     this.game.addSpectator(id);
   };
 
-  this.removeUser = id => {
+  this.onUserDisconnect = id => {
     const user = this.users[id];
+    const { name } = user;
+
     delete this.users[id];
     if (user.isLeader) {
       promoteRandomLeader();
@@ -35,14 +37,7 @@ function Room({ broadcast, emitToUser }) {
       const connectedPlayer = Object.values(this.game.players).find(player => player.connected);
       if (!connectedPlayer) { this.game = null; }
     }
-  };
-
-  this.onUserDisconnect = id => {
-    const { name } = this.users[id];
-
-    this.removeUser(id);
     broadcast('userDisconnect', id);
-    const leader = this.getLeader();
 
     if (!name) { return; }
     broadcastSystemMessage(`${name} disconnected`);
