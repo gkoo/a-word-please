@@ -17,7 +17,7 @@ app.get('/', (req, res) => res.send('Hello World!'))
 // Callbacks to pass to room
 const broadcast = (eventName, data) => io.emit(eventName, data);
 const emitToSocket = (socketId, eventName, data) =>
-  io.sockets.connected[socketId].emit(eventName, data);
+  io.sockets.connected[socketId] && io.sockets.connected[socketId].emit(eventName, data);
 
 const room = new Room({ broadcast, emitToUser: emitToSocket });
 

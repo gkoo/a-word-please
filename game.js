@@ -200,6 +200,14 @@ function Game({
 
     const success = this.performCardEffect(card, effectData);
 
+    // Tell FE what card was played and who was targeted, if applicable
+    broadcast('lastCardPlayed', {
+      playerId: this.activePlayerId,
+      card,
+      effectData,
+      discarded: success,
+    });
+
     if (!player.isKnockedOut) { player.discardCardById(card.id); }
 
     const endActions = () => {
@@ -209,12 +217,7 @@ function Game({
       this.nextTurn();
     };
 
-    // Don't delay next turn if card was discarded
-    if (success && [cards.PRIEST, cards.BARON].includes(card.type)) {
-      setTimeout(endActions, 3000);
-    } else {
-      endActions();
-    }
+    setTimeout(endActions, 2000);
   };
 
   const isLegalMove = (player, card, effectData = {}) => {
@@ -501,6 +504,7 @@ function Game({
     }
 
     broadcastSystemMessage(broadcastMessage.join(' '));
+
     return true;
   };
 
