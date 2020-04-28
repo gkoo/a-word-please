@@ -259,6 +259,25 @@ function Game({
     this.state = STATE_ROUND_END;
 
     // Determine winner
+    const roundWinners = this.determineRoundWinners();
+
+    const roundEndMsg = `${roundWinners.map(winner => winner.name).join(' and ')} won the round!`;
+    broadcastSystemMessage(roundEndMsg);
+
+    const isGameOver = false;
+    const gameWinners = roundWinners.filter(
+      roundWinner => ++roundWinner.numTokens >= this.maxTokens
+    );
+
+    if (gameWinners.length > 0) {
+      this.endGame(gameWinners);
+      return;
+    }
+
+    broadcastGameDataToPlayers();
+  };
+
+  this.determineRoundWinners = () => {
     const playerList = Object.values(this.players);
     const alivePlayers = this.getAlivePlayers();
 
@@ -284,43 +303,30 @@ function Game({
       finalists.push(player);
     }
 
+    if (finalists.length === 1) {
+      return finalists;
+    }
+
+    // Tie-break. Add up the discard piles
+    let maxDiscardTotal = 0;
+
     let roundWinners = [];
 
-    if (finalists.length > 1) {
-      // Tie-break. Add up the discard piles
-      let maxDiscardTotal = 0;
+    finalists.forEach(finalist => {
+      const discardTotal = _.reduce(
+        finalist.discardPile,
+        (sum, discardCard) => sum + discardCard.getNumber(),
+        0,
+      );
+      if (discardTotal > maxDiscardTotal) {
+        maxDiscardTotal = discardTotal;
+        roundWinners = [finalist];
+      } else if (discardTotal === maxDiscardTotal) {
+        roundWinners.push(finalist);
+      }
+    });
 
-      finalists.forEach(finalist => {
-        const discardTotal = _.reduce(
-          finalist.discardPile,
-          (sum, discardCard) => sum + discardCard.getNumber(),
-          0,
-        );
-        if (discardTotal > maxDiscardTotal) {
-          maxDiscardTotal = discardTotal;
-          roundWinners = [finalist];
-        } else if (discardTotal === maxDiscardTotal) {
-          roundWinners.push(finalist);
-        }
-      });
-    } else {
-      roundWinners = finalists;
-    }
-
-    const roundEndMsg = `${roundWinners.map(winner => winner.name).join(' and ')} won the round!`;
-    broadcastSystemMessage(roundEndMsg);
-
-    const isGameOver = false;
-    const gameWinners = roundWinners.filter(
-      roundWinner => ++roundWinner.numTokens >= this.maxTokens
-    );
-
-    if (gameWinners.length > 0) {
-      this.endGame(gameWinners);
-      return;
-    }
-
-    broadcastGameDataToPlayers();
+    return roundWinners;
   };
 
   this.endGame = (winners) => {

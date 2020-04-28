@@ -203,6 +203,70 @@ describe('endRound', () => {
   });
 });
 
+describe('determineRoundWinners', () => {
+  describe('when one person has a higher card than anyone else', () => {
+    beforeEach(() => {
+      game.players['1'].hand = [new Card({ id: 100, type: cards.PRINCESS })];
+      game.players['2'].hand = [new Card({ id: 101, type: cards.PRIEST })];
+      game.players['3'].hand = [new Card({ id: 102, type: cards.GUARD })];
+    });
+
+    it('chooses that person as the round winner', () => {
+      const roundWinners = game.determineRoundWinners();
+      expect(roundWinners).toHaveLength(1);
+      expect(roundWinners).toContain(game.players['1']);
+    });
+  });
+
+  describe('when two people have the same card', () => {
+    beforeEach(() => {
+      game.players['1'].hand = [new Card({ id: 100, type: cards.PRIEST })];
+      game.players['2'].hand = [new Card({ id: 101, type: cards.PRIEST })];
+      game.players['3'].hand = [new Card({ id: 102, type: cards.GUARD })];
+    });
+
+    describe('and one has a higher discard sum', () => {
+      beforeEach(() => {
+        game.players['1'].discardPile = [
+          new Card({ id: 103, type: cards.BARON }),
+          new Card({ id: 104, type: cards.GUARD }),
+        ];
+        game.players['2'].discardPile = [
+          new Card({ id: 105, type: cards.COUNTESS }),
+          new Card({ id: 106, type: cards.GUARD }),
+        ];
+        game.players['3'].hand = [new Card({ id: 102, type: cards.GUARD })];
+      });
+
+      it('chooses that person as the round winner', () => {
+        const roundWinners = game.determineRoundWinners();
+        expect(roundWinners).toHaveLength(1);
+        expect(roundWinners).toContain(game.players['2']);
+      });
+    });
+
+    describe('and they have the same discard sum', () => {
+      beforeEach(() => {
+        game.players['1'].discardPile = [
+          new Card({ id: 103, type: cards.COUNTESS }),
+          new Card({ id: 104, type: cards.GUARD }),
+        ];
+        game.players['2'].discardPile = [
+          new Card({ id: 105, type: cards.PRINCE }),
+          new Card({ id: 106, type: cards.BARON }),
+        ];
+        game.players['3'].hand = [new Card({ id: 102, type: cards.GUARD })];
+      });
+
+      it('chooses both people as the winner', () => {
+        const roundWinners = game.determineRoundWinners();
+        expect(roundWinners).toHaveLength(2);
+        expect(roundWinners).toContain(game.players['1', '2']);
+      });
+    });
+  });
+});
+
 describe('getAlivePlayers', () => {
   const subject = () => game.getAlivePlayers();
 
