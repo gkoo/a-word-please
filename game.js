@@ -6,9 +6,9 @@ const Card = require('./card');
 const Player = require('./player');
 
 function Game({
-  broadcast,
+  broadcastToRoom,
   broadcastSystemMessage,
-  emitToUser,
+  broadcastToSocket,
   users,
 }) {
   const STATE_PENDING = 0;
@@ -201,7 +201,7 @@ function Game({
     const success = this.performCardEffect(card, effectData);
 
     // Tell FE what card was played and who was targeted, if applicable
-    broadcast('lastCardPlayed', {
+    broadcastToRoom('lastCardPlayed', {
       playerId: this.activePlayerId,
       card,
       effectData,
@@ -212,7 +212,7 @@ function Game({
 
     const endActions = () => {
       // Tell the clients to dismiss their revealed cards
-      broadcast('dismissReveal');
+      broadcastToRoom('dismissReveal');
 
       this.nextTurn();
     };
@@ -335,7 +335,7 @@ function Game({
   this.endGame = (winners) => {
     console.log('end game');
     const winnerIds = winners && winners.map(winner => winner.id);
-    broadcast('endGame', winnerIds);
+    broadcastToRoom('endGame', winnerIds);
     broadcastSystemMessage('Game is over!');
     this.state = STATE_GAME_END;
 
@@ -431,7 +431,7 @@ function Game({
         break;
       case cards.PRIEST:
         console.log('revealing for priest');
-        emitToUser(activePlayer.id, 'priestReveal', targetPlayerCard);
+        broadcastToSocket(activePlayer.id, 'priestReveal', targetPlayerCard);
         const priestRevealMessage = `(Only visible to you) ${targetPlayer.name} is holding the ` +
           `${targetPlayerCard.getLabel()}!`;
         emitSystemMessage(activePlayer.id, priestRevealMessage);
@@ -445,8 +445,8 @@ function Game({
           playerId: targetPlayer.id,
           card: targetPlayerCard,
         }];
-        emitToUser(activePlayer.id, 'baronReveal', baronRevealData);
-        emitToUser(targetPlayer.id, 'baronReveal', baronRevealData);
+        broadcastToSocket(activePlayer.id, 'baronReveal', baronRevealData);
+        broadcastToSocket(targetPlayer.id, 'baronReveal', baronRevealData);
         broadcastMessage.push(`and compared cards with ${targetPlayer.name}`);
 
         // Who died?
@@ -527,18 +527,18 @@ function Game({
       text: msg,
       type: 'system',
     };
-    emitToUser(playerId, 'message', messageObj);
+    broadcastToSocket(playerId, 'message', messageObj);
   };
 
   const broadcastGameDataToPlayers = (includeHands = false) => {
     Object.keys(this.players).forEach(playerId =>
-      emitToUser(
+      broadcastToSocket(
         playerId,
         'gameData',
         this.serializeForPlayer(playerId, includeHands),
       )
     );
-    this.spectatorIds.forEach(id => emitToUser(id, 'gameData', this.serializeForSpectator()));
+    this.spectatorIds.forEach(id => broadcastToSocket(id, 'gameData', this.serializeForSpectator()));
   };
 
   this.serializeForPlayer = (playerIdToSerializeFor, includeHands) => {

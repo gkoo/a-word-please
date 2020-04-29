@@ -7,7 +7,8 @@ const User = require('./user');
 const MAX_MESSAGES = 50;
 const MAX_MESSAGE_LENGTH = 200;
 
-function Room({ broadcast, emitToUser }) {
+function Room({ io, roomCode }) {
+  this.roomCode = roomCode;
   this.users = {};
   this.messages = [];
 
@@ -37,7 +38,7 @@ function Room({ broadcast, emitToUser }) {
       const connectedPlayer = Object.values(this.game.players).find(player => player.connected);
       if (!connectedPlayer) { this.game = null; }
     }
-    broadcast('userDisconnect', id);
+    broadcastToRoom('userDisconnect', id);
 
     if (!name) { return; }
     broadcastSystemMessage(`${name} disconnected`);
@@ -53,7 +54,7 @@ function Room({ broadcast, emitToUser }) {
     for (let i = 1; i < users.length; ++i) {
       users[i].unpromoteFromLeader();
     }
-    broadcast('newLeader', newLeader.id);
+    broadcastToRoom('newLeader', newLeader.id);
   };
 
   this.getLeader = () => Object.values(this.users).find(user => user.isLeader);
@@ -62,7 +63,7 @@ function Room({ broadcast, emitToUser }) {
     const user = this.users[id];
     user.setName(name);
     broadcastSystemMessage(`${name} connected`);
-    broadcast('newUser', user.serialize());
+    broadcastToRoom('newUser', user.serialize());
   };
 
   this.handleMessage = (senderId, msg) => {
@@ -81,17 +82,7 @@ function Room({ broadcast, emitToUser }) {
     })
     if (messages.length > MAX_MESSAGES) { messages.shift(); }
     messages.push(messageObj);
-    broadcast('message', messageObj);
-  };
-
-  const broadcastSystemMessage = msg => {
-    const messageObj = {
-      id: uuid.v4(),
-      text: msg,
-      type: 'system',
-    };
-    this.messages.push(messageObj);
-    broadcast('message', messageObj);
+    broadcastToRoom('message', messageObj);
   };
 
   // returns an array of users
@@ -100,9 +91,9 @@ function Room({ broadcast, emitToUser }) {
   this.startGame = (gameInitiatorId) => {
     if (!this.isUserLeader(gameInitiatorId)) { return; }
     this.game = new Game({
-      broadcast,
+      broadcastToRoom,
       broadcastSystemMessage,
-      emitToUser,
+      broadcastToSocket,
       users: this.users,
     });
     this.game.setup();
@@ -123,10 +114,9 @@ function Room({ broadcast, emitToUser }) {
   };
 
   this.endGame = (gameInitiatorId) => {
-    if (!this.isUserLeader(gameInitiatorId)) { return false; }
-    if (!this.game) { return false; }
+    if (!this.isUserLeader(gameInitiatorId)) { return; }
+    if (!this.game) { return; }
     this.game.endGame();
-    return true;
   };
 
   this.setPending = () => this.game && this.game.setPending();
@@ -147,17 +137,31 @@ function Room({ broadcast, emitToUser }) {
       messages,
       currUserId: socket.id,
     };
-    emitToUser(socket.id, 'initData', initData);
+    broadcastToSocket(socket.id, 'initData', initData);
 
     if (!this.game) { return; }
 
-    emitToUser(socket.id, 'gameData', this.game.serializeForSpectator());
+    broadcastToSocket(socket.id, 'gameData', this.game.serializeForSpectator());
   }
 
   this.sendGameState = socketId => {
     if (!this.game) { return; }
 
-    emitToUser(socketId, 'debugInfo', this.game.serialize());
+    broadcastToSocket(socketId, 'debugInfo', this.game.serialize());
+  };
+
+  const broadcastToRoom = (eventName, data) => io.to(this.roomCode).emit(eventName, data);
+
+  const broadcastToSocket = (socketId, eventName, data) => io.to(socketId).emit(eventName, data);
+
+  const broadcastSystemMessage = msg => {
+    const messageObj = {
+      id: uuid.v4(),
+      text: msg,
+      type: 'system',
+    };
+    this.messages.push(messageObj);
+    broadcastToRoom('message', messageObj);
   };
 }
 
