@@ -205,7 +205,7 @@ function Game({
       playerId: this.activePlayerId,
       card,
       effectData,
-      discarded: success,
+      discarded: !success,
     });
 
     if (!player.isKnockedOut) { player.discardCardById(card.id); }
