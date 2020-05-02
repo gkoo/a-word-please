@@ -10,7 +10,7 @@ let players;
 
 const mockBroadcastToRoom = jest.fn();
 const mockBroadcastSystemMessage = jest.fn();
-const mockBroadcastToSocket = jest.fn();
+const mockBroadcastTo = jest.fn();
 
 beforeEach(() => {
   users = {
@@ -21,7 +21,7 @@ beforeEach(() => {
   game = new Game({
     broadcastToRoom: mockBroadcastToRoom,
     broadcastSystemMessage: mockBroadcastSystemMessage,
-    broadcastToSocket: mockBroadcastToSocket,
+    broadcastTo: mockBroadcastTo,
     users,
   });
   game.setup();
@@ -107,18 +107,19 @@ describe('playCard', () => {
       game.playerOrder = ['1', '2'];
       game.playerOrderCursor = 1;
       game.activePlayerId = '1';
-      const player = game.players['1'];
-      player.hand = [
-        new Card({ id: 0, type: cards.PRINCE }),
-        new Card({ id: 1, type: cards.GUARD }),
+      const player1 = game.players['1'];
+      const cardId = 100;
+      player1.hand = [
+        new Card({ id: cardId, type: cards.PRINCE }),
+        new Card({ id: 101, type: cards.GUARD }),
       ];
-      player.discardPile = [
-        new Card({ id: 2, type: cards.HANDMAID }),
+      player1.discardPile = [
+        new Card({ id: 102, type: cards.HANDMAID }),
       ];
-      player.handmaidActive = true;
-      game.playCard('1', 0, { targetPlayerId: '1' });
-      expect(player.hand.find(card => card.id === 1)).toBeFalsy();
-      expect(player.discardPile.find(card => card.id === 1)).toBeTruthy();
+      player1.handmaidActive = true;
+      game.playCard(player1.id, cardId, { targetPlayerId: player1.id });
+      expect(player1.hand.find(card => card.id === 101)).toBeFalsy();
+      expect(player1.discardPile.find(card => card.id === 101)).toBeTruthy();
     });
   });
 

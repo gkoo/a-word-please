@@ -26,6 +26,8 @@ server.listen(port, () => {
   console.log(`Starting the server on port ${port}`);
 });
 
+const broadcastTo = (roomId, eventName, data) => io.to(roomId).emit(eventName, data);
+
 const handleSetName = (socket, name) => {
   const { id } = socket;
   const room = getRoom(socket);
@@ -52,7 +54,7 @@ const handleEndGame = socket => {
 const joinRoom = (socket, roomCode) => {
   let room = rooms[roomCode];
   if (!room) {
-    room = new Room({ io, roomCode });
+    room = new Room({ broadcastTo, roomCode });
     rooms[roomCode] = room;
   }
   socket.join(roomCode);

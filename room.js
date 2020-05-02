@@ -7,44 +7,57 @@ const User = require('./user');
 const MAX_MESSAGES = 50;
 const MAX_MESSAGE_LENGTH = 200;
 
-function Room({ io, roomCode }) {
+function Room({ broadcastTo, roomCode }) {
+  this.broadcastToRoom = (eventName, data) => broadcastTo(roomCode, eventName, data);
+  this.broadcastTo = broadcastTo;
   this.roomCode = roomCode;
   this.users = {};
   this.messages = [];
+  this.broadcastSystemMessage = (msg) => {
+    const messageObj = {
+      id: uuid.v4(),
+      text: msg,
+      type: 'system',
+    };
+    this.messages.push(messageObj);
+    this.broadcastToRoom('message', messageObj);
+  };
+}
 
-  this.getUserById = id => this.users[id];
+Room.prototype = {
+  getUserById: function(id) { return this.users[id]; },
 
-  this.addUser = id => {
+  addUser: function(id) {
     const user = new User(id);
     this.users[id] = user;
     if (this.getUsers().length === 1) {
-      promoteRandomLeader();
+      this.promoteRandomLeader();
     }
     if (!this.game) { return; }
 
     this.game.addSpectator(id);
-  };
+  },
 
-  this.onUserDisconnect = id => {
+  onUserDisconnect: function(id) {
     const user = this.users[id];
     const { name } = user;
 
     delete this.users[id];
     if (user.isLeader) {
-      promoteRandomLeader();
+      this.promoteRandomLeader();
     }
     if (this.game) {
       this.game.removeUser(id);
       const connectedPlayer = Object.values(this.game.players).find(player => player.connected);
       if (!connectedPlayer) { this.game = null; }
     }
-    broadcastToRoom('userDisconnect', id);
+    this.broadcastToRoom('userDisconnect', id);
 
     if (!name) { return; }
-    broadcastSystemMessage(`${name} disconnected`);
-  };
+    this.broadcastSystemMessage(`${name} disconnected`);
+  },
 
-  const promoteRandomLeader = () => {
+  promoteRandomLeader: function() {
     const users = this.getUsers();
 
     if (users.length === 0) { return; }
@@ -54,19 +67,19 @@ function Room({ io, roomCode }) {
     for (let i = 1; i < users.length; ++i) {
       users[i].unpromoteFromLeader();
     }
-    broadcastToRoom('newLeader', newLeader.id);
-  };
+    this.broadcastToRoom('newLeader', newLeader.id);
+  },
 
-  this.getLeader = () => Object.values(this.users).find(user => user.isLeader);
+  getLeader: function() { return Object.values(this.users).find(user => user.isLeader); },
 
-  this.setUserName = (id, name) => {
+  setUserName: function(id, name) {
     const user = this.users[id];
     user.setName(name);
-    broadcastSystemMessage(`${name} connected`);
-    broadcastToRoom('newUser', user.serialize());
-  };
+    this.broadcastSystemMessage(`${name} connected`);
+    this.broadcastToRoom('newUser', user.serialize());
+  },
 
-  this.handleMessage = (senderId, msg) => {
+  handleMessage: function(senderId, msg) {
     const { messages } = this;
     let senderName;
     if (this.users[senderId]) {
@@ -82,28 +95,33 @@ function Room({ io, roomCode }) {
     })
     if (messages.length > MAX_MESSAGES) { messages.shift(); }
     messages.push(messageObj);
-    broadcastToRoom('message', messageObj);
-  };
+    this.broadcastToRoom('message', messageObj);
+  },
 
   // returns an array of users
-  this.getUsers = () => Object.values(this.users);
+  getUsers: function() { return Object.values(this.users); },
 
-  this.startGame = (gameInitiatorId) => {
+  startGame: function(gameInitiatorId) {
+    const {
+      broadcastToRoom,
+      broadcastSystemMessage,
+      broadcastTo,
+    } = this;
     if (!this.isUserLeader(gameInitiatorId)) { return; }
     this.game = new Game({
       broadcastToRoom,
       broadcastSystemMessage,
-      broadcastToSocket,
+      broadcastTo,
       users: this.users,
     });
     this.game.setup();
-  };
+  },
 
-  this.playCard = (userId, cardId, effectData) => {
+  playCard: function(userId, cardId, effectData) {
     this.game.playCard(userId, cardId, effectData);
-  };
+  },
 
-  this.nextRound = userId => {
+  nextRound: function(userId) {
     console.log('starting next round');
     if (!this.isUserLeader(userId)) {
       console.log(`user ${userId} tried to start next round but is not the leader`);
@@ -111,22 +129,22 @@ function Room({ io, roomCode }) {
     }
     if (!this.game) { return false; }
     this.game.newRound();
-  };
+  },
 
-  this.endGame = (gameInitiatorId) => {
+  endGame: function(gameInitiatorId) {
     if (!this.isUserLeader(gameInitiatorId)) { return; }
     if (!this.game) { return; }
     this.game.endGame();
-  };
+  },
 
-  this.setPending = () => this.game && this.game.setPending();
+  setPending: function() { return this.game && this.game.setPending(); },
 
-  this.isUserLeader = (userId) => {
+  isUserLeader: function(userId) {
     const user = this.getUserById(userId);
     return user.isLeader;
-  };
+  },
 
-  this.sendInitRoomData = socket => {
+  sendInitRoomData: function(socket) {
     const users = {};
     const { messages } = this;
     Object.values(this.users).forEach(user => {
@@ -137,32 +155,18 @@ function Room({ io, roomCode }) {
       messages,
       currUserId: socket.id,
     };
-    broadcastToSocket(socket.id, 'initData', initData);
+    this.broadcastTo(socket.id, 'initData', initData);
 
     if (!this.game) { return; }
 
-    broadcastToSocket(socket.id, 'gameData', this.game.serializeForSpectator());
-  }
+    this.broadcastTo(socket.id, 'gameData', this.game.serializeForSpectator());
+  },
 
-  this.sendGameState = socketId => {
+  sendGameState: function(socketId) {
     if (!this.game) { return; }
 
-    broadcastToSocket(socketId, 'debugInfo', this.game.serialize());
-  };
-
-  const broadcastToRoom = (eventName, data) => io.to(this.roomCode).emit(eventName, data);
-
-  const broadcastToSocket = (socketId, eventName, data) => io.to(socketId).emit(eventName, data);
-
-  const broadcastSystemMessage = msg => {
-    const messageObj = {
-      id: uuid.v4(),
-      text: msg,
-      type: 'system',
-    };
-    this.messages.push(messageObj);
-    broadcastToRoom('message', messageObj);
-  };
+    this.broadcastTo(socketId, 'debugInfo', this.game.serialize());
+  },
 }
 
 module.exports = Room;

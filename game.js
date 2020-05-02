@@ -8,12 +8,13 @@ const Player = require('./player');
 function Game({
   broadcastToRoom,
   broadcastSystemMessage,
-  broadcastToSocket,
+  broadcastTo,
   users,
 }) {
   this.broadcastToRoom = broadcastToRoom;
   this.broadcastSystemMessage = broadcastSystemMessage;
-  this.broadcastToSocket = broadcastToSocket;
+  this.broadcastTo = broadcastTo;
+  this.users = users;
 }
 
 Game.prototype = {
@@ -26,7 +27,7 @@ Game.prototype = {
   MAX_PLAYERS: 4,
 
   setup: function() {
-    const userList = Object.values(users);
+    const userList = Object.values(this.users);
     this.state = this.STATE_STARTED;
     this.players = {};
     this.spectatorIds = userList.slice(this.MAX_PLAYERS);
@@ -439,7 +440,7 @@ Game.prototype = {
         break;
       case cards.PRIEST:
         console.log('revealing for priest');
-        this.broadcastToSocket(activePlayer.id, 'priestReveal', targetPlayerCard);
+        this.broadcastTo(activePlayer.id, 'priestReveal', targetPlayerCard);
         const priestRevealMessage = `(Only visible to you) ${targetPlayer.name} is holding the ` +
           `${targetPlayerCard.getLabel()}!`;
         this.emitSystemMessage(activePlayer.id, priestRevealMessage);
@@ -453,8 +454,8 @@ Game.prototype = {
           playerId: targetPlayer.id,
           card: targetPlayerCard,
         }];
-        this.broadcastToSocket(activePlayer.id, 'baronReveal', baronRevealData);
-        this.broadcastToSocket(targetPlayer.id, 'baronReveal', baronRevealData);
+        this.broadcastTo(activePlayer.id, 'baronReveal', baronRevealData);
+        this.broadcastTo(targetPlayer.id, 'baronReveal', baronRevealData);
         broadcastMessage.push(`and compared cards with ${targetPlayer.name}`);
 
         // Who died?
@@ -535,18 +536,18 @@ Game.prototype = {
       text: msg,
       type: 'system',
     };
-    this.broadcastToSocket(playerId, 'message', messageObj);
+    this.broadcastTo(playerId, 'message', messageObj);
   },
 
   broadcastGameDataToPlayers: function(includeHands = false) {
-    Object.keys(this.players).forEach(playerId =>
-      this.broadcastToSocket(
+    Object.keys(this.players).forEach((playerId) => {
+      this.broadcastTo(
         playerId,
         'gameData',
         this.serializeForPlayer(playerId, includeHands),
-      )
-    );
-    this.spectatorIds.forEach(id => this.broadcastToSocket(id, 'gameData', this.serializeForSpectator()));
+      );
+    });
+    this.spectatorIds.forEach(id => this.broadcastTo(id, 'gameData', this.serializeForSpectator()));
   },
 
   serializeForPlayer: function(playerIdToSerializeFor, includeHands) {

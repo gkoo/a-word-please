@@ -1,12 +1,12 @@
+const Game = require('./game');
 const Room = require('./room');
 
 let room;
 
-const mockBroadcast = jest.fn();
-const mockEmitToUser = jest.fn();
+const mockBroadcastTo = jest.fn();
 
 beforeEach(() => {
-  room = new Room({ broadcast: mockBroadcast, emitToUser: mockEmitToUser });
+  room = new Room({ broadcastTo: mockBroadcastTo });
 });
 
 const userId = '123';
