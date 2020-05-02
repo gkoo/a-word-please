@@ -7,10 +7,12 @@ function Player({ id, name }) {
   this.isKnockedOut = false;
   this.handmaidActive = false;
   this.connected = true;
+}
 
-  this.addCardToHand = card => this.hand.push(card);
+Player.prototype = {
+  addCardToHand: function(card) { this.hand.push(card); },
 
-  this.discardCardById = cardId => {
+  discardCardById: function(cardId) {
     const cardIdx = this.hand.findIndex(card => card.id === cardId);
 
     if (cardIdx === -1) {
@@ -19,28 +21,28 @@ function Player({ id, name }) {
 
     const discardedCards = this.hand.splice(cardIdx, 1);
     this.discardPile = this.discardPile.concat(discardedCards);
-  };
+  },
 
-  this.resetCards = () => {
+  resetCards: function() {
     this.hand = [];
     this.discardPile = [];
     this.isKnockedOut = false;
-  };
+  },
 
   // Take the player out of the round
-  this.knockOut = () => {
+  knockOut: function() {
     this.discardPile = this.discardPile.concat(this.hand);
     this.hand = [];
     this.isKnockedOut = true;
-  };
+  },
 
-  this.getCard = cardId => this.hand.find(card => card.id === cardId);
+  getCard: function(cardId) { return this.hand.find(card => card.id === cardId); },
 
-  this.hasCard = cardType => !!this.hand.find(card => card.type === cardType);
+  hasCard: function(cardType) { return !!this.hand.find(card => card.type === cardType); },
 
-  this.setHandmaid = (enabled) => this.handmaidActive = enabled;
+  setHandmaid: function(enabled) { this.handmaidActive = enabled; },
 
-  this.serialize = ({ includeHand }) => {
+  serialize: function ({ includeHand }) {
     const {
       discardPile,
       hand,
@@ -60,7 +62,7 @@ function Player({ id, name }) {
       name,
       numTokens,
     }
-  };
+  },
 }
 
 module.exports = Player;
