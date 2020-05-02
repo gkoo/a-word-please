@@ -3,7 +3,6 @@ const _ = require('lodash');
 const Card = require('./card');
 const Game = require('./game');
 const User = require('./user');
-const { cards } = require('./constants');
 
 let game;
 let players;
@@ -93,8 +92,8 @@ describe('playCard', () => {
     game.playerOrderCursor = 1;
     game.activePlayerId = '1';
     game.players['1'].hand = [
-      new Card({ id: 0, type: cards.HANDMAID }),
-      new Card({ id: 1, type: cards.GUARD }),
+      new Card({ id: 0, type: Card.HANDMAID }),
+      new Card({ id: 1, type: Card.GUARD }),
     ];
     game.playCard(game.activePlayerId, 0);
     const player = game.players['1'];
@@ -110,11 +109,11 @@ describe('playCard', () => {
       const player1 = game.players['1'];
       const cardId = 100;
       player1.hand = [
-        new Card({ id: cardId, type: cards.PRINCE }),
-        new Card({ id: 101, type: cards.GUARD }),
+        new Card({ id: cardId, type: Card.PRINCE }),
+        new Card({ id: 101, type: Card.GUARD }),
       ];
       player1.discardPile = [
-        new Card({ id: 102, type: cards.HANDMAID }),
+        new Card({ id: 102, type: Card.HANDMAID }),
       ];
       player1.handmaidActive = true;
       game.playCard(player1.id, cardId, { targetPlayerId: player1.id });
@@ -128,14 +127,14 @@ describe('playCard', () => {
       it('prohibits playing the King', () => {
         game.activePlayerId = '1';
         game.players['1'].hand = [
-          new Card({ id: 0, type: cards.COUNTESS }),
-          new Card({ id: 1, type: cards.KING }),
+          new Card({ id: 0, type: Card.COUNTESS }),
+          new Card({ id: 1, type: Card.KING }),
         ];
         game.playCard(game.activePlayerId, 1);
         const player = game.players[game.activePlayerId];
         expect(player.hand).toHaveLength(2);
-        expect(player.hand.find(card => card.type === cards.KING)).toBeTruthy();
-        expect(player.hand.find(card => card.type === cards.COUNTESS)).toBeTruthy();
+        expect(player.hand.find(card => card.type === Card.KING)).toBeTruthy();
+        expect(player.hand.find(card => card.type === Card.COUNTESS)).toBeTruthy();
       });
     });
 
@@ -143,11 +142,11 @@ describe('playCard', () => {
       beforeEach(() => {
         game.activePlayerId = '1';
         game.players['1'].hand = [
-          new Card({ id: 0, type: cards.GUARD }),
-          new Card({ id: 1, type: cards.KING }),
+          new Card({ id: 0, type: Card.GUARD }),
+          new Card({ id: 1, type: Card.KING }),
         ];
         game.players['2'].hand = [
-          new Card({ id: 2, type: cards.PRINCESS }),
+          new Card({ id: 2, type: Card.PRINCESS }),
         ];
         game.players['2'].handmaidActive = true;
       });
@@ -155,9 +154,9 @@ describe('playCard', () => {
       it('has no effect', () => {
         game.playCard('1', 0, { targetPlayerId: '2' });
         const activePlayerHand = game.players['1'].hand;
-        expect(activePlayerHand.find(card => card.type === cards.GUARD)).toBeTruthy();
-        expect(activePlayerHand.find(card => card.type === cards.KING)).toBeTruthy();
-        expect(game.players['2'].hand[0].type).toEqual(cards.PRINCESS);
+        expect(activePlayerHand.find(card => card.type === Card.GUARD)).toBeTruthy();
+        expect(activePlayerHand.find(card => card.type === Card.KING)).toBeTruthy();
+        expect(game.players['2'].hand[0].type).toEqual(Card.PRINCESS);
       });
     });
 
@@ -165,16 +164,16 @@ describe('playCard', () => {
       beforeEach(() => {
         game.activePlayerId = '1';
         game.players['1'].hand = [
-          new Card({ id: 0, type: cards.GUARD }),
-          new Card({ id: 1, type: cards.KING }),
+          new Card({ id: 0, type: Card.GUARD }),
+          new Card({ id: 1, type: Card.KING }),
         ];
         game.players['2'].isKnockedOut = true;
       });
 
       it('has no effect', () => {
         game.playCard('1', 1, { targetPlayerId: '2' });
-        expect(game.players['1'].hand[0].type).toEqual(cards.GUARD);
-        expect(game.players['1'].hand[1].type).toEqual(cards.KING);
+        expect(game.players['1'].hand[0].type).toEqual(Card.GUARD);
+        expect(game.players['1'].hand[1].type).toEqual(Card.KING);
       });
     });
   });
@@ -194,9 +193,9 @@ describe('serializeForPlayer', () => {
 
 describe('endRound', () => {
   it('assigns a token to the winner', () => {
-    game.players['1'].hand = [new Card({ id: 100, type: cards.GUARD})];
-    game.players['2'].hand = [new Card({ id: 101, type: cards.PRINCESS})];
-    game.players['3'].hand = [new Card({ id: 102, type: cards.GUARD})];
+    game.players['1'].hand = [new Card({ id: 100, type: Card.GUARD})];
+    game.players['2'].hand = [new Card({ id: 101, type: Card.PRINCESS})];
+    game.players['3'].hand = [new Card({ id: 102, type: Card.GUARD})];
     game.endRound();
     expect(game.players['1'].numTokens).toEqual(0);
     expect(game.players['2'].numTokens).toEqual(1);
@@ -207,9 +206,9 @@ describe('endRound', () => {
 describe('determineRoundWinners', () => {
   describe('when one person has a higher card than anyone else', () => {
     beforeEach(() => {
-      game.players['1'].hand = [new Card({ id: 100, type: cards.PRINCESS })];
-      game.players['2'].hand = [new Card({ id: 101, type: cards.PRIEST })];
-      game.players['3'].hand = [new Card({ id: 102, type: cards.GUARD })];
+      game.players['1'].hand = [new Card({ id: 100, type: Card.PRINCESS })];
+      game.players['2'].hand = [new Card({ id: 101, type: Card.PRIEST })];
+      game.players['3'].hand = [new Card({ id: 102, type: Card.GUARD })];
     });
 
     it('chooses that person as the round winner', () => {
@@ -221,22 +220,22 @@ describe('determineRoundWinners', () => {
 
   describe('when two people have the same card', () => {
     beforeEach(() => {
-      game.players['1'].hand = [new Card({ id: 100, type: cards.PRIEST })];
-      game.players['2'].hand = [new Card({ id: 101, type: cards.PRIEST })];
-      game.players['3'].hand = [new Card({ id: 102, type: cards.GUARD })];
+      game.players['1'].hand = [new Card({ id: 100, type: Card.PRIEST })];
+      game.players['2'].hand = [new Card({ id: 101, type: Card.PRIEST })];
+      game.players['3'].hand = [new Card({ id: 102, type: Card.GUARD })];
     });
 
     describe('and one has a higher discard sum', () => {
       beforeEach(() => {
         game.players['1'].discardPile = [
-          new Card({ id: 103, type: cards.BARON }),
-          new Card({ id: 104, type: cards.GUARD }),
+          new Card({ id: 103, type: Card.BARON }),
+          new Card({ id: 104, type: Card.GUARD }),
         ];
         game.players['2'].discardPile = [
-          new Card({ id: 105, type: cards.COUNTESS }),
-          new Card({ id: 106, type: cards.GUARD }),
+          new Card({ id: 105, type: Card.COUNTESS }),
+          new Card({ id: 106, type: Card.GUARD }),
         ];
-        game.players['3'].hand = [new Card({ id: 102, type: cards.GUARD })];
+        game.players['3'].hand = [new Card({ id: 102, type: Card.GUARD })];
       });
 
       it('chooses that person as the round winner', () => {
@@ -249,14 +248,14 @@ describe('determineRoundWinners', () => {
     describe('and they have the same discard sum', () => {
       beforeEach(() => {
         game.players['1'].discardPile = [
-          new Card({ id: 103, type: cards.COUNTESS }),
-          new Card({ id: 104, type: cards.GUARD }),
+          new Card({ id: 103, type: Card.COUNTESS }),
+          new Card({ id: 104, type: Card.GUARD }),
         ];
         game.players['2'].discardPile = [
-          new Card({ id: 105, type: cards.PRINCE }),
-          new Card({ id: 106, type: cards.BARON }),
+          new Card({ id: 105, type: Card.PRINCE }),
+          new Card({ id: 106, type: Card.BARON }),
         ];
-        game.players['3'].hand = [new Card({ id: 102, type: cards.GUARD })];
+        game.players['3'].hand = [new Card({ id: 102, type: Card.GUARD })];
       });
 
       it('chooses both people as the winner', () => {
@@ -280,24 +279,24 @@ describe('performCardEffect', () => {
   describe('when all other players have a handmaid', () => {
     it('has no effect', () => {
       game.activePlayerId = '1';
-      const card = new Card({ id: 0, type: cards.PRINCE });
+      const card = new Card({ id: 0, type: Card.PRINCE });
       game.players['1'].hand = [card];
       game.players['2'].handmaidActive = true;
       game.players['3'].hand = [
-        new Card({ id: 2, type: cards.PRINCESS }),
+        new Card({ id: 2, type: Card.PRINCESS }),
       ];
       game.players['3'].handmaidActive = true;
       const success = game.performCardEffect(card, { targetPlayerId: '3' });
       expect(success).toEqual(false);
       expect(game.players['3'].hand).toHaveLength(1);
-      expect(game.players['3'].hand[0].type).toEqual(cards.PRINCESS);
-      expect(game.players['1'].hand[0].type).toEqual(cards.PRINCE);
+      expect(game.players['3'].hand[0].type).toEqual(Card.PRINCESS);
+      expect(game.players['1'].hand[0].type).toEqual(Card.PRINCE);
     });
 
     describe('and the active player had handmaid status from previous turn', () => {
       it('removes the active player\'s handmaid status', () => {
         game.activePlayerId = '1';
-        const card = new Card({ id: 0, type: cards.GUARD });
+        const card = new Card({ id: 0, type: Card.GUARD });
         game.players['1'].hand = [card];
         game.players['1'].handmaidActive = true;
         game.players['2'].handmaidActive = true;
@@ -313,11 +312,11 @@ describe('performCardEffect', () => {
     describe('and one player doesn\'t have a handmaid but they are already knocked out', () => {
       it('has no effect', () => {
         game.activePlayerId = '1';
-        const card = new Card({ id: 0, type: cards.PRINCE });
+        const card = new Card({ id: 0, type: Card.PRINCE });
         game.players['1'].hand = [card];
         game.players['2'].handmaidActive = true;
         game.players['2'].hand = [
-          new Card({ id: 2, type: cards.PRINCESS }),
+          new Card({ id: 2, type: Card.PRINCESS }),
         ];
         game.players['3'].handmaidActive = false;
         game.players['3'].isKnockedOut = true;
@@ -325,8 +324,8 @@ describe('performCardEffect', () => {
         const success = game.performCardEffect(card, { targetPlayerId: '2' });
         expect(success).toEqual(false);
         expect(game.players['2'].hand).toHaveLength(1);
-        expect(game.players['2'].hand[0].type).toEqual(cards.PRINCESS);
-        expect(game.players['1'].hand[0].type).toEqual(cards.PRINCE);
+        expect(game.players['2'].hand[0].type).toEqual(Card.PRINCESS);
+        expect(game.players['1'].hand[0].type).toEqual(Card.PRINCE);
       });
     });
   });
@@ -335,10 +334,10 @@ describe('performCardEffect', () => {
     it('does not protect the player', () => {
       game.activePlayerId = '1';
       const { players } = game;
-      players['1'].discardPile = new Card({ id: 100, type: cards.HANDMAID });
-      players['1'].hand = [new Card({ id: 101, type: cards.PRINCESS })];
+      players['1'].discardPile = new Card({ id: 100, type: Card.HANDMAID });
+      players['1'].hand = [new Card({ id: 101, type: Card.PRINCESS })];
       players['1'].handmaidActive = false;
-      const priestCard = new Card({ id: 102, type: cards.PRINCE });
+      const priestCard = new Card({ id: 102, type: Card.PRINCE });
       players['2'].hand[0] = new Card(priestCard);
       const success = game.performCardEffect(priestCard, { targetPlayerId: '2' });
       expect(success).toEqual(true);
@@ -350,8 +349,8 @@ describe('performCardEffect', () => {
     describe('when the guess is correct', () => {
       it('knocks out the player', () => {
         game.activePlayerId = '1';
-        game.players['3'].hand = [new Card({ id: 1, type: cards.BARON })];
-        const guardCard = new Card({ id: 0, type: cards.GUARD });
+        game.players['3'].hand = [new Card({ id: 1, type: Card.BARON })];
+        const guardCard = new Card({ id: 0, type: Card.GUARD });
         const effectData = { targetPlayerId: '3', guardNumberGuess: 3 };
         game.performCardEffect(guardCard, effectData);
         expect(game.players['3'].isKnockedOut).toEqual(true);
@@ -361,8 +360,8 @@ describe('performCardEffect', () => {
     describe('when the guess is correct', () => {
       it('doesn\'t knock out the player', () => {
         game.activePlayerId = '1';
-        game.players['3'].hand = [new Card({ id: 1, type: cards.BARON })];
-        const guardCard = new Card({ id: 0, type: cards.GUARD });
+        game.players['3'].hand = [new Card({ id: 1, type: Card.BARON })];
+        const guardCard = new Card({ id: 0, type: Card.GUARD });
         const effectData = { targetPlayerId: '3', guardNumberGuess: 8 };
         game.performCardEffect(guardCard, effectData);
         expect(game.players['3'].isKnockedOut).toEqual(false);
@@ -372,13 +371,13 @@ describe('performCardEffect', () => {
 
   describe('baron', () => {
     it('knocks out the player with the lower card', () => {
-      const baronCard = new Card({ id: 1, type: cards.BARON });
+      const baronCard = new Card({ id: 1, type: Card.BARON });
       game.players['1'].hand = [
-        new Card({ id: 0, type: cards.PRINCESS }),
+        new Card({ id: 0, type: Card.PRINCESS }),
         baronCard,
       ];
       game.players['2'].hand = [
-        new Card({ id: 2, type: cards.KING }),
+        new Card({ id: 2, type: Card.KING }),
       ];
       game.activePlayerId = '1';
       success = game.performCardEffect(baronCard, { targetPlayerId: '2' });
@@ -389,13 +388,13 @@ describe('performCardEffect', () => {
 
     describe('when the cards are equal', () => {
       it('doesn\'t kill anyone', () => {
-        const baronCard = new Card({ id: 100, type: cards.BARON });
+        const baronCard = new Card({ id: 100, type: Card.BARON });
         game.players['1'].hand = [
-          new Card({ id: 0, type: cards.PRINCE }),
+          new Card({ id: 0, type: Card.PRINCE }),
           baronCard,
         ];
         game.players['2'].hand = [
-          new Card({ id: 2, type: cards.PRINCE }),
+          new Card({ id: 2, type: Card.PRINCE }),
         ];
         game.activePlayerId = '1';
         success = game.performCardEffect(baronCard, { targetPlayerId: '2' });
@@ -407,13 +406,13 @@ describe('performCardEffect', () => {
 
     describe('when the baron is the first card in the hand', () => {
       it('knocks out the player with the lower card', () => {
-        const baronCard = new Card({ id: 1, type: cards.BARON });
+        const baronCard = new Card({ id: 1, type: Card.BARON });
         game.players['1'].hand = [
           baronCard,
-          new Card({ id: 0, type: cards.PRINCESS }),
+          new Card({ id: 0, type: Card.PRINCESS }),
         ];
         game.players['2'].hand = [
-          new Card({ id: 2, type: cards.KING }),
+          new Card({ id: 2, type: Card.KING }),
         ];
         game.activePlayerId = '1';
         success = game.performCardEffect(baronCard, { targetPlayerId: '2' });
@@ -427,7 +426,7 @@ describe('performCardEffect', () => {
   describe('handmaid', () => {
     it('sets handmaid status to active', () => {
       game.activePlayerId = '1';
-      const handmaidCard = new Card({ id: 2, type: cards.HANDMAID });
+      const handmaidCard = new Card({ id: 2, type: Card.HANDMAID });
       const player = game.players['1'];
       player.hand = [handmaidCard];
       expect(player.handmaidActive).toEqual(false);
@@ -438,10 +437,10 @@ describe('performCardEffect', () => {
     describe('when the only other remaining player has played a handmaid', () => {
       it('sets handmaid status to active', () => {
         game.activePlayerId = '1';
-        game.players['2'].discardPile.push(new Card({ id: 100, type: cards.HANDMAID }));
+        game.players['2'].discardPile.push(new Card({ id: 100, type: Card.HANDMAID }));
         game.players['2'].handmaidActive = true;
         game.players['3'].isKnockedOut = true;
-        const handmaidCard = new Card({ id: 101, type: cards.HANDMAID });
+        const handmaidCard = new Card({ id: 101, type: Card.HANDMAID });
         const activePlayer = game.players['1'];
         activePlayer.hand = [handmaidCard];
         expect(activePlayer.handmaidActive).toEqual(false);
@@ -461,14 +460,14 @@ describe('performCardEffect', () => {
       game.activePlayerId = '1';
       game.players['3'].hand = [targetedCard];
       game.performCardEffect(
-        new Card({ id: 101, type: cards.PRINCE }),
+        new Card({ id: 101, type: Card.PRINCE }),
         { targetPlayerId: '3' },
       );
     };
 
     describe('for a non-Princess card', () => {
       beforeEach(() => {
-        targetedCardType = cards.BARON;
+        targetedCardType = Card.BARON;
       });
 
       it('moves the hand card to the discard pile', () => {
@@ -491,10 +490,10 @@ describe('performCardEffect', () => {
         it('discards own card', () => {
           const activePlayer = game.players['1'];
           game.activePlayerId = '1';
-          const card = new Card({ id: 100, type: cards.PRINCE });
+          const card = new Card({ id: 100, type: Card.PRINCE });
           activePlayer.hand = [
             card,
-            new Card({ id: 101, type: cards.GUARD }),
+            new Card({ id: 101, type: Card.GUARD }),
           ];
           game.players['2'].handmaidActive = true;
           game.players['3'].handmaidActive = true;
@@ -514,7 +513,7 @@ describe('performCardEffect', () => {
 
     describe('when the hand card is the Princess', () => {
       beforeEach(() => {
-        targetedCardType = cards.PRINCESS;
+        targetedCardType = Card.PRINCESS;
       });
 
       it('knocks the player out of the game', () => {
@@ -525,7 +524,7 @@ describe('performCardEffect', () => {
 
     describe('when there are no cards left in the deck', () => {
       beforeEach(() => {
-        targetedCardType = cards.HANDMAID;
+        targetedCardType = Card.HANDMAID;
       });
 
       it('draws the burn card', () => {
@@ -540,24 +539,24 @@ describe('performCardEffect', () => {
   describe('king', () => {
     it('switches cards with the target player', () => {
       game.activePlayerId = '1';
-      const baronCard = new Card({ id: 0, type: cards.BARON });
-      const kingCard = new Card({ id: 1, type: cards.KING });
-      const guardCard = new Card({ id: 2, type: cards.GUARD });
+      const baronCard = new Card({ id: 0, type: Card.BARON });
+      const kingCard = new Card({ id: 1, type: Card.KING });
+      const guardCard = new Card({ id: 2, type: Card.GUARD });
 
       game.players['1'].hand = [baronCard, kingCard];
       game.players['3'].hand = [guardCard];
 
       game.performCardEffect(kingCard, { targetPlayerId: 3 })
-      expect(game.players['1'].hand[0].type).toEqual(cards.GUARD);
-      expect(game.players['3'].hand[0].type).toEqual(cards.BARON);
+      expect(game.players['1'].hand[0].type).toEqual(Card.GUARD);
+      expect(game.players['3'].hand[0].type).toEqual(Card.BARON);
     });
 
     describe('when king is the first card in hand', () => {
       it('switches cards with the target player', () => {
         game.activePlayerId = '1';
-        const baronCard = new Card({ id: 0, type: cards.BARON });
-        const kingCard = new Card({ id: 1, type: cards.KING });
-        const guardCard = new Card({ id: 2, type: cards.GUARD });
+        const baronCard = new Card({ id: 0, type: Card.BARON });
+        const kingCard = new Card({ id: 1, type: Card.KING });
+        const guardCard = new Card({ id: 2, type: Card.GUARD });
         const activePlayer = game.players['1'];
 
         activePlayer.hand = [kingCard, baronCard];
@@ -565,25 +564,25 @@ describe('performCardEffect', () => {
 
         game.performCardEffect(kingCard, { targetPlayerId: 3 })
         // make sure we still have both the guard and the king
-        expect(activePlayer.hand.find(card => card.type === cards.GUARD)).toBeTruthy();
-        expect(activePlayer.hand.find(card => card.type === cards.KING)).toBeTruthy();
-        expect(game.players['3'].hand[0].type).toEqual(cards.BARON);
+        expect(activePlayer.hand.find(card => card.type === Card.GUARD)).toBeTruthy();
+        expect(activePlayer.hand.find(card => card.type === Card.KING)).toBeTruthy();
+        expect(game.players['3'].hand[0].type).toEqual(Card.BARON);
       });
     });
 
     describe('when player has princess', () => {
       it('switches cards with the target player', () => {
         game.activePlayerId = '1';
-        const princessCard = new Card({ id: 100, type: cards.PRINCESS });
-        const kingCard = new Card({ id: 101, type: cards.KING });
-        const guardCard = new Card({ id: 102, type: cards.GUARD });
+        const princessCard = new Card({ id: 100, type: Card.PRINCESS });
+        const kingCard = new Card({ id: 101, type: Card.KING });
+        const guardCard = new Card({ id: 102, type: Card.GUARD });
 
         game.players['1'].hand = [princessCard, kingCard];
         game.players['3'].hand = [guardCard];
 
         game.performCardEffect(kingCard, { targetPlayerId: 3 })
-        expect(game.players['1'].hand[0].type).toEqual(cards.GUARD);
-        expect(game.players['3'].hand[0].type).toEqual(cards.PRINCESS);
+        expect(game.players['1'].hand[0].type).toEqual(Card.GUARD);
+        expect(game.players['3'].hand[0].type).toEqual(Card.PRINCESS);
       });
     });
   });
@@ -591,7 +590,7 @@ describe('performCardEffect', () => {
   describe('princess', () => {
     it('knocks out the player', () => {
       game.activePlayerId = '1';
-      const princessCard = new Card({ id: 2, type: cards.PRINCESS });
+      const princessCard = new Card({ id: 2, type: Card.PRINCESS });
       const player = game.players['1'];
       player.hand = [princessCard];
       expect(player.isKnockedOut).toEqual(false);

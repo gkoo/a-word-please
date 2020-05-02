@@ -1,15 +1,14 @@
 const Card = require('./card');
-const { cards } = require('./constants');
 
 let card;
 
 beforeEach(() => {
-  card = new Card({ id: 11, type: cards.PRINCESS });
+  card = new Card({ id: 11, type: Card.PRINCESS });
 });
 
 describe('Card', () => {
   it('makes a card', () => {
-    expect(card.type).toEqual(cards.PRINCESS);
+    expect(card.type).toEqual(Card.PRINCESS);
     expect(card.id).toEqual(11);
   });
 

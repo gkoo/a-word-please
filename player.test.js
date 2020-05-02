@@ -1,4 +1,3 @@
-const { cards } = require('./constants');
 const Card = require('./card');
 const Player = require('./player');
 
@@ -11,8 +10,8 @@ beforeEach(() => {
 describe('discard', () => {
   beforeEach(() => {
     player.hand = [
-      new Card({ id: 8, type: cards.GUARD }),
-      new Card({ id: 9, type: cards.PRIEST }),
+      new Card({ id: 8, type: Card.GUARD }),
+      new Card({ id: 9, type: Card.PRIEST }),
     ];
   });
 
