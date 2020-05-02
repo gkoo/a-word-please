@@ -11,24 +11,30 @@ function Game({
   broadcastToSocket,
   users,
 }) {
-  const STATE_PENDING = 0;
-  const STATE_STARTED = 1;
-  const STATE_ROUND_END = 2;
-  const STATE_GAME_END = 3;
+  this.broadcastToRoom = broadcastToRoom;
+  this.broadcastSystemMessage = broadcastSystemMessage;
+  this.broadcastToSocket = broadcastToSocket;
+}
 
-  const MIN_PLAYERS = 2;
-  const MAX_PLAYERS = 4;
+Game.prototype = {
+  STATE_PENDING: 0,
+  STATE_STARTED: 1,
+  STATE_ROUND_END: 2,
+  STATE_GAME_END: 3,
 
-  this.setup = () => {
+  MIN_PLAYERS: 2,
+  MAX_PLAYERS: 4,
+
+  setup: function() {
     const userList = Object.values(users);
-    this.state = STATE_STARTED;
+    this.state = this.STATE_STARTED;
     this.players = {};
-    this.spectatorIds = userList.slice(MAX_PLAYERS);
+    this.spectatorIds = userList.slice(this.MAX_PLAYERS);
 
-    const usersToConvertToPlayers = userList.slice(0, MAX_PLAYERS);
+    const usersToConvertToPlayers = userList.slice(0, this.MAX_PLAYERS);
     const numPlayers = usersToConvertToPlayers.length;
-    if (numPlayers < MIN_PLAYERS) {
-      broadcastSystemMessage(`Cannot start the game with less than ${MIN_PLAYERS} players`);
+    if (numPlayers < this.MIN_PLAYERS) {
+      this.broadcastSystemMessage(`Cannot start the game with less than ${this.MIN_PLAYERS} players`);
       return;
     }
     usersToConvertToPlayers.forEach(user => {
@@ -36,47 +42,47 @@ function Game({
       this.players[user.id] = player;
     });
     this.roundNum = 0;
-    determinePlayerOrder();
-    determineMaxTokens();
+    this.determinePlayerOrder();
+    this.determineMaxTokens();
     this.newRound();
-    broadcastSystemMessage('Game has started!');
-    broadcastGameDataToPlayers();
-  };
+    this.broadcastSystemMessage('Game has started!');
+    this.broadcastGameDataToPlayers();
+  },
 
-  this.getPlayers = () => {
+  getPlayers: function() {
     return Object.values(this.players);
-  };
+  },
 
-  this.addSpectator = id => {
-    this.spectatorIds.push(id)
-  };
+  addSpectator: function(id) {
+    this.spectatorIds.push(id);
+  },
 
-  this.removeUser = id => {
+  removeUser: function(id) {
     // Remove from `players` and `users`
     if (this.players[id]) { this.players[id].connected = false; }
     const idx = this.spectatorIds.findIndex(spectatorId => spectatorId === id);
     if (idx >= 0) { this.spectatorIds.splice(idx, 1) }
-  };
+  },
 
-  this.newRound = () => {
-    if (![STATE_STARTED, STATE_ROUND_END].includes(this.state)) { return; }
+  newRound: function() {
+    if (![this.STATE_STARTED, this.STATE_ROUND_END].includes(this.state)) { return; }
 
-    this.state = STATE_STARTED;
+    this.state = this.STATE_STARTED;
     ++this.roundNum;
     this.getPlayers().forEach(player => player.resetCards());
 
     // keeps track of how far through the deck we are
     this.deckCursor = 0;
 
-    createDeck();
-    dealCards();
+    this.createDeck();
+    this.dealCards();
 
-    broadcastSystemMessage('New round starting...');
+    this.broadcastSystemMessage('New round starting...');
 
     this.nextTurn();
-  };
+  },
 
-  const createDeck = () => {
+  createDeck: function() {
     let nextId = 0;
     let i;
     const tmpDeck = [
@@ -100,9 +106,9 @@ function Game({
     // choose burn card
     const burnCardIdx = Math.floor(Math.random()*this.deck.length);
     this.burnCard = this.deck.splice(burnCardIdx, 1)[0];
-  };
+  },
 
-  const dealCards = () => {
+  dealCards: function() {
     const players = this.getPlayers();
     const playerIds = players.map(player => player.id);
     for (let i=0; i < players.length; ++i) {
@@ -110,17 +116,17 @@ function Game({
       const card = this.deck[this.deckCursor++];
       this.players[playerId].addCardToHand(card);
     }
-  };
+  },
 
-  const determinePlayerOrder = () => {
+  determinePlayerOrder: function() {
     const playerIds = this.getPlayers().map(player => player.id);
     this.playerOrder = _.shuffle(playerIds);
 
     // keeps track of whose turn it is.
     this.playerOrderCursor = 0;
-  };
+  },
 
-  const determineMaxTokens = () => {
+  determineMaxTokens: function() {
     switch (this.getPlayers().length) {
       case 2:
         this.maxTokens = 7;
@@ -132,9 +138,9 @@ function Game({
       default:
         this.maxTokens = 4;
     }
-  };
+  },
 
-  const drawCard = ({ player, canUseBurnCard }) => {
+  drawCard: function({ player, canUseBurnCard }) {
     let nextCard;
 
     if (this.deckCursor >= this.deck.length && canUseBurnCard) {
@@ -145,10 +151,10 @@ function Game({
     }
 
     player.addCardToHand(nextCard);
-  };
+  },
 
-  this.nextTurn = () => {
-    if (this.state !== STATE_STARTED) { return; }
+  nextTurn: function() {
+    if (this.state !== this.STATE_STARTED) { return; }
 
     // If one or zero players are left alive, end the round.
     if (this.getAlivePlayers().length < 2) {
@@ -174,15 +180,15 @@ function Game({
     }
 
     // Add the next card into the hand of the player
-    drawCard({ player: nextPlayer, canUseBurnCard: false });
+    this.drawCard({ player: nextPlayer, canUseBurnCard: false });
 
     // Id of the player whose turn it is
     this.activePlayerId = nextPlayer.id;
 
-    broadcastGameDataToPlayers();
-  };
+    this.broadcastGameDataToPlayers();
+  },
 
-  this.playCard = (playerId, cardId, effectData = {}) => {
+  playCard: function(playerId, cardId, effectData = {}) {
     const player = this.players[playerId];
 
     if (this.activePlayerId !== playerId) {
@@ -194,14 +200,14 @@ function Game({
       throw 'Player tried to play a card when it wasn\'t in their hand! Aborting...';
     }
 
-    if (!isLegalMove(player, card, effectData)) {
+    if (!this.isLegalMove(player, card, effectData)) {
       return;
     }
 
     const success = this.performCardEffect(card, effectData);
 
     // Tell FE what card was played and who was targeted, if applicable
-    broadcastToRoom('lastCardPlayed', {
+    this.broadcastToRoom('lastCardPlayed', {
       playerId: this.activePlayerId,
       card,
       effectData,
@@ -212,22 +218,22 @@ function Game({
 
     const endActions = () => {
       // Tell the clients to dismiss their revealed cards
-      broadcastToRoom('dismissReveal');
+      this.broadcastToRoom('dismissReveal');
 
       this.nextTurn();
     };
 
     setTimeout(endActions, 2000);
-  };
+  },
 
-  const isLegalMove = (player, card, effectData = {}) => {
+  isLegalMove: function(player, card, effectData = {}) {
     // Check Countess card effect
     // TODO: alert this error instead of putting in chat
     if ([cards.KING, cards.PRINCE].includes(card.type) && player.hasCard(cards.COUNTESS)) {
       // If you have the King or Prince in your hand, you must discard the Countess.
       const message = `(Only visible to you) You cannot discard the ` +
         `${cardLabels[cards.COUNTESS]} when you have the ${card.getLabel()} in your hand`;
-      emitSystemMessage(player.id, message);
+      this.emitSystemMessage(player.id, message);
       return false;
     }
 
@@ -240,7 +246,7 @@ function Game({
 
     // Prohibit targeting knocked out players
     if (targetPlayer.isKnockedOut) {
-      emitSystemMessage(
+      this.emitSystemMessage(
         player.id,
         '(Only visible to you) Cannot target knocked out players',
       );
@@ -251,21 +257,21 @@ function Game({
     if (targetPlayerId !== this.activePlayerId && targetPlayer.handmaidActive) {
       const message = '(Only visible to you) You can\'t target someone who played ' +
         `${cardLabels[cards.HANDMAID]} last turn`;
-      emitSystemMessage(player.id, message);
+      this.emitSystemMessage(player.id, message);
       return false;
     }
 
     return true;
-  }
+  },
 
-  this.endRound = () => {
-    this.state = STATE_ROUND_END;
+  endRound: function() {
+    this.state = this.STATE_ROUND_END;
 
     // Determine winner
     const roundWinners = this.determineRoundWinners();
 
     const roundEndMsg = `${roundWinners.map(winner => winner.name).join(' and ')} won the round!`;
-    broadcastSystemMessage(roundEndMsg);
+    this.broadcastSystemMessage(roundEndMsg);
 
     const isGameOver = false;
     const gameWinners = roundWinners.filter(
@@ -277,16 +283,16 @@ function Game({
       return;
     }
 
-    broadcastGameDataToPlayers();
-  };
+    this.broadcastGameDataToPlayers();
+  },
 
-  this.determineRoundWinners = () => {
+  determineRoundWinners: function() {
     const playerList = Object.values(this.players);
     const alivePlayers = this.getAlivePlayers();
 
     if (alivePlayers.length === 0) {
-      broadcastSystemMessage('No one won the round...');
-      broadcastGameDataToPlayers();
+      this.broadcastSystemMessage('No one won the round...');
+      this.broadcastGameDataToPlayers();
       return;
     }
 
@@ -330,21 +336,21 @@ function Game({
     });
 
     return roundWinners;
-  };
+  },
 
-  this.endGame = (winners) => {
+  endGame: function(winners) {
     console.log('end game');
     const winnerIds = winners && winners.map(winner => winner.id);
-    broadcastToRoom('endGame', winnerIds);
-    broadcastSystemMessage('Game is over!');
-    this.state = STATE_GAME_END;
+    this.broadcastToRoom('endGame', winnerIds);
+    this.broadcastSystemMessage('Game is over!');
+    this.state = this.STATE_GAME_END;
 
-    broadcastGameDataToPlayers(true);
-  };
+    this.broadcastGameDataToPlayers(true);
+  },
 
   // Send all players back to the lobby
-  this.setPending = () => {
-    this.state = STATE_PENDING;
+  setPending: function() {
+    this.state = this.STATE_PENDING;
 
     // move all players to spectators
     Object.keys(this.players).forEach(playerId => {
@@ -353,24 +359,26 @@ function Game({
       }
     });
     this.players = {};
-    broadcastGameDataToPlayers();
-  };
+    this.broadcastGameDataToPlayers();
+  },
 
-  this.getWinnerIds = () => {
+  getWinnerIds: function() {
     const winners = Object.values(this.players).filter(
       player => player.numTokens >= this.maxTokens
     );
     return winners.map(winner => winner.id);
-  };
+  },
 
-  this.getAlivePlayers = () => Object.values(this.players).filter(player => !player.isKnockedOut);
+  getAlivePlayers: function() {
+    return Object.values(this.players).filter(player => !player.isKnockedOut);
+  },
 
-  this.isRoundOver = () => this.state !== STATE_STARTED;
+  isRoundOver: function() { return this.state !== this.STATE_STARTED; },
 
-  this.isGameOver = () => this.state === STATE_GAME_END;
+  isGameOver: function() { return this.state === this.STATE_GAME_END; },
 
   // Returns true if card effect was performed successfully, false otherwise.
-  this.performCardEffect = (card, effectData) => {
+  performCardEffect: function (card, effectData) {
     const activePlayer = this.players[this.activePlayerId];
 
     const statusMessage = `${activePlayer.name} played ${card.getLabel()}`;
@@ -387,11 +395,11 @@ function Game({
     activePlayer.setHandmaid(false);
 
     // Do all alive players have handmaids?
-    if (cardsWithTargets.includes(card.type) && allAlivePlayersHaveHandmaids()) {
+    if (cardsWithTargets.includes(card.type) && this.allAlivePlayersHaveHandmaids()) {
       // Prince card is allowed to target self
       if (card.type !== cards.PRINCE || targetPlayer.id !== activePlayer.id) {
         console.log('all players have handmaids. discarding...');
-        broadcastSystemMessage(`${activePlayer.name} discarded ${card.getLabel()}`);
+        this.broadcastSystemMessage(`${activePlayer.name} discarded ${card.getLabel()}`);
         return false;
       }
     }
@@ -422,8 +430,8 @@ function Game({
 
         if (guardGuessCardTypes.includes(targetPlayer.hand[0].type)) {
           // Dead!
-          broadcastSystemMessage(broadcastMessage.join(' '));
-          knockOut(targetPlayer);
+          this.broadcastSystemMessage(broadcastMessage.join(' '));
+          this.knockOut(targetPlayer);
           return true;
         } else {
           broadcastMessage.push('but was wrong');
@@ -431,10 +439,10 @@ function Game({
         break;
       case cards.PRIEST:
         console.log('revealing for priest');
-        broadcastToSocket(activePlayer.id, 'priestReveal', targetPlayerCard);
+        this.broadcastToSocket(activePlayer.id, 'priestReveal', targetPlayerCard);
         const priestRevealMessage = `(Only visible to you) ${targetPlayer.name} is holding the ` +
           `${targetPlayerCard.getLabel()}!`;
-        emitSystemMessage(activePlayer.id, priestRevealMessage);
+        this.emitSystemMessage(activePlayer.id, priestRevealMessage);
         broadcastMessage.push(`and is looking at ${targetPlayer.name}'s card`);
         break;
       case cards.BARON:
@@ -445,14 +453,14 @@ function Game({
           playerId: targetPlayer.id,
           card: targetPlayerCard,
         }];
-        broadcastToSocket(activePlayer.id, 'baronReveal', baronRevealData);
-        broadcastToSocket(targetPlayer.id, 'baronReveal', baronRevealData);
+        this.broadcastToSocket(activePlayer.id, 'baronReveal', baronRevealData);
+        this.broadcastToSocket(targetPlayer.id, 'baronReveal', baronRevealData);
         broadcastMessage.push(`and compared cards with ${targetPlayer.name}`);
 
         // Who died?
-        broadcastSystemMessage(broadcastMessage.join(' '));
+        this.broadcastSystemMessage(broadcastMessage.join(' '));
         if (activePlayerOtherCard.getNumber() === targetPlayerCard.getNumber()) {
-          broadcastSystemMessage('Nothing happened...');
+          this.broadcastSystemMessage('Nothing happened...');
           return true;
         }
 
@@ -462,7 +470,7 @@ function Game({
         } else {
           loser = targetPlayer;
         }
-        knockOut(loser);
+        this.knockOut(loser);
         return true;
       case cards.PRINCE:
         targetPlayer.discardCardById(targetPlayerCard.id);
@@ -470,11 +478,11 @@ function Game({
           `and forced ${targetPlayer.name} to discard their card`,
         );
         if (targetPlayerCard.type === cards.PRINCESS) {
-          broadcastSystemMessage(broadcastMessage);
-          knockOut(targetPlayer);
+          this.broadcastSystemMessage(broadcastMessage);
+          this.knockOut(targetPlayer);
           return true;
         }
-        drawCard({ player: targetPlayer, canUseBurnCard: true });
+        this.drawCard({ player: targetPlayer, canUseBurnCard: true });
         broadcastMessage.push(
           'and draw a new one',
         );
@@ -490,7 +498,7 @@ function Game({
       case cards.PRINCESS:
         // effects handled elsewhere
         broadcastMessage.push('... oops!');
-        knockOut(activePlayer);
+        this.knockOut(activePlayer);
         break;
       case cards.HANDMAID:
         activePlayer.setHandmaid(true);
@@ -503,45 +511,45 @@ function Game({
         throw `unknown card played: ${card}`;
     }
 
-    broadcastSystemMessage(broadcastMessage.join(' '));
+    this.broadcastSystemMessage(broadcastMessage.join(' '));
 
     return true;
-  };
+  },
 
-  const allAlivePlayersHaveHandmaids = () => {
+  allAlivePlayersHaveHandmaids: function() {
     const players = Object.values(this.players);
     const playerWithoutHandmaid = players.find(
       player => !player.isKnockedOut && !player.handmaidActive && (player.id !== this.activePlayerId)
     );
     return !playerWithoutHandmaid;
-  };
+  },
 
-  const knockOut = player => {
+  knockOut: function(player) {
     player.knockOut();
-    broadcastSystemMessage(`${player.name} was knocked out of the round!`);
-  };
+    this.broadcastSystemMessage(`${player.name} was knocked out of the round!`);
+  },
 
-  const emitSystemMessage = (playerId, msg) => {
+  emitSystemMessage: function(playerId, msg) {
     const messageObj = {
       id: uuid.v4(),
       text: msg,
       type: 'system',
     };
-    broadcastToSocket(playerId, 'message', messageObj);
-  };
+    this.broadcastToSocket(playerId, 'message', messageObj);
+  },
 
-  const broadcastGameDataToPlayers = (includeHands = false) => {
+  broadcastGameDataToPlayers: function(includeHands = false) {
     Object.keys(this.players).forEach(playerId =>
-      broadcastToSocket(
+      this.broadcastToSocket(
         playerId,
         'gameData',
         this.serializeForPlayer(playerId, includeHands),
       )
     );
-    this.spectatorIds.forEach(id => broadcastToSocket(id, 'gameData', this.serializeForSpectator()));
-  };
+    this.spectatorIds.forEach(id => this.broadcastToSocket(id, 'gameData', this.serializeForSpectator()));
+  },
 
-  this.serializeForPlayer = (playerIdToSerializeFor, includeHands) => {
+  serializeForPlayer: function(playerIdToSerializeFor, includeHands) {
     const {
       activePlayerId,
       playerOrder,
@@ -565,11 +573,11 @@ function Game({
       roundNum,
       state,
     };
-  };
+  },
 
-  this.serializeForSpectator = () => this.serializeForPlayer(null, true);
+  serializeForSpectator: function() { return this.serializeForPlayer(null, true); },
 
-  this.serialize = () => {
+  serialize: function() {
     const {
       activePlayerId,
       deck,
@@ -592,7 +600,7 @@ function Game({
       spectatorIds,
       state,
     };
-  }
+  },
 }
 
 module.exports = Game;

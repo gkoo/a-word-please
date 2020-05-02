@@ -8,9 +8,9 @@ const { cards } = require('./constants');
 let game;
 let players;
 
-const mockBroadcast = jest.fn();
+const mockBroadcastToRoom = jest.fn();
 const mockBroadcastSystemMessage = jest.fn();
-const mockEmitToUser = jest.fn();
+const mockBroadcastToSocket = jest.fn();
 
 beforeEach(() => {
   users = {
@@ -19,9 +19,9 @@ beforeEach(() => {
     '3': new User('3'),
   };
   game = new Game({
-    broadcast: mockBroadcast,
+    broadcastToRoom: mockBroadcastToRoom,
     broadcastSystemMessage: mockBroadcastSystemMessage,
-    emitToUser: mockEmitToUser,
+    broadcastToSocket: mockBroadcastToSocket,
     users,
   });
   game.setup();
