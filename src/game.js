@@ -2,6 +2,7 @@ const _ = require('lodash');
 const uuid = require('uuid');
 
 const Player = require('./player');
+const wordlist = require('./wordlist');
 
 function Game({
   broadcastToRoom,
@@ -16,36 +17,41 @@ function Game({
   this.clues = {};
   this.lexicon = [];
   this.lexiconCursor = 0;
+  this.numPoints = 0;
 }
 
 Game.prototype = {
   STATE_PENDING: 0,
-  STATE_STARTED: 1,
-  STATE_ENTERING_CLUES: 2,
-  STATE_REVIEWING_CLUES: 3,
-  STATE_ENTERING_GUESS: 4,
-  STATE_ROUND_END: 5,
-  STATE_GAME_END: 6,
+  STATE_ENTERING_CLUES: 1,
+  STATE_REVIEWING_CLUES: 2,
+  STATE_ENTERING_GUESS: 3,
+  STATE_TURN_END: 4,
+  STATE_GAME_END: 5,
 
   MIN_PLAYERS: 2,
   MAX_PLAYERS: 4,
 
+  TOTAL_NUM_ROUNDS: 13,
+
   setup: function(users) {
     const userList = Object.values(users);
-    this.state = this.STATE_STARTED;
     this.players = {};
 
-    userList.forEach(user => {
-      const player = new Player({ id: user.id, name: user.name });
-      this.players[user.id] = player;
-    });
+    userList.forEach(user => this.addPlayer(user));
     this.roundNum = 0;
+    this.numPoints = 0;
     this.createLexicon();
     this.determinePlayerOrder();
-    this.state = this.STATE_STARTED;
-    this.broadcastSystemMessage('Game has started!');
     this.nextTurn();
-    this.broadcastGameDataToPlayers();
+  },
+
+  addPlayer: function(user) {
+    const { id, name } = user;
+    this.players[user.id] = new Player({
+      id,
+      name,
+    });
+    console.log(this.players);
   },
 
   getPlayers: function() {
@@ -56,9 +62,8 @@ Game.prototype = {
     if (this.players[id]) { this.players[id].connected = false; }
   },
 
-  // TODO: IMPLEMENT
   createLexicon: function() {
-    this.lexicon = ['water', 'fire', 'earth', 'air'];
+    this.lexicon = _.shuffle(wordlist);
   },
 
   determinePlayerOrder: function() {
@@ -70,12 +75,15 @@ Game.prototype = {
   },
 
   nextTurn: function() {
-    if (this.state !== this.STATE_STARTED) { return; }
-
     this.clues = {};
-    this.revealTo = null;
+    this.currGuess = null;
 
     ++this.roundNum;
+
+    if (this.roundNum >= this.TOTAL_NUM_ROUNDS) {
+      this.endGame();
+      return;
+    }
 
     // Advance the playerOrderCursor
     this.guesserId = this.playerOrder[this.playerOrderCursor];
@@ -88,7 +96,7 @@ Game.prototype = {
   },
 
   receiveClue: function(playerId, submittedClue) {
-    const isDuplicate = false;
+    let isDuplicate = false;
     Object.keys(this.clues).forEach(playerId => {
       if (this.clues[playerId].clue === submittedClue) {
         this.clues[playerId].isDuplicate = true;
@@ -117,15 +125,22 @@ Game.prototype = {
 
   revealCluesToGuesser: function() {
     const DELAY_TIME = 5000;
-    this.revealTo = 'guesser';
     this.state = this.STATE_ENTERING_GUESS;
     this.broadcastGameDataToPlayers();
   },
 
   receiveGuess: function(socketId, guess) {
-    if (guess.toLowerCase() === this.currWord.toLowerCase()) {
-      // Correct guess
+    const DELAY_TIME = 5000;
+    this.currGuess = guess;
+    const correctGuess = guess.toLowerCase() === this.currWord.toLowerCase();
+
+    if (correctGuess) {
+      ++this.numPoints;
     }
+
+    this.state = this.STATE_TURN_END;
+    this.broadcastGameDataToPlayers();
+    setTimeout(() => this.nextTurn(), DELAY_TIME);
   },
 
   endRound: function() {
@@ -151,10 +166,7 @@ Game.prototype = {
   },
 
   endGame: function(winners) {
-    console.log('end game');
-    this.broadcastSystemMessage('Game is over!');
     this.state = this.STATE_GAME_END;
-
     this.broadcastGameDataToPlayers();
   },
 
@@ -185,22 +197,26 @@ Game.prototype = {
   serialize: function() {
     const {
       clues,
-      guesserId,
+      currGuess,
       currWord,
+      guesserId,
+      numPoints,
       players,
-      revealTo,
       roundNum,
-      state
+      state,
+      totalNumRounds,
     } = this;
 
     return {
       clues,
-      guesserId,
+      currGuess,
       currWord,
+      guesserId,
+      numPoints,
       players,
-      revealTo,
       roundNum,
-      state
+      state,
+      totalNumRounds,
     };
   },
 }

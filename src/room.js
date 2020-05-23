@@ -32,7 +32,6 @@ Room.prototype = {
     if (this.getUsers().length === 1) {
       this.promoteRandomLeader();
     }
-    if (!this.game) { return; }
   },
 
   onUserDisconnect: function(id) {
@@ -69,11 +68,15 @@ Room.prototype = {
 
   getLeader: function() { return Object.values(this.users).find(user => user.isLeader); },
 
-  setUserName: function(id, name) {
+  setUserName: function(socket, id, name) {
     const user = this.users[id];
     user.setName(name);
     this.broadcastSystemMessage(`${name} connected`);
     this.broadcastToRoom('newUser', user.serialize());
+
+    if (!this.game) { return; }
+    this.game.addPlayer(user);
+    this.broadcastToRoom('gameData', this.game.serialize());
   },
 
   // returns an array of users
@@ -124,6 +127,11 @@ Room.prototype = {
   receiveClue: function(socketId, clue) {
     if (!this.game) { return; }
     this.game.receiveClue(socketId, clue);
+  },
+
+  receiveGuess: function(socketId, guess) {
+    if (!this.game) { return; }
+    this.game.receiveGuess(socketId, guess);
   },
 
   sendInitRoomData: function(socket) {

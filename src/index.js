@@ -32,7 +32,8 @@ const handleSetName = (socket, name) => {
   const { id } = socket;
   const room = getRoom(socket);
   console.log(`Client ${id} set name to: ${name}`);
-  room.setUserName(id, name);
+  if (!room) { return; }
+  room.setUserName(socket, id, name);
 };
 
 const handleStartGame = socket => {
@@ -98,4 +99,5 @@ io.on('connection', socket => {
   socket.on('endGame', () => handleEndGame(socket));
   //socket.on('debug', () => room.sendGameState(socket));
   socket.on('submitClue', (clue) => getRoom(socket).receiveClue(socket.id, clue));
+  socket.on('submitGuess', (guess) => getRoom(socket).receiveGuess(socket.id, guess));
 });
