@@ -61,10 +61,17 @@ Game.prototype = {
   },
 
   removeUser: function(id) {
-    if (this.players[id]) { this.players[id].connected = false; }
+    if (this.players[id]) { delete this.players[id]; }
+    const orderIdx = this.playerOrder.indexOf(id);
+    this.playerOrder.splice(orderIdx, 1);
   },
 
   createLexicon: function() {
+    if (process.env.NODE_ENV === 'development') {
+      this.lexicon = ['water', 'fire', 'earth', 'air'];
+      return;
+    }
+
     this.lexicon = _.shuffle(wordlist);
   },
 
