@@ -51,7 +51,9 @@ Game.prototype = {
       id,
       name,
     });
-    console.log(this.players);
+    if (this.playerOrder) {
+      this.playerOrder.push(user.id);
+    }
   },
 
   getPlayers: function() {
@@ -202,6 +204,7 @@ Game.prototype = {
       guesserId,
       numPoints,
       players,
+      playerOrder,
       roundNum,
       state,
       totalNumRounds,
@@ -214,6 +217,7 @@ Game.prototype = {
       guesserId,
       numPoints,
       players,
+      playerOrder,
       roundNum,
       state,
       totalNumRounds,

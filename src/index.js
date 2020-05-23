@@ -97,7 +97,7 @@ io.on('connection', socket => {
   socket.on('startGame', () => handleStartGame(socket));
   socket.on('nextRound', () => handleNextRound(socket));
   socket.on('endGame', () => handleEndGame(socket));
-  //socket.on('debug', () => room.sendGameState(socket));
+  socket.on('debug', () => onDebug(socket));
   socket.on('submitClue', (clue) => getRoom(socket).receiveClue(socket.id, clue));
   socket.on('submitGuess', (guess) => getRoom(socket).receiveGuess(socket.id, guess));
 });

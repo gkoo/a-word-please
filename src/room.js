@@ -38,6 +38,7 @@ Room.prototype = {
     const user = this.users[id];
     const { name } = user;
 
+    console.log(`${id} disconnected`);
     delete this.users[id];
     if (user.isLeader) {
       this.promoteRandomLeader();
