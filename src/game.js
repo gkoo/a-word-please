@@ -73,11 +73,6 @@ Game.prototype = {
   },
 
   createLexicon: function() {
-    if (process.env.NODE_ENV === 'development') {
-      this.lexicon = ['water', 'fire', 'earth', 'air'];
-      return;
-    }
-
     this.lexicon = _.shuffle(wordlist);
   },
 
