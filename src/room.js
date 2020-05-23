@@ -89,7 +89,11 @@ Room.prototype = {
       broadcastSystemMessage,
       broadcastTo,
     } = this;
-    if (!this.isUserLeader(gameInitiatorId)) { return; }
+    if (this.game) {
+      this.game.newGame();
+      return;
+    }
+
     this.game = new Game({
       broadcastToRoom,
       broadcastSystemMessage,
@@ -102,32 +106,27 @@ Room.prototype = {
     this.game.playCard(userId, cardId, effectData);
   },
 
-  nextRound: function(userId) {
+  nextTurn: function(userId) {
     console.log('starting next round');
-    if (!this.isUserLeader(userId)) {
-      console.log(`user ${userId} tried to start next round but is not the leader`);
-      return false;
-    }
     if (!this.game) { return false; }
-    this.game.newRound();
+    this.game.nextTurn();
   },
 
   endGame: function(gameInitiatorId) {
-    if (!this.isUserLeader(gameInitiatorId)) { return; }
     if (!this.game) { return; }
     this.game.endGame();
   },
 
   setPending: function() { return this.game && this.game.setPending(); },
 
-  isUserLeader: function(userId) {
-    const user = this.getUserById(userId);
-    return user.isLeader;
-  },
-
   receiveClue: function(socketId, clue) {
     if (!this.game) { return; }
     this.game.receiveClue(socketId, clue);
+  },
+
+  revealClues: function() {
+    if (!this.game) { return; }
+    this.game.revealCluesToGuesser();
   },
 
   receiveGuess: function(socketId, guess) {

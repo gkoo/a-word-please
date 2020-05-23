@@ -43,8 +43,8 @@ const handleStartGame = socket => {
   io.emit('systemMessage', 'Game started');
 };
 
-const handleNextRound = socket => {
-  getRoom(socket).nextRound(socket.id);
+const handleNextTurn = socket => {
+  getRoom(socket).nextTurn(socket.id);
 };
 
 const handleEndGame = socket => {
@@ -95,9 +95,10 @@ io.on('connection', socket => {
   socket.on('saveName', name => handleSetName(socket, name));
   socket.on('setPending', () => onSetPending(socket));
   socket.on('startGame', () => handleStartGame(socket));
-  socket.on('nextRound', () => handleNextRound(socket));
+  socket.on('nextTurn', () => handleNextTurn(socket));
   socket.on('endGame', () => handleEndGame(socket));
   socket.on('debug', () => onDebug(socket));
-  socket.on('submitClue', (clue) => getRoom(socket).receiveClue(socket.id, clue));
-  socket.on('submitGuess', (guess) => getRoom(socket).receiveGuess(socket.id, guess));
+  socket.on('submitClue', clue => getRoom(socket).receiveClue(socket.id, clue));
+  socket.on('revealClues', () => getRoom(socket).revealClues());
+  socket.on('submitGuess', guess => getRoom(socket).receiveGuess(socket.id, guess));
 });

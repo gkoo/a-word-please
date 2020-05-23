@@ -38,10 +38,14 @@ Game.prototype = {
     this.players = {};
 
     userList.forEach(user => this.addPlayer(user));
-    this.roundNum = 0;
-    this.numPoints = 0;
     this.createLexicon();
     this.determinePlayerOrder();
+    this.newGame();
+  },
+
+  newGame: function() {
+    this.roundNum = 0;
+    this.numPoints = 0;
     this.nextTurn();
   },
 
@@ -133,7 +137,6 @@ Game.prototype = {
     const DELAY_TIME = 5000;
     this.state = this.STATE_REVIEWING_CLUES;
     this.broadcastGameDataToPlayers();
-    setTimeout(() => this.revealCluesToGuesser(), DELAY_TIME);
   },
 
   revealCluesToGuesser: function() {
@@ -154,7 +157,6 @@ Game.prototype = {
 
     this.state = this.STATE_TURN_END;
     this.broadcastGameDataToPlayers();
-    setTimeout(() => this.nextTurn(), DELAY_TIME);
   },
 
   endRound: function() {
