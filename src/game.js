@@ -47,6 +47,9 @@ Game.prototype = {
 
   addPlayer: function(user) {
     const { id, name } = user;
+
+    if (!name) { return; }
+
     this.players[user.id] = new Player({
       id,
       name,
@@ -56,14 +59,12 @@ Game.prototype = {
     }
   },
 
-  getPlayers: function() {
-    return Object.values(this.players);
+  getConnectedPlayers: function() {
+    return Object.values(this.players).filter(player => player.connected);
   },
 
   removeUser: function(id) {
-    if (this.players[id]) { delete this.players[id]; }
-    const orderIdx = this.playerOrder.indexOf(id);
-    this.playerOrder.splice(orderIdx, 1);
+    if (this.players[id]) { this.players[id].connected = false; }
     this.broadcastGameDataToPlayers();
   },
 
@@ -77,7 +78,7 @@ Game.prototype = {
   },
 
   determinePlayerOrder: function() {
-    const playerIds = this.getPlayers().map(player => player.id);
+    const playerIds = this.getConnectedPlayers().map(player => player.id);
     this.playerOrder = _.shuffle(playerIds);
 
     // keeps track of whose turn it is.
@@ -90,16 +91,17 @@ Game.prototype = {
 
     ++this.roundNum;
 
-    if (this.roundNum >= this.TOTAL_NUM_ROUNDS) {
+    if (this.roundNum > this.TOTAL_NUM_ROUNDS) {
       this.endGame();
       return;
     }
 
     // Advance the playerOrderCursor
     this.guesserId = this.playerOrder[this.playerOrderCursor];
-    this.playerOrderCursor = (++this.playerOrderCursor) % this.getPlayers().length;
+    this.playerOrderCursor = (++this.playerOrderCursor) % this.getConnectedPlayers().length;
 
-    this.currWord = this.lexicon[this.lexiconCursor++];
+    this.currWord = this.lexicon[this.lexiconCursor];
+    this.lexiconCursor = (++this.lexiconCursor) % this.lexicon.length;
     this.state = this.STATE_ENTERING_CLUES;
 
     this.broadcastGameDataToPlayers();
@@ -121,7 +123,7 @@ Game.prototype = {
 
     this.broadcastGameDataToPlayers();
 
-    if (Object.values(this.clues).length === this.getPlayers().length - 1) {
+    if (Object.values(this.clues).length === this.getConnectedPlayers().length - 1) {
       // All clues are in!
       setTimeout(() => this.revealCluesToClueGivers(), 500);
     }
@@ -217,7 +219,7 @@ Game.prototype = {
       playerOrder,
       roundNum,
       state,
-      totalNumRounds,
+      TOTAL_NUM_ROUNDS,
     } = this;
 
     return {
@@ -230,7 +232,7 @@ Game.prototype = {
       playerOrder,
       roundNum,
       state,
-      totalNumRounds,
+      totalNumRounds: TOTAL_NUM_ROUNDS,
     };
   },
 }
