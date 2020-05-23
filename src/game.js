@@ -64,6 +64,7 @@ Game.prototype = {
     if (this.players[id]) { delete this.players[id]; }
     const orderIdx = this.playerOrder.indexOf(id);
     this.playerOrder.splice(orderIdx, 1);
+    this.broadcastGameDataToPlayers();
   },
 
   createLexicon: function() {
@@ -105,15 +106,16 @@ Game.prototype = {
   },
 
   receiveClue: function(playerId, submittedClue) {
+    const clue = submittedClue.toLowerCase();
     let isDuplicate = false;
     Object.keys(this.clues).forEach(playerId => {
-      if (this.clues[playerId].clue === submittedClue) {
+      if (this.clues[playerId].clue === clue) {
         this.clues[playerId].isDuplicate = true;
         isDuplicate = true;
       }
     });
     this.clues[playerId] = {
-      clue: submittedClue,
+      clue,
       isDuplicate,
     };
 
@@ -138,10 +140,11 @@ Game.prototype = {
     this.broadcastGameDataToPlayers();
   },
 
-  receiveGuess: function(socketId, guess) {
+  receiveGuess: function(socketId, submittedGuess) {
     const DELAY_TIME = 5000;
+    const guess = submittedGuess.toLowerCase();
     this.currGuess = guess;
-    const correctGuess = guess.toLowerCase() === this.currWord.toLowerCase();
+    const correctGuess = guess === this.currWord.toLowerCase();
 
     if (correctGuess) {
       ++this.numPoints;
