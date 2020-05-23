@@ -95,20 +95,3 @@ describe('getLeader', () => {
     expect(subject().id).toEqual('123');
   });
 });
-
-describe('handleMessage', () => {
-  beforeEach(() => {
-    room.addUser('1');
-    room.setUserName('1', 'Bilbo Baggins');
-  });
-
-  it('adds the message to the messages list', () => {
-    const senderId = '1';
-    const messageText = 'hello world!';
-    room.handleMessage(senderId, messageText);
-    message = room.messages.find(msg => msg.text === messageText);
-    expect(message).toBeTruthy();
-    expect(message.senderName).toEqual('Bilbo Baggins');
-    expect(message.id).toBeTruthy();
-  });
-});

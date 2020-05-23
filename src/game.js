@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const uuid = require('uuid');
 
-const Card = require('./card');
 const Player = require('./player');
 
 function Game({
@@ -14,38 +13,38 @@ function Game({
   this.broadcastSystemMessage = broadcastSystemMessage;
   this.broadcastTo = broadcastTo;
   this.users = users;
+  this.clues = {};
+  this.lexicon = [];
+  this.lexiconCursor = 0;
 }
 
 Game.prototype = {
   STATE_PENDING: 0,
   STATE_STARTED: 1,
-  STATE_ROUND_END: 2,
-  STATE_GAME_END: 3,
+  STATE_ENTERING_CLUES: 2,
+  STATE_REVIEWING_CLUES: 3,
+  STATE_ENTERING_GUESS: 4,
+  STATE_ROUND_END: 5,
+  STATE_GAME_END: 6,
 
   MIN_PLAYERS: 2,
   MAX_PLAYERS: 4,
 
-  setup: function() {
-    const userList = Object.values(this.users);
+  setup: function(users) {
+    const userList = Object.values(users);
     this.state = this.STATE_STARTED;
     this.players = {};
-    this.spectatorIds = userList.slice(this.MAX_PLAYERS);
 
-    const usersToConvertToPlayers = userList.slice(0, this.MAX_PLAYERS);
-    const numPlayers = usersToConvertToPlayers.length;
-    if (numPlayers < this.MIN_PLAYERS) {
-      this.broadcastSystemMessage(`Cannot start the game with less than ${this.MIN_PLAYERS} players`);
-      return;
-    }
-    usersToConvertToPlayers.forEach(user => {
+    userList.forEach(user => {
       const player = new Player({ id: user.id, name: user.name });
       this.players[user.id] = player;
     });
     this.roundNum = 0;
+    this.createLexicon();
     this.determinePlayerOrder();
-    this.determineMaxTokens();
-    this.newRound();
+    this.state = this.STATE_STARTED;
     this.broadcastSystemMessage('Game has started!');
+    this.nextTurn();
     this.broadcastGameDataToPlayers();
   },
 
@@ -53,69 +52,13 @@ Game.prototype = {
     return Object.values(this.players);
   },
 
-  addSpectator: function(id) {
-    this.spectatorIds.push(id);
-  },
-
   removeUser: function(id) {
-    // Remove from `players` and `users`
     if (this.players[id]) { this.players[id].connected = false; }
-    const idx = this.spectatorIds.findIndex(spectatorId => spectatorId === id);
-    if (idx >= 0) { this.spectatorIds.splice(idx, 1) }
   },
 
-  newRound: function() {
-    if (![this.STATE_STARTED, this.STATE_ROUND_END].includes(this.state)) { return; }
-
-    this.state = this.STATE_STARTED;
-    ++this.roundNum;
-    this.getPlayers().forEach(player => player.resetCards());
-
-    // keeps track of how far through the deck we are
-    this.deckCursor = 0;
-
-    this.createDeck();
-    this.dealCards();
-
-    this.broadcastSystemMessage('New round starting...');
-
-    this.nextTurn();
-  },
-
-  createDeck: function() {
-    let nextId = 0;
-    let i;
-    const tmpDeck = [
-      new Card({ id: nextId++, type: Card.PRINCESS}),
-      new Card({ id: nextId++, type: Card.COUNTESS}),
-      new Card({ id: nextId++, type: Card.KING})
-    ];
-
-    for (i=0; i<2; ++i) {
-      tmpDeck.push(new Card({ id: nextId++, type: Card.PRINCE }));
-      tmpDeck.push(new Card({ id: nextId++, type: Card.HANDMAID }));
-      tmpDeck.push(new Card({ id: nextId++, type: Card.BARON }));
-      tmpDeck.push(new Card({ id: nextId++, type: Card.PRIEST }));
-    }
-    for (i=0; i<5; ++i) {
-      tmpDeck.push(new Card({ id: nextId++, type: Card.GUARD }));
-    }
-
-    this.deck = _.shuffle(tmpDeck);
-
-    // choose burn card
-    const burnCardIdx = Math.floor(Math.random()*this.deck.length);
-    this.burnCard = this.deck.splice(burnCardIdx, 1)[0];
-  },
-
-  dealCards: function() {
-    const players = this.getPlayers();
-    const playerIds = players.map(player => player.id);
-    for (let i=0; i < players.length; ++i) {
-      const playerId = playerIds[i];
-      const card = this.deck[this.deckCursor++];
-      this.players[playerId].addCardToHand(card);
-    }
+  // TODO: IMPLEMENT
+  createLexicon: function() {
+    this.lexicon = ['water', 'fire', 'earth', 'air'];
   },
 
   determinePlayerOrder: function() {
@@ -126,142 +69,63 @@ Game.prototype = {
     this.playerOrderCursor = 0;
   },
 
-  determineMaxTokens: function() {
-    switch (this.getPlayers().length) {
-      case 2:
-        this.maxTokens = 7;
-        break;
-      case 3:
-        this.maxTokens = 5;
-        break;
-      case 4:
-      default:
-        this.maxTokens = 4;
-    }
-  },
-
-  drawCard: function({ player, canUseBurnCard }) {
-    let nextCard;
-
-    if (this.deckCursor >= this.deck.length && canUseBurnCard) {
-      // For the Prince card effect
-      nextCard = this.burnCard;
-    } else {
-      nextCard = this.deck[this.deckCursor++];
-    }
-
-    player.addCardToHand(nextCard);
-  },
-
   nextTurn: function() {
     if (this.state !== this.STATE_STARTED) { return; }
 
-    // If one or zero players are left alive, end the round.
-    if (this.getAlivePlayers().length < 2) {
-      this.endRound();
-      return;
-    }
+    this.clues = {};
+    this.revealTo = null;
 
-    if (this.deckCursor >= this.deck.length) {
-      // No more cards in the deck, the round is over.
-      this.endRound();
-      return;
-    }
+    ++this.roundNum;
 
     // Advance the playerOrderCursor
-    let nextPlayer;
-    while (true) {
-      const nextPlayerId = this.playerOrder[this.playerOrderCursor];
-      this.playerOrderCursor = (++this.playerOrderCursor) % this.getPlayers().length;
-      nextPlayer = this.players[nextPlayerId];
+    this.guesserId = this.playerOrder[this.playerOrderCursor];
+    this.playerOrderCursor = (++this.playerOrderCursor) % this.getPlayers().length;
 
-      // Skip players who have been knocked out
-      if (!nextPlayer.isKnockedOut) { break; }
-    }
-
-    // Add the next card into the hand of the player
-    this.drawCard({ player: nextPlayer, canUseBurnCard: false });
-
-    // Id of the player whose turn it is
-    this.activePlayerId = nextPlayer.id;
+    this.currWord = this.lexicon[this.lexiconCursor++];
+    this.state = this.STATE_ENTERING_CLUES;
 
     this.broadcastGameDataToPlayers();
   },
 
-  playCard: function(playerId, cardId, effectData = {}) {
-    const player = this.players[playerId];
-
-    if (this.activePlayerId !== playerId) {
-      throw 'Player tried to play a card when it wasn\'t their turn! Aborting...';
-    }
-
-    const card = player.getCard(cardId);
-    if (!card) {
-      throw 'Player tried to play a card when it wasn\'t in their hand! Aborting...';
-    }
-
-    if (!this.isLegalMove(player, card, effectData)) {
-      return;
-    }
-
-    const success = this.performCardEffect(card, effectData);
-
-    // Tell FE what card was played and who was targeted, if applicable
-    this.broadcastToRoom('lastCardPlayed', {
-      playerId: this.activePlayerId,
-      card,
-      effectData,
-      discarded: !success,
+  receiveClue: function(playerId, submittedClue) {
+    const isDuplicate = false;
+    Object.keys(this.clues).forEach(playerId => {
+      if (this.clues[playerId].clue === submittedClue) {
+        this.clues[playerId].isDuplicate = true;
+        isDuplicate = true;
+      }
     });
-
-    if (!player.isKnockedOut) { player.discardCardById(card.id); }
-
-    const endActions = () => {
-      // Tell the clients to dismiss their revealed cards
-      this.broadcastToRoom('dismissReveal');
-
-      this.nextTurn();
+    this.clues[playerId] = {
+      clue: submittedClue,
+      isDuplicate,
     };
 
-    setTimeout(endActions, 2000);
+    this.broadcastGameDataToPlayers();
+
+    if (Object.values(this.clues).length === this.getPlayers().length - 1) {
+      // All clues are in!
+      setTimeout(() => this.revealCluesToClueGivers(), 500);
+    }
   },
 
-  isLegalMove: function(player, card, effectData = {}) {
-    // Check Countess card effect
-    // TODO: alert this error instead of putting in chat
-    if ([Card.KING, Card.PRINCE].includes(card.type) && player.hasCard(Card.COUNTESS)) {
-      // If you have the King or Prince in your hand, you must discard the Countess.
-      const message = `(Only visible to you) You cannot discard the ` +
-        `${Card.labels[Card.COUNTESS]} when you have the ${card.getLabel()} in your hand`;
-      this.emitSystemMessage(player.id, message);
-      return false;
+  revealCluesToClueGivers: function() {
+    const DELAY_TIME = 5000;
+    this.state = this.STATE_REVIEWING_CLUES;
+    this.broadcastGameDataToPlayers();
+    setTimeout(() => this.revealCluesToGuesser(), DELAY_TIME);
+  },
+
+  revealCluesToGuesser: function() {
+    const DELAY_TIME = 5000;
+    this.revealTo = 'guesser';
+    this.state = this.STATE_ENTERING_GUESS;
+    this.broadcastGameDataToPlayers();
+  },
+
+  receiveGuess: function(socketId, guess) {
+    if (guess.toLowerCase() === this.currWord.toLowerCase()) {
+      // Correct guess
     }
-
-    const { targetPlayerId } = effectData;
-    const targetPlayer = targetPlayerId ? this.players[targetPlayerId] : null;
-
-    if (!targetPlayer) { return true; }
-
-    // Moves involving targeted players
-
-    // Prohibit targeting knocked out players
-    if (targetPlayer.isKnockedOut) {
-      this.emitSystemMessage(
-        player.id,
-        '(Only visible to you) Cannot target knocked out players',
-      );
-      return false;
-    }
-
-    // Check Handmaid card effect
-    if (targetPlayerId !== this.activePlayerId && targetPlayer.handmaidActive) {
-      const message = '(Only visible to you) You can\'t target someone who played ' +
-        `${Card.labels[Card.HANDMAID]} last turn`;
-      this.emitSystemMessage(player.id, message);
-      return false;
-    }
-
-    return true;
   },
 
   endRound: function() {
@@ -286,248 +150,24 @@ Game.prototype = {
     this.broadcastGameDataToPlayers();
   },
 
-  determineRoundWinners: function() {
-    const playerList = Object.values(this.players);
-    const alivePlayers = this.getAlivePlayers();
-
-    if (alivePlayers.length === 0) {
-      this.broadcastSystemMessage('No one won the round...');
-      this.broadcastGameDataToPlayers();
-      return;
-    }
-
-    // Sort by card number descending
-    alivePlayers.sort(
-      (player1, player2) => player1.hand[0].getNumber() - player2.hand[0].getNumber()
-    );
-
-    const finalists = [];
-    const highestCardNumber = alivePlayers[alivePlayers.length - 1].hand[0].getNumber();
-    for (let i = alivePlayers.length - 1; i >= 0; --i) {
-      const player = alivePlayers[i]
-      if (player.hand[0].getNumber() < highestCardNumber) {
-        break;
-      }
-      console.log(`${player.name} is a finalist with a card number of ${player.hand[0].getNumber()}`);
-      finalists.push(player);
-    }
-
-    if (finalists.length === 1) {
-      return finalists;
-    }
-
-    // Tie-break. Add up the discard piles
-    let maxDiscardTotal = 0;
-
-    let roundWinners = [];
-
-    finalists.forEach(finalist => {
-      const discardTotal = _.reduce(
-        finalist.discardPile,
-        (sum, discardCard) => sum + discardCard.getNumber(),
-        0,
-      );
-      if (discardTotal > maxDiscardTotal) {
-        maxDiscardTotal = discardTotal;
-        roundWinners = [finalist];
-      } else if (discardTotal === maxDiscardTotal) {
-        roundWinners.push(finalist);
-      }
-    });
-
-    return roundWinners;
-  },
-
   endGame: function(winners) {
     console.log('end game');
-    const winnerIds = winners && winners.map(winner => winner.id);
-    this.broadcastToRoom('endGame', winnerIds);
     this.broadcastSystemMessage('Game is over!');
     this.state = this.STATE_GAME_END;
 
-    this.broadcastGameDataToPlayers(true);
+    this.broadcastGameDataToPlayers();
   },
 
   // Send all players back to the lobby
   setPending: function() {
     this.state = this.STATE_PENDING;
-
-    // move all players to spectators
-    Object.keys(this.players).forEach(playerId => {
-      if (!this.spectatorIds.includes(playerId)) {
-        this.spectatorIds.push(playerId);
-      }
-    });
     this.players = {};
     this.broadcastGameDataToPlayers();
-  },
-
-  getWinnerIds: function() {
-    const winners = Object.values(this.players).filter(
-      player => player.numTokens >= this.maxTokens
-    );
-    return winners.map(winner => winner.id);
-  },
-
-  getAlivePlayers: function() {
-    return Object.values(this.players).filter(player => !player.isKnockedOut);
   },
 
   isRoundOver: function() { return this.state !== this.STATE_STARTED; },
 
   isGameOver: function() { return this.state === this.STATE_GAME_END; },
-
-  // Returns true if card effect was performed successfully, false otherwise.
-  performCardEffect: function (card, effectData) {
-    const activePlayer = this.players[this.activePlayerId];
-
-    const statusMessage = `${activePlayer.name} played ${card.getLabel()}`;
-    console.log(statusMessage);
-
-    const targetPlayer = (
-      effectData && effectData.targetPlayerId ?
-        this.players[effectData.targetPlayerId] :
-        undefined
-    );
-
-    const cardsWithTargets = [Card.GUARD, Card.PRIEST, Card.BARON, Card.PRINCE, Card.KING];
-
-    activePlayer.setHandmaid(false);
-
-    // Do all alive players have handmaids?
-    if (cardsWithTargets.includes(card.type) && this.allAlivePlayersHaveHandmaids()) {
-      // Prince card is allowed to target self
-      if (card.type !== Card.PRINCE || targetPlayer.id !== activePlayer.id) {
-        console.log('all players have handmaids. discarding...');
-        this.broadcastSystemMessage(`${activePlayer.name} discarded ${card.getLabel()}`);
-        return false;
-      }
-    }
-
-    const broadcastMessage = [statusMessage];
-
-    let targetPlayerCard;
-    if (targetPlayer) {
-      // Prince is allowed to target self. Choose the correct target card
-      if (targetPlayer.id === activePlayer.id) {
-        targetPlayerCard = activePlayer.hand.find(handCard => handCard.id !== card.id);
-      } else {
-        targetPlayerCard = targetPlayer.hand[0];
-      }
-    }
-    // the card that the active player did not play
-    const activePlayerOtherCardIdx = activePlayer.hand.findIndex(handCard => handCard.id !== card.id)
-    const activePlayerOtherCard = activePlayer.hand[activePlayerOtherCardIdx];
-
-    switch (card.type) {
-      case Card.GUARD:
-        const { guardNumberGuess } = effectData;
-        broadcastMessage.push(`and guessed ${targetPlayer.name} has a ${guardNumberGuess} card`);
-
-        const guardGuessCardTypes = Object.keys(Card.numbers).filter(cardType => {
-          return guardNumberGuess === Card.numbers[cardType];
-        }).map(card => parseInt(card, 10)); // for some reason it gets turned into a string
-
-        if (guardGuessCardTypes.includes(targetPlayer.hand[0].type)) {
-          // Dead!
-          this.broadcastSystemMessage(broadcastMessage.join(' '));
-          this.knockOut(targetPlayer);
-          return true;
-        } else {
-          broadcastMessage.push('but was wrong');
-        }
-        break;
-      case Card.PRIEST:
-        console.log('revealing for priest');
-        this.broadcastTo(activePlayer.id, 'priestReveal', targetPlayerCard);
-        const priestRevealMessage = `(Only visible to you) ${targetPlayer.name} is holding the ` +
-          `${targetPlayerCard.getLabel()}!`;
-        this.emitSystemMessage(activePlayer.id, priestRevealMessage);
-        broadcastMessage.push(`and is looking at ${targetPlayer.name}'s card`);
-        break;
-      case Card.BARON:
-        const baronRevealData = [{
-          playerId: activePlayer.id,
-          card: activePlayerOtherCard,
-        }, {
-          playerId: targetPlayer.id,
-          card: targetPlayerCard,
-        }];
-        this.broadcastTo(activePlayer.id, 'baronReveal', baronRevealData);
-        this.broadcastTo(targetPlayer.id, 'baronReveal', baronRevealData);
-        broadcastMessage.push(`and compared cards with ${targetPlayer.name}`);
-
-        // Who died?
-        this.broadcastSystemMessage(broadcastMessage.join(' '));
-        if (activePlayerOtherCard.getNumber() === targetPlayerCard.getNumber()) {
-          this.broadcastSystemMessage('Nothing happened...');
-          return true;
-        }
-
-        let loser;
-        if (activePlayerOtherCard.getNumber() < targetPlayerCard.getNumber()) {
-          loser = activePlayer;
-        } else {
-          loser = targetPlayer;
-        }
-        this.knockOut(loser);
-        return true;
-      case Card.PRINCE:
-        targetPlayer.discardCardById(targetPlayerCard.id);
-        broadcastMessage.push(
-          `and forced ${targetPlayer.name} to discard their card`,
-        );
-        if (targetPlayerCard.type === Card.PRINCESS) {
-          this.broadcastSystemMessage(broadcastMessage);
-          this.knockOut(targetPlayer);
-          return true;
-        }
-        this.drawCard({ player: targetPlayer, canUseBurnCard: true });
-        broadcastMessage.push(
-          'and draw a new one',
-        );
-        break;
-      case Card.KING:
-        // Switch the cards!
-        targetPlayer.hand[0] = activePlayerOtherCard;
-        activePlayer.hand[activePlayerOtherCardIdx] = targetPlayerCard;
-        broadcastMessage.push(
-          `and switched cards with ${targetPlayer.name}`,
-        );
-        break;
-      case Card.PRINCESS:
-        // effects handled elsewhere
-        broadcastMessage.push('... oops!');
-        this.knockOut(activePlayer);
-        break;
-      case Card.HANDMAID:
-        activePlayer.setHandmaid(true);
-        broadcastMessage.push('and is immune from card effects until their next turn');
-        break;
-      case Card.COUNTESS:
-        // effects handled elsewhere
-        break;
-      default:
-        throw `unknown card played: ${card}`;
-    }
-
-    this.broadcastSystemMessage(broadcastMessage.join(' '));
-
-    return true;
-  },
-
-  allAlivePlayersHaveHandmaids: function() {
-    const players = Object.values(this.players);
-    const playerWithoutHandmaid = players.find(
-      player => !player.isKnockedOut && !player.handmaidActive && (player.id !== this.activePlayerId)
-    );
-    return !playerWithoutHandmaid;
-  },
-
-  knockOut: function(player) {
-    player.knockOut();
-    this.broadcastSystemMessage(`${player.name} was knocked out of the round!`);
-  },
 
   emitSystemMessage: function(playerId, msg) {
     const messageObj = {
@@ -538,67 +178,29 @@ Game.prototype = {
     this.broadcastTo(playerId, 'message', messageObj);
   },
 
-  broadcastGameDataToPlayers: function(includeHands = false) {
-    Object.keys(this.players).forEach((playerId) => {
-      this.broadcastTo(
-        playerId,
-        'gameData',
-        this.serializeForPlayer(playerId, includeHands),
-      );
-    });
-    this.spectatorIds.forEach(id => this.broadcastTo(id, 'gameData', this.serializeForSpectator()));
+  broadcastGameDataToPlayers: function() {
+    this.broadcastToRoom('gameData', this.serialize());
   },
-
-  serializeForPlayer: function(playerIdToSerializeFor, includeHands) {
-    const {
-      activePlayerId,
-      playerOrder,
-      roundNum,
-      state,
-    } = this;
-
-    const playerData = {};
-
-    Object.keys(this.players).forEach(playerId => {
-      const serialized = this.players[playerId].serialize({
-        includeHand: includeHands || (playerIdToSerializeFor === playerId),
-      });
-      playerData[playerId] = serialized;
-    });
-
-    return {
-      activePlayerId,
-      players: playerData,
-      playerOrder,
-      roundNum,
-      state,
-    };
-  },
-
-  serializeForSpectator: function() { return this.serializeForPlayer(null, true); },
 
   serialize: function() {
     const {
-      activePlayerId,
-      deck,
-      deckCursor,
+      clues,
+      guesserId,
+      currWord,
       players,
-      playerOrder,
-      playerOrderCursor,
+      revealTo,
       roundNum,
-      spectatorIds,
       state
     } = this;
+
     return {
-      activePlayerId,
-      deck,
-      deckCursor,
+      clues,
+      guesserId,
+      currWord,
       players,
-      playerOrder,
-      playerOrderCursor,
+      revealTo,
       roundNum,
-      spectatorIds,
-      state,
+      state
     };
   },
 }

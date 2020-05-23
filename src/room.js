@@ -1,7 +1,6 @@
 const uuid = require('uuid');
 
 const Game = require('./game');
-const Message = require('./message');
 const User = require('./user');
 
 const MAX_MESSAGES = 50;
@@ -34,8 +33,6 @@ Room.prototype = {
       this.promoteRandomLeader();
     }
     if (!this.game) { return; }
-
-    this.game.addSpectator(id);
   },
 
   onUserDisconnect: function(id) {
@@ -79,25 +76,6 @@ Room.prototype = {
     this.broadcastToRoom('newUser', user.serialize());
   },
 
-  handleMessage: function(senderId, msg) {
-    const { messages } = this;
-    let senderName;
-    if (this.users[senderId]) {
-      senderName = this.users[senderId].name || 'anonymous';
-    } else {
-      senderName = '';
-    }
-    const messageObj = new Message({
-      id: uuid.v4(),
-      senderName,
-      text: msg.substring(0, MAX_MESSAGE_LENGTH),
-      type: 'user',
-    })
-    if (messages.length > MAX_MESSAGES) { messages.shift(); }
-    messages.push(messageObj);
-    this.broadcastToRoom('message', messageObj);
-  },
-
   // returns an array of users
   getUsers: function() { return Object.values(this.users); },
 
@@ -112,9 +90,8 @@ Room.prototype = {
       broadcastToRoom,
       broadcastSystemMessage,
       broadcastTo,
-      users: this.users,
     });
-    this.game.setup();
+    this.game.setup(this.users);
   },
 
   playCard: function(userId, cardId, effectData) {
@@ -144,6 +121,11 @@ Room.prototype = {
     return user.isLeader;
   },
 
+  receiveClue: function(socketId, clue) {
+    if (!this.game) { return; }
+    this.game.receiveClue(socketId, clue);
+  },
+
   sendInitRoomData: function(socket) {
     const users = {};
     const { messages } = this;
@@ -159,7 +141,7 @@ Room.prototype = {
 
     if (!this.game) { return; }
 
-    this.broadcastTo(socket.id, 'gameData', this.game.serializeForSpectator());
+    this.broadcastTo(socket.id, 'gameData', this.game.serialize());
   },
 
   sendGameState: function(socketId) {

@@ -79,16 +79,6 @@ const onUserDisconnect = socket => {
   });
 };
 
-const onChatMessage = (socket, msg) => {
-  const room = getRoom(socket);
-  room.handleMessage(socket.id, msg);
-};
-
-const onPlayCard = (socket, { cardId, effectData }) => {
-  const room = getRoom(socket);
-  room.playCard(socket.id, cardId, effectData);
-};
-
 const onSetPending = socket => {
   getRoom(socket).setPending();
 }
@@ -99,14 +89,13 @@ const onDebug = socket => {
 
 io.on('connection', socket => {
   console.log('New client connected');
-  socket.on('chatMessage', msg => onChatMessage(socket, msg));
   socket.on('disconnect', () => onUserDisconnect(socket));
   socket.on('joinRoom', (roomCode) => joinRoom(socket, roomCode));
-  socket.on('playCard', data => onPlayCard(socket, data));
   socket.on('saveName', name => handleSetName(socket, name));
   socket.on('setPending', () => onSetPending(socket));
   socket.on('startGame', () => handleStartGame(socket));
   socket.on('nextRound', () => handleNextRound(socket));
   socket.on('endGame', () => handleEndGame(socket));
-  socket.on('debug', () => room.sendGameState(socket));
+  //socket.on('debug', () => room.sendGameState(socket));
+  socket.on('submitClue', (clue) => getRoom(socket).receiveClue(socket.id, clue));
 });
