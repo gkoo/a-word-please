@@ -90,11 +90,11 @@ const onUserDisconnect = socket => {
 
 const onSetPending = socket => {
   getRoom(socket).setPending();
-}
+};
 
 const onDebug = socket => {
   getRoom(socket).sendGameState(socket.id);
-}
+};
 
 io.on('connection', socket => {
   console.log('New client connected');
@@ -106,8 +106,11 @@ io.on('connection', socket => {
   socket.on('nextTurn', () => handleNextTurn(socket));
   socket.on('endGame', () => handleEndGame(socket));
   socket.on('debug', () => onDebug(socket));
-  socket.on('submitClue', clue => getRoom(socket).receiveClue(socket.id, clue));
-  socket.on('revealClues', () => getRoom(socket).revealClues());
-  socket.on('submitGuess', guess => getRoom(socket).receiveGuess(socket.id, guess));
-  socket.on('skipTurn', guess => getRoom(socket).skipTurn());
+  socket.on('submitClue', clue => getRoom(socket) && getRoom(socket).receiveClue(socket.id, clue));
+  socket.on('revealClues', () => getRoom(socket) && getRoom(socket).revealClues());
+  socket.on(
+    'submitGuess',
+    guess => getRoom(socket) && getRoom(socket).receiveGuess(socket.id, guess),
+  );
+  socket.on('skipTurn', guess => getRoom(socket) && getRoom(socket).skipTurn());
 });
