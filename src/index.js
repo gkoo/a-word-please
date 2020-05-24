@@ -54,6 +54,14 @@ const handleEndGame = socket => {
 
 const joinRoom = (socket, roomCode) => {
   let room = rooms[roomCode];
+
+  // Disconnect the user from any other rooms they may have joined
+  Object.values(rooms).forEach(room => {
+    if (!room.users[socket.id]) { return; }
+    if (room.roomCode === roomCode) { return; }
+    room.onUserDisconnect(socket.id);
+  });
+
   if (!room) {
     room = new Room({ broadcastTo, roomCode });
     rooms[roomCode] = room;
