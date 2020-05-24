@@ -134,6 +134,11 @@ Room.prototype = {
     this.game.receiveGuess(socketId, guess);
   },
 
+  skipTurn: function(socketId, guess) {
+    if (!this.game) { return; }
+    this.game.skipTurn();
+  },
+
   sendInitRoomData: function(socket) {
     const users = {};
     const { messages } = this;

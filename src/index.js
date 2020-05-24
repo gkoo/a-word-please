@@ -109,4 +109,5 @@ io.on('connection', socket => {
   socket.on('submitClue', clue => getRoom(socket).receiveClue(socket.id, clue));
   socket.on('revealClues', () => getRoom(socket).revealClues());
   socket.on('submitGuess', guess => getRoom(socket).receiveGuess(socket.id, guess));
+  socket.on('skipTurn', guess => getRoom(socket).skipTurn());
 });

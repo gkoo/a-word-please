@@ -18,6 +18,7 @@ function Game({
   this.lexicon = [];
   this.lexiconCursor = 0;
   this.numPoints = 0;
+  this.skippedTurn = false;
 }
 
 Game.prototype = {
@@ -87,6 +88,7 @@ Game.prototype = {
   nextTurn: function() {
     this.clues = {};
     this.currGuess = null;
+    this.skippedTurn = false;
 
     ++this.roundNum;
 
@@ -148,8 +150,16 @@ Game.prototype = {
 
     if (correctGuess) {
       ++this.numPoints;
+    } else {
+      ++this.roundNum;
     }
 
+    this.state = this.STATE_TURN_END;
+    this.broadcastGameDataToPlayers();
+  },
+
+  skipTurn: function() {
+    this.skippedTurn = true;
     this.state = this.STATE_TURN_END;
     this.broadcastGameDataToPlayers();
   },
@@ -215,6 +225,7 @@ Game.prototype = {
       players,
       playerOrder,
       roundNum,
+      skippedTurn,
       state,
       TOTAL_NUM_ROUNDS,
     } = this;
@@ -228,6 +239,7 @@ Game.prototype = {
       players,
       playerOrder,
       roundNum,
+      skippedTurn,
       state,
       totalNumRounds: TOTAL_NUM_ROUNDS,
     };
