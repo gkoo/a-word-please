@@ -83,7 +83,7 @@ Room.prototype = {
   // returns an array of users
   getUsers: function() { return Object.values(this.users); },
 
-  startGame: function(gameInitiatorId) {
+  startGame: function() {
     const {
       broadcastToRoom,
       broadcastSystemMessage,

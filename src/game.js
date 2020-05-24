@@ -70,7 +70,18 @@ Game.prototype = {
 
   removeUser: function(id) {
     if (this.players[id]) { this.players[id].connected = false; }
+
+    // Remove from player order
+    const playerOrderIdx = this.playerOrder.indexOf(id);
+    this.playerOrder.splice(playerOrderIdx, 1);
+
+    // Remove clue from clues
+    delete this.clues[id];
+
+    if (id === guesserId) { this.nextTurn(); }
+
     this.broadcastGameDataToPlayers();
+    this.checkIfAllCluesAreIn();
   },
 
   createLexicon: function() {
@@ -124,6 +135,10 @@ Game.prototype = {
 
     this.broadcastGameDataToPlayers();
 
+    this.checkIfAllCluesAreIn();
+  },
+
+  checkIfAllCluesAreIn: function() {
     if (Object.values(this.clues).length === this.getConnectedPlayers().length - 1) {
       // All clues are in!
       setTimeout(() => this.revealCluesToClueGivers(), 500);

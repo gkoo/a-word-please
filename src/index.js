@@ -40,7 +40,6 @@ const handleStartGame = socket => {
   const room = getRoom(socket);
   console.log('starting game');
   room.startGame(socket.id);
-  io.emit('systemMessage', 'Game started');
 };
 
 const handleNextTurn = socket => {
