@@ -78,7 +78,7 @@ Game.prototype = {
     // Remove clue from clues
     delete this.clues[id];
 
-    if (id === guesserId) { this.nextTurn(); }
+    if (id === this.guesserId) { this.nextTurn(); }
 
     this.broadcastGameDataToPlayers();
     this.checkIfAllCluesAreIn();
@@ -86,6 +86,7 @@ Game.prototype = {
 
   createLexicon: function() {
     this.lexicon = _.shuffle(wordlist);
+    //this.lexicon = ['water', 'fire', 'earth', 'air'];
   },
 
   determinePlayerOrder: function() {
