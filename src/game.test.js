@@ -12,9 +12,9 @@ const mockBroadcastTo = jest.fn();
 
 beforeEach(() => {
   users = {
-    '1': new User('1'),
-    '2': new User('2'),
-    '3': new User('3'),
+    '1': new User({ id: '1', name: 'Gordon' }),
+    '2': new User({ id: '2', name: 'Fordon' }),
+    '3': new User({ id: '3', name: 'Bordon' }),
   };
   game = new Game({
     broadcastToRoom: mockBroadcastToRoom,
@@ -25,15 +25,48 @@ beforeEach(() => {
   game.setup(users);
 });
 
-describe('newRound', () => {
-});
-
 describe('removeUser', () => {
-  it('removes the user from player list', () => {
-    const id = '123'
-    game.players = { [id]: {} };
-    game.removeUser(id);
-    expect(game.players[id].connected).toEqual(false);
+  const playerToRemoveId = '1'
+  const subject = () => game.removeUser(playerToRemoveId);
+
+  it('sets the player\'s connected status to false', () => {
+    subject();
+    expect(game.players[playerToRemoveId].connected).toEqual(false);
+  });
+
+  describe('when the player has submitted a clue', () => {
+    beforeEach(() => {
+      game.clues = {
+        [playerToRemoveId]: {
+          clue: 'jellyfish',
+          isDuplicate: false,
+        },
+      };
+    });
+
+    it('removes any clues the player has submitted', () => {
+      subject();
+      expect(game.clues[playerToRemoveId]).toBeFalsy();
+    });
+  });
+
+  describe('when it is the player\'s turn', () => {
+    beforeEach(() => {
+      game.playerOrder = ['1', '2', '3'];
+      game.playerOrderCursor = 1;
+      game.guesserId = playerToRemoveId;
+    });
+
+    it('advances to the next turn', () => {
+      subject();
+      expect(game.guesserId).toEqual('2');
+    });
+
+    it('doesn\'t change the round number', () => {
+      const { roundNum } = game;
+      subject();
+      expect(game.roundNum).toEqual(roundNum);
+    });
   });
 });
 
@@ -44,7 +77,10 @@ describe('nextTurn', () => {
     subject();
     const { guesserId } = game;
     subject();
-    const newGuesserId = game.activePlayerId;
-    expect(newGuesserId).not.toEqual(guesserId);
+    expect(game.guesserId).not.toEqual(guesserId);
+  });
+
+  it('increments the round number', () => {
+    subject();
   });
 });

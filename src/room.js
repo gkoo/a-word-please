@@ -27,7 +27,7 @@ Room.prototype = {
   getUserById: function(id) { return this.users[id]; },
 
   addUser: function(id) {
-    const user = new User(id);
+    const user = new User({ id });
     this.users[id] = user;
     if (this.getUsers().length === 1) {
       this.promoteRandomLeader();

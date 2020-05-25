@@ -59,6 +59,7 @@ Game.prototype = {
       id,
       name,
     });
+
     if (this.playerOrder) {
       this.playerOrder.push(user.id);
     }
@@ -78,15 +79,24 @@ Game.prototype = {
     // Remove clue from clues
     delete this.clues[id];
 
-    if (id === this.guesserId) { this.nextTurn(); }
+    if (this.playerOrder.indexOf(id) < this.playerOrderCursor) {
+      // If removing player ID 1 and player order is [1, 2, 3] with player order cursor at idx 2,
+      // player order would become [2, 3], so we need to decrement the cursor or we get an out of
+      // bounds error.
+      --this.playerOrderCursor;
+    }
+
+    if (id === this.guesserId) {
+      this.nextTurn(false);
+    }
 
     this.broadcastGameDataToPlayers();
     this.checkIfAllCluesAreIn();
   },
 
   createLexicon: function() {
-    this.lexicon = _.shuffle(wordlist);
-    //this.lexicon = ['water', 'fire', 'earth', 'air'];
+    this.lexicon = ['water', 'fire', 'earth', 'air'];
+    //this.lexicon = _.shuffle(wordlist);
   },
 
   determinePlayerOrder: function() {
@@ -97,12 +107,14 @@ Game.prototype = {
     this.playerOrderCursor = 0;
   },
 
-  nextTurn: function() {
+  nextTurn: function(shouldIncrementRound = true) {
     this.clues = {};
     this.currGuess = null;
     this.skippedTurn = false;
 
-    ++this.roundNum;
+    if (shouldIncrementRound) {
+      ++this.roundNum;
+    }
 
     if (this.roundNum > this.TOTAL_NUM_ROUNDS) {
       this.endGame();

@@ -1,5 +1,6 @@
-function User(id) {
+function User({ id, name }) {
   this.id = id;
+  this.name = name;
   this.isLeader = false;
 
   this.setName = name => {
