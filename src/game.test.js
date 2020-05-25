@@ -25,13 +25,55 @@ beforeEach(() => {
   game.setup(users);
 });
 
-describe('removeUser', () => {
+describe('addPlayer', () => {
+  const userToAdd = new User({ id: '4', name: 'Mordon' });
+  const subject = () => game.addPlayer(userToAdd);
+
+  it('adds to the players object', () => {
+    subject();
+    const newPlayer = game.players[userToAdd.id];
+    expect(newPlayer.id).toEqual(userToAdd.id);
+    expect(newPlayer.name).toEqual(userToAdd.name);
+  });
+
+  describe('when there is an existing player order', () => {
+    it('appends the player to the end of the player order array', () => {
+      const oldPlayerOrderLength = game.playerOrder.length;
+      subject();
+      const newOrderLength = game.playerOrder.length;
+      expect(newOrderLength).toEqual(oldPlayerOrderLength + 1);
+      expect(game.playerOrder[newOrderLength - 1]).toEqual(userToAdd.id);
+    });
+  });
+});
+
+describe('getConnectedPlayers', () => {
+  beforeEach(() => {
+    game.players['1'].connected = false;
+  });
+
+  it('returns only connected players', () => {
+    const connectedPlayers = game.getConnectedPlayers();
+    const connectedPlayerIds = connectedPlayers.map(player => player.id);
+    expect(connectedPlayerIds).not.toContain('1');
+    expect(connectedPlayerIds).toContain('2');
+    expect(connectedPlayerIds).toContain('3');
+  });
+});
+
+describe('removePlayer', () => {
   const playerToRemoveId = '1'
-  const subject = () => game.removeUser(playerToRemoveId);
+  const subject = () => game.removePlayer(playerToRemoveId);
 
   it('sets the player\'s connected status to false', () => {
     subject();
     expect(game.players[playerToRemoveId].connected).toEqual(false);
+  });
+
+  it('removes the player from the player order array', () => {
+    expect(game.playerOrder.indexOf(playerToRemoveId)).toBeGreaterThanOrEqual(0)
+    subject();
+    expect(game.playerOrder.indexOf(playerToRemoveId)).toEqual(-1);
   });
 
   describe('when the player has submitted a clue', () => {
@@ -81,6 +123,8 @@ describe('nextTurn', () => {
   });
 
   it('increments the round number', () => {
+    const { roundNum } = game;
     subject();
+    expect(game.roundNum).toEqual(roundNum + 1);
   });
 });

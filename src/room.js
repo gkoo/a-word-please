@@ -44,7 +44,7 @@ Room.prototype = {
       this.promoteRandomLeader();
     }
     if (this.game) {
-      this.game.removeUser(id);
+      this.game.removePlayer(id);
       const connectedPlayer = Object.values(this.game.players).find(player => player.connected);
       if (!connectedPlayer) { this.game = null; }
     }

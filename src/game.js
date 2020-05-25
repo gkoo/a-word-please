@@ -69,7 +69,7 @@ Game.prototype = {
     return Object.values(this.players).filter(player => player.connected);
   },
 
-  removeUser: function(id) {
+  removePlayer: function(id) {
     if (this.players[id]) { this.players[id].connected = false; }
 
     // Remove from player order
