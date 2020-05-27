@@ -76,6 +76,30 @@ describe('removePlayer', () => {
     expect(game.playerOrder.indexOf(playerToRemoveId)).toEqual(-1);
   });
 
+  describe('when the player is the last in the player order', () => {
+    beforeEach(() => {
+      game.playerOrder = ['3', '2', '1'];
+      game.playerOrderCursor = 2;
+    });
+
+    it('decrements the player order cursor', () => {
+      subject();
+      expect(game.playerOrderCursor).toEqual(1);
+    });
+  });
+
+  describe('when the player\'s position in the player order is after the current player order cursor position', () => {
+    beforeEach(() => {
+      game.playerOrder = ['1', '2', '3'];
+      game.playerOrderCursor = 1;
+    });
+
+    it('does not decrement the player order cursor', () => {
+      subject();
+      expect(game.playerOrderCursor).toEqual(1);
+    });
+  });
+
   describe('when the player has submitted a clue', () => {
     beforeEach(() => {
       game.clues = {

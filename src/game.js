@@ -77,7 +77,7 @@ Game.prototype = {
     // Remove clue from clues
     delete this.clues[id];
 
-    if (this.playerOrder.indexOf(id) < this.playerOrderCursor) {
+    if (playerOrderIdx <= this.playerOrderCursor) {
       // If removing player ID 1 and player order is [1, 2, 3] with player order cursor at idx 2,
       // player order would become [2, 3], so we need to decrement the cursor or we get an out of
       // bounds error.
