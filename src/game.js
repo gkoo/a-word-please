@@ -21,19 +21,17 @@ function Game({
   this.skippedTurn = false;
 }
 
+Game.STATE_PENDING = 0;
+Game.STATE_ENTERING_CLUES = 1;
+Game.STATE_REVIEWING_CLUES = 2;
+Game.STATE_ENTERING_GUESS = 3;
+Game.STATE_TURN_END = 4;
+Game.STATE_GAME_END = 5;
+
+Game.MIN_PLAYERS = 2;
+Game.TOTAL_NUM_ROUNDS = 13;
+
 Game.prototype = {
-  STATE_PENDING: 0,
-  STATE_ENTERING_CLUES: 1,
-  STATE_REVIEWING_CLUES: 2,
-  STATE_ENTERING_GUESS: 3,
-  STATE_TURN_END: 4,
-  STATE_GAME_END: 5,
-
-  MIN_PLAYERS: 2,
-  MAX_PLAYERS: 4,
-
-  TOTAL_NUM_ROUNDS: 13,
-
   setup: function(users) {
     const userList = Object.values(users);
     this.players = {};
@@ -116,7 +114,7 @@ Game.prototype = {
       ++this.roundNum;
     }
 
-    if (this.roundNum > this.TOTAL_NUM_ROUNDS) {
+    if (this.roundNum > Game.TOTAL_NUM_ROUNDS) {
       this.endGame();
       return;
     }
@@ -127,7 +125,7 @@ Game.prototype = {
 
     this.currWord = this.lexicon[this.lexiconCursor];
     this.lexiconCursor = (++this.lexiconCursor) % this.lexicon.length;
-    this.state = this.STATE_ENTERING_CLUES;
+    this.state = Game.STATE_ENTERING_CLUES;
 
     this.broadcastGameDataToPlayers();
   },
@@ -160,13 +158,13 @@ Game.prototype = {
 
   revealCluesToClueGivers: function() {
     const DELAY_TIME = 5000;
-    this.state = this.STATE_REVIEWING_CLUES;
+    this.state = Game.STATE_REVIEWING_CLUES;
     this.broadcastGameDataToPlayers();
   },
 
   revealCluesToGuesser: function() {
     const DELAY_TIME = 5000;
-    this.state = this.STATE_ENTERING_GUESS;
+    this.state = Game.STATE_ENTERING_GUESS;
     this.broadcastGameDataToPlayers();
   },
 
@@ -182,13 +180,13 @@ Game.prototype = {
       ++this.roundNum;
     }
 
-    this.state = this.STATE_TURN_END;
+    this.state = Game.STATE_TURN_END;
     this.broadcastGameDataToPlayers();
   },
 
   skipTurn: function() {
     this.skippedTurn = true;
-    this.state = this.STATE_TURN_END;
+    this.state = Game.STATE_TURN_END;
     this.broadcastGameDataToPlayers();
   },
 
@@ -215,20 +213,20 @@ Game.prototype = {
   },
 
   endGame: function(winners) {
-    this.state = this.STATE_GAME_END;
+    this.state = Game.STATE_GAME_END;
     this.broadcastGameDataToPlayers();
   },
 
   // Send all players back to the lobby
   setPending: function() {
-    this.state = this.STATE_PENDING;
+    this.state = Game.STATE_PENDING;
     this.players = {};
     this.broadcastGameDataToPlayers();
   },
 
   isRoundOver: function() { return this.state !== this.STATE_STARTED; },
 
-  isGameOver: function() { return this.state === this.STATE_GAME_END; },
+  isGameOver: function() { return this.state === Game.STATE_GAME_END; },
 
   emitSystemMessage: function(playerId, msg) {
     const messageObj = {
@@ -255,7 +253,6 @@ Game.prototype = {
       roundNum,
       skippedTurn,
       state,
-      TOTAL_NUM_ROUNDS,
     } = this;
 
     return {
@@ -269,7 +266,7 @@ Game.prototype = {
       roundNum,
       skippedTurn,
       state,
-      totalNumRounds: TOTAL_NUM_ROUNDS,
+      totalNumRounds: Game.TOTAL_NUM_ROUNDS,
     };
   },
 }

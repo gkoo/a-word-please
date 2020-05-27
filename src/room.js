@@ -139,28 +139,31 @@ Room.prototype = {
     this.game.skipTurn();
   },
 
-  sendInitRoomData: function(socket) {
+  getInitRoomData: function(socketId) {
     const users = {};
     const { messages } = this;
     Object.values(this.users).forEach(user => {
       users[user.id] = user.serialize();
     });
-    const initData = {
+    return {
       users,
       messages,
-      currUserId: socket.id,
+      currUserId: socketId,
     };
+  },
+
+  sendInitRoomData: function(socket) {
+    const initData = this.getInitRoomData(socket.id);
     this.broadcastTo(socket.id, 'initData', initData);
 
-    if (!this.game) { return; }
-
-    this.broadcastTo(socket.id, 'gameData', this.game.serialize());
+    let gameData = this.game ? this.game.serialize() : { state: Game.STATE_PENDING };
+    this.broadcastTo(socket.id, 'gameData', gameData);
   },
 
   sendGameState: function(socketId) {
-    if (!this.game) { return; }
+    let debugData = this.game ? this.game.serialize() : this.getInitRoomData(socketId);
 
-    this.broadcastTo(socketId, 'debugInfo', this.game.serialize());
+    this.broadcastTo(socketId, 'debugInfo', debugData);
   },
 }
 
