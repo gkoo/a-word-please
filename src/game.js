@@ -93,8 +93,8 @@ Game.prototype = {
   },
 
   createLexicon: function() {
-    this.lexicon = ['water', 'fire', 'earth', 'air'];
-    //this.lexicon = _.shuffle(wordlist);
+    //this.lexicon = ['water', 'fire', 'earth', 'air'];
+    this.lexicon = _.shuffle(wordlist);
   },
 
   determinePlayerOrder: function() {
