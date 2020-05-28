@@ -76,18 +76,6 @@ describe('removePlayer', () => {
     expect(game.playerOrder.indexOf(playerToRemoveId)).toEqual(-1);
   });
 
-  describe('when the player is the last in the player order', () => {
-    beforeEach(() => {
-      game.playerOrder = ['3', '2', '1'];
-      game.playerOrderCursor = 2;
-    });
-
-    it('decrements the player order cursor', () => {
-      subject();
-      expect(game.playerOrderCursor).toEqual(1);
-    });
-  });
-
   describe('when the player\'s position in the player order is after the current player order cursor position', () => {
     beforeEach(() => {
       game.playerOrder = ['1', '2', '3'];
@@ -119,7 +107,6 @@ describe('removePlayer', () => {
   describe('when it is the player\'s turn', () => {
     beforeEach(() => {
       game.playerOrder = ['1', '2', '3'];
-      game.playerOrderCursor = 1;
       game.guesserId = playerToRemoveId;
     });
 
@@ -132,6 +119,61 @@ describe('removePlayer', () => {
       const { roundNum } = game;
       subject();
       expect(game.roundNum).toEqual(roundNum);
+    });
+  });
+
+  describe('when the game is in entering guess state', () => {
+    beforeEach(() => {
+      game.guesserId = '2';
+      game.playerOrder = ['1', '2', '3'];
+      game.playerOrderCursor = 2;
+      game.clues = {
+        '1': {
+          clue: 'butt',
+          isDuplicate: false,
+        },
+        '3': {
+          clue: 'poop',
+          isDuplicate: false,
+        },
+      };
+      game.state = Game.STATE_ENTERING_GUESS;
+    });
+
+    it('doesn\'t change game state', () => {
+      const { state } = game;
+      subject();
+      expect(game.state).toEqual(state);
+    });
+  });
+
+  describe('when the game state is entering clues', () => {
+    beforeEach(() => {
+      game.guesserId = '2';
+      game.playerOrder = ['1', '2', '3'];
+      game.playerOrderCursor = 2;
+      game.state = Game.STATE_ENTERING_CLUES;
+    });
+
+    describe('and all clues are in', () => {
+      beforeEach(() => {
+        game.clues = {
+          '3': {
+            clue: 'poop',
+            isDuplicate: false,
+          },
+        };
+      });
+
+      it('changes the game state', () => {
+        const { state } = game;
+        subject();
+        expect(game.state).not.toEqual(state);
+        expect(game.state).toEqual(Game.STATE_REVIEWING_CLUES);
+      });
+    });
+
+    describe('and some clues are still pending', () => {
     });
   });
 });

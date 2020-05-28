@@ -77,19 +77,17 @@ Game.prototype = {
     // Remove clue from clues
     delete this.clues[id];
 
-    if (playerOrderIdx <= this.playerOrderCursor) {
-      // If removing player ID 1 and player order is [1, 2, 3] with player order cursor at idx 2,
-      // player order would become [2, 3], so we need to decrement the cursor or we get an out of
-      // bounds error.
-      --this.playerOrderCursor;
-    }
-
     if (id === this.guesserId) {
+      this.guesserId = this.playerOrder[playerOrderIdx % this.playerOrder.length];
       this.nextTurn(false);
     }
 
     this.broadcastGameDataToPlayers();
-    this.checkIfAllCluesAreIn();
+
+    if (this.state === Game.STATE_ENTERING_CLUES) {
+      // TODO: unmark duplicates
+      this.checkIfAllCluesAreIn();
+    }
   },
 
   createLexicon: function() {
@@ -101,8 +99,7 @@ Game.prototype = {
     const playerIds = this.getConnectedPlayers().map(player => player.id);
     this.playerOrder = _.shuffle(playerIds);
 
-    // keeps track of whose turn it is.
-    this.playerOrderCursor = 0;
+    this.guesserId = this.playerOrder[0];
   },
 
   nextTurn: function(shouldIncrementRound = true) {
@@ -120,8 +117,11 @@ Game.prototype = {
     }
 
     // Advance the playerOrderCursor
-    this.guesserId = this.playerOrder[this.playerOrderCursor];
-    this.playerOrderCursor = (++this.playerOrderCursor) % this.getConnectedPlayers().length;
+    // No action needed if we're advancing turn due to a player disconnect
+    if (shouldIncrementRound) {
+      const playerOrderIdx = this.playerOrder.indexOf(this.guesserId);
+      this.guesserId = this.playerOrder[(playerOrderIdx + 1) % this.playerOrder.length]
+    }
 
     this.currWord = this.lexicon[this.lexiconCursor];
     this.lexiconCursor = (++this.lexiconCursor) % this.lexicon.length;
@@ -146,30 +146,26 @@ Game.prototype = {
 
     this.broadcastGameDataToPlayers();
 
-    this.checkIfAllCluesAreIn();
+    setTimeout(() => this.checkIfAllCluesAreIn(), 500);
   },
 
   checkIfAllCluesAreIn: function() {
     if (Object.values(this.clues).length === this.getConnectedPlayers().length - 1) {
-      // All clues are in!
-      setTimeout(() => this.revealCluesToClueGivers(), 500);
+      this.revealCluesToClueGivers();
     }
   },
 
   revealCluesToClueGivers: function() {
-    const DELAY_TIME = 5000;
     this.state = Game.STATE_REVIEWING_CLUES;
     this.broadcastGameDataToPlayers();
   },
 
   revealCluesToGuesser: function() {
-    const DELAY_TIME = 5000;
     this.state = Game.STATE_ENTERING_GUESS;
     this.broadcastGameDataToPlayers();
   },
 
   receiveGuess: function(socketId, submittedGuess) {
-    const DELAY_TIME = 5000;
     const guess = submittedGuess.toLowerCase();
     this.currGuess = guess;
     const correctGuess = guess === this.currWord.toLowerCase();
@@ -190,29 +186,7 @@ Game.prototype = {
     this.broadcastGameDataToPlayers();
   },
 
-  endRound: function() {
-    this.state = this.STATE_ROUND_END;
-
-    // Determine winner
-    const roundWinners = this.determineRoundWinners();
-
-    const roundEndMsg = `${roundWinners.map(winner => winner.name).join(' and ')} won the round!`;
-    this.broadcastSystemMessage(roundEndMsg);
-
-    const isGameOver = false;
-    const gameWinners = roundWinners.filter(
-      roundWinner => ++roundWinner.numTokens >= this.maxTokens
-    );
-
-    if (gameWinners.length > 0) {
-      this.endGame(gameWinners);
-      return;
-    }
-
-    this.broadcastGameDataToPlayers();
-  },
-
-  endGame: function(winners) {
+  endGame: function() {
     this.state = Game.STATE_GAME_END;
     this.broadcastGameDataToPlayers();
   },
