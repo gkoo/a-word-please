@@ -1,4 +1,4 @@
-function User({ id, name }) {
+export default function User({ id, name }) {
   this.id = id;
   this.name = name;
   this.isLeader = false;
@@ -24,5 +24,3 @@ function User({ id, name }) {
     };
   }
 }
-
-module.exports = User;

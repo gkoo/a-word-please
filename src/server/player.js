@@ -18,4 +18,4 @@ Player.prototype = {
   },
 }
 
-module.exports = Player;
+export default Player;

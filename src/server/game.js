@@ -1,8 +1,8 @@
-const _ = require('lodash');
-const uuid = require('uuid');
+import _ from 'lodash';
+import uuid from 'uuid';
 
-const Player = require('./player');
-const wordlist = require('./wordlist');
+import Player from './player.js';
+import wordlist from './wordlist.js';
 
 function Game({
   broadcastToRoom,
@@ -248,4 +248,4 @@ Game.prototype = {
   },
 }
 
-module.exports = Game;
+export default Game;

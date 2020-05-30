@@ -1,14 +1,14 @@
-const uuid = require('uuid');
+import uuid from 'uuid';
 
-const Game = require('./game');
-const User = require('./user');
+import Game from './game.js';
+import User from './user.js';
 
 const MAX_MESSAGES = 50;
 const MAX_MESSAGE_LENGTH = 200;
 
-function Room({ broadcastTo, roomCode }) {
-  this.broadcastToRoom = (eventName, data) => broadcastTo(roomCode, eventName, data);
-  this.broadcastTo = broadcastTo;
+function Room({ io, roomCode }) {
+  this.broadcastToRoom = (eventName, data) => io.to(roomCode).emit(eventName, data);
+  this.io = io;
   this.roomCode = roomCode;
   this.users = {};
   this.messages = [];
@@ -87,7 +87,7 @@ Room.prototype = {
     const {
       broadcastToRoom,
       broadcastSystemMessage,
-      broadcastTo,
+      io,
     } = this;
     if (this.game) {
       this.game.newGame();
@@ -97,7 +97,7 @@ Room.prototype = {
     this.game = new Game({
       broadcastToRoom,
       broadcastSystemMessage,
-      broadcastTo,
+      io,
     });
     this.game.setup(this.users);
   },
@@ -154,17 +154,17 @@ Room.prototype = {
 
   sendInitRoomData: function(socket) {
     const initData = this.getInitRoomData(socket.id);
-    this.broadcastTo(socket.id, 'initData', initData);
+    this.io.to(socket.id).emit('initData', initData)
 
     let gameData = this.game ? this.game.serialize() : { state: Game.STATE_PENDING };
-    this.broadcastTo(socket.id, 'gameData', gameData);
+    this.io.to(socket.id).emit('gameData', gameData)
   },
 
   sendGameState: function(socketId) {
     let debugData = this.game ? this.game.serialize() : this.getInitRoomData(socketId);
 
-    this.broadcastTo(socketId, 'debugInfo', debugData);
+    this.io.to(socket.id).emit('debugInfo', debugData)
   },
 }
 
-module.exports = Room;
+export default Room;

@@ -1,4 +1,4 @@
-const wordlist = [
+export default [
   'Hollywood',
   'Well',
   'Foot',
@@ -954,5 +954,3 @@ const wordlist = [
   'branch',
   'robot',
 ];
-
-module.exports = wordlist;

@@ -5,5 +5,5 @@ import {
 } from './constants';
 
 export const newSocket = () => {
-  return io(socketIoServerUrl);
+  return io('/');
 };
