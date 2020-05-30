@@ -28,6 +28,7 @@ Game.STATE_ENTERING_GUESS = 3;
 Game.STATE_TURN_END = 4;
 Game.STATE_GAME_END = 5;
 
+Game.MAX_WORD_LENGTH = 20;
 Game.MIN_PLAYERS = 2;
 Game.TOTAL_NUM_ROUNDS = 13;
 
@@ -131,7 +132,7 @@ Game.prototype = {
   },
 
   receiveClue: function(playerId, submittedClue) {
-    const clue = submittedClue.toLowerCase();
+    const clue = submittedClue.substring(0, Game.MAX_WORD_LENGTH);
     const formattedClue = clue.toLowerCase().replace(/\s/g, '');
     let isDuplicate = false;
     Object.keys(this.clues).forEach(playerId => {
@@ -166,7 +167,8 @@ Game.prototype = {
     this.broadcastGameDataToPlayers();
   },
 
-  receiveGuess: function(socketId, guess) {
+  receiveGuess: function(socketId, submittedGuess) {
+    const guess = submittedGuess.substring(0, Game.MAX_WORD_LENGTH);
     const formattedGuess = guess.toLowerCase().replace(/\s/g, '');
     this.currGuess = guess;
     const correctGuess = formattedGuess === this.currWord.toLowerCase().replace(/\s/g, '');
