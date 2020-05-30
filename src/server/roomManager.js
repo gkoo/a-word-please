@@ -57,13 +57,13 @@ class RoomManager {
   }
 
   handleNextTurn(socket) {
-    const room = getRoom(socket);
+    const room = this.getRoom(socket);
     if (!room) { return; }
     room.nextTurn(socket.id);
   }
 
   handleEndGame(socket) {
-    const room = getRoom(socket);
+    const room = this.getRoom(socket);
     if (!room) { return; }
     room.endGame(socket.id);
   }
@@ -79,11 +79,11 @@ class RoomManager {
   }
 
   onSetPending(socket) {
-    getRoom(socket).setPending();
+    this.getRoom(socket).setPending();
   }
 
   onDebug(socket) {
-    getRoom(socket).sendGameState(socket.id);
+    this.getRoom(socket).sendGameState(socket.id);
   }
 }
 
