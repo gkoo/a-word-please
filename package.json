@@ -1,8 +1,8 @@
 {
-  "name": "loveletter",
+  "name": "a-word-please",
   "version": "1.0.0",
   "main": "index.js",
-  "author": "Gordon Koo <gordon@opendoor.com>",
+  "author": "Gordon Koo <gordon@gordonkoo.com>",
   "license": "MIT",
   "dependencies": {
     "express": "^4.17.1",
@@ -11,9 +11,10 @@
     "uuid": "^7.0.3"
   },
   "devDependencies": {
-    "jest": "^25.3.0"
+    "jest": "24.9.0"
   },
   "scripts": {
+    "heroku-postbuild": "cd src/client && yarn && yarn run build",
     "start": "NODE_ENV=development node src/index.js",
     "test": "jest"
   }

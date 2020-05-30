@@ -11,8 +11,7 @@ const Room = require('./room');
 
 const port = process.env.PORT || 5000;
 app.set('port', port);
-app.use('/static', express.static(__dirname + '/static'));
-app.get('/', (req, res) => res.send('Hello World!'))
+app.use(express.static(path.join(__dirname, 'client/build')));
 
 const ROOM_CODE_PREFIX = 'room-';
 

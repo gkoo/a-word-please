@@ -1,0 +1,153 @@
+.center {
+  text-align: center;
+}
+
+/* HOMEPAGE */
+
+.jumbotron {
+  margin-top: 50px;
+}
+
+/* LOBBY */
+
+.lobby-title {
+  margin-bottom: 25px;
+  text-align: center
+}
+
+.room-code, .word-to-guess {
+  font-family: Courier New;
+}
+
+.word-to-guess {
+  font-size: 96px;
+  text-transform: lowercase;
+}
+
+.share-link {
+  margin-top: 50px;
+}
+
+.correct {
+  color: #0f0;
+}
+
+.incorrect {
+  color: #f00;
+}
+
+/* GAME */
+
+.main-panel {
+  background-color: #2a2a2a;
+  border: 5px dashed #fff;
+}
+
+.player-label {
+  display: inline-block;
+  border-radius: 5px;
+  min-width: 80px;
+  padding: 5px;
+  margin: 5px 0;
+}
+
+.clue-label .tooltip-inner {
+  background-color: #e0e0e0;
+  color: #000;
+}
+
+.clue-label .arrow::before {
+  border-right-color: #e0e0e0;
+}
+
+.player-label.blue {
+  background-color: #375a7f;
+}
+.player-label.indigo {
+  background-color: #6610f2;
+}
+.player-label.purple {
+  background-color: #6f42c1;
+}
+.player-label.pink {
+  background-color: #e83e8c;
+}
+.player-label.red {
+  background-color: #E74C3C;
+}
+.player-label.orange {
+  background-color: #fd7e14;
+}
+.player-label.yellow {
+  background-color: #F39C12;
+}
+.player-label.green {
+  background-color: #00bc8c;
+}
+.player-label.teal {
+  background-color: #20c997;
+}
+.player-label.cyan {
+  background-color: #3498DB;
+}
+.player-label.warning {
+  background-color: #F39C12;
+}
+.player-label.danger {
+  background-color: #E74C3C;
+}
+.player-label.dark {
+  background-color: #303030;
+}
+
+.main-panel:first-child {
+  border-bottom-width: 0;
+}
+
+.board {
+  font-size: 14px;
+}
+
+.lobby-container {
+  margin-top: 50px;
+}
+
+.rules-modal-body {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.duplicate .tooltip-inner span {
+  padding-left: 5px;
+}
+
+.help-text {
+  font-size: 16px;
+}
+
+.modal {
+  z-index: 1080;
+}
+
+.modal.duplicates-modal {
+  z-index: 1050;
+}
+
+@media (min-width: 576px) {
+  .board {
+    font-size: 16px;
+  }
+
+  .main-panel:first-child {
+    border-right-width: 0;
+    border-bottom-width: 5px;
+  }
+
+  .word-to-guess {
+    font-size: 3.5rem;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+  }
+}

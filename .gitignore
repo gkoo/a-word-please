@@ -4,7 +4,7 @@
 node_modules
 
 # production
-/fe/build
+/src/client/build
 
 # misc
 .DS_Store
