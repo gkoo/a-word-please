@@ -132,9 +132,10 @@ Game.prototype = {
 
   receiveClue: function(playerId, submittedClue) {
     const clue = submittedClue.toLowerCase();
+    const formattedClue = clue.toLowerCase().replace(/\s/g, '');
     let isDuplicate = false;
     Object.keys(this.clues).forEach(playerId => {
-      if (this.clues[playerId].clue === clue) {
+      if (this.clues[playerId].clue.toLowerCase().replace(/\s/g, '') === formattedClue) {
         this.clues[playerId].isDuplicate = true;
         isDuplicate = true;
       }
