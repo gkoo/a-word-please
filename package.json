@@ -15,7 +15,7 @@
   },
   "scripts": {
     "heroku-postbuild": "cd src/client && yarn && yarn run build",
-    "start": "NODE_ENV=development node src/index.js",
+    "start": "node src/server/index.js",
     "test": "jest"
   }
 }
