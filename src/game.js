@@ -166,10 +166,10 @@ Game.prototype = {
     this.broadcastGameDataToPlayers();
   },
 
-  receiveGuess: function(socketId, submittedGuess) {
-    const guess = submittedGuess.toLowerCase();
+  receiveGuess: function(socketId, guess) {
+    const formattedGuess = guess.toLowerCase().replace(/\s/g, '');
     this.currGuess = guess;
-    const correctGuess = guess === this.currWord.toLowerCase();
+    const correctGuess = formattedGuess === this.currWord.toLowerCase().replace(/\s/g, '');
 
     if (correctGuess) {
       ++this.numPoints;
