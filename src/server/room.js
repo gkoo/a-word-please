@@ -163,7 +163,7 @@ Room.prototype = {
   sendGameState: function(socketId) {
     let debugData = this.game ? this.game.serialize() : this.getInitRoomData(socketId);
 
-    this.io.to(socket.id).emit('debugInfo', debugData)
+    this.io.to(socketId).emit('debugInfo', debugData)
   },
 }
 
