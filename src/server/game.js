@@ -73,10 +73,14 @@ Game.prototype = {
 
     // Remove from player order
     const playerOrderIdx = this.playerOrder.indexOf(id);
-    this.playerOrder.splice(playerOrderIdx, 1);
+
+    // For some reason, players get disconnected without being in the game
+    if (playerOrderIdx >= 0) {
+      this.playerOrder.splice(playerOrderIdx, 1);
+    }
 
     // Remove clue from clues
-    delete this.clues[id];
+    if (this.clues[id]) { delete this.clues[id]; }
 
     if (id === this.guesserId) {
       this.guesserId = this.playerOrder[playerOrderIdx % this.playerOrder.length];
