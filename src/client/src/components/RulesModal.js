@@ -11,8 +11,8 @@ function RulesModal({ onClose, show }) {
       </Modal.Header>
       <Modal.Body className='rules-modal-body'>
         <p>
-          A Word Please? is a cooperative game where everyone works together to guess as many
-          mystery words as possible.
+          <em>A Word, Please?</em> is a cooperative game where everyone works together to guess as
+          many mystery words as possible.
         </p>
 
         <h5><u>Turns</u></h5>

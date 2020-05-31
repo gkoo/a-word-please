@@ -13,6 +13,7 @@ export const RECEIVE_INIT_DATA = 'RECEIVE_INIT_DATA';
 export const SAVE_NAME = 'SAVE_NAME';
 export const SET_ROOM_CODE = 'SET_ROOM_CODE';
 export const SHOW_ALERT = 'SHOW_ALERT';
+export const TOGGLE_ABOUT_MODAL = 'TOGGLE_ABOUT_MODAL';
 export const TOGGLE_RULES_MODAL = 'TOGGLE_RULES_MODAL';
 export const USER_DISCONNECT = 'USER_DISCONNECT';
 
@@ -109,6 +110,13 @@ export function showAlert(msg) {
   return {
     payload: msg,
     type: SHOW_ALERT,
+  }
+}
+
+export function toggleAboutModal({ show }) {
+  return {
+    payload: { show },
+    type: TOGGLE_ABOUT_MODAL,
   }
 }
 

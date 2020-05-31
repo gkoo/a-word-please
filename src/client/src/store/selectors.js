@@ -14,22 +14,52 @@ export const currUserSelector = createSelector(
 )
 export const roomCodeSelector = state => state.roomCode;
 export const showRulesModalSelector = state => state.showRulesModal;
+export const showAboutModalSelector = state => state.showAboutModal;
 export const alertsSelector = state => state.alerts;
 export const socketConnectedSelector = state => state.socketConnected;
 
 // Game Data
-export const cluesSelector = state => state.gameData.clues;
-// the id of the player whose turn it is
-export const guesserIdSelector = state => state.gameData.guesserId;
-export const currWordSelector = state => state.gameData.currWord;
-export const currGuessSelector = state => state.gameData.currGuess;
-export const gameStateSelector = state => state.gameData.state;
 export const gameDataSelector = state => state.gameData;
-export const numPointsSelector = state => state.gameData.numPoints;
-export const playersSelector = state => state.gameData.players;
-export const roundNumSelector = state => state.gameData.roundNum;
-export const skippedTurnSelector = state => state.gameData.skippedTurn;
-export const totalNumRoundsSelector = state => state.gameData.totalNumRounds;
+export const cluesSelector = createSelector(
+  gameDataSelector,
+  gameData => gameData && gameData.clues
+);
+export const guesserIdSelector = createSelector(
+  gameDataSelector,
+  gameData => gameData && gameData.guesserId
+);
+export const currWordSelector = createSelector(
+  gameDataSelector,
+  gameData => gameData && gameData.currWord
+);
+export const currGuessSelector = createSelector(
+  gameDataSelector,
+  gameData => gameData && gameData.currGuess
+);
+export const gameStateSelector = createSelector(
+  gameDataSelector,
+  gameData => gameData && gameData.state
+);
+export const numPointsSelector = createSelector(
+  gameDataSelector,
+  gameData => gameData && gameData.numPoints
+);
+export const playersSelector = createSelector(
+  gameDataSelector,
+  gameData => gameData && gameData.players
+);
+export const roundNumSelector = createSelector(
+  gameDataSelector,
+  gameData => gameData && gameData.roundNum
+);
+export const skippedTurnSelector = createSelector(
+  gameDataSelector,
+  gameData => gameData && gameData.skippedTurn
+);
+export const totalNumRoundsSelector = createSelector(
+  gameDataSelector,
+  gameData => gameData && gameData.totalNumRounds
+);
 
 export const currPlayerIsGuesserSelector = createSelector(
   currUserIdSelector,

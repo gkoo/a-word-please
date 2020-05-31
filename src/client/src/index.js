@@ -16,7 +16,7 @@ ReactDOM.render(
     <Provider store={store}>
       <Router>
         <Switch>
-          <Route path='/rooms/:roomCode' children={<Room />}/>
+          <Route path='/rooms/:roomCode' component={Room}/>
           <Route path='/'>
             <Homepage />
           </Route>

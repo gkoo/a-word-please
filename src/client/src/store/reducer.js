@@ -99,6 +99,7 @@ const testState = {
     },
   },
   roundNum: 0,
+  showAboutModal: false,
   showRulesModal: false,
   socket: null,
   totalNumRounds: 13,
@@ -348,6 +349,12 @@ export default function reducer(state = stateToUse, action) {
       return {
         ...state,
         alertMessage: action.payload,
+      };
+
+    case actions.TOGGLE_ABOUT_MODAL:
+      return {
+        ...state,
+        showAboutModal: action.payload.show,
       };
 
     case actions.TOGGLE_RULES_MODAL:

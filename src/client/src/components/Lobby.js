@@ -33,7 +33,7 @@ function Lobby({ messages, roomCode, users, socket }) {
           </Col>
         </Row>
         <Row className='mb-5'>
-          <Col className='center'>
+          <Col className='text-center'>
             <LeaderPanel numUsers={Object.keys(users).length}/>
           </Col>
         </Row>

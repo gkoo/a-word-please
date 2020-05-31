@@ -13,6 +13,7 @@ import InputGroup from 'react-bootstrap/InputGroup'
 import Jumbotron from 'react-bootstrap/Jumbotron';
 import Row from 'react-bootstrap/Row';
 
+import Layout from './Layout';
 import { disconnectSocket, receiveGameData, setRoomCode, saveName } from './store/actions';
 import { socketConnectedSelector } from './store/selectors';
 
@@ -59,56 +60,58 @@ function Homepage() {
   }, [socketConnected, dispatch]);
 
   return (
-    <Container>
-      <Row>
-        <Col lg={{ offset: 1, span: 10 }} xl={{ offset: 2, span: 8 }}>
-          <Jumbotron className='jumbotron'>
-            <h1>A Word, Please?</h1>
-            <p>Love. Power. Deceit. You'll find it all in A Word, Please?!</p>
-            <p><em>Get your <strike>communique</strike> word to the <strike>Princess</strike> Guesser!</em></p>
-          </Jumbotron>
-        </Col>
-      </Row>
-      <Row>
-        <Col md={6} lg={{ offset: 1, span: 5 }} xl={{ offset: 2, span: 4 }}>
-          <Card>
-            <Card.Body>
-              <h5>Create a new room</h5>
-              <Form.Group>
-              <Link className='btn btn-primary' to={`/rooms/${generatedRoomCode}`}>
-                Create a room
-              </Link>
-              </Form.Group>
-            </Card.Body>
-          </Card>
-        </Col>
-        <Col md={6} lg={5} xl={4}>
-          <Card>
-            <Card.Body>
-              <h5>Join a room</h5>
-              <Form onSubmit={joinRoom}>
-                <Form.Group controlId='roomCode'>
-                  <ButtonToolbar>
-                    <InputGroup>
-                      <Form.Control
-                        placeholder='Room code'
-                        value={newRoomCode}
-                        onChange={onRoomCodeChange}
-                      />
-                    </InputGroup>
-                    <ButtonGroup>
-                      <Button variant='primary' type='submit'>
-                        Join room
-                      </Button>
-                    </ButtonGroup>
-                  </ButtonToolbar>
+    <Layout>
+      <Container>
+        <Row>
+          <Col lg={{ offset: 1, span: 10 }} xl={{ offset: 2, span: 8 }}>
+            <Jumbotron className='jumbotron'>
+              <h1>A Word, Please?</h1>
+              <p>Work together to guess all of the words!</p>
+              <p>But make sure your clues aren't the same, or else they'll be hidden!</p>
+            </Jumbotron>
+          </Col>
+        </Row>
+        <Row>
+          <Col md={6} lg={{ offset: 1, span: 5 }} xl={{ offset: 2, span: 4 }}>
+            <Card>
+              <Card.Body>
+                <h5>Create a new room</h5>
+                <Form.Group>
+                <Link className='btn btn-primary' to={`/rooms/${generatedRoomCode}`}>
+                  Create a room
+                </Link>
                 </Form.Group>
-              </Form>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </Container>
+              </Card.Body>
+            </Card>
+          </Col>
+          <Col md={6} lg={5} xl={4}>
+            <Card>
+              <Card.Body>
+                <h5>Join a room</h5>
+                <Form onSubmit={joinRoom}>
+                  <Form.Group controlId='roomCode'>
+                    <ButtonToolbar>
+                      <InputGroup>
+                        <Form.Control
+                          placeholder='Room code'
+                          value={newRoomCode}
+                          onChange={onRoomCodeChange}
+                        />
+                      </InputGroup>
+                      <ButtonGroup>
+                        <Button variant='primary' type='submit'>
+                          Join room
+                        </Button>
+                      </ButtonGroup>
+                    </ButtonToolbar>
+                  </Form.Group>
+                </Form>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
+    </Layout>
   );
 }
 

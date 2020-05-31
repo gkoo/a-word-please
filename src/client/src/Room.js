@@ -1,16 +1,11 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import NavBar from 'react-bootstrap/Navbar';
-
-import AlertGroup from './components/AlertGroup';
 import Game from './components/Game';
+import Layout from './Layout';
 import Lobby from './components/Lobby';
 import NameModal from './components/NameModal';
-import RulesModal from './components/RulesModal';
 import { STATE_PENDING } from './constants';
 import * as actions from './store/actions';
 import * as selectors from './store/selectors';
@@ -51,16 +46,11 @@ function Room() {
   const gameState = useSelector(selectors.gameStateSelector);
   const messages = useSelector(selectors.messagesSelector);
   const name = useSelector(selectors.nameSelector);
-  const showRulesModal = useSelector(selectors.showRulesModalSelector);
   const socket = useSelector(selectors.socketSelector);
   const socketConnected = useSelector(selectors.socketConnectedSelector);
   const users = useSelector(selectors.usersSelector);
-  const history = useHistory();
 
   const roomCodeParam = useParams().roomCode;
-
-  const onHideRulesModal = () => dispatch(actions.toggleRulesModal({ show: false }));
-  const onShowRulesModal = () => dispatch(actions.toggleRulesModal({ show: true }));
 
   const ROOM_CODE_PREFIX = 'room-';
 
@@ -101,23 +91,13 @@ function Room() {
     };
   }, [socket, dispatch]);
 
-  const navigateHome = (e) => { e.preventDefault(); history.push(`/`) };
-
   return (
-    <Container>
-      <NavBar variant='dark'>
-        <Nav className="mr-auto">
-          <NavBar.Brand onClick={navigateHome} href='/'>A Word, Please?</NavBar.Brand>
-          <Nav.Link href="#" onClick={onShowRulesModal}>How to Play</Nav.Link>
-        </Nav>
-      </NavBar>
-      <AlertGroup />
+    <Layout>
       {
         renderContent({ gameState, messages, roomCodeParam, socket, users })
       }
       <NameModal show={!name} />
-      <RulesModal show={showRulesModal} onClose={onHideRulesModal} />
-    </Container>
+    </Layout>
   );
 }
 
