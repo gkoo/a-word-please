@@ -24,7 +24,7 @@ yarn install
 yarn start
 ```
 
-This will start the server on port 3000. Since the code for the client is normally served from the server in production, the setup is different in development. In order to develop, you'll need to change the path in socket.js from
+This will start the server on port 3000. Since the code for the client is normally served from the server in production, the setup is different in development. In order to develop, you'll need to change the path in [socket.js](./src/client/src/socket.js) from
 
 ```js
 return io('/');
@@ -38,4 +38,4 @@ return io('http://localhost:5000');
 
 ### Developing the UI
 
-Sometimes you'll want to work on the UI without having to go through the inconvenience of starting a game and getting it in the right state. To make this easier, change the value of `useTestState` in reducer.js from `0` to `1`, then modify the `testState` variable to set up the game in the desired state.
+Sometimes you'll want to work on the UI without having to go through the inconvenience of starting a game and getting it in the right state. To make this easier, change the value of `useTestState` in [reducer.js](./src/client/src/store/reducer.js) from `0` to `1`, then modify the `testState` variable to set up the game in the desired state.
