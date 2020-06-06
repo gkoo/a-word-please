@@ -4,28 +4,38 @@ import { Provider } from 'react-redux';
 import {
   BrowserRouter as Router,
   Switch,
+  Redirect,
   Route,
 } from "react-router-dom";
+
 import Homepage from './Homepage';
 import Room from './Room';
+import { env, routePrefix } from './constants';
 import * as serviceWorker from './serviceWorker';
 import store from './store';
 
-ReactDOM.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <Router>
-        <Switch>
-          <Route path='/rooms/:roomCode' component={Room}/>
-          <Route path='/'>
-            <Homepage />
-          </Route>
-        </Switch>
-      </Router>
-    </Provider>
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+if (env === 'production' && !window.location.href.match(/koofitness\.club/)) {
+  // Redirect to new URL
+  const pathMatch = window.location.href.match(/https?:\/\/[^\/]+\/?(.*)/);
+  window.location.href = `http://koofitness.club/${pathMatch[1]}`;
+} else {
+  ReactDOM.render(
+    <React.StrictMode>
+      <Provider store={store}>
+        <Router>
+          <Switch>
+            <Route path={`${routePrefix}/rooms/:roomCode`} component={Room}/>
+            <Route path={routePrefix} component={Homepage}/>
+            <Route path='/'>
+              <Redirect to={routePrefix} />
+            </Route>
+          </Switch>
+        </Router>
+      </Provider>
+    </React.StrictMode>,
+    document.getElementById('root')
+  );
+}
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

@@ -14,6 +14,7 @@ import Jumbotron from 'react-bootstrap/Jumbotron';
 import Row from 'react-bootstrap/Row';
 
 import Layout from './Layout';
+import { routePrefix } from './constants';
 import { disconnectSocket, receiveGameData, setRoomCode, saveName } from './store/actions';
 import { socketConnectedSelector } from './store/selectors';
 
@@ -50,7 +51,7 @@ function Homepage() {
     dispatch(receiveGameData({}));
     dispatch(saveName(null));
     dispatch(setRoomCode(newRoomCode));
-    history.push(`/rooms/${newRoomCode}`);
+    history.push(`${routePrefix}/rooms/${newRoomCode}`);
   };
 
   useEffect(() => {

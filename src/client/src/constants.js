@@ -1,4 +1,5 @@
 export const env = process.env.NODE_ENV;
+export const routePrefix = '/a-word-please';
 
 export const STATE_PENDING = 0;
 export const STATE_ENTERING_CLUES = 1;
