@@ -11,6 +11,7 @@ import AlertGroup from './components/AlertGroup';
 import AboutModal from './components/AboutModal';
 import RulesModal from './components/RulesModal';
 import * as selectors from './store/selectors';
+import { routePrefix } from './constants';
 
 function Layout({ children }) {
   const dispatch = useDispatch();
@@ -28,9 +29,12 @@ function Layout({ children }) {
     <Container>
       <NavBar variant='dark'>
         <Nav className="mr-auto">
-          <NavBar.Brand onClick={navigateHome} href='/'>A Word, Please?</NavBar.Brand>
-          <Nav.Link href="#" onClick={onShowRulesModal}>How to Play</Nav.Link>
+          <NavBar.Brand onClick={navigateHome} href={routePrefix}>A Word, Please?</NavBar.Brand>
+          <Nav.Link href="#" onClick={onShowRulesModal}>How to play</Nav.Link>
           <Nav.Link href="#" onClick={onShowAboutModal}>About</Nav.Link>
+          <Nav.Link href="https://www.buymeacoffee.com/gkoo" target="_blank">
+            Buy me a coffee
+          </Nav.Link>
         </Nav>
       </NavBar>
       <AlertGroup />
