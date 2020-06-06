@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
@@ -9,6 +9,7 @@ import NameModal from './components/NameModal';
 import { STATE_PENDING } from './constants';
 import * as actions from './store/actions';
 import * as selectors from './store/selectors';
+import { env } from './constants';
 
 import './bootstrap.min.css';
 import './game.css';
@@ -34,12 +35,11 @@ const renderContent = ({
     );
   }
   return (
-    <Game
-      socket={socket}
-      messages={messages}
-    />
+    <Game socket={socket} messages={messages} />
   );
 };
+
+const pingHealthEndpoint = () => window.fetch('/health').then(resp => {});
 
 function Room() {
   const dispatch = useDispatch();
@@ -49,6 +49,7 @@ function Room() {
   const socket = useSelector(selectors.socketSelector);
   const socketConnected = useSelector(selectors.socketConnectedSelector);
   const users = useSelector(selectors.usersSelector);
+  const [pingInterval, setPingInterval] = useState();
 
   const roomCodeParam = useParams().roomCode;
 
@@ -81,6 +82,7 @@ function Room() {
     socket.on('gameData', gameData => dispatch(actions.receiveGameData(gameData)));
     socket.on('newUser', user => dispatch(actions.newUser(user)));
     socket.on('userDisconnect', userId => dispatch(actions.userDisconnect(userId)));
+
     return () => {
       socket.removeAllListeners('debugInfo');
       socket.removeAllListeners('endGame');
@@ -90,6 +92,15 @@ function Room() {
       socket.removeAllListeners('userDisconnect');
     };
   }, [socket, dispatch]);
+
+  useEffect(() => {
+    // Keep the server alive!
+    if (env === 'production') {
+      console.log('setting ping interval');
+      setPingInterval(window.setInterval(pingHealthEndpoint, 60000));
+      return () => { console.log('clearing ping interval'); window.clearInterval(pingInterval); };
+    }
+  }, []);
 
   return (
     <Layout>

@@ -16,6 +16,8 @@ const moduleURL = new URL(import.meta.url);
 const dirname = path.dirname(moduleURL.pathname);
 app.use(express.static(path.join(dirname, '../client/build')));
 
+app.get('/health', (req, res) => res.send('ok'));
+
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
 app.get('*', (req, res) => {

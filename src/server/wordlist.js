@@ -310,7 +310,6 @@ export default [
   'File',
   'Hawk',
   'Battery',
-  'Compound',
   'Slug',
   'Octopus',
   'Whip',
