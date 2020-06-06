@@ -28,10 +28,6 @@ function RulesModal({ onClose, show }) {
           </a>!
         </p>
 
-        <div className='text-center my-3'>
-          <img className='just-one-cover' src='/justone.jpg' alt='Cover of Just One board game' />
-        </div>
-
         <p>
           The code for this game is on{' '}
           <a

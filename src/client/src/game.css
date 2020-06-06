@@ -1,7 +1,3 @@
-.just-one-cover {
-  width: 33%;
-}
-
 /* LOBBY */
 
 .lobby-title {
@@ -9,12 +5,15 @@
   text-align: center
 }
 
-.room-code, .word-to-guess {
+.room-code, .featured-word {
   font-family: Courier New;
 }
 
-.word-to-guess {
+.featured-word {
   font-size: 96px;
+}
+
+.lowercase {
   text-transform: lowercase;
 }
 
@@ -137,7 +136,7 @@
     border-bottom-width: 5px;
   }
 
-  .word-to-guess {
+  .featured-word {
     font-size: 3.5rem;
   }
 

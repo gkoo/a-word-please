@@ -16,7 +16,7 @@ import store from './store';
 
 if (env === 'production' && !window.location.href.match(/koofitness\.club/)) {
   // Redirect to new URL
-  const pathMatch = window.location.href.match(/https?:\/\/[^\/]+\/?(.*)/);
+  const pathMatch = window.location.href.match(/https?:\/\/[^/]+\/?(.*)/);
   window.location.href = `http://koofitness.club/${pathMatch[1]}`;
 } else {
   ReactDOM.render(
