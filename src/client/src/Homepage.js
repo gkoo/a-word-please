@@ -78,7 +78,7 @@ function Homepage() {
               <Card.Body>
                 <h5>Create a new room</h5>
                 <Form.Group>
-                <Link className='btn btn-primary' to={`/rooms/${generatedRoomCode}`}>
+                <Link className='btn btn-primary' to={`${routePrefix}/rooms/${generatedRoomCode}`}>
                   Create a room
                 </Link>
                 </Form.Group>
