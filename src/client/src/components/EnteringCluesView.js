@@ -14,18 +14,7 @@ const renderCurrWord = currWord => {
     <Row className='mb-5'>
       <Col className='text-center'>
         <h6>The word is:</h6>
-        <h2 className='word-to-guess'>{currWord}</h2>
-      </Col>
-    </Row>
-  );
-};
-
-const renderYourClue = clue => {
-  return (
-    <Row className='mt-4'>
-      <Col className='text-center'>
-        <h6>Your clue is:</h6>
-        <h2 className='word-to-guess'>{clue}</h2>
+        <h2 className='featured-word'>{currWord}</h2>
       </Col>
     </Row>
   );
@@ -74,7 +63,12 @@ function EnteringCluesView({
     return (
       <div className='text-center'>
         {renderCurrWord(currWord)}
-        {renderYourClue(currPlayerClue.clue)}
+        <Row className='mt-4'>
+          <Col className='text-center'>
+            <h6>Your clue is:</h6>
+            <h2 className='featured-word lower-case'>{currPlayerClue.clue}</h2>
+          </Col>
+        </Row>
         <h3 className='mt-3'>Waiting for others to enter their clues...</h3>
       </div>
     );

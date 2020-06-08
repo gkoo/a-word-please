@@ -16,7 +16,7 @@ function TurnEndView() {
 
   const isCorrectGuess = !!currGuess && currGuess.toLowerCase() === currWord.toLowerCase();
 
-  const classes = cx('word-to-guess', {
+  const classes = cx('featured-word', {
     correct: isCorrectGuess,
     incorrect: !isCorrectGuess,
   });
