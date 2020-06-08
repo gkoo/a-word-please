@@ -8,7 +8,6 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 
 import LeaderPanel from './LeaderPanel';
-import MessageLog from './MessageLog';
 import UserList from './UserList';
 import { toggleRulesModal } from '../store/actions';
 
@@ -38,14 +37,8 @@ function Lobby({ messages, roomCode, users, socket }) {
           </Col>
         </Row>
         <Row>
-          <Col xs={6} lg={{ offset: 3, span: 3 }}>
+          <Col xs={{ span: 6, offset: 3 }}>
             <UserList users={users} />
-          </Col>
-          <Col xs={6} lg={{ span: 3 }}>
-            <MessageLog
-              messages={messages}
-              onNewMessage={onNewChatMessage}
-            />
           </Col>
         </Row>
         <Row className='share-link'>
