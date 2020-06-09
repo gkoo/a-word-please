@@ -73,7 +73,7 @@ function Homepage() {
           </Col>
         </Row>
         <Row>
-          <Col md={6} lg={{ offset: 1, span: 5 }} xl={{ offset: 2, span: 4 }}>
+          <Col xs={5} lg={{ offset: 1, span: 5 }} xl={{ offset: 2, span: 4 }}>
             <Card>
               <Card.Body>
                 <h5>Create a new room</h5>
@@ -85,7 +85,7 @@ function Homepage() {
               </Card.Body>
             </Card>
           </Col>
-          <Col md={6} lg={5} xl={4}>
+          <Col xs={7} lg={5} xl={4}>
             <Card>
               <Card.Body>
                 <h5>Join a room</h5>
