@@ -1,7 +1,8 @@
-import { env } from '../constants';
-import * as actions from './actions';
+import io from 'socket.io-client';
 
+import * as actions from './actions';
 import {
+  env,
   STATE_PENDING,
   STATE_ENTERING_CLUES,
   STATE_REVIEWING_CLUES,
@@ -9,9 +10,8 @@ import {
   STATE_TURN_END,
   STATE_GAME_END,
 } from '../constants';
-import { newSocket } from '../socket';
 
-// Change to true to develop UI
+// Change to 1 to develop UI
 const useTestState = 0;
 
 const initialState = {
@@ -178,10 +178,10 @@ export default function reducer(state = stateToUse, action) {
       if (state.socket) {
         return state;
       }
-      const socket = newSocket();
+      const ioServerDomain = (env === 'production') ? '/' : 'http://localhost:5000';
       return {
         ...state,
-        socket,
+        socket: io(ioServerDomain),
       };
 
     case actions.NEW_USER:
