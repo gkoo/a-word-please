@@ -14,7 +14,7 @@ const renderCurrWord = currWord => {
     <Row className='mb-5'>
       <Col className='text-center'>
         <h6>The word is:</h6>
-        <h2 className='featured-word'>{currWord}</h2>
+        <h2 className='featured-word lowercase'>{currWord}</h2>
       </Col>
     </Row>
   );

@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 
-import Game from './game.js';
+import Game from './a-word-please/game.js';
 import User from './user.js';
 
 const MAX_MESSAGES = 50;

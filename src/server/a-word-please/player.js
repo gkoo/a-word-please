@@ -5,7 +5,7 @@ function Player({ id, name }) {
 }
 
 Player.prototype = {
-  serialize: function ({ includeHand }) {
+  serialize: function () {
     const {
       id,
       name,

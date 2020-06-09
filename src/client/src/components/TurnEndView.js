@@ -26,7 +26,7 @@ function TurnEndView() {
       <Row className='my-3'>
         <Col>
           <p>The word was</p>
-          <h2 className='word-to-guess'>{currWord}</h2>
+          <h2 className='featured-word lowercase'>{currWord}</h2>
         </Col>
       </Row>
       <Row className='mb-5'>

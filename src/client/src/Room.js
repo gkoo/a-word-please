@@ -29,7 +29,6 @@ const renderContent = ({
       <Lobby
         messages={messages}
         roomCode={roomCodeParam}
-        socket={socket}
         users={users}
       />
     );

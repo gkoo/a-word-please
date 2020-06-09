@@ -11,8 +11,7 @@ import LeaderPanel from './LeaderPanel';
 import UserList from './UserList';
 import { toggleRulesModal } from '../store/actions';
 
-function Lobby({ messages, roomCode, users, socket }) {
-  const onNewChatMessage = msg => socket.emit('chatMessage', msg);
+function Lobby({ messages, roomCode, users }) {
   const dispatch = useDispatch();
 
   const onShowRulesModal = () => dispatch(toggleRulesModal({ show: true }));
