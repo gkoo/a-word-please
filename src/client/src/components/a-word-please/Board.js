@@ -10,14 +10,14 @@ import {
   STATE_ENTERING_GUESS,
   STATE_TURN_END,
   STATE_GAME_END,
-} from '../constants';
+} from '../../constants';
 import DuplicatesModal from './DuplicatesModal';
 import EnteringCluesView from './EnteringCluesView';
 import EnteringGuessView from './EnteringGuessView';
 import GameEndView from './GameEndView';
-import LeaderPanel from './LeaderPanel';
+import LeaderPanel from '../LeaderPanel';
 import TurnEndView from './TurnEndView';
-import * as selectors from '../store/selectors';
+import * as selectors from '../../store/selectors';
 
 function Board() {
   const clues = useSelector(selectors.cluesSelector);

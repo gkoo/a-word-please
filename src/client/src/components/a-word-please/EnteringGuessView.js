@@ -8,7 +8,7 @@ import InputGroup from 'react-bootstrap/InputGroup'
 import Button from 'react-bootstrap/Button';
 
 import CluesView from './CluesView';
-import * as selectors from '../store/selectors';
+import * as selectors from '../../store/selectors';
 
 const MAX_GUESS_LENGTH = 20;
 

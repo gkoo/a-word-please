@@ -3,7 +3,7 @@ import React from 'react';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 
-import Board from './Board';
+import Board from './a-word-please/Board';
 
 function Game({ socket, messages }) {
   return (

@@ -9,7 +9,7 @@ import {
   currPlayerIsGuesserSelector,
   guesserSelector,
   socketSelector,
-} from '../store/selectors';
+} from '../../store/selectors';
 
 function DuplicatesModal({ show }) {
   const currPlayerIsGuesser = useSelector(currPlayerIsGuesserSelector);

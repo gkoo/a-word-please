@@ -4,7 +4,7 @@ import Card from 'react-bootstrap/Card';
 
 function PlayerList({ users }) {
   return (
-    <Card style={{ height: '100%' }}>
+    <Card>
       <Card.Body>
         {
           Object.values(users).map(user => {

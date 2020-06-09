@@ -6,7 +6,7 @@ import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
 
 import CluesView from './CluesView';
-import * as selectors from '../store/selectors';
+import * as selectors from '../../store/selectors';
 
 function TurnEndView() {
   const currWord = useSelector(selectors.currWordSelector);

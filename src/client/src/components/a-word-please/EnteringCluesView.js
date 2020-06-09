@@ -7,7 +7,7 @@ import Form from 'react-bootstrap/Form'
 import InputGroup from 'react-bootstrap/InputGroup'
 import Button from 'react-bootstrap/Button';
 
-import * as selectors from '../store/selectors';
+import * as selectors from '../../store/selectors';
 
 const renderCurrWord = currWord => {
   return (
