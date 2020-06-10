@@ -36,9 +36,11 @@ server.listen(port, () => {
 
 io.on('connection', socket => {
   console.log('New client connected');
+  socket.emit('userId', socket.id);
   socket.on('disconnect', () => roomManager.onUserDisconnect(socket));
-  socket.on('joinRoom', (roomCode) => roomManager.joinRoom(socket, roomCode));
+  socket.on('joinRoom', roomCode => roomManager.joinRoom(socket, roomCode));
   socket.on('saveName', name => roomManager.handleSetName(socket, name));
+  socket.on('chooseGame', gameId => roomManager.handleChooseGame(socket, gameId));
   socket.on('setPending', () => roomManager.onSetPending(socket));
   socket.on('startGame', () => roomManager.handleStartGame(socket));
   socket.on('nextTurn', () => roomManager.handleNextTurn(socket));

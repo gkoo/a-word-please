@@ -16,30 +16,22 @@ const useTestState = 0;
 
 const initialState = {
   alerts: [],
+  currUserId: null,
   debugEnabled: env !== 'production',
   gameData: {
     players: {},
   },
+  roomData: {
+    selectedGame: null,
+    users: {},
+  },
   nextAlertId: 0,
   socketConnected: false,
-  users: {},
   messages: [],
   socket: null,
 };
 
-const testState = {
-  alerts: [
-    {
-      id: 0,
-      message: 'Gordon is dumb!',
-      type: 'danger',
-    },
-    {
-      id: 1,
-      message: 'No he\'s not!',
-      type: 'primary',
-    },
-  ],
+const testGameDataState = {
   //clues: {},
   clues: {
     'steve': {
@@ -51,19 +43,10 @@ const testState = {
       isDuplicate: false,
     },
   },
-  currWord: 'water',
-  currUserId: 'gordon',
   currGuess: 'hydrant',
-  debugEnabled: env !== 'production',
-  //gameState: STATE_ENTERING_CLUES,
-  //gameState: STATE_REVIEWING_CLUES,
-  //gameState: STATE_ENTERING_GUESS,
-  gameState: STATE_TURN_END,
-  //gameState: STATE_GAME_END,
-  //guesserId: 'gordon',
+  currWord: 'water',
   guesserId: 'willy',
-  name: 'Gordon',
-  nextAlertId: 5,
+  //guesserId: 'gordon',
   numPoints: 7,
   players: {
     gordon: {
@@ -99,25 +82,55 @@ const testState = {
     },
   },
   roundNum: 0,
+  skippedTurn: false,
+  state: STATE_PENDING,
+  //state: STATE_ENTERING_CLUES,
+  //state: STATE_REVIEWING_CLUES,
+  //state: STATE_ENTERING_GUESS,
+  //state: STATE_TURN_END,
+  //state: STATE_GAME_END,
+  totalNumRounds: 13,
+};
+
+const testState = {
+  alerts: [
+    {
+      id: 0,
+      message: 'Gordon is dumb!',
+      type: 'danger',
+    },
+    {
+      id: 1,
+      message: 'No he\'s not!',
+      type: 'primary',
+    },
+  ],
+  currUserId: 'gordon',
+  debugEnabled: env !== 'production',
+  gameData: testGameDataState,
+  name: 'Gordon',
+  nextAlertId: 5,
+  roomData: {
+    selectedGame: null,
+    users: {
+      gordon: {
+        id: 'gordon',
+        name: 'Gordon',
+        isLeader: true,
+      },
+      steve: {
+        id: 'steve',
+        name: 'Steve',
+      },
+      yuriko: {
+        id: 'yuriko',
+        name: 'Yuriko',
+      },
+    },
+  },
   showAboutModal: false,
   showRulesModal: false,
   socket: null,
-  totalNumRounds: 13,
-  users: {
-    gordon: {
-      id: 'gordon',
-      name: 'Gordon',
-      isLeader: true,
-    },
-    steve: {
-      id: 'steve',
-      name: 'Steve',
-    },
-    yuriko: {
-      id: 'yuriko',
-      name: 'Yuriko',
-    },
-  },
 };
 
 const stateToUse = useTestState ? testState : initialState;
@@ -188,7 +201,7 @@ export default function reducer(state = stateToUse, action) {
       const userId = action.payload.id;
       const isLeader = action.payload.isLeader;
       name = action.payload.name;
-      const oldUser = state.users[userId] || {};
+      const oldUser = state.roomData?.users[userId] || {};
 
       const newAlerts = [...state.alerts];
       const shouldShowAlert = userId !== state.currUserId;
@@ -207,12 +220,15 @@ export default function reducer(state = stateToUse, action) {
         alerts: newAlerts,
         // Increment the id for the next alert
         nextAlertId: shouldShowAlert ? state.nextAlertId + 1 : state.nextAlertId,
-        users: {
-          ...state.users,
-          [userId]: {
-            ...oldUser,
-            name,
-            isLeader,
+        roomData: {
+          ...state.roomData,
+          users: {
+            ...state.roomData?.users,
+            [userId]: {
+              ...oldUser,
+              name,
+              isLeader,
+            },
           },
         },
       };
@@ -220,14 +236,14 @@ export default function reducer(state = stateToUse, action) {
     // When another user has disconnected
     case actions.USER_DISCONNECT:
       const disconnectedUserId = action.payload.userId;
-      const disconnectedUser = state.users[disconnectedUserId];
+      const disconnectedUser = state.roomData?.users[disconnectedUserId];
       const playerName = disconnectedUser && disconnectedUser.name;
 
       newUsers = {};
 
-      Object.keys(state.users).forEach(userId => {
+      Object.keys(state.roomData?.users).forEach(userId => {
         if (disconnectedUserId !== userId) {
-          newUsers[userId] = state.users[userId];
+          newUsers[userId] = state.roomData?.users[userId];
         }
       });
 
@@ -319,13 +335,21 @@ export default function reducer(state = stateToUse, action) {
         },
       };
 
-    case actions.RECEIVE_INIT_DATA:
-      const { currUserId, messages, users } = action.payload;
+    case actions.RECEIVE_ROOM_DATA:
+      const newRoomData = action.payload;
+      const { roomData } = state;
       return {
         ...state,
-        currUserId,
-        messages,
-        users,
+        roomData: {
+          ...roomData,
+          ...newRoomData,
+        },
+      };
+
+    case actions.RECEIVE_USER_ID:
+      return {
+        ...state,
+        currUserId: action.payload,
       };
 
     case actions.SAVE_NAME:

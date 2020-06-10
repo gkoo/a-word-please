@@ -2,7 +2,7 @@ import { createSelector } from 'reselect';
 
 export const alertMessageSelector = state => state.alertMessage;
 export const debugEnabledSelector = state => state.debugEnabled;
-export const usersSelector = state => state.users;
+export const usersSelector = state => state.roomData?.users;
 export const messagesSelector = state => state.messages;
 export const nameSelector = state => state.name;
 export const socketSelector = state => state.socket;
@@ -13,6 +13,7 @@ export const currUserSelector = createSelector(
   (currUserId, users) => users[currUserId],
 )
 export const roomCodeSelector = state => state.roomCode;
+export const selectedGameSelector = state => state.roomData?.selectedGame;
 export const showRulesModalSelector = state => state.showRulesModal;
 export const showAboutModalSelector = state => state.showAboutModal;
 export const alertsSelector = state => state.alerts;

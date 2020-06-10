@@ -4,15 +4,11 @@ import uuid from 'uuid';
 import Player from './player.js';
 import wordlist from './wordlist.js';
 
-function Game({
+function AWPGame({
   broadcastToRoom,
-  broadcastSystemMessage,
-  broadcastTo,
   users,
 }) {
   this.broadcastToRoom = broadcastToRoom;
-  this.broadcastSystemMessage = broadcastSystemMessage;
-  this.broadcastTo = broadcastTo;
   this.users = users;
   this.clues = {};
   this.lexicon = [];
@@ -21,18 +17,18 @@ function Game({
   this.skippedTurn = false;
 }
 
-Game.STATE_PENDING = 0;
-Game.STATE_ENTERING_CLUES = 1;
-Game.STATE_REVIEWING_CLUES = 2;
-Game.STATE_ENTERING_GUESS = 3;
-Game.STATE_TURN_END = 4;
-Game.STATE_GAME_END = 5;
+AWPGame.STATE_PENDING = 0;
+AWPGame.STATE_ENTERING_CLUES = 1;
+AWPGame.STATE_REVIEWING_CLUES = 2;
+AWPGame.STATE_ENTERING_GUESS = 3;
+AWPGame.STATE_TURN_END = 4;
+AWPGame.STATE_GAME_END = 5;
 
-Game.MAX_WORD_LENGTH = 20;
-Game.MIN_PLAYERS = 2;
-Game.TOTAL_NUM_ROUNDS = 13;
+AWPGame.MAX_WORD_LENGTH = 20;
+AWPGame.MIN_PLAYERS = 2;
+AWPGame.TOTAL_NUM_ROUNDS = 13;
 
-Game.prototype = {
+AWPGame.prototype = {
   setup: function(users) {
     const userList = Object.values(users);
     this.players = {};
@@ -89,7 +85,7 @@ Game.prototype = {
 
     this.broadcastGameDataToPlayers();
 
-    if (this.state === Game.STATE_ENTERING_CLUES) {
+    if (this.state === AWPGame.STATE_ENTERING_CLUES) {
       // TODO: unmark duplicates
       this.checkIfAllCluesAreIn();
     }
@@ -116,7 +112,7 @@ Game.prototype = {
       ++this.roundNum;
     }
 
-    if (this.roundNum > Game.TOTAL_NUM_ROUNDS) {
+    if (this.roundNum > AWPGame.TOTAL_NUM_ROUNDS) {
       this.endGame();
       return;
     }
@@ -130,13 +126,13 @@ Game.prototype = {
 
     this.currWord = this.lexicon[this.lexiconCursor];
     this.lexiconCursor = (++this.lexiconCursor) % this.lexicon.length;
-    this.state = Game.STATE_ENTERING_CLUES;
+    this.state = AWPGame.STATE_ENTERING_CLUES;
 
     this.broadcastGameDataToPlayers();
   },
 
   receiveClue: function(playerId, submittedClue) {
-    const clue = submittedClue.substring(0, Game.MAX_WORD_LENGTH);
+    const clue = submittedClue.substring(0, AWPGame.MAX_WORD_LENGTH);
     const formattedClue = clue.toLowerCase().replace(/\s/g, '');
     let isDuplicate = false;
     Object.keys(this.clues).forEach(playerId => {
@@ -162,17 +158,17 @@ Game.prototype = {
   },
 
   revealCluesToClueGivers: function() {
-    this.state = Game.STATE_REVIEWING_CLUES;
+    this.state = AWPGame.STATE_REVIEWING_CLUES;
     this.broadcastGameDataToPlayers();
   },
 
   revealCluesToGuesser: function() {
-    this.state = Game.STATE_ENTERING_GUESS;
+    this.state = AWPGame.STATE_ENTERING_GUESS;
     this.broadcastGameDataToPlayers();
   },
 
   receiveGuess: function(socketId, submittedGuess) {
-    const guess = submittedGuess.substring(0, Game.MAX_WORD_LENGTH);
+    const guess = submittedGuess.substring(0, AWPGame.MAX_WORD_LENGTH);
     const formattedGuess = guess.toLowerCase().replace(/\s/g, '');
     this.currGuess = guess;
     const correctGuess = formattedGuess === this.currWord.toLowerCase().replace(/\s/g, '');
@@ -183,40 +179,31 @@ Game.prototype = {
       ++this.roundNum;
     }
 
-    this.state = Game.STATE_TURN_END;
+    this.state = AWPGame.STATE_TURN_END;
     this.broadcastGameDataToPlayers();
   },
 
   skipTurn: function() {
     this.skippedTurn = true;
-    this.state = Game.STATE_TURN_END;
+    this.state = AWPGame.STATE_TURN_END;
     this.broadcastGameDataToPlayers();
   },
 
   endGame: function() {
-    this.state = Game.STATE_GAME_END;
+    this.state = AWPGame.STATE_GAME_END;
     this.broadcastGameDataToPlayers();
   },
 
   // Send all players back to the lobby
   setPending: function() {
-    this.state = Game.STATE_PENDING;
+    this.state = AWPGame.STATE_PENDING;
     this.players = {};
     this.broadcastGameDataToPlayers();
   },
 
   isRoundOver: function() { return this.state !== this.STATE_STARTED; },
 
-  isGameOver: function() { return this.state === Game.STATE_GAME_END; },
-
-  emitSystemMessage: function(playerId, msg) {
-    const messageObj = {
-      id: uuid.v4(),
-      text: msg,
-      type: 'system',
-    };
-    this.broadcastTo(playerId, 'message', messageObj);
-  },
+  isGameOver: function() { return this.state === AWPGame.STATE_GAME_END; },
 
   broadcastGameDataToPlayers: function() {
     this.broadcastToRoom('gameData', this.serialize());
@@ -247,9 +234,9 @@ Game.prototype = {
       roundNum,
       skippedTurn,
       state,
-      totalNumRounds: Game.TOTAL_NUM_ROUNDS,
+      totalNumRounds: AWPGame.TOTAL_NUM_ROUNDS,
     };
   },
 }
 
-export default Game;
+export default AWPGame;

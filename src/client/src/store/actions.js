@@ -9,7 +9,8 @@ export const NEW_SOCKET = 'NEW_SOCKET';
 export const NEW_USER = 'NEW_USER';
 export const RECEIVE_DEBUG_INFO = 'RECEIVE_DEBUG_INFO';
 export const RECEIVE_GAME_DATA = 'RECEIVE_GAME_DATA';
-export const RECEIVE_INIT_DATA = 'RECEIVE_INIT_DATA';
+export const RECEIVE_ROOM_DATA = 'RECEIVE_ROOM_DATA';
+export const RECEIVE_USER_ID = 'RECEIVE_USER_ID';
 export const SAVE_NAME = 'SAVE_NAME';
 export const SET_ROOM_CODE = 'SET_ROOM_CODE';
 export const SHOW_ALERT = 'SHOW_ALERT';
@@ -78,10 +79,17 @@ export function receiveGameData(gameData) {
   }
 }
 
-export function receiveInitData({ currUserId, messages, users }) {
+export function receiveRoomData({ selectedGame, users }) {
   return {
-    payload: { currUserId, messages, users },
-    type: RECEIVE_INIT_DATA,
+    payload: { selectedGame, users },
+    type: RECEIVE_ROOM_DATA,
+  }
+}
+
+export function receiveUserId(userId) {
+  return {
+    payload: userId,
+    type: RECEIVE_USER_ID,
   }
 }
 

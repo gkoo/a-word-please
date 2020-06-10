@@ -1,26 +1,22 @@
 import uuid from 'uuid';
 
-import Game from './a-word-please/game.js';
+import AWPGame from './a-word-please/awp-game.js';
 import User from './user.js';
 
-const MAX_MESSAGES = 50;
-const MAX_MESSAGE_LENGTH = 200;
+const GAME_A_WORD_PLEASE = 1;
+const GAME_WEREWOLF = 2;
+
+const VALID_GAMES = [
+  GAME_A_WORD_PLEASE,
+  GAME_WEREWOLF,
+];
 
 function Room({ io, roomCode }) {
   this.broadcastToRoom = (eventName, data) => io.to(roomCode).emit(eventName, data);
   this.io = io;
   this.roomCode = roomCode;
+  this.selectedGame = null;
   this.users = {};
-  this.messages = [];
-  this.broadcastSystemMessage = (msg) => {
-    const messageObj = {
-      id: uuid.v4(),
-      text: msg,
-      type: 'system',
-    };
-    this.messages.push(messageObj);
-    this.broadcastToRoom('message', messageObj);
-  };
 }
 
 Room.prototype = {
@@ -51,7 +47,6 @@ Room.prototype = {
     this.broadcastToRoom('userDisconnect', id);
 
     if (!name) { return; }
-    this.broadcastSystemMessage(`${name} disconnected`);
   },
 
   promoteRandomLeader: function() {
@@ -72,7 +67,6 @@ Room.prototype = {
   setUserName: function(socket, id, name) {
     const user = this.users[id];
     user.setName(name);
-    this.broadcastSystemMessage(`${name} connected`);
     this.broadcastToRoom('newUser', user.serialize());
 
     if (!this.game) { return; }
@@ -83,22 +77,32 @@ Room.prototype = {
   // returns an array of users
   getUsers: function() { return Object.values(this.users); },
 
+  chooseGame: function(gameId) {
+    console.log('choosing game ', gameId);
+    if (!VALID_GAMES.includes(gameId)) { return; }
+    this.selectedGame = gameId;
+    this.broadcastToRoom('roomData', this.getRoomData());
+  },
+
   startGame: function() {
     const {
       broadcastToRoom,
-      broadcastSystemMessage,
       io,
     } = this;
+    if (!this.selectedGame) { return; }
+
     if (this.game) {
       this.game.newGame();
       return;
     }
 
-    this.game = new Game({
-      broadcastToRoom,
-      broadcastSystemMessage,
-      io,
-    });
+    switch (this.selectedGame) {
+      case GAME_A_WORD_PLEASE:
+        this.game = new AWPGame({ broadcastToRoom });
+        break;
+      default:
+        throw 'Unrecognized game type chosen';
+    }
     this.game.setup(this.users);
   },
 
@@ -139,29 +143,30 @@ Room.prototype = {
     this.game.skipTurn();
   },
 
-  getInitRoomData: function(socketId) {
+  getRoomData: function(socketId) {
     const users = {};
-    const { messages } = this;
+    const { roomCode, selectedGame } = this;
     Object.values(this.users).forEach(user => {
       users[user.id] = user.serialize();
     });
     return {
-      users,
-      messages,
       currUserId: socketId,
+      roomCode,
+      selectedGame,
+      users,
     };
   },
 
-  sendInitRoomData: function(socket) {
-    const initData = this.getInitRoomData(socket.id);
-    this.io.to(socket.id).emit('initData', initData)
+  sendRoomData: function(socket) {
+    const roomData = this.getRoomData(socket.id);
+    this.io.to(socket.id).emit('roomData', roomData)
 
-    let gameData = this.game ? this.game.serialize() : { state: Game.STATE_PENDING };
+    let gameData = this.game ? this.game.serialize() : { state: AWPGame.STATE_PENDING };
     this.io.to(socket.id).emit('gameData', gameData)
   },
 
   sendGameState: function(socketId) {
-    let debugData = this.game ? this.game.serialize() : this.getInitRoomData(socketId);
+    let debugData = this.game ? this.game.serialize() : this.getRoomData(socketId);
 
     this.io.to(socketId).emit('debugInfo', debugData)
   },

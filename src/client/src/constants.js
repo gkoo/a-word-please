@@ -7,3 +7,6 @@ export const STATE_REVIEWING_CLUES = 2;
 export const STATE_ENTERING_GUESS = 3;
 export const STATE_TURN_END = 4;
 export const STATE_GAME_END = 5;
+
+export const GAME_A_WORD_PLEASE = 1;
+export const GAME_WEREWOLF = 2;

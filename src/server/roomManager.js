@@ -30,8 +30,8 @@ class RoomManager {
     const room = this.findOrCreateRoom(roomCode);
     socket.join(roomCode);
     room.addUser(socket.id);
-    room.sendInitRoomData(socket);
-  };
+    room.sendRoomData(socket);
+  }
 
   // Returns the name of the Socket IO room
   getRoom(socket) {
@@ -39,6 +39,12 @@ class RoomManager {
       roomName => roomName.indexOf(ROOM_CODE_PREFIX) === 0
     );
     return this.rooms[roomCode];
+  }
+
+  handleChooseGame(socket, gameId) {
+    const room = this.getRoom(socket);
+    if (!room) { return; }
+    room.chooseGame(gameId);
   }
 
   handleSetName(socket, name) {
