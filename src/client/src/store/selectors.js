@@ -11,7 +11,7 @@ export const currUserSelector = createSelector(
   currUserIdSelector,
   usersSelector,
   (currUserId, users) => users[currUserId],
-)
+);
 export const roomCodeSelector = state => state.roomCode;
 export const selectedGameSelector = state => state.roomData?.selectedGame;
 export const showRulesModalSelector = state => state.showRulesModal;
@@ -21,6 +21,7 @@ export const socketConnectedSelector = state => state.socketConnected;
 
 // Game Data
 export const gameDataSelector = state => state.gameData;
+export const gameIdSelector = state => state.gameData.gameId;
 export const cluesSelector = createSelector(
   gameDataSelector,
   gameData => gameData && gameData.clues

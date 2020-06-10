@@ -5,13 +5,11 @@ const Game = require('../game');
 const Player = require('./player.js');
 const wordlist = require('./wordlist.js');
 
-class AWPGame extends Game{
-  static STATE_PENDING = 0;
-  static STATE_ENTERING_CLUES = 1;
-  static STATE_REVIEWING_CLUES = 2;
-  static STATE_ENTERING_GUESS = 3;
-  static STATE_TURN_END = 4;
-  static STATE_GAME_END = 5;
+class AWPGame extends Game {
+  static GAME_ID = Game.GAME_A_WORD_PLEASE;
+  static STATE_ENTERING_CLUES = 3;
+  static STATE_REVIEWING_CLUES = 4;
+  static STATE_ENTERING_GUESS = 5;
 
   static MAX_WORD_LENGTH = 20;
   static MIN_PLAYERS = 2;
@@ -27,10 +25,7 @@ class AWPGame extends Game{
   }
 
   setup(users) {
-    const userList = Object.values(users);
-    this.players = {};
-
-    userList.forEach(user => this.addPlayer(user));
+    super.setup(users);
     this.createLexicon();
     this.determinePlayerOrder();
     this.newGame();
@@ -176,7 +171,7 @@ class AWPGame extends Game{
       ++this.roundNum;
     }
 
-    this.state = AWPGame.STATE_TURN_END;
+    this.state = Game.STATE_TURN_END;
     this.broadcastGameDataToPlayers();
   }
 
@@ -187,13 +182,13 @@ class AWPGame extends Game{
   }
 
   endGame() {
-    this.state = AWPGame.STATE_GAME_END;
+    this.state = Game.STATE_GAME_END;
     this.broadcastGameDataToPlayers();
   }
 
   // Send all players back to the lobby
   setPending() {
-    this.state = AWPGame.STATE_PENDING;
+    this.state = Game.STATE_PENDING;
     this.players = {};
     this.broadcastGameDataToPlayers();
   }
@@ -203,11 +198,7 @@ class AWPGame extends Game{
   }
 
   isGameOver() {
-    return this.state === AWPGame.STATE_GAME_END;
-  }
-
-  broadcastGameDataToPlayers() {
-    this.broadcastToRoom('gameData', this.serialize());
+    return this.state === Game.STATE_GAME_END;
   }
 
   serialize() {
@@ -228,6 +219,7 @@ class AWPGame extends Game{
       clues,
       currGuess,
       currWord,
+      gameId: AWPGame.GAME_ID,
       guesserId,
       numPoints,
       players,

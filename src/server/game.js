@@ -1,4 +1,11 @@
 class Game {
+  static GAME_A_WORD_PLEASE = 1;
+  static GAME_WEREWOLF = 2;
+
+  static STATE_PENDING = 0;
+  static STATE_TURN_END = 1;
+  static STATE_GAME_END = 2;
+
   constructor(io, roomCode) {
     this.io = io;
     this.roomCode = roomCode;
@@ -7,6 +14,10 @@ class Game {
 
   broadcastToRoom(eventName, data) {
     this.io.to(this.roomCode).emit(eventName, data);
+  }
+
+  broadcastGameDataToPlayers() {
+    this.broadcastToRoom('gameData', this.serialize());
   }
 
   setup(users) {

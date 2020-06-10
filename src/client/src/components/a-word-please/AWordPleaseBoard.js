@@ -5,9 +5,9 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 
 import {
-  STATE_ENTERING_CLUES,
-  STATE_REVIEWING_CLUES,
-  STATE_ENTERING_GUESS,
+  STATE_AWP_ENTERING_CLUES,
+  STATE_AWP_REVIEWING_CLUES,
+  STATE_AWP_ENTERING_GUESS,
   STATE_TURN_END,
   STATE_GAME_END,
 } from '../../constants';
@@ -19,7 +19,7 @@ import LeaderPanel from '../LeaderPanel';
 import TurnEndView from './TurnEndView';
 import * as selectors from '../../store/selectors';
 
-function Board() {
+function AWordPleaseBoard() {
   const clues = useSelector(selectors.cluesSelector);
   const currPlayer = useSelector(selectors.currPlayerSelector);
   const currPlayerIsGuesser = useSelector(selectors.currPlayerIsGuesserSelector);
@@ -45,7 +45,7 @@ function Board() {
       <Row>
         <Col sm={8} className='main-panel py-5'>
           {
-            [STATE_ENTERING_CLUES, STATE_REVIEWING_CLUES].includes(gameState) &&
+            [STATE_AWP_ENTERING_CLUES, STATE_AWP_REVIEWING_CLUES].includes(gameState) &&
               <EnteringCluesView
                 clues={clues}
                 clueGivers={clueGivers}
@@ -56,7 +56,7 @@ function Board() {
               />
           }
           {
-            gameState === STATE_ENTERING_GUESS &&
+            gameState === STATE_AWP_ENTERING_GUESS &&
               <EnteringGuessView
                 clues={clues}
                 clueGivers={clueGivers}
@@ -109,9 +109,9 @@ function Board() {
           }
         </Col>
       </Row>
-      <DuplicatesModal show={gameState === STATE_REVIEWING_CLUES}/>
+      <DuplicatesModal show={gameState === STATE_AWP_REVIEWING_CLUES}/>
     </div>
   );
 }
 
-export default Board;
+export default AWordPleaseBoard;

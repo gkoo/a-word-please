@@ -11,11 +11,11 @@ import {
 } from '../store/selectors';
 import {
   STATE_PENDING,
-  STATE_ENTERING_CLUES,
-  STATE_REVIEWING_CLUES,
-  STATE_ENTERING_GUESS,
   STATE_TURN_END,
   STATE_GAME_END,
+  STATE_AWP_ENTERING_CLUES,
+  STATE_AWP_REVIEWING_CLUES,
+  STATE_AWP_ENTERING_GUESS,
 } from '../constants';
 import { gameStateSelector } from '../store/selectors';
 
@@ -72,12 +72,7 @@ function LeaderPanel({ numUsers }) {
             <Button onClick={nextTurn}>Next Turn</Button>
         }
         {
-          [
-            STATE_ENTERING_CLUES,
-            STATE_REVIEWING_CLUES,
-            STATE_ENTERING_GUESS,
-            STATE_TURN_END,
-          ].includes(gameState) &&
+          (gameState !== STATE_PENDING && gameState !== STATE_GAME_END) &&
             <Button onClick={endGame}>End game</Button>
         }
         {

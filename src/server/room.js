@@ -1,6 +1,7 @@
 const uuid = require('uuid');
 
 const AWPGame = require('./a-word-please/awp-game.js');
+const WerewolfGame = require('./werewolf/werewolfGame.js');
 const User = require('./user.js');
 
 const GAME_A_WORD_PLEASE = 1;
@@ -98,6 +99,9 @@ Room.prototype = {
     switch (this.selectedGame) {
       case GAME_A_WORD_PLEASE:
         this.game = new AWPGame(this.io, this.roomCode);
+        break;
+      case GAME_WEREWOLF:
+        this.game = new WerewolfGame(this.io, this.roomCode);
         break;
       default:
         throw 'Unrecognized game type chosen';

@@ -3,12 +3,15 @@ import io from 'socket.io-client';
 import * as actions from './actions';
 import {
   env,
+  GAME_A_WORD_PLEASE,
+  GAME_WEREWOLF,
   STATE_PENDING,
-  STATE_ENTERING_CLUES,
-  STATE_REVIEWING_CLUES,
-  STATE_ENTERING_GUESS,
   STATE_TURN_END,
   STATE_GAME_END,
+  STATE_AWP_ENTERING_CLUES,
+  STATE_AWP_REVIEWING_CLUES,
+  STATE_AWP_ENTERING_GUESS,
+  STATE_WW_CHOOSING_ROLES,
 } from '../constants';
 
 // Change to 1 to develop UI
@@ -31,7 +34,7 @@ const initialState = {
   socket: null,
 };
 
-const testGameDataState = {
+const testAwpGameData = {
   //clues: {},
   clues: {
     'steve': {
@@ -45,6 +48,7 @@ const testGameDataState = {
   },
   currGuess: 'hydrant',
   currWord: 'water',
+  gameId: GAME_A_WORD_PLEASE,
   guesserId: 'willy',
   //guesserId: 'gordon',
   numPoints: 7,
@@ -84,30 +88,68 @@ const testGameDataState = {
   roundNum: 0,
   skippedTurn: false,
   state: STATE_PENDING,
-  //state: STATE_ENTERING_CLUES,
-  //state: STATE_REVIEWING_CLUES,
-  //state: STATE_ENTERING_GUESS,
-  //state: STATE_TURN_END,
-  //state: STATE_GAME_END,
+  //state: STATE_AWP_ENTERING_CLUES,
+  //state: STATE_AWP_REVIEWING_CLUES,
+  //state: STATE_AWP_ENTERING_GUESS,
+  //state: STATE_AWP_TURN_END,
+  //state: STATE_AWP_GAME_END,
   totalNumRounds: 13,
+};
+
+const testWerewolfGameData = {
+  state: STATE_WW_CHOOSING_ROLES,
+  gameId: GAME_WEREWOLF,
+  players: {
+    gordon: {
+      id: 'gordon',
+      name: 'Gordon',
+      isLeader: true,
+      color: 'blue',
+    },
+    steve: {
+      id: 'steve',
+      name: 'Steve',
+      color: 'indigo',
+    },
+    yuriko: {
+      id: 'yuriko',
+      name: 'Yuriko',
+      color: 'purple',
+    },
+    aj: {
+      id: 'aj',
+      name: 'AJ',
+      color: 'pink',
+    },
+    willy: {
+      id: 'willy',
+      name: 'Willy',
+      color: 'red',
+    },
+    rishi: {
+      id: 'rishi',
+      name: 'Rishi',
+      color: 'orange',
+    },
+  },
 };
 
 const testState = {
   alerts: [
-    {
-      id: 0,
-      message: 'Gordon is dumb!',
-      type: 'danger',
-    },
-    {
-      id: 1,
-      message: 'No he\'s not!',
-      type: 'primary',
-    },
+    //{
+      //id: 0,
+      //message: 'Gordon is dumb!',
+      //type: 'danger',
+    //},
+    //{
+      //id: 1,
+      //message: 'No he\'s not!',
+      //type: 'primary',
+    //},
   ],
   currUserId: 'gordon',
   debugEnabled: env !== 'production',
-  gameData: testGameDataState,
+  gameData: testWerewolfGameData,
   name: 'Gordon',
   nextAlertId: 5,
   roomData: {
@@ -295,6 +337,7 @@ export default function reducer(state = stateToUse, action) {
         clues,
         currGuess,
         currWord,
+        gameId,
         guesserId,
         numPoints,
         playerOrder,
@@ -308,7 +351,7 @@ export default function reducer(state = stateToUse, action) {
       newPlayers = {};
 
       if (players) {
-        Object.keys(players).forEach(playerId => {
+        Object.keys(players).forEach((playerId, idx) => {
           const color = getColorForPlayerName(players[playerId].name);
           newPlayers[playerId] = {
             ...state.gameData.players[playerId],
@@ -321,17 +364,8 @@ export default function reducer(state = stateToUse, action) {
       return {
         ...state,
         gameData: {
-          clues,
-          currGuess,
-          currWord,
-          guesserId,
-          numPoints,
+          ...action.payload,
           players: newPlayers,
-          playerOrder,
-          roundNum,
-          skippedTurn,
-          state: action.payload.state,
-          totalNumRounds,
         },
       };
 
