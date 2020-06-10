@@ -1,27 +1,26 @@
-const _ = require('lodash');
+const http = require('http');
 
-const Game = require('./game');
-const User = require('./user');
+const _ = require('lodash');
+const socketIO = require('socket.io');
+const MockExpress = require('mock-express');
+
+const AWPGame = require('./awp-game.js');
+const User = require('../user.js');
 
 let game;
 let players;
 
-const mockBroadcastToRoom = jest.fn();
-const mockBroadcastSystemMessage = jest.fn();
-const mockBroadcastTo = jest.fn();
+const mockApp = MockExpress();
+const mockServer = http.createServer(mockApp);
+const mockIo = socketIO(mockServer);
 
 beforeEach(() => {
-  users = {
+  const users = {
     '1': new User({ id: '1', name: 'Gordon' }),
     '2': new User({ id: '2', name: 'Fordon' }),
     '3': new User({ id: '3', name: 'Bordon' }),
   };
-  game = new Game({
-    broadcastToRoom: mockBroadcastToRoom,
-    broadcastSystemMessage: mockBroadcastSystemMessage,
-    broadcastTo: mockBroadcastTo,
-    users,
-  });
+  game = new AWPGame(mockIo, users);
   game.setup(users);
 });
 
@@ -137,7 +136,7 @@ describe('removePlayer', () => {
           isDuplicate: false,
         },
       };
-      game.state = Game.STATE_ENTERING_GUESS;
+      game.state = AWPGame.STATE_ENTERING_GUESS;
     });
 
     it('doesn\'t change game state', () => {
@@ -152,7 +151,7 @@ describe('removePlayer', () => {
       game.guesserId = '2';
       game.playerOrder = ['1', '2', '3'];
       game.playerOrderCursor = 2;
-      game.state = Game.STATE_ENTERING_CLUES;
+      game.state = AWPGame.STATE_ENTERING_CLUES;
     });
 
     describe('and all clues are in', () => {
@@ -169,7 +168,7 @@ describe('removePlayer', () => {
         const { state } = game;
         subject();
         expect(game.state).not.toEqual(state);
-        expect(game.state).toEqual(Game.STATE_REVIEWING_CLUES);
+        expect(game.state).toEqual(AWPGame.STATE_REVIEWING_CLUES);
       });
     });
 

@@ -1,35 +1,32 @@
-import _ from 'lodash';
-import uuid from 'uuid';
+const _ = require('lodash');
+const uuid = require('uuid');
 
-import Player from './player.js';
-import wordlist from './wordlist.js';
+const Game = require('../game');
+const Player = require('./player.js');
+const wordlist = require('./wordlist.js');
 
-function AWPGame({
-  broadcastToRoom,
-  users,
-}) {
-  this.broadcastToRoom = broadcastToRoom;
-  this.users = users;
-  this.clues = {};
-  this.lexicon = [];
-  this.lexiconCursor = 0;
-  this.numPoints = 0;
-  this.skippedTurn = false;
-}
+class AWPGame extends Game{
+  static STATE_PENDING = 0;
+  static STATE_ENTERING_CLUES = 1;
+  static STATE_REVIEWING_CLUES = 2;
+  static STATE_ENTERING_GUESS = 3;
+  static STATE_TURN_END = 4;
+  static STATE_GAME_END = 5;
 
-AWPGame.STATE_PENDING = 0;
-AWPGame.STATE_ENTERING_CLUES = 1;
-AWPGame.STATE_REVIEWING_CLUES = 2;
-AWPGame.STATE_ENTERING_GUESS = 3;
-AWPGame.STATE_TURN_END = 4;
-AWPGame.STATE_GAME_END = 5;
+  static MAX_WORD_LENGTH = 20;
+  static MIN_PLAYERS = 2;
+  static TOTAL_NUM_ROUNDS = 13;
 
-AWPGame.MAX_WORD_LENGTH = 20;
-AWPGame.MIN_PLAYERS = 2;
-AWPGame.TOTAL_NUM_ROUNDS = 13;
+  constructor(io, roomCode) {
+    super(io, roomCode);
+    this.clues = {};
+    this.lexicon = [];
+    this.lexiconCursor = 0;
+    this.numPoints = 0;
+    this.skippedTurn = false;
+  }
 
-AWPGame.prototype = {
-  setup: function(users) {
+  setup(users) {
     const userList = Object.values(users);
     this.players = {};
 
@@ -37,15 +34,15 @@ AWPGame.prototype = {
     this.createLexicon();
     this.determinePlayerOrder();
     this.newGame();
-  },
+  }
 
-  newGame: function() {
+  newGame() {
     this.roundNum = 0;
     this.numPoints = 0;
     this.nextTurn();
-  },
+  }
 
-  addPlayer: function(user) {
+  addPlayer(user) {
     const { id, name } = user;
 
     if (!name) { return; }
@@ -58,13 +55,13 @@ AWPGame.prototype = {
     if (this.playerOrder) {
       this.playerOrder.push(user.id);
     }
-  },
+  }
 
-  getConnectedPlayers: function() {
+  getConnectedPlayers() {
     return Object.values(this.players).filter(player => player.connected);
-  },
+  }
 
-  removePlayer: function(id) {
+  removePlayer(id) {
     if (this.players[id]) { this.players[id].connected = false; }
 
     // Remove from player order
@@ -89,21 +86,21 @@ AWPGame.prototype = {
       // TODO: unmark duplicates
       this.checkIfAllCluesAreIn();
     }
-  },
+  }
 
-  createLexicon: function() {
+  createLexicon() {
     //this.lexicon = ['water', 'fire', 'earth', 'air'];
     this.lexicon = _.shuffle(wordlist);
-  },
+  }
 
-  determinePlayerOrder: function() {
+  determinePlayerOrder() {
     const playerIds = this.getConnectedPlayers().map(player => player.id);
     this.playerOrder = _.shuffle(playerIds);
 
     this.guesserId = this.playerOrder[0];
-  },
+  }
 
-  nextTurn: function(shouldIncrementRound = true) {
+  nextTurn(shouldIncrementRound = true) {
     this.clues = {};
     this.currGuess = null;
     this.skippedTurn = false;
@@ -129,9 +126,9 @@ AWPGame.prototype = {
     this.state = AWPGame.STATE_ENTERING_CLUES;
 
     this.broadcastGameDataToPlayers();
-  },
+  }
 
-  receiveClue: function(playerId, submittedClue) {
+  receiveClue(playerId, submittedClue) {
     const clue = submittedClue.substring(0, AWPGame.MAX_WORD_LENGTH);
     const formattedClue = clue.toLowerCase().replace(/\s/g, '');
     let isDuplicate = false;
@@ -149,25 +146,25 @@ AWPGame.prototype = {
     this.broadcastGameDataToPlayers();
 
     setTimeout(() => this.checkIfAllCluesAreIn(), 500);
-  },
+  }
 
-  checkIfAllCluesAreIn: function() {
+  checkIfAllCluesAreIn() {
     if (Object.values(this.clues).length === this.getConnectedPlayers().length - 1) {
       this.revealCluesToClueGivers();
     }
-  },
+  }
 
-  revealCluesToClueGivers: function() {
+  revealCluesToClueGivers() {
     this.state = AWPGame.STATE_REVIEWING_CLUES;
     this.broadcastGameDataToPlayers();
-  },
+  }
 
-  revealCluesToGuesser: function() {
+  revealCluesToGuesser() {
     this.state = AWPGame.STATE_ENTERING_GUESS;
     this.broadcastGameDataToPlayers();
-  },
+  }
 
-  receiveGuess: function(socketId, submittedGuess) {
+  receiveGuess(socketId, submittedGuess) {
     const guess = submittedGuess.substring(0, AWPGame.MAX_WORD_LENGTH);
     const formattedGuess = guess.toLowerCase().replace(/\s/g, '');
     this.currGuess = guess;
@@ -181,35 +178,39 @@ AWPGame.prototype = {
 
     this.state = AWPGame.STATE_TURN_END;
     this.broadcastGameDataToPlayers();
-  },
+  }
 
-  skipTurn: function() {
+  skipTurn() {
     this.skippedTurn = true;
     this.state = AWPGame.STATE_TURN_END;
     this.broadcastGameDataToPlayers();
-  },
+  }
 
-  endGame: function() {
+  endGame() {
     this.state = AWPGame.STATE_GAME_END;
     this.broadcastGameDataToPlayers();
-  },
+  }
 
   // Send all players back to the lobby
-  setPending: function() {
+  setPending() {
     this.state = AWPGame.STATE_PENDING;
     this.players = {};
     this.broadcastGameDataToPlayers();
-  },
+  }
 
-  isRoundOver: function() { return this.state !== this.STATE_STARTED; },
+  isRoundOver() {
+    return this.state !== this.STATE_STARTED;
+  }
 
-  isGameOver: function() { return this.state === AWPGame.STATE_GAME_END; },
+  isGameOver() {
+    return this.state === AWPGame.STATE_GAME_END;
+  }
 
-  broadcastGameDataToPlayers: function() {
+  broadcastGameDataToPlayers() {
     this.broadcastToRoom('gameData', this.serialize());
-  },
+  }
 
-  serialize: function() {
+  serialize() {
     const {
       clues,
       currGuess,
@@ -236,7 +237,7 @@ AWPGame.prototype = {
       state,
       totalNumRounds: AWPGame.TOTAL_NUM_ROUNDS,
     };
-  },
+  }
 }
 
-export default AWPGame;
+module.exports = AWPGame;

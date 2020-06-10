@@ -1,7 +1,7 @@
-import uuid from 'uuid';
+const uuid = require('uuid');
 
-import AWPGame from './a-word-please/awp-game.js';
-import User from './user.js';
+const AWPGame = require('./a-word-please/awp-game.js');
+const User = require('./user.js');
 
 const GAME_A_WORD_PLEASE = 1;
 const GAME_WEREWOLF = 2;
@@ -78,7 +78,6 @@ Room.prototype = {
   getUsers: function() { return Object.values(this.users); },
 
   chooseGame: function(gameId) {
-    console.log('choosing game ', gameId);
     if (!VALID_GAMES.includes(gameId)) { return; }
     this.selectedGame = gameId;
     this.broadcastToRoom('roomData', this.getRoomData());
@@ -98,16 +97,12 @@ Room.prototype = {
 
     switch (this.selectedGame) {
       case GAME_A_WORD_PLEASE:
-        this.game = new AWPGame({ broadcastToRoom });
+        this.game = new AWPGame(this.io, this.roomCode);
         break;
       default:
         throw 'Unrecognized game type chosen';
     }
     this.game.setup(this.users);
-  },
-
-  playCard: function(userId, cardId, effectData) {
-    this.game.playCard(userId, cardId, effectData);
   },
 
   nextTurn: function(userId) {
@@ -172,4 +167,4 @@ Room.prototype = {
   },
 }
 
-export default Room;
+module.exports = Room;

@@ -1,12 +1,19 @@
+const http = require('http');
+
+const MockExpress = require('mock-express');
+const socketIO = require('socket.io');
+
 const Game = require('./game');
 const Room = require('./room');
 
 let room;
 
-const mockBroadcastTo = jest.fn();
+const mockApp = MockExpress();
+const mockServer = http.createServer(mockApp);
+const mockIo = socketIO(mockServer);
 
 beforeEach(() => {
-  room = new Room({ broadcastTo: mockBroadcastTo });
+  room = new Room({ io: mockIo, roomCode: 'abcd' });
 });
 
 const userId = '123';

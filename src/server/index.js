@@ -1,27 +1,25 @@
-import express from 'express';
-import http from 'http';
-import path from 'path';
-import socketIO from 'socket.io';
+const express = require('express');
+const http = require('http');
+const path = require('path');
+const socketIO = require('socket.io');
 
 const app = express();
-const server = http.Server(app);
+const server = http.createServer(app);
 const io = socketIO(server);
 
-import RoomManager from './roomManager.js';
+const RoomManager = require('./roomManager.js');
 
 const port = process.env.PORT || 5000;
 app.set('port', port);
 
-const moduleURL = new URL(import.meta.url);
-const dirname = path.dirname(moduleURL.pathname);
-app.use(express.static(path.join(dirname, '../client/build')));
+app.use(express.static(path.join(__dirname, '../client/build')));
 
 app.get('/health', (req, res) => res.send('ok'));
 
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
 app.get('*', (req, res) => {
-  res.sendFile(path.join(dirname, '../client/build/index.html'));
+  res.sendFile(path.join(__dirname, '../client/build/index.html'));
 });
 
 const roomManager = new RoomManager(io);

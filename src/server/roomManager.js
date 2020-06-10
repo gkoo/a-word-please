@@ -1,6 +1,6 @@
-import Room from './room.js';
+const Room = require('./room.js');
 
-export const broadcastTo = (roomId, eventName, data) => io.to(roomId).emit(eventName, data);
+const broadcastTo = (roomId, eventName, data) => io.to(roomId).emit(eventName, data);
 
 const ROOM_CODE_PREFIX = 'room-';
 
@@ -93,4 +93,4 @@ class RoomManager {
   }
 }
 
-export default RoomManager;
+module.exports = RoomManager;
