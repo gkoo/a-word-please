@@ -28,12 +28,12 @@ function NighttimeView() {
   const currPlayer = useSelector(currPlayerSelector);
   const players = useSelector(playersSelector);
   const wakeUpRole = useSelector(wakeUpRoleSelector);
-  const isAwake = currPlayer.role === wakeUpRole
+  const isAwake = currPlayer.originalRole === wakeUpRole;
 
   const maybeRenderWakeUp = () => {
     if (!isAwake) { return; }
 
-    switch (currPlayer.role) {
+    switch (currPlayer.originalRole) {
       case ROLE_DOPPELGANGER:
         return <DoppelgangerView />;
       case ROLE_SEER:
@@ -52,13 +52,21 @@ function NighttimeView() {
   };
 
   const renderEmoji = () => {
-    switch (currPlayer.role) {
+    switch (currPlayer.originalRole) {
+      case ROLE_WEREWOLF:
+        return '🐺';
+      case ROLE_MASON:
+        return '⚒';
+      case ROLE_ROBBER:
+        return '💰';
       case ROLE_SEER:
         return '🔍';
       case ROLE_DRUNK:
         return '🍺';
       case ROLE_INSOMNIAC:
         return '☕️';
+      case ROLE_HUNTER:
+        return '🏹';
     }
   };
 
@@ -69,7 +77,7 @@ function NighttimeView() {
           {isAwake ? '😳' : '😴'}
         </span>
       </h1>
-      <h4>Your role is: {LABELS[currPlayer.role]} {renderEmoji()}</h4>
+      <h4>Your role is: {LABELS[currPlayer.lastKnownRole]} {renderEmoji()}</h4>
       {maybeRenderWakeUp()}
     </div>
   );

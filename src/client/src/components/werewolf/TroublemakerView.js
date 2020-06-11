@@ -18,7 +18,7 @@ function TroublemakerView() {
 
   const switchRoles = () => {
     socket.emit('playerAction', {
-      action: 'switchRoles',
+      action: 'troublemakeRoles',
       playerIds: targets,
     });
   };

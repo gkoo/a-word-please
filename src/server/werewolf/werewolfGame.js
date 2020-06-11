@@ -87,9 +87,19 @@ class WerewolfGame extends Game {
         return this.toggleRole(data);
       case 'beginNighttime':
         return this.beginNighttime();
-      case 'switchRoles':
-        if (this.players[playerId].originalRole === ROLE_TROUBLEMAKER) {
-          this.switchRoles(data.playerIds);
+      case 'troublemakeRoles':
+        if (this.players[playerId].originalRole === WerewolfGame.ROLE_TROUBLEMAKER) {
+          this.troublemakeRoles(data.playerIds);
+        }
+        return;
+      case 'robRole':
+        if (this.players[playerId].originalRole === WerewolfGame.ROLE_ROBBER) {
+          this.robRole(playerId, data.playerId);
+        }
+        return;
+      case 'swapRoleWithUnclaimed':
+        if (this.players[playerId].originalRole === WerewolfGame.ROLE_DRUNK) {
+          this.swapRoleWithUnclaimed(playerId);
         }
         return;
       case 'endTurn':
@@ -139,7 +149,7 @@ class WerewolfGame extends Game {
     this.wakeUpRole = WerewolfGame.WAKE_UP_ORDER[this.currentWakeUpIdx];
 
     const wakeUpPlayers = Object.values(this.players).filter(
-      player => player.role === wakeUpRole,
+      player => player.originalRole === wakeUpRole,
     );
 
     if (wakeUpPlayers.length === 0) {
@@ -150,12 +160,34 @@ class WerewolfGame extends Game {
     this.broadcastGameDataToPlayers();
   }
 
-  switchRoles(playerIds) {
+  robRole(robberId, victimId) {
+    const robber = this.players[robberId];
+    const victim = this.players[victimId];
+    switchRoles(robber, victim);
+    robber.setLastKnownRole(robber.role);
+    this.nextTurn();
+  }
+
+  troublemakeRoles(playerIds) {
     const players = playerIds.map(playerId => this.players[playerId]);
-    const tmpRole = players[0].role;
-    players[0].role = players[1].role;
-    players[1].role = tmpRole;
-    this.endTurn();
+    switchRoles(players[0], players[2]);
+    this.nextTurn();
+  }
+
+  swapRoleWithUnclaimed(playerId) {
+    const player = this.players[playerId];
+    const tmpRole = player.role;
+    const shuffledUnclaimedRoles = _.shuffle(this.unclaimedRoles);
+    player.setRole({ role: shuffledUnclaimedRoles[0], isOriginal: false });
+    shuffledUnclaimedRoles[0] = tmpRole;
+    this.unclaimedRoles = shuffledUnclaimedRoles;
+    this.nextTurn();
+  }
+
+  switchRoles(player1, player2) {
+    const tmpRole = player1.role;
+    player1.setRole({ role: player2.role, isOriginal: false });
+    player2.setRole({ role: tmpRole, isOriginal: false });
   }
 
   endGame() {
