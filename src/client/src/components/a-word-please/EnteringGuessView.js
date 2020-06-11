@@ -8,7 +8,7 @@ import InputGroup from 'react-bootstrap/InputGroup'
 import Button from 'react-bootstrap/Button';
 
 import CluesView from './CluesView';
-import * as selectors from '../store/selectors';
+import * as selectors from '../../store/selectors';
 
 const MAX_GUESS_LENGTH = 20;
 
@@ -30,14 +30,17 @@ function EnteringGuessView({
   const onSubmit = e => {
     e.preventDefault();
     if (!currPlayerIsGuesser) { return; }
-    socket.emit('submitGuess', guess);
+    socket.emit('playerAction', {
+      action: 'submitGuess',
+      guess,
+    });
     setGuess('');
   };
 
   const onSkipTurn = e => {
     e.preventDefault();
     if (!currPlayerIsGuesser) { return; }
-    socket.emit('skipTurn');
+    socket.emit('playerAction', { action: 'skipTurn' });
   };
 
   return (

@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 
 import ClueCard from './ClueCard';
-import { cluesSelector } from '../store/selectors';
+import { cluesSelector } from '../../store/selectors';
 
 function CluesView({ largeView, redactDuplicates }) {
   const clues = useSelector(cluesSelector);

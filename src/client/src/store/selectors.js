@@ -2,7 +2,7 @@ import { createSelector } from 'reselect';
 
 export const alertMessageSelector = state => state.alertMessage;
 export const debugEnabledSelector = state => state.debugEnabled;
-export const usersSelector = state => state.users;
+export const usersSelector = state => state.roomData?.users;
 export const messagesSelector = state => state.messages;
 export const nameSelector = state => state.name;
 export const socketSelector = state => state.socket;
@@ -11,15 +11,22 @@ export const currUserSelector = createSelector(
   currUserIdSelector,
   usersSelector,
   (currUserId, users) => users[currUserId],
-)
+);
 export const roomCodeSelector = state => state.roomCode;
+export const selectedGameSelector = state => state.roomData?.selectedGame;
 export const showRulesModalSelector = state => state.showRulesModal;
 export const showAboutModalSelector = state => state.showAboutModal;
 export const alertsSelector = state => state.alerts;
 export const socketConnectedSelector = state => state.socketConnected;
+export const roomStateSelector = state => state.roomData?.state;
 
 // Game Data
+// A Word, Please?
 export const gameDataSelector = state => state.gameData;
+export const gameIdSelector = createSelector(
+  gameDataSelector,
+  gameData => gameData && gameData.gameId
+);
 export const cluesSelector = createSelector(
   gameDataSelector,
   gameData => gameData && gameData.clues
@@ -80,4 +87,25 @@ export const numRoundsLeftSelector = createSelector(
   roundNumSelector,
   totalNumRoundsSelector,
   (roundNum, totalNumRounds) => Math.max(totalNumRounds - roundNum, 0),
+);
+// Werewolf
+export const roleIdsSelector = createSelector(
+  gameDataSelector,
+  gameData => gameData && gameData.roleIds
+);
+export const wakeUpRoleSelector = createSelector(
+  gameDataSelector,
+  gameData => gameData && gameData.wakeUpRole
+)
+export const unclaimedRolesSelector = createSelector(
+  gameDataSelector,
+  gameData => gameData && gameData.unclaimedRoles
+);
+export const votesSelector = createSelector(
+  gameDataSelector,
+  gameData => gameData && gameData.votes
+);
+export const revealingRolesSelector = createSelector(
+  gameDataSelector,
+  gameData => gameData && gameData.revealingRoles
 );

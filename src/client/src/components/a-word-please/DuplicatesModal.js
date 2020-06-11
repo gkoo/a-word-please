@@ -9,7 +9,7 @@ import {
   currPlayerIsGuesserSelector,
   guesserSelector,
   socketSelector,
-} from '../store/selectors';
+} from '../../store/selectors';
 
 function DuplicatesModal({ show }) {
   const currPlayerIsGuesser = useSelector(currPlayerIsGuesserSelector);
@@ -18,7 +18,10 @@ function DuplicatesModal({ show }) {
 
   const onRevealClues = e => {
     e.preventDefault();
-    socket.emit('revealClues');
+    socket.emit(
+      'playerAction',
+      { action: 'revealClues' }
+    );
   };
 
   return (

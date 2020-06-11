@@ -1,5 +1,19 @@
 /* LOBBY */
 
+.game-tile {
+  border: 2px solid #ccc;
+  cursor: pointer;
+  height: 100%;
+}
+
+.game-tile.selected {
+  border-color: #f00;
+}
+
+.game-tile:hover {
+  background-color: #444;
+}
+
 .lobby-title {
   margin-bottom: 25px;
   text-align: center
@@ -53,9 +67,6 @@
   border-right-color: #e0e0e0;
 }
 
-.player-label.blue {
-  background-color: #375a7f;
-}
 .player-label.indigo {
   background-color: #6610f2;
 }

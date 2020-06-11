@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 
-import * as selectors from '../store/selectors';
+import * as selectors from '../../store/selectors';
 
 function GameEndView() {
   const numPoints = useSelector(selectors.numPointsSelector);

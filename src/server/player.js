@@ -1,21 +1,16 @@
-function Player({ id, name }) {
-  this.id = id;
-  this.name = name;
-  this.connected = true;
-}
+class Player {
+  constructor({ id, name }) {
+    this.id = id;
+    this.name = name;
+    this.connected = true;
+  }
 
-Player.prototype = {
-  serialize: function ({ includeHand }) {
-    const {
-      id,
-      name,
-    } = this;
-
+  serialize() {
     return {
-      id,
-      name,
-    }
-  },
+      id: this.id,
+      name: this.name,
+    };
+  }
 }
 
-export default Player;
+module.exports = Player;

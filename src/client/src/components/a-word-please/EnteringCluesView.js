@@ -7,14 +7,14 @@ import Form from 'react-bootstrap/Form'
 import InputGroup from 'react-bootstrap/InputGroup'
 import Button from 'react-bootstrap/Button';
 
-import * as selectors from '../store/selectors';
+import * as selectors from '../../store/selectors';
 
 const renderCurrWord = currWord => {
   return (
     <Row className='mb-5'>
       <Col className='text-center'>
         <h6>The word is:</h6>
-        <h2 className='featured-word'>{currWord}</h2>
+        <h2 className='featured-word lowercase'>{currWord}</h2>
       </Col>
     </Row>
   );
@@ -43,7 +43,10 @@ function EnteringCluesView({
     if (clue.toLowerCase() === currWord.toLowerCase()) {
       return;
     }
-    socket.emit('submitClue', clue);
+    socket.emit('playerAction', {
+      action: 'submitClue',
+      clue,
+    });
     setClue('');
   };
 

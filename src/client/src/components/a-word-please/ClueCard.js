@@ -5,7 +5,7 @@ import Overlay from 'react-bootstrap/Overlay'
 import Tooltip from 'react-bootstrap/Tooltip';
 import cx from 'classnames';
 
-import { playersSelector } from '../store/selectors';
+import { playersSelector } from '../../store/selectors';
 
 const renderClue = (clue, isDuplicate, isRedacted) => {
   if (!isRedacted) {

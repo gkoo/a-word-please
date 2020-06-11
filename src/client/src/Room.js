@@ -6,7 +6,7 @@ import Game from './components/Game';
 import Layout from './Layout';
 import Lobby from './components/Lobby';
 import NameModal from './components/NameModal';
-import { STATE_PENDING } from './constants';
+import { ROOM_STATE_LOBBY } from './constants';
 import * as actions from './store/actions';
 import * as selectors from './store/selectors';
 import { env } from './constants';
@@ -14,36 +14,12 @@ import { env } from './constants';
 import './bootstrap.min.css';
 import './game.css';
 
-const renderContent = ({
-  gameState,
-  messages,
-  roomCodeParam,
-  socket,
-  users,
-}) => {
-  if (gameState === null || gameState === undefined) {
-    return <div />;
-  }
-  if (gameState === STATE_PENDING) {
-    return (
-      <Lobby
-        messages={messages}
-        roomCode={roomCodeParam}
-        socket={socket}
-        users={users}
-      />
-    );
-  }
-  return (
-    <Game socket={socket} messages={messages} />
-  );
-};
-
 const pingHealthEndpoint = () => window.fetch('/health').then(resp => {});
 
 function Room() {
   const dispatch = useDispatch();
   const gameState = useSelector(selectors.gameStateSelector);
+  const roomState = useSelector(selectors.roomStateSelector);
   const messages = useSelector(selectors.messagesSelector);
   const name = useSelector(selectors.nameSelector);
   const socket = useSelector(selectors.socketSelector);
@@ -76,11 +52,13 @@ function Room() {
   useEffect(() => {
     if (!socket) { return; }
 
+    socket.on('connect', () => socket.emit('reconnect'));
     socket.on('debugInfo', data => dispatch(actions.receiveDebugInfo(data)));
     socket.on('endGame', winnerIds => dispatch(actions.endGame(winnerIds)));
-    socket.on('initData', data => dispatch(actions.receiveInitData(data)));
+    socket.on('roomData', data => dispatch(actions.receiveRoomData(data)));
     socket.on('gameData', gameData => dispatch(actions.receiveGameData(gameData)));
     socket.on('newUser', user => dispatch(actions.newUser(user)));
+    socket.on('userId', id => dispatch(actions.receiveUserId(id)));
     socket.on('userDisconnect', userId => dispatch(actions.userDisconnect(userId)));
 
     return () => {
@@ -105,7 +83,19 @@ function Room() {
   return (
     <Layout>
       {
-        renderContent({ gameState, messages, roomCodeParam, socket, users })
+        (gameState === null || gameState === undefined) && <div />
+      }
+      {
+        roomState === ROOM_STATE_LOBBY &&
+          <Lobby
+            messages={messages}
+            roomCode={roomCodeParam}
+            users={users}
+          />
+      }
+      {
+        roomState !== ROOM_STATE_LOBBY &&
+          <Game socket={socket} messages={messages} />
       }
       <NameModal show={!name} />
     </Layout>

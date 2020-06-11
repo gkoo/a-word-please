@@ -6,7 +6,7 @@ import Col from 'react-bootstrap/Col'
 import Row from 'react-bootstrap/Row'
 
 import CluesView from './CluesView';
-import * as selectors from '../store/selectors';
+import * as selectors from '../../store/selectors';
 
 function TurnEndView() {
   const currWord = useSelector(selectors.currWordSelector);
@@ -26,7 +26,7 @@ function TurnEndView() {
       <Row className='my-3'>
         <Col>
           <p>The word was</p>
-          <h2 className='word-to-guess'>{currWord}</h2>
+          <h2 className='featured-word lowercase'>{currWord}</h2>
         </Col>
       </Row>
       <Row className='mb-5'>

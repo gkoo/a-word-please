@@ -1,45 +1,58 @@
-import { env } from '../constants';
+import io from 'socket.io-client';
+
 import * as actions from './actions';
-
 import {
-  STATE_PENDING,
-  STATE_ENTERING_CLUES,
-  STATE_REVIEWING_CLUES,
-  STATE_ENTERING_GUESS,
-  STATE_TURN_END,
-  STATE_GAME_END,
-} from '../constants';
-import { newSocket } from '../socket';
+  env,
+  GAME_A_WORD_PLEASE,
+  GAME_WEREWOLF,
 
-// Change to true to develop UI
+  ROLE_WEREWOLF,
+  ROLE_MINION,
+  ROLE_MASON,
+  ROLE_SEER,
+  ROLE_ROBBER,
+  ROLE_TROUBLEMAKER,
+  ROLE_DRUNK,
+  ROLE_INSOMNIAC,
+  ROLE_HUNTER,
+  ROLE_VILLAGER,
+  ROLE_DOPPELGANGER,
+  ROLE_TANNER,
+
+  GAME_STATE_PENDING,
+  GAME_STATE_TURN_END,
+  GAME_STATE_GAME_END,
+  STATE_AWP_ENTERING_CLUES,
+  STATE_AWP_REVIEWING_CLUES,
+  STATE_AWP_ENTERING_GUESS,
+  STATE_WW_CHOOSING_ROLES,
+  STATE_WW_NIGHTTIME,
+  STATE_WW_DAYTIME,
+  STATE_WW_VOTING,
+  STATE_WW_VOTE_RESULTS,
+} from '../constants';
+
+// Change to 1 to develop UI
 const useTestState = 0;
 
 const initialState = {
   alerts: [],
+  currUserId: null,
   debugEnabled: env !== 'production',
   gameData: {
     players: {},
   },
+  roomData: {
+    selectedGame: null,
+    users: {},
+  },
   nextAlertId: 0,
   socketConnected: false,
-  users: {},
   messages: [],
   socket: null,
 };
 
-const testState = {
-  alerts: [
-    {
-      id: 0,
-      message: 'Gordon is dumb!',
-      type: 'danger',
-    },
-    {
-      id: 1,
-      message: 'No he\'s not!',
-      type: 'primary',
-    },
-  ],
+const testAwpGameData = {
   //clues: {},
   clues: {
     'steve': {
@@ -51,19 +64,11 @@ const testState = {
       isDuplicate: false,
     },
   },
-  currWord: 'water',
-  currUserId: 'gordon',
   currGuess: 'hydrant',
-  debugEnabled: env !== 'production',
-  //gameState: STATE_ENTERING_CLUES,
-  //gameState: STATE_REVIEWING_CLUES,
-  //gameState: STATE_ENTERING_GUESS,
-  gameState: STATE_TURN_END,
-  //gameState: STATE_GAME_END,
-  //guesserId: 'gordon',
+  currWord: 'water',
+  gameId: GAME_A_WORD_PLEASE,
   guesserId: 'willy',
-  name: 'Gordon',
-  nextAlertId: 5,
+  //guesserId: 'gordon',
   numPoints: 7,
   players: {
     gordon: {
@@ -99,31 +104,128 @@ const testState = {
     },
   },
   roundNum: 0,
-  showAboutModal: false,
-  showRulesModal: false,
-  socket: null,
+  skippedTurn: false,
+  state: GAME_STATE_PENDING,
+  //state: STATE_AWP_ENTERING_CLUES,
+  //state: STATE_AWP_REVIEWING_CLUES,
+  //state: STATE_AWP_ENTERING_GUESS,
+  //state: STATE_AWP_TURN_END,
+  //state: STATE_AWP_GAME_END,
   totalNumRounds: 13,
-  users: {
+};
+
+const roleToTest = ROLE_DOPPELGANGER;
+
+const testWerewolfGameData = {
+  gameId: GAME_WEREWOLF,
+  players: {
     gordon: {
       id: 'gordon',
       name: 'Gordon',
       isLeader: true,
+      color: 'teal',
+      originalRole: roleToTest,
+      lastKnownRole: roleToTest,
+      role: roleToTest,
     },
     steve: {
       id: 'steve',
       name: 'Steve',
+      color: 'indigo',
+      originalRole: ROLE_TROUBLEMAKER,
+      lastKnownRole: ROLE_TROUBLEMAKER,
+      role: ROLE_TROUBLEMAKER,
     },
     yuriko: {
       id: 'yuriko',
       name: 'Yuriko',
+      color: 'purple',
+      originalRole: ROLE_ROBBER,
+      lastKnownRole: ROLE_ROBBER,
+      role: ROLE_ROBBER,
+    },
+    aj: {
+      id: 'aj',
+      name: 'AJ',
+      color: 'pink',
+      originalRole: ROLE_SEER,
+      lastKnownRole: ROLE_SEER,
+      role: ROLE_SEER,
+    },
+    willy: {
+      id: 'willy',
+      name: 'Willy',
+      color: 'red',
+      originalRole: ROLE_ROBBER,
+      lastKnownRole: ROLE_ROBBER,
+      role: ROLE_ROBBER,
+    },
+    rishi: {
+      id: 'rishi',
+      name: 'Rishi',
+      color: 'orange',
+      originalRole: ROLE_VILLAGER,
+      lastKnownRole: ROLE_VILLAGER,
+      role: ROLE_VILLAGER,
     },
   },
+  revealingRoles: true,
+  roleIds: [],
+  state: STATE_WW_NIGHTTIME,
+  unclaimedRoles: [ROLE_WEREWOLF, ROLE_DRUNK, ROLE_VILLAGER],
+  votes: {
+    'gordon': 'willy',
+    'steve': 'yuriko',
+    'aj': 'yuriko',
+    'rishi': 'steve',
+  },
+  wakeUpRole: roleToTest,
+};
+
+const testState = {
+  alerts: [
+    //{
+      //id: 0,
+      //message: 'Gordon is dumb!',
+      //type: 'danger',
+    //},
+    //{
+      //id: 1,
+      //message: 'No he\'s not!',
+      //type: 'primary',
+    //},
+  ],
+  currUserId: 'gordon',
+  debugEnabled: env !== 'production',
+  gameData: testWerewolfGameData,
+  name: 'Gordon',
+  nextAlertId: 5,
+  roomData: {
+    selectedGame: null,
+    users: {
+      gordon: {
+        id: 'gordon',
+        name: 'Gordon',
+        isLeader: true,
+      },
+      steve: {
+        id: 'steve',
+        name: 'Steve',
+      },
+      yuriko: {
+        id: 'yuriko',
+        name: 'Yuriko',
+      },
+    },
+  },
+  showAboutModal: false,
+  showRulesModal: false,
+  socket: null,
 };
 
 const stateToUse = useTestState ? testState : initialState;
 
 const colors = [
-  'blue',
   'indigo',
   'purple',
   'pink',
@@ -145,7 +247,7 @@ const getColorForPlayerName = name => {
 };
 
 export default function reducer(state = stateToUse, action) {
-  let name, newPlayers, newUsers, players;
+  let name, newAlerts, newPlayers, newUsers, players;
 
   switch(action.type) {
     case actions.CONNECT_SOCKET:
@@ -178,19 +280,19 @@ export default function reducer(state = stateToUse, action) {
       if (state.socket) {
         return state;
       }
-      const socket = newSocket();
+      const ioServerDomain = (env === 'production') ? '/' : 'http://localhost:5000';
       return {
         ...state,
-        socket,
+        socket: io(ioServerDomain),
       };
 
     case actions.NEW_USER:
       const userId = action.payload.id;
       const isLeader = action.payload.isLeader;
       name = action.payload.name;
-      const oldUser = state.users[userId] || {};
+      const oldUser = state.roomData?.users[userId] || {};
 
-      const newAlerts = [...state.alerts];
+      newAlerts = [...state.alerts];
       const shouldShowAlert = userId !== state.currUserId;
 
       if (shouldShowAlert) {
@@ -207,12 +309,15 @@ export default function reducer(state = stateToUse, action) {
         alerts: newAlerts,
         // Increment the id for the next alert
         nextAlertId: shouldShowAlert ? state.nextAlertId + 1 : state.nextAlertId,
-        users: {
-          ...state.users,
-          [userId]: {
-            ...oldUser,
-            name,
-            isLeader,
+        roomData: {
+          ...state.roomData,
+          users: {
+            ...state.roomData?.users,
+            [userId]: {
+              ...oldUser,
+              name,
+              isLeader,
+            },
           },
         },
       };
@@ -220,28 +325,34 @@ export default function reducer(state = stateToUse, action) {
     // When another user has disconnected
     case actions.USER_DISCONNECT:
       const disconnectedUserId = action.payload.userId;
-      const disconnectedUser = state.users[disconnectedUserId];
+      const disconnectedUser = state.roomData?.users[disconnectedUserId];
       const playerName = disconnectedUser && disconnectedUser.name;
 
       newUsers = {};
 
-      Object.keys(state.users).forEach(userId => {
+      Object.keys(state.roomData?.users).forEach(userId => {
         if (disconnectedUserId !== userId) {
-          newUsers[userId] = state.users[userId];
+          newUsers[userId] = state.roomData?.users[userId];
         }
       });
 
-      return {
-        ...state,
-        // Add an alert to notify that the user has disconnected
-        alerts: [
+      newAlerts = state.alerts;
+
+      if (playerName) {
+        newAlerts = [
           ...state.alerts,
           {
             id: state.nextAlertId,
             message: `${playerName} has disconnected`,
             type: 'danger',
           }
-        ],
+        ];
+      }
+
+      return {
+        ...state,
+        // Add an alert to notify that the user has disconnected
+        alerts: newAlerts,
         // Increment the id for the next alert
         nextAlertId: state.nextAlertId + 1,
         // Mark the user as disconnected
@@ -275,24 +386,12 @@ export default function reducer(state = stateToUse, action) {
       return state;
 
     case actions.RECEIVE_GAME_DATA:
-      const {
-        clues,
-        currGuess,
-        currWord,
-        guesserId,
-        numPoints,
-        playerOrder,
-        roundNum,
-        skippedTurn,
-        totalNumRounds,
-      } = action.payload;
-
       players = action.payload.players;
 
       newPlayers = {};
 
       if (players) {
-        Object.keys(players).forEach(playerId => {
+        Object.keys(players).forEach((playerId, idx) => {
           const color = getColorForPlayerName(players[playerId].name);
           newPlayers[playerId] = {
             ...state.gameData.players[playerId],
@@ -305,27 +404,26 @@ export default function reducer(state = stateToUse, action) {
       return {
         ...state,
         gameData: {
-          clues,
-          currGuess,
-          currWord,
-          guesserId,
-          numPoints,
+          ...action.payload,
           players: newPlayers,
-          playerOrder,
-          roundNum,
-          skippedTurn,
-          state: action.payload.state,
-          totalNumRounds,
         },
       };
 
-    case actions.RECEIVE_INIT_DATA:
-      const { currUserId, messages, users } = action.payload;
+    case actions.RECEIVE_ROOM_DATA:
+      const newRoomData = action.payload;
+      const { roomData } = state;
       return {
         ...state,
-        currUserId,
-        messages,
-        users,
+        roomData: {
+          ...roomData,
+          ...newRoomData,
+        },
+      };
+
+    case actions.RECEIVE_USER_ID:
+      return {
+        ...state,
+        currUserId: action.payload,
       };
 
     case actions.SAVE_NAME:
@@ -338,7 +436,6 @@ export default function reducer(state = stateToUse, action) {
 
     case actions.SET_ROOM_CODE:
       const { roomCode } = action.payload;
-      const isHomepage = !roomCode;
 
       return {
         ...state,

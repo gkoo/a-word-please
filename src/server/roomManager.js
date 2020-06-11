@@ -1,6 +1,6 @@
-import Room from './room.js';
+const Room = require('./room.js');
 
-export const broadcastTo = (roomId, eventName, data) => io.to(roomId).emit(eventName, data);
+const broadcastTo = (roomId, eventName, data) => io.to(roomId).emit(eventName, data);
 
 const ROOM_CODE_PREFIX = 'room-';
 
@@ -30,8 +30,8 @@ class RoomManager {
     const room = this.findOrCreateRoom(roomCode);
     socket.join(roomCode);
     room.addUser(socket.id);
-    room.sendInitRoomData(socket);
-  };
+    room.sendRoomData(socket);
+  }
 
   // Returns the name of the Socket IO room
   getRoom(socket) {
@@ -41,12 +41,24 @@ class RoomManager {
     return this.rooms[roomCode];
   }
 
+  handleChooseGame(socket, gameId) {
+    const room = this.getRoom(socket);
+    if (!room) { return; }
+    room.chooseGame(gameId);
+  }
+
   handleSetName(socket, name) {
     const { id } = socket;
     const room = this.getRoom(socket);
     console.log(`Client ${id} set name to: ${name}`);
     if (!room) { return; }
     room.setUserName(socket, id, name);
+  }
+
+  handleReconnect(socket) {
+    const room = this.getRoom(socket);
+    if (!room) { return; }
+    room.sendRoomData(socket);
   }
 
   handleStartGame(socket) {
@@ -68,6 +80,12 @@ class RoomManager {
     room.endGame(socket.id);
   }
 
+  handlePlayerAction(socket, data) {
+    const room = this.getRoom(socket);
+    if (!room) { return; }
+    room.handlePlayerAction(socket, data);
+  }
+
   onUserDisconnect(socket) {
     // socket.rooms gets cleared before we can do any cleanup. Just loop through rooms to find if
     // they have the socket and clean it up.
@@ -87,4 +105,4 @@ class RoomManager {
   }
 }
 
-export default RoomManager;
+module.exports = RoomManager;
