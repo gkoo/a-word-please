@@ -9,7 +9,7 @@ import Col from 'react-bootstrap/Col';
 import { currPlayerSelector, playersSelector, socketSelector, unclaimedRolesSelector } from '../../store/selectors';
 import { LABELS, ROLE_INSOMNIAC } from '../../constants';
 
-function SeerView() {
+function SeerView({ showWakeUp }) {
   const [revealedPlayerId, setRevealedPlayerId] = useState(null);
   const [revealedUnclaimedRoles, setRevealedUnclaimedRoles] = useState(null);
   const unclaimedRoles = useSelector(unclaimedRolesSelector);
@@ -39,7 +39,7 @@ function SeerView() {
 
   return (
     <>
-      <h1>Wake up.</h1>
+      {showWakeUp && <h1>Wake up.</h1>}
       <p>
         You may choose to look at another player's role, or you may choose to see
         two of the unclaimed role cards.

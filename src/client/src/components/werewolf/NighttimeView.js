@@ -7,6 +7,12 @@ import RobberView from './RobberView';
 import TroublemakerView from './TroublemakerView';
 import DrunkView from './DrunkView';
 import InsomniacView from './InsomniacView';
+import WerewolfView from './WerewolfView';
+import HunterView from './HunterView';
+import MasonView from './MasonView';
+import MinionView from './MinionView';
+import TannerView from './TannerView';
+import VillagerView from './VillagerView';
 import {
   ROLE_WEREWOLF,
   ROLE_MINION,
@@ -24,29 +30,58 @@ import {
 } from '../../constants';
 import { currPlayerSelector, wakeUpRoleSelector } from '../../store/selectors';
 
+const getTeamLabel = role => {
+  switch (role) {
+    case ROLE_WEREWOLF:
+    case ROLE_MINION:
+      return LABELS[ROLE_WEREWOLF];
+    case ROLE_TANNER:
+      return LABELS[ROLE_TANNER];
+    default:
+      return LABELS[ROLE_VILLAGER];
+  }
+};
+
 function NighttimeView() {
   const currPlayer = useSelector(currPlayerSelector);
   const wakeUpRole = useSelector(wakeUpRoleSelector);
   const isAwake = currPlayer.originalRole === wakeUpRole;
 
-  const maybeRenderWakeUp = () => {
-    if (!isAwake) { return; }
-
+  const renderWakeUp = () => {
     switch (currPlayer.originalRole) {
       case ROLE_DOPPELGANGER:
         return <DoppelgangerView />;
       case ROLE_SEER:
-        return <SeerView />;
+        return <SeerView showWakeUp={true} />;
       case ROLE_ROBBER:
-        return <RobberView />;
+        return <RobberView showWakeUp={true} />;
       case ROLE_TROUBLEMAKER:
-        return <TroublemakerView />;
+        return <TroublemakerView showWakeUp={true} />;
       case ROLE_DRUNK:
-        return <DrunkView />;
+        return <DrunkView showWakeUp={true} />;
       case ROLE_INSOMNIAC:
         return <InsomniacView />;
       default:
         throw new Error('Unrecognized wake up role in NighttimeView');
+    }
+  };
+
+  const renderPassiveView = () => {
+    switch (currPlayer.originalRole) {
+      case ROLE_WEREWOLF:
+        return <WerewolfView />;
+      case ROLE_MINION:
+        return <MinionView />;
+      case ROLE_MASON:
+        return <MasonView />;
+      case ROLE_HUNTER:
+        return <HunterView />;
+      case ROLE_VILLAGER:
+        return <VillagerView />;
+      case ROLE_TANNER:
+        return <TannerView />;
+      default:
+        return;
     }
   };
 
@@ -78,8 +113,19 @@ function NighttimeView() {
           {isAwake ? '😳' : '😴'}
         </span>
       </h1>
-      <h4>Your role is: {LABELS[currPlayer.lastKnownRole]} {renderEmoji()}</h4>
-      {maybeRenderWakeUp()}
+      <h4>Your starting role is: {LABELS[currPlayer.lastKnownRole]} {renderEmoji()}</h4>
+      <h5>
+        Team {getTeamLabel(currPlayer.lastKnownRole)}
+      </h5>
+      {isAwake && renderWakeUp()}
+      {
+        !isAwake && (
+          <>
+            {renderPassiveView()}
+            <p><em><small>Roles may change throughout the night...</small></em></p>
+          </>
+        )
+      }
     </div>
   );
 }

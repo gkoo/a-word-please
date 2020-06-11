@@ -112,6 +112,8 @@ const testAwpGameData = {
   totalNumRounds: 13,
 };
 
+const roleToTest = ROLE_DOPPELGANGER;
+
 const testWerewolfGameData = {
   gameId: GAME_WEREWOLF,
   players: {
@@ -120,33 +122,33 @@ const testWerewolfGameData = {
       name: 'Gordon',
       isLeader: true,
       color: 'blue',
-      originalRole: ROLE_INSOMNIAC,
-      lastKnownRole: ROLE_INSOMNIAC,
-      role: ROLE_TROUBLEMAKER,
+      originalRole: roleToTest,
+      lastKnownRole: roleToTest,
+      role: roleToTest,
     },
     steve: {
       id: 'steve',
       name: 'Steve',
       color: 'indigo',
-      originalRole: ROLE_VILLAGER,
-      lastKnownRole: ROLE_VILLAGER,
-      role: ROLE_VILLAGER,
+      originalRole: ROLE_TROUBLEMAKER,
+      lastKnownRole: ROLE_TROUBLEMAKER,
+      role: ROLE_TROUBLEMAKER,
     },
     yuriko: {
       id: 'yuriko',
       name: 'Yuriko',
       color: 'purple',
-      originalRole: ROLE_VILLAGER,
-      lastKnownRole: ROLE_VILLAGER,
-      role: ROLE_VILLAGER,
+      originalRole: ROLE_ROBBER,
+      lastKnownRole: ROLE_ROBBER,
+      role: ROLE_ROBBER,
     },
     aj: {
       id: 'aj',
       name: 'AJ',
       color: 'pink',
-      originalRole: ROLE_WEREWOLF,
-      lastKnownRole: ROLE_WEREWOLF,
-      role: ROLE_WEREWOLF,
+      originalRole: ROLE_SEER,
+      lastKnownRole: ROLE_SEER,
+      role: ROLE_SEER,
     },
     willy: {
       id: 'willy',
@@ -168,7 +170,7 @@ const testWerewolfGameData = {
   roleIds: [],
   state: STATE_WW_NIGHTTIME,
   unclaimedRoles: [ROLE_WEREWOLF, ROLE_DRUNK, ROLE_VILLAGER],
-  wakeUpRole: ROLE_INSOMNIAC,
+  wakeUpRole: roleToTest,
 };
 
 const testState = {

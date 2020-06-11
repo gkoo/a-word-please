@@ -9,7 +9,7 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import { currPlayerSelector, playersSelector, socketSelector } from '../../store/selectors';
 import { LABELS } from '../../constants';
 
-function RobberView() {
+function RobberView({ showWakeUp }) {
   const [playerToRobId, setPlayerToRobId] = useState(null);
   const players = useSelector(playersSelector);
   const currPlayer = useSelector(currPlayerSelector);
@@ -32,7 +32,7 @@ function RobberView() {
 
   return (
     <>
-      <h1>Wake up.</h1>
+      {showWakeUp && <h1>Wake up.</h1>}
       <p>
         Choose another player. You will switch roles with that player and then look at your
         new role.

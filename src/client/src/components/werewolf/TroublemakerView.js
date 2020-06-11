@@ -9,7 +9,7 @@ import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup'
 
 import { currPlayerSelector, playersSelector, socketSelector } from '../../store/selectors';
 
-function TroublemakerView() {
+function TroublemakerView({ showWakeUp }) {
   const [targets, setTargets] = useState([]);
   const currPlayer = useSelector(currPlayerSelector);
   const players = useSelector(playersSelector);
@@ -41,7 +41,7 @@ function TroublemakerView() {
 
   return (
     <>
-      <h1>Wake up.</h1>
+      {showWakeUp && <h1>Wake up.</h1>}
       <p>
         Choose two other players and switch their roles. Those players will now be on the teams of
         their new roles. Devious!
