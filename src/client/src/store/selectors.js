@@ -101,3 +101,11 @@ export const unclaimedRolesSelector = createSelector(
   gameDataSelector,
   gameData => gameData && gameData.unclaimedRoles
 );
+export const votesSelector = createSelector(
+  gameDataSelector,
+  gameData => gameData && gameData.votes
+);
+export const revealingRolesSelector = createSelector(
+  gameDataSelector,
+  gameData => gameData && gameData.revealingRoles
+);

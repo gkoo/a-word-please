@@ -28,6 +28,8 @@ import {
   STATE_WW_CHOOSING_ROLES,
   STATE_WW_NIGHTTIME,
   STATE_WW_DAYTIME,
+  STATE_WW_VOTING,
+  STATE_WW_VOTE_RESULTS,
 } from '../constants';
 
 // Change to 1 to develop UI
@@ -121,7 +123,7 @@ const testWerewolfGameData = {
       id: 'gordon',
       name: 'Gordon',
       isLeader: true,
-      color: 'blue',
+      color: 'teal',
       originalRole: roleToTest,
       lastKnownRole: roleToTest,
       role: roleToTest,
@@ -167,9 +169,16 @@ const testWerewolfGameData = {
       role: ROLE_VILLAGER,
     },
   },
+  revealingRoles: true,
   roleIds: [],
   state: STATE_WW_NIGHTTIME,
   unclaimedRoles: [ROLE_WEREWOLF, ROLE_DRUNK, ROLE_VILLAGER],
+  votes: {
+    'gordon': 'willy',
+    'steve': 'yuriko',
+    'aj': 'yuriko',
+    'rishi': 'steve',
+  },
   wakeUpRole: roleToTest,
 };
 
@@ -217,7 +226,6 @@ const testState = {
 const stateToUse = useTestState ? testState : initialState;
 
 const colors = [
-  'blue',
   'indigo',
   'purple',
   'pink',
@@ -239,7 +247,7 @@ const getColorForPlayerName = name => {
 };
 
 export default function reducer(state = stateToUse, action) {
-  let name, newPlayers, newUsers, players;
+  let name, newAlerts, newPlayers, newUsers, players;
 
   switch(action.type) {
     case actions.CONNECT_SOCKET:
@@ -284,7 +292,7 @@ export default function reducer(state = stateToUse, action) {
       name = action.payload.name;
       const oldUser = state.roomData?.users[userId] || {};
 
-      const newAlerts = [...state.alerts];
+      newAlerts = [...state.alerts];
       const shouldShowAlert = userId !== state.currUserId;
 
       if (shouldShowAlert) {
@@ -328,17 +336,23 @@ export default function reducer(state = stateToUse, action) {
         }
       });
 
-      return {
-        ...state,
-        // Add an alert to notify that the user has disconnected
-        alerts: [
+      newAlerts = state.alerts;
+
+      if (playerName) {
+        newAlerts = [
           ...state.alerts,
           {
             id: state.nextAlertId,
             message: `${playerName} has disconnected`,
             type: 'danger',
           }
-        ],
+        ];
+      }
+
+      return {
+        ...state,
+        // Add an alert to notify that the user has disconnected
+        alerts: newAlerts,
         // Increment the id for the next alert
         nextAlertId: state.nextAlertId + 1,
         // Mark the user as disconnected

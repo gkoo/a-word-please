@@ -1,7 +1,4 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
-
-import { currPlayerSelector, playersSelector } from '../../store/selectors';
 
 function VillagerView() {
   return (

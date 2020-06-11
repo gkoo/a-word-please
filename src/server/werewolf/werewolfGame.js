@@ -7,6 +7,8 @@ class WerewolfGame extends Game {
   static STATE_CHOOSING_ROLES = 3;
   static STATE_NIGHTTIME = 4;
   static STATE_DAYTIME = 5;
+  static STATE_VOTING = 6;
+  static STATE_VOTE_RESULTS = 7;
 
   static ROLE_WEREWOLF = 0;
   static ROLE_MINION = 1;
@@ -52,6 +54,9 @@ class WerewolfGame extends Game {
     super(io, roomCode);
     this.roleIds = {}; // to sync client views
     this.roles = {}; // for actual game logic
+    this.votes = {};
+    this.unclaimedRoles = [];
+    this.revealingRoles = false;
   }
 
   setup(users) {
@@ -83,28 +88,35 @@ class WerewolfGame extends Game {
   }
 
   handlePlayerAction(playerId, data) {
+    const currPlayer = this.players[playerId];
     switch (data.action) {
       case 'toggleRoleSelection':
         return this.toggleRole(data);
       case 'beginNighttime':
         return this.beginNighttime();
       case 'troublemakeRoles':
-        if (this.players[playerId].originalRole === WerewolfGame.ROLE_TROUBLEMAKER) {
+        if (currPlayer.originalRole === WerewolfGame.ROLE_TROUBLEMAKER) {
           this.switchRoles.apply(this, data.playerIds);
         }
         return;
       case 'robRole':
-        if (this.players[playerId].originalRole === WerewolfGame.ROLE_ROBBER) {
+        if (currPlayer.originalRole === WerewolfGame.ROLE_ROBBER) {
           this.robRole(playerId, data.playerId);
         }
         return;
       case 'swapRoleWithUnclaimed':
-        if (this.players[playerId].originalRole === WerewolfGame.ROLE_DRUNK) {
+        if (currPlayer.originalRole === WerewolfGame.ROLE_DRUNK) {
           this.swapRoleWithUnclaimed(playerId);
         }
         return;
+      case 'startVoting':
+        return this.enableVoting();
+      case 'voteToEliminate':
+        return this.voteToEliminate(playerId, data.suspectId);
       case 'endTurn':
         return this.nextTurn();
+      case 'revealRoles':
+        return this.revealRoles();
       default:
         throw new Error(`Unexpected action ${data.action}`);
     }
@@ -141,6 +153,10 @@ class WerewolfGame extends Game {
 
     this.unclaimedRoles = shuffledRoles.slice(shuffledRoles.length - 3);
 
+    // Let's broadcast now because we don't know if we're going to artificially delay the first
+    // turn.
+    this.broadcastGameDataToPlayers();
+
     // traverse through each role's wakeup actions
     this.currentWakeUpIdx = 0;
     this.performWakeUpActions();
@@ -148,8 +164,7 @@ class WerewolfGame extends Game {
 
   performWakeUpActions() {
     if (this.currentWakeUpIdx >= WerewolfGame.WAKE_UP_ORDER.length) {
-      this.state = WerewolfGame.STATE_DAYTIME;
-      this.broadcastGameDataToPlayers();
+      this.beginDaytime();
       return;
     }
 
@@ -161,7 +176,18 @@ class WerewolfGame extends Game {
 
     if (wakeUpPlayers.length === 0) {
       // No players with this role. Move on to the next one in the list.
-      return this.nextTurn();
+      // We'll wait a random number of seconds (between 3 and 7) before moving on so people can't
+      // infer what roles are claimed based on if, e.g. the first player to wake up had a
+      // Troublemaker role.
+      const delay = (Math.random() * 4000) + 3000;
+      if (this.unclaimedRoles.includes(this.wakeUpRole)) {
+        this.broadcastGameDataToPlayers();
+        setTimeout(() => this.nextTurn(), delay);
+      } else {
+        // The role wasn't even part of our game. We can call nextTurn immediately.
+        this.nextTurn();
+      }
+      return;
     }
 
     this.broadcastGameDataToPlayers();
@@ -190,6 +216,48 @@ class WerewolfGame extends Game {
     const tmpRole = player1.role;
     player1.setRole({ role: player2.role, isOriginal: false });
     player2.setRole({ role: tmpRole, isOriginal: false });
+    this.nextTurn();
+  }
+
+  beginDaytime() {
+    this.state = WerewolfGame.STATE_DAYTIME;
+    // Automatically switch to voting after 5 minutes
+    this.votingTimeoutId = setTimeout(() => enableVoting(), 300000);
+    this.broadcastGameDataToPlayers();
+  }
+
+  enableVoting() {
+    if (this.state !== WerewolfGame.STATE_DAYTIME) {
+      if (this.votingTimeoutId) {
+        clearTimeout(this.votingTimeoutId);
+        this.votingTimeoutId = null;
+      }
+      return;
+    }
+
+    this.state = WerewolfGame.STATE_VOTING;
+    this.broadcastGameDataToPlayers();
+  }
+
+  voteToEliminate(playerId, suspectId) {
+    this.votes[playerId] = suspectId;
+    this.broadcastGameDataToPlayers();
+
+    if (Object.keys(this.votes).length === Object.keys(this.players).length) {
+      // All votes are in! Time to reveal votes.
+      setTimeout(() => this.revealVotes(), 1000);
+    }
+  }
+
+  revealVotes() {
+    this.state = WerewolfGame.STATE_VOTE_RESULTS;
+    this.broadcastGameDataToPlayers();
+  }
+
+  revealRoles() {
+    if (this.state !== WerewolfGame.STATE_VOTE_RESULTS) { return; }
+    this.revealingRoles = true;
+    this.broadcastGameDataToPlayers();
   }
 
   endGame() {
@@ -201,10 +269,12 @@ class WerewolfGame extends Game {
   serialize() {
     return {
       gameId: WerewolfGame.GAME_ID,
-      roleIds: Object.keys(this.roleIds).filter(id => !!this.roleIds[id]),
       players: this.players,
+      roleIds: Object.keys(this.roleIds).filter(id => !!this.roleIds[id]),
+      revealingRoles: this.revealingRoles,
       state: this.state,
       unclaimedRoles: this.unclaimedRoles,
+      votes: this.votes,
       wakeUpRole: this.wakeUpRole,
     }
   }

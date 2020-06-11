@@ -16,12 +16,10 @@ function TroublemakerView({ showWakeUp }) {
   const socket = useSelector(socketSelector);
   const otherPlayers = Object.values(players).filter(player => player.id !== currPlayer.id);
 
-  const switchRoles = () => {
-    socket.emit('playerAction', {
-      action: 'troublemakeRoles',
-      playerIds: targets,
-    });
-  };
+  const switchRoles = () => socket.emit('playerAction', {
+    action: 'troublemakeRoles',
+    playerIds: targets,
+  });
 
   const onChange = value => {
     if (value.length > 2) {

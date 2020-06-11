@@ -86,7 +86,7 @@ function NighttimeView() {
   };
 
   const renderEmoji = () => {
-    switch (currPlayer.originalRole) {
+    switch (currPlayer.lastKnownRole) {
       case ROLE_WEREWOLF:
         return '🐺';
       case ROLE_MASON:
@@ -101,6 +101,8 @@ function NighttimeView() {
         return '☕️';
       case ROLE_HUNTER:
         return '🏹';
+      case ROLE_DOPPELGANGER:
+        return '👯‍♀️';
       default:
         return;
     }
@@ -113,7 +115,11 @@ function NighttimeView() {
           {isAwake ? '😳' : '😴'}
         </span>
       </h1>
-      <h4>Your starting role is: {LABELS[currPlayer.lastKnownRole]} {renderEmoji()}</h4>
+      <h4>
+        Your
+        {currPlayer.lastKnownRole !== currPlayer.originalRole ? ' last known ' : ' starting '}
+        role is: {LABELS[currPlayer.lastKnownRole]} {renderEmoji()}
+      </h4>
       <h5>
         Team {getTeamLabel(currPlayer.lastKnownRole)}
       </h5>

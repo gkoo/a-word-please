@@ -18,6 +18,8 @@ export const STATE_AWP_ENTERING_GUESS = 5;
 export const STATE_WW_CHOOSING_ROLES = 3;
 export const STATE_WW_NIGHTTIME = 4;
 export const STATE_WW_DAYTIME = 5;
+export const STATE_WW_VOTING = 6;
+export const STATE_WW_VOTE_RESULTS = 7;
 
 export const ROLE_WEREWOLF = 0;
 export const ROLE_MINION = 1;
