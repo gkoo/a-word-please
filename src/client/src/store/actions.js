@@ -79,9 +79,9 @@ export function receiveGameData(gameData) {
   }
 }
 
-export function receiveRoomData({ selectedGame, users }) {
+export function receiveRoomData(data) {
   return {
-    payload: { selectedGame, users },
+    payload: data,
     type: RECEIVE_ROOM_DATA,
   }
 }

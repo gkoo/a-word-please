@@ -18,6 +18,7 @@ export const showRulesModalSelector = state => state.showRulesModal;
 export const showAboutModalSelector = state => state.showAboutModal;
 export const alertsSelector = state => state.alerts;
 export const socketConnectedSelector = state => state.socketConnected;
+export const roomStateSelector = state => state.roomData?.state;
 
 // Game Data
 // A Word, Please?

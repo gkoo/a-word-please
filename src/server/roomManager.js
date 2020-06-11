@@ -55,6 +55,12 @@ class RoomManager {
     room.setUserName(socket, id, name);
   }
 
+  handleReconnect(socket) {
+    const room = this.getRoom(socket);
+    if (!room) { return; }
+    room.sendRoomData(socket);
+  }
+
   handleStartGame(socket) {
     const room = this.getRoom(socket);
     console.log('starting game');

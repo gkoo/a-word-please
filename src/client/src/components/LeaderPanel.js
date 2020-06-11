@@ -10,12 +10,9 @@ import {
   socketSelector,
 } from '../store/selectors';
 import {
-  STATE_PENDING,
-  STATE_TURN_END,
-  STATE_GAME_END,
-  STATE_AWP_ENTERING_CLUES,
-  STATE_AWP_REVIEWING_CLUES,
-  STATE_AWP_ENTERING_GUESS,
+  GAME_STATE_PENDING,
+  GAME_STATE_TURN_END,
+  GAME_STATE_GAME_END,
 } from '../constants';
 import { gameStateSelector } from '../store/selectors';
 
@@ -55,7 +52,7 @@ function LeaderPanel({ numUsers }) {
   const wrongNumPlayers = numUsers < 2;
 
   const renderStartGameButton = () => {
-    const buttonLabel = gameState === STATE_PENDING ? 'Start game' : 'New game';
+    const buttonLabel = gameState === GAME_STATE_PENDING ? 'Start game' : 'New game';
 
     if (wrongNumPlayers) {
       return <Button onClick={startGame} disabled>{buttonLabel}</Button>;
@@ -66,13 +63,13 @@ function LeaderPanel({ numUsers }) {
   return (
     <div>
       <ButtonGroup>
-        {[STATE_PENDING, STATE_GAME_END].includes(gameState) && renderStartGameButton()}
+        {[GAME_STATE_PENDING, GAME_STATE_GAME_END].includes(gameState) && renderStartGameButton()}
         {
-          gameState === STATE_TURN_END &&
+          gameState === GAME_STATE_TURN_END &&
             <Button onClick={nextTurn}>Next Turn</Button>
         }
         {
-          (gameState !== STATE_PENDING && gameState !== STATE_GAME_END) &&
+          (gameState !== GAME_STATE_PENDING && gameState !== GAME_STATE_GAME_END) &&
             <Button onClick={endGame}>End game</Button>
         }
         {

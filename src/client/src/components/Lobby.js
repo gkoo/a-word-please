@@ -35,14 +35,14 @@ function Lobby({ messages, roomCode, users }) {
             <h1 className='room-code'>{roomCode}</h1>
           </Col>
         </Row>
-        <Row>
+        <Row className='my-3'>
           <Col xs={6} md={{ offset: 2, span: 4 }}>
             <Card
               className={cx('game-tile', { selected: selectedGame === GAME_A_WORD_PLEASE})}
               onClick={() => onChooseGame(GAME_A_WORD_PLEASE)}
             >
               <Card.Body className='text-center'>
-                <h1>A Word, Please?</h1>
+                <h3>A Word, Please?</h3>
               </Card.Body>
             </Card>
           </Col>
@@ -52,14 +52,14 @@ function Lobby({ messages, roomCode, users }) {
               onClick={() => onChooseGame(GAME_WEREWOLF)}
             >
               <Card.Body className='text-center'>
-                <h1>Werewolf</h1>
+                <h3>Werewolf</h3>
               </Card.Body>
             </Card>
           </Col>
         </Row>
         {
           selectedGame &&
-            <div className='my-5'>
+            <div className='my-3'>
               <Row>
                 <Col className='text-center'>
                   <Button variant='link' onClick={onShowRulesModal}>How to play</Button>

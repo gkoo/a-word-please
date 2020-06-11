@@ -4,9 +4,12 @@ export const routePrefix = '/a-word-please';
 export const GAME_A_WORD_PLEASE = 1;
 export const GAME_WEREWOLF = 2;
 
-export const STATE_PENDING = 0;
-export const STATE_TURN_END = 1;
-export const STATE_GAME_END = 2;
+export const GAME_STATE_PENDING = 0;
+export const GAME_STATE_TURN_END = 1;
+export const GAME_STATE_GAME_END = 2;
+
+export const ROOM_STATE_LOBBY = 1;
+export const ROOM_STATE_GAME = 2;
 
 export const STATE_AWP_ENTERING_CLUES = 3;
 export const STATE_AWP_REVIEWING_CLUES = 4;

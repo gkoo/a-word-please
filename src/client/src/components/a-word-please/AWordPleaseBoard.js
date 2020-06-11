@@ -8,8 +8,8 @@ import {
   STATE_AWP_ENTERING_CLUES,
   STATE_AWP_REVIEWING_CLUES,
   STATE_AWP_ENTERING_GUESS,
-  STATE_TURN_END,
-  STATE_GAME_END,
+  GAME_STATE_TURN_END,
+  GAME_STATE_GAME_END,
 } from '../../constants';
 import DuplicatesModal from './DuplicatesModal';
 import EnteringCluesView from './EnteringCluesView';
@@ -66,11 +66,11 @@ function AWordPleaseBoard() {
               />
           }
           {
-            gameState === STATE_TURN_END &&
+            gameState === GAME_STATE_TURN_END &&
               <TurnEndView />
           }
           {
-            gameState === STATE_GAME_END &&
+            gameState === GAME_STATE_GAME_END &&
               <GameEndView />
           }
         </Col>

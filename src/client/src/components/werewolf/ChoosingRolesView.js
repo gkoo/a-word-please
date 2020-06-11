@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 
 import Button from 'react-bootstrap/Button'
@@ -6,27 +6,18 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Form from 'react-bootstrap/Form'
 
-import { playersSelector, roleIdsSelector, socketSelector } from '../../store/selectors';
 import {
-  ROLE_WEREWOLF,
-  ROLE_MINION,
-  ROLE_MASON,
-  ROLE_SEER,
-  ROLE_ROBBER,
-  ROLE_TROUBLEMAKER,
-  ROLE_DRUNK,
-  ROLE_INSOMNIAC,
-  ROLE_HUNTER,
-  ROLE_VILLAGER,
-  ROLE_DOPPELGANGER,
-  ROLE_TANNER,
-} from '../../constants';
+  debugEnabledSelector,
+  playersSelector,
+  roleIdsSelector,
+  socketSelector,
+} from '../../store/selectors';
 
 function ChoosingRolesView() {
-  const [roles, setRoles] = useState({});
   const players = useSelector(playersSelector);
   const socket = useSelector(socketSelector);
   const roleIds = useSelector(roleIdsSelector);
+  const debugEnabled = useSelector(debugEnabledSelector);
 
   const numPlayers = Object.keys(players).length;
   const numSelectedRoles = roleIds.length;
@@ -38,6 +29,7 @@ function ChoosingRolesView() {
 
   const beginNighttime = () => {
     if (numRolesToChoose !== numSelectedRoles) {
+      alert(`Please choose exactly ${numRolesToChoose} roles before continuing.`);
       return;
     }
     socket.emit('playerAction', { action: 'beginNighttime' });
@@ -45,10 +37,6 @@ function ChoosingRolesView() {
 
   const onChange = e => {
     e.preventDefault();
-    if (allRolesChosen()) {
-      alert('You have reached the limit of roles you can choose. Please unselect a role first.');
-      return;
-    }
     socket.emit('playerAction', {
       action: 'toggleRoleSelection',
       roleId: e.target.id,
@@ -70,7 +58,10 @@ function ChoosingRolesView() {
     <div>
       <div className='text-center'>
         <Button onClick={beginNighttime} disabled={!allRolesChosen()}>Go to sleep</Button>
-        {/*<Button onClick={debug}>Debug</Button>*/}
+        {
+          debugEnabled &&
+            <Button onClick={debug}>Debug</Button>
+        }
       </div>
       <Form>
         {/* TODO: "You have n players. Choose n+3 roles to play with" */}

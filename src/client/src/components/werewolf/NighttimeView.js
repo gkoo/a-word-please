@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 
 import DoppelgangerView from './DoppelgangerView';
@@ -22,11 +22,10 @@ import {
   ROLE_TANNER,
   LABELS,
 } from '../../constants';
-import { currPlayerSelector, playersSelector, wakeUpRoleSelector } from '../../store/selectors';
+import { currPlayerSelector, wakeUpRoleSelector } from '../../store/selectors';
 
 function NighttimeView() {
   const currPlayer = useSelector(currPlayerSelector);
-  const players = useSelector(playersSelector);
   const wakeUpRole = useSelector(wakeUpRoleSelector);
   const isAwake = currPlayer.originalRole === wakeUpRole;
 
@@ -67,6 +66,8 @@ function NighttimeView() {
         return '☕️';
       case ROLE_HUNTER:
         return '🏹';
+      default:
+        return;
     }
   };
 

@@ -8,7 +8,6 @@ const AWPGame = require('./awp-game.js');
 const User = require('../user.js');
 
 let game;
-let players;
 
 const mockApp = MockExpress();
 const mockServer = http.createServer(mockApp);

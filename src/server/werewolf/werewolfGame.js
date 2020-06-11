@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const Game = require('../game');
 const WerewolfPlayer = require('./werewolfPlayer');
 
@@ -24,27 +25,27 @@ class WerewolfGame extends Game {
   static MAX_PLAYERS = 10;
 
   static WAKE_UP_ORDER = [
-    ROLE_DOPPELGANGER,
-    ROLE_SEER,
-    ROLE_ROBBER,
-    ROLE_TROUBLEMAKER,
-    ROLE_DRUNK,
-    ROLE_INSOMNIAC,
+    WerewolfGame.ROLE_DOPPELGANGER,
+    WerewolfGame.ROLE_SEER,
+    WerewolfGame.ROLE_ROBBER,
+    WerewolfGame.ROLE_TROUBLEMAKER,
+    WerewolfGame.ROLE_DRUNK,
+    WerewolfGame.ROLE_INSOMNIAC,
   ];
 
   static ROLE_ID_TO_ENUM = {
-    werewolf: ROLE_WEREWOLF,
-    minion: ROLE_MINION,
-    mason: ROLE_MASON,
-    seer: ROLE_SEER,
-    robber: ROLE_ROBBER,
-    troublemaker: ROLE_TROUBLEMAKER,
-    drunk: ROLE_DRUNK,
-    insomniac: ROLE_INSOMNIAC,
-    hunter: ROLE_HUNTER,
-    villager: ROLE_VILLAGER,
-    doppelganger: ROLE_DOPPELGANGER,
-    tanner: ROLE_TANNER,
+    werewolf: WerewolfGame.ROLE_WEREWOLF,
+    minion: WerewolfGame.ROLE_MINION,
+    mason: WerewolfGame.ROLE_MASON,
+    seer: WerewolfGame.ROLE_SEER,
+    robber: WerewolfGame.ROLE_ROBBER,
+    troublemaker: WerewolfGame.ROLE_TROUBLEMAKER,
+    drunk: WerewolfGame.ROLE_DRUNK,
+    insomniac: WerewolfGame.ROLE_INSOMNIAC,
+    hunter: WerewolfGame.ROLE_HUNTER,
+    villager: WerewolfGame.ROLE_VILLAGER,
+    doppelganger: WerewolfGame.ROLE_DOPPELGANGER,
+    tanner: WerewolfGame.ROLE_TANNER,
   };
 
   constructor(io, roomCode) {
@@ -89,7 +90,7 @@ class WerewolfGame extends Game {
         return this.beginNighttime();
       case 'troublemakeRoles':
         if (this.players[playerId].originalRole === WerewolfGame.ROLE_TROUBLEMAKER) {
-          this.troublemakeRoles(data.playerIds);
+          this.switchRoles.apply(this, data.playerIds);
         }
         return;
       case 'robRole':
@@ -120,17 +121,22 @@ class WerewolfGame extends Game {
   }
 
   beginNighttime() {
+    // Assign roles
     const selectedRoleIds = Object.keys(this.roleIds).filter(roleId => !!this.roleIds[roleId]);
     const shuffledRoleIds = _.shuffle(selectedRoleIds);
-    const shuffledRoles = shuffledRoleIds.map(roleId => WerewolfGame.ROLE_ID_TO_ENUM[roleId]);
+    const shuffledRoles = shuffledRoleIds.map(roleId => {
+      const formattedRoleId = roleId.replace(/[^a-z]/, '');
+      return WerewolfGame.ROLE_ID_TO_ENUM[formattedRoleId];
+    });
 
     if (shuffledRoles.length !== Object.keys(this.players).length + 3) { return; }
 
-    // assign roles
     Object.values(this.players).forEach((player, idx) => {
       const role = shuffledRoles[idx];
       player.setRole({ role, isOriginalRole: true });
     });
+
+    this.state = WerewolfGame.STATE_NIGHTTIME;
 
     this.unclaimedRoles = shuffledRoles.slice(shuffledRoles.length - 3);
 
@@ -141,7 +147,7 @@ class WerewolfGame extends Game {
 
   performWakeUpActions() {
     if (this.currentWakeUpIdx >= WerewolfGame.WAKE_UP_ORDER.length) {
-      this.state = STATE_DAYTIME;
+      this.state = WerewolfGame.STATE_DAYTIME;
       this.broadcastGameDataToPlayers();
       return;
     }
@@ -149,7 +155,7 @@ class WerewolfGame extends Game {
     this.wakeUpRole = WerewolfGame.WAKE_UP_ORDER[this.currentWakeUpIdx];
 
     const wakeUpPlayers = Object.values(this.players).filter(
-      player => player.originalRole === wakeUpRole,
+      player => player.originalRole === this.wakeUpRole,
     );
 
     if (wakeUpPlayers.length === 0) {
@@ -162,15 +168,8 @@ class WerewolfGame extends Game {
 
   robRole(robberId, victimId) {
     const robber = this.players[robberId];
-    const victim = this.players[victimId];
-    switchRoles(robber, victim);
+    this.switchRoles(robberId, victimId);
     robber.setLastKnownRole(robber.role);
-    this.nextTurn();
-  }
-
-  troublemakeRoles(playerIds) {
-    const players = playerIds.map(playerId => this.players[playerId]);
-    switchRoles(players[0], players[2]);
     this.nextTurn();
   }
 
@@ -184,7 +183,9 @@ class WerewolfGame extends Game {
     this.nextTurn();
   }
 
-  switchRoles(player1, player2) {
+  switchRoles(player1Id, player2Id) {
+    const player1 = this.players[player1Id];
+    const player2 = this.players[player2Id];
     const tmpRole = player1.role;
     player1.setRole({ role: player2.role, isOriginal: false });
     player2.setRole({ role: tmpRole, isOriginal: false });

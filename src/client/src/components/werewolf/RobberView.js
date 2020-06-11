@@ -6,7 +6,7 @@ import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 
-import { currPlayerSelector, playersSelector, socketSelector, unclaimedRolesSelector } from '../../store/selectors';
+import { currPlayerSelector, playersSelector, socketSelector } from '../../store/selectors';
 import { LABELS } from '../../constants';
 
 function RobberView() {

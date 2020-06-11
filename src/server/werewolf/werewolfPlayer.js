@@ -7,9 +7,9 @@ class WerewolfPlayer extends Player {
 
   setRole({ role, isOriginalRole }) {
     this.role = role;
-    this.lastKnownRole = role;
     if (isOriginalRole) {
       this.originalRole = role;
+      this.lastKnownRole = role;
     }
   }
 
@@ -17,7 +17,7 @@ class WerewolfPlayer extends Player {
     this.lastKnownRole = role;
   }
 
-  serialize() = {
+  serialize() {
     return {
       ...super.serialize(),
       lastKnownRole: this.lastKnownRole,
@@ -27,4 +27,4 @@ class WerewolfPlayer extends Player {
   }
 }
 
-module.exports = Player;
+module.exports = WerewolfPlayer;
