@@ -6,39 +6,60 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Form from 'react-bootstrap/Form'
 
-import { playersSelector, socketSelector } from '../../store/selectors';
+import { playersSelector, roleIdsSelector, socketSelector } from '../../store/selectors';
+import {
+  ROLE_WEREWOLF,
+  ROLE_MINION,
+  ROLE_MASON,
+  ROLE_SEER,
+  ROLE_ROBBER,
+  ROLE_TROUBLEMAKER,
+  ROLE_DRUNK,
+  ROLE_INSOMNIAC,
+  ROLE_HUNTER,
+  ROLE_VILLAGER,
+  ROLE_DOPPELGANGER,
+  ROLE_TANNER,
+} from '../../constants';
 
 function ChoosingRolesView() {
   const [roles, setRoles] = useState({});
   const players = useSelector(playersSelector);
   const socket = useSelector(socketSelector);
-
-  const getAllCheckedRoles = () => {
-    return Object.keys(roles).filter(role => !!roles[role]);
-  };
+  const roleIds = useSelector(roleIdsSelector);
 
   const numPlayers = Object.keys(players).length;
-  const numSelectedRoles = getAllCheckedRoles().length;
+  const numSelectedRoles = roleIds.length;
   const numRolesToChoose = numPlayers + 3;
 
-  const startGame = () => {
+  const debug = () => {
+    socket.emit('debug');
+  };
+
+  const beginNighttime = () => {
     if (numRolesToChoose !== numSelectedRoles) {
       return;
     }
-    socket.emit('selectRoles', getAllCheckedRoles());
+    socket.emit('playerAction', { action: 'beginNighttime' });
   };
 
   const onChange = e => {
-    setRoles({
-      ...roles,
-      [e.target.id]: e.target.checked,
+    e.preventDefault();
+    if (allRolesChosen()) {
+      alert('You have reached the limit of roles you can choose. Please unselect a role first.');
+      return;
+    }
+    socket.emit('playerAction', {
+      action: 'toggleRoleSelection',
+      roleId: e.target.id,
+      selected: e.target.checked,
     });
   };
 
   const renderRoleCheckbox = (id, label) => {
     return (
       <Form.Group controlId={id}>
-        <Form.Check id={id} label={label} onChange={onChange}/>
+        <Form.Check id={id} label={label} onChange={onChange} checked={roleIds.indexOf(id) >= 0}/>
       </Form.Group>
     );
   };
@@ -48,7 +69,8 @@ function ChoosingRolesView() {
   return (
     <div>
       <div className='text-center'>
-        <Button onClick={startGame} disabled={!allRolesChosen()}>Go to sleep</Button>
+        <Button onClick={beginNighttime} disabled={!allRolesChosen()}>Go to sleep</Button>
+        {/*<Button onClick={debug}>Debug</Button>*/}
       </div>
       <Form>
         {/* TODO: "You have n players. Choose n+3 roles to play with" */}
@@ -75,6 +97,7 @@ function ChoosingRolesView() {
             {renderRoleCheckbox('werewolf1', 'Werewolf')}
             {renderRoleCheckbox('werewolf2', 'Werewolf')}
             {renderRoleCheckbox('werewolf3', 'Werewolf')}
+            {renderRoleCheckbox('minion', 'Minion')}
 
             <h2>Team Tanner</h2>
             {renderRoleCheckbox('tanner', 'Tanner')}

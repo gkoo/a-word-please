@@ -28,7 +28,7 @@ class Game {
     throw new Error('newGame not implemented!');
   }
 
-  addPlayer() {
+  addPlayer(user) {
     throw new Error('removePlayer not implemented!');
   }
 

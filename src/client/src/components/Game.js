@@ -9,19 +9,6 @@ import AWordPleaseBoard from './a-word-please/AWordPleaseBoard';
 import WerewolfBoard from './werewolf/WerewolfBoard';
 import { gameIdSelector } from '../store/selectors';
 
-const renderGame = gameId => {
-  console.log('renderGame');
-  switch (gameId) {
-    case GAME_A_WORD_PLEASE:
-      return <AWordPleaseBoard />;
-    case GAME_WEREWOLF:
-      // TODO
-      return <WerewolfBoard />;
-    default:
-      throw new Error('Unrecognized game id');
-  }
-}
-
 function Game() {
   const gameId = useSelector(gameIdSelector);
 
@@ -29,7 +16,14 @@ function Game() {
     <>
       <Row>
         <Col>
-          {renderGame(gameId)}
+          {
+            gameId === GAME_A_WORD_PLEASE &&
+              <AWordPleaseBoard />
+          }
+          {
+            gameId === GAME_WEREWOLF &&
+              <WerewolfBoard />
+          }
         </Col>
       </Row>
     </>

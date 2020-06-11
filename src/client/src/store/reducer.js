@@ -5,6 +5,20 @@ import {
   env,
   GAME_A_WORD_PLEASE,
   GAME_WEREWOLF,
+
+  ROLE_WEREWOLF,
+  ROLE_MINION,
+  ROLE_MASON,
+  ROLE_SEER,
+  ROLE_ROBBER,
+  ROLE_TROUBLEMAKER,
+  ROLE_DRUNK,
+  ROLE_INSOMNIAC,
+  ROLE_HUNTER,
+  ROLE_VILLAGER,
+  ROLE_DOPPELGANGER,
+  ROLE_TANNER,
+
   STATE_PENDING,
   STATE_TURN_END,
   STATE_GAME_END,
@@ -12,6 +26,8 @@ import {
   STATE_AWP_REVIEWING_CLUES,
   STATE_AWP_ENTERING_GUESS,
   STATE_WW_CHOOSING_ROLES,
+  STATE_WW_NIGHTTIME,
+  STATE_WW_DAYTIME,
 } from '../constants';
 
 // Change to 1 to develop UI
@@ -97,7 +113,6 @@ const testAwpGameData = {
 };
 
 const testWerewolfGameData = {
-  state: STATE_WW_CHOOSING_ROLES,
   gameId: GAME_WEREWOLF,
   players: {
     gordon: {
@@ -105,33 +120,43 @@ const testWerewolfGameData = {
       name: 'Gordon',
       isLeader: true,
       color: 'blue',
+      role: ROLE_TROUBLEMAKER,
     },
     steve: {
       id: 'steve',
       name: 'Steve',
       color: 'indigo',
+      role: ROLE_INSOMNIAC,
     },
     yuriko: {
       id: 'yuriko',
       name: 'Yuriko',
       color: 'purple',
+      role: ROLE_VILLAGER,
     },
     aj: {
       id: 'aj',
       name: 'AJ',
       color: 'pink',
+      role: ROLE_WEREWOLF,
     },
     willy: {
       id: 'willy',
       name: 'Willy',
       color: 'red',
+      role: ROLE_ROBBER,
     },
     rishi: {
       id: 'rishi',
       name: 'Rishi',
       color: 'orange',
+      role: ROLE_VILLAGER,
     },
   },
+  roleIds: [],
+  state: STATE_WW_NIGHTTIME,
+  unclaimedRoles: [ROLE_WEREWOLF, ROLE_DRUNK, ROLE_VILLAGER],
+  wakeUpRole: ROLE_TROUBLEMAKER,
 };
 
 const testState = {
@@ -333,19 +358,6 @@ export default function reducer(state = stateToUse, action) {
       return state;
 
     case actions.RECEIVE_GAME_DATA:
-      const {
-        clues,
-        currGuess,
-        currWord,
-        gameId,
-        guesserId,
-        numPoints,
-        playerOrder,
-        roundNum,
-        skippedTurn,
-        totalNumRounds,
-      } = action.payload;
-
       players = action.payload.players;
 
       newPlayers = {};
@@ -396,7 +408,6 @@ export default function reducer(state = stateToUse, action) {
 
     case actions.SET_ROOM_CODE:
       const { roomCode } = action.payload;
-      const isHomepage = !roomCode;
 
       return {
         ...state,

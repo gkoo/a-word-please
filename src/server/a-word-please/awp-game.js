@@ -2,7 +2,7 @@ const _ = require('lodash');
 const uuid = require('uuid');
 
 const Game = require('../game');
-const Player = require('./player.js');
+const Player = require('../player.js');
 const wordlist = require('./wordlist.js');
 
 class AWPGame extends Game {

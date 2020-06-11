@@ -20,8 +20,12 @@ export const alertsSelector = state => state.alerts;
 export const socketConnectedSelector = state => state.socketConnected;
 
 // Game Data
+// A Word, Please?
 export const gameDataSelector = state => state.gameData;
-export const gameIdSelector = state => state.gameData.gameId;
+export const gameIdSelector = createSelector(
+  gameDataSelector,
+  gameData => gameData && gameData.gameId
+);
 export const cluesSelector = createSelector(
   gameDataSelector,
   gameData => gameData && gameData.clues
@@ -82,4 +86,17 @@ export const numRoundsLeftSelector = createSelector(
   roundNumSelector,
   totalNumRoundsSelector,
   (roundNum, totalNumRounds) => Math.max(totalNumRounds - roundNum, 0),
+);
+// Werewolf
+export const roleIdsSelector = createSelector(
+  gameDataSelector,
+  gameData => gameData && gameData.roleIds
+);
+export const wakeUpRoleSelector = createSelector(
+  gameDataSelector,
+  gameData => gameData && gameData.wakeUpRole
+)
+export const unclaimedRolesSelector = createSelector(
+  gameDataSelector,
+  gameData => gameData && gameData.unclaimedRoles
 );

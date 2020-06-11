@@ -5,11 +5,11 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 
 import ChoosingRolesView from './ChoosingRolesView';
+import NighttimeView from './NighttimeView';
 import {
   STATE_WW_CHOOSING_ROLES,
-  STATE_WW_NIGHTTIME_ACTIONS,
-  STATE_WW_DAYTIME_ACTIONS,
-  STATE_WW_VOTING,
+  STATE_WW_NIGHTTIME,
+  STATE_WW_DAYTIME,
 } from '../../constants';
 import * as selectors from '../../store/selectors';
 
@@ -23,6 +23,10 @@ function WerewolfBoard() {
           {
             gameState === STATE_WW_CHOOSING_ROLES &&
               <ChoosingRolesView />
+          }
+          {
+            gameState === STATE_WW_NIGHTTIME &&
+              <NighttimeView />
           }
         </Col>
       </Row>
