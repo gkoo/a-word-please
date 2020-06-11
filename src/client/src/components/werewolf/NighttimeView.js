@@ -5,7 +5,6 @@ import DoppelgangerView from './DoppelgangerView';
 import SeerView from './SeerView';
 import RobberView from './RobberView';
 import TroublemakerView from './TroublemakerView';
-import DrunkView from './DrunkView';
 import InsomniacView from './InsomniacView';
 import WerewolfView from './WerewolfView';
 import HunterView from './HunterView';
@@ -45,7 +44,7 @@ const getTeamLabel = role => {
 function NighttimeView() {
   const currPlayer = useSelector(currPlayerSelector);
   const wakeUpRole = useSelector(wakeUpRoleSelector);
-  const isAwake = currPlayer.originalRole === wakeUpRole;
+  const isAwake = currPlayer.originalRole === wakeUpRole && wakeUpRole !== ROLE_DRUNK;
 
   const renderWakeUp = () => {
     switch (currPlayer.originalRole) {
@@ -57,8 +56,6 @@ function NighttimeView() {
         return <RobberView showWakeUp={true} />;
       case ROLE_TROUBLEMAKER:
         return <TroublemakerView showWakeUp={true} />;
-      case ROLE_DRUNK:
-        return <DrunkView showWakeUp={true} />;
       case ROLE_INSOMNIAC:
         return <InsomniacView />;
       default:

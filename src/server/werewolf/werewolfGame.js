@@ -191,6 +191,13 @@ class WerewolfGame extends Game {
     }
 
     this.broadcastGameDataToPlayers();
+
+    if (this.wakeUpRole === WerewolfGame.ROLE_DRUNK) {
+      // This role is special in that it doesn't require any action from the player. Let's just
+      // perform it for them to speed up the game.
+      if (wakeUpPlayers.length !== 1) { throw new Error('Got more than one drunk'); }
+      this.swapRoleWithUnclaimed(wakeUpPlayers[0].id);
+    }
   }
 
   robRole(robberId, victimId) {

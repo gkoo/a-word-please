@@ -52,7 +52,8 @@ function DaytimeView() {
           currPlayer.lastKnownRole === ROLE_DRUNK &&
             <>
               <u>???</u>
-              ({' ' + LABELS[currPlayer.lastKnownRole]})
+              {' '}
+              ({LABELS[currPlayer.lastKnownRole]})
             </>
         }
         {

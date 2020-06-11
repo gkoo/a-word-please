@@ -128,6 +128,25 @@ describe('performWakeUpActions', () => {
       expect(game.wakeUpRole).not.toBe(WerewolfGame.ROLE_DOPPELGANGER);
     });
   });
+
+  describe('when it is the Drunk\'s turn', () => {
+    beforeEach(() => {
+      game.currentWakeUpIdx = 4;
+      game.unclaimedRoles = [
+        WerewolfGame.ROLE_WEREWOLF,
+        WerewolfGame.ROLE_WEREWOLF,
+        WerewolfGame.ROLE_WEREWOLF,
+      ];
+      game.players['user2'].originalRole = WerewolfGame.ROLE_DRUNK;
+      game.players['user2'].role = WerewolfGame.ROLE_DRUNK;
+    });
+
+    it('swaps roles with an unclaimed role', () => {
+      subject();
+      expect(game.players['user2'].role).toBe(WerewolfGame.ROLE_WEREWOLF);
+      expect(game.unclaimedRoles).toContain(WerewolfGame.ROLE_DRUNK);
+    });
+  });
 });
 
 describe('handlePlayerAction', () => {
@@ -195,8 +214,8 @@ describe('swapRoleWithUnclaimed', () => {
   beforeEach(() => {
     game.unclaimedRoles = [
       WerewolfGame.ROLE_WEREWOLF,
-      WerewolfGame.ROLE_HUNTER,
-      WerewolfGame.ROLE_VILLAGER,
+      WerewolfGame.ROLE_WEREWOLF,
+      WerewolfGame.ROLE_WEREWOLF,
     ];
     game.players['user1'].role = WerewolfGame.ROLE_DRUNK;
   });
@@ -204,11 +223,7 @@ describe('swapRoleWithUnclaimed', () => {
   it('swaps the player\'s role with a random unclaimed role', () => {
     game.swapRoleWithUnclaimed('user1');
     expect(game.unclaimedRoles).toContain(WerewolfGame.ROLE_DRUNK);
-    expect([
-      WerewolfGame.ROLE_WEREWOLF,
-      WerewolfGame.ROLE_HUNTER,
-      WerewolfGame.ROLE_VILLAGER,
-    ]).toContain(game.players['user1'].role)
+    expect(game.players['user1'].role).toBe(WerewolfGame.ROLE_WEREWOLF);
   });
 });
 
