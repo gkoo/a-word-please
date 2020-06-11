@@ -30,14 +30,17 @@ function EnteringGuessView({
   const onSubmit = e => {
     e.preventDefault();
     if (!currPlayerIsGuesser) { return; }
-    socket.emit('submitGuess', guess);
+    socket.emit('playerAction', {
+      action: 'submitGuess',
+      guess,
+    });
     setGuess('');
   };
 
   const onSkipTurn = e => {
     e.preventDefault();
     if (!currPlayerIsGuesser) { return; }
-    socket.emit('skipTurn');
+    socket.emit('playerAction', { action: 'skipTurn' });
   };
 
   return (

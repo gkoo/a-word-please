@@ -123,6 +123,21 @@ class AWPGame extends Game {
     this.broadcastGameDataToPlayers();
   }
 
+  handlePlayerAction(playerId, data) {
+    switch (data.action) {
+      case 'submitClue':
+        return this.receiveClue(playerId, data.clue);
+      case 'revealClues':
+        return this.revealCluesToGuesser();
+      case 'submitGuess':
+        return this.receiveGuess(playerId, data.guess);
+      case 'skipTurn':
+        return this.skipTurn();
+      default:
+        throw new Error(`Unexpected action ${data.action}`);
+    }
+  }
+
   receiveClue(playerId, submittedClue) {
     const clue = submittedClue.substring(0, AWPGame.MAX_WORD_LENGTH);
     const formattedClue = clue.toLowerCase().replace(/\s/g, '');

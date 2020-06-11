@@ -18,7 +18,10 @@ function DuplicatesModal({ show }) {
 
   const onRevealClues = e => {
     e.preventDefault();
-    socket.emit('revealClues');
+    socket.emit(
+      'playerAction',
+      { action: 'revealClues' }
+    );
   };
 
   return (

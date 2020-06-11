@@ -74,6 +74,12 @@ class RoomManager {
     room.endGame(socket.id);
   }
 
+  handlePlayerAction(socket, data) {
+    const room = this.getRoom(socket);
+    if (!room) { return; }
+    room.handlePlayerAction(socket, data);
+  }
+
   onUserDisconnect(socket) {
     // socket.rooms gets cleared before we can do any cleanup. Just loop through rooms to find if
     // they have the socket and clean it up.

@@ -44,19 +44,5 @@ io.on('connection', socket => {
   socket.on('nextTurn', () => roomManager.handleNextTurn(socket));
   socket.on('endGame', () => roomManager.handleEndGame(socket));
   socket.on('debug', () => roomManager.onDebug(socket));
-  socket.on('submitClue', clue => {
-    const room = roomManager.getRoom(socket);
-    if (room) {
-      roomManager.getRoom(socket).receiveClue(socket.id, clue);
-    }
-  });
-  socket.on('revealClues', () => {
-    roomManager.getRoom(socket) && roomManager.getRoom(socket).revealClues()
-  });
-  socket.on('submitGuess', guess => {
-    roomManager.getRoom(socket) && roomManager.getRoom(socket).receiveGuess(socket.id, guess)
-  });
-  socket.on('skipTurn', guess => {
-    roomManager.getRoom(socket) && roomManager.getRoom(socket).skipTurn()
-  });
+  socket.on('playerAction', data => roomManager.handlePlayerAction(socket, data));
 });

@@ -25,27 +25,31 @@ class Game {
   }
 
   newGame() {
-    throw 'newGame not implemented!';
+    throw new Error('newGame not implemented!');
   }
 
   addPlayer() {
-    throw 'removePlayer not implemented!';
+    throw new Error('removePlayer not implemented!');
   }
 
   removePlayer() {
-    throw 'removePlayer not implemented!';
+    throw new Error('removePlayer not implemented!');
+  }
+
+  handlePlayerAction() {
+    throw new Error('handlePlayerAction not implemented!');
   }
 
   endGame() {
-    throw 'endGame not implemented!';
+    throw new Error('endGame not implemented!');
   }
 
   setPending() {
-    throw 'setPending not implemented!';
+    throw new Error('setPending not implemented!');
   }
 
   serialize() {
-    throw 'serialize not implemented!';
+    throw new Error('serialize not implemented!');
   }
 }
 

@@ -43,7 +43,10 @@ function EnteringCluesView({
     if (clue.toLowerCase() === currWord.toLowerCase()) {
       return;
     }
-    socket.emit('submitClue', clue);
+    socket.emit('playerAction', {
+      action: 'submitClue',
+      clue,
+    });
     setClue('');
   };
 

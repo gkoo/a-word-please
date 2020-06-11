@@ -115,6 +115,11 @@ Room.prototype = {
     this.game.nextTurn();
   },
 
+  handlePlayerAction: function(socket, data) {
+    if (!this.game) { return; }
+    this.game.handlePlayerAction(socket.id, data);
+  },
+
   endGame: function(gameInitiatorId) {
     if (!this.game) { return; }
     this.game.endGame();
@@ -122,24 +127,9 @@ Room.prototype = {
 
   setPending: function() { return this.game && this.game.setPending(); },
 
-  receiveClue: function(socketId, clue) {
-    if (!this.game) { return; }
-    this.game.receiveClue(socketId, clue);
-  },
-
   revealClues: function() {
     if (!this.game) { return; }
     this.game.revealCluesToGuesser();
-  },
-
-  receiveGuess: function(socketId, guess) {
-    if (!this.game) { return; }
-    this.game.receiveGuess(socketId, guess);
-  },
-
-  skipTurn: function(socketId, guess) {
-    if (!this.game) { return; }
-    this.game.skipTurn();
   },
 
   getRoomData: function(socketId) {
