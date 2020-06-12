@@ -52,7 +52,7 @@ class WerewolfGame extends Game {
 
   constructor(io, roomCode) {
     super(io, roomCode);
-    this.roleIds = {}; // to sync client views
+    this.roleIds = []; // to sync client views
     this.roles = {}; // for actual game logic
     this.votes = {};
     this.unclaimedRoles = [];
@@ -90,8 +90,8 @@ class WerewolfGame extends Game {
   handlePlayerAction(playerId, data) {
     const currPlayer = this.players[playerId];
     switch (data.action) {
-      case 'toggleRoleSelection':
-        return this.toggleRole(data);
+      case 'setRoleSelection':
+        return this.setRoleIds(data.roleIds);
       case 'beginNighttime':
         return this.beginNighttime();
       case 'troublemakeRoles':
@@ -128,15 +128,14 @@ class WerewolfGame extends Game {
     this.performWakeUpActions();
   }
 
-  toggleRole({ roleId, selected }) {
-    this.roleIds[roleId] = selected;
+  setRoleIds(roleIds) {
+    this.roleIds = roleIds;
     this.broadcastGameDataToPlayers();
   }
 
   beginNighttime() {
     // Assign roles
-    const selectedRoleIds = Object.keys(this.roleIds).filter(roleId => !!this.roleIds[roleId]);
-    const shuffledRoleIds = _.shuffle(selectedRoleIds);
+    const shuffledRoleIds = _.shuffle(this.roleIds);
     const shuffledRoles = shuffledRoleIds.map(roleId => {
       const formattedRoleId = roleId.replace(/[^a-z]/, '');
       return WerewolfGame.ROLE_ID_TO_ENUM[formattedRoleId];
@@ -277,7 +276,7 @@ class WerewolfGame extends Game {
     return {
       gameId: WerewolfGame.GAME_ID,
       players: this.players,
-      roleIds: Object.keys(this.roleIds).filter(id => !!this.roleIds[id]),
+      roleIds: this.roleIds,
       revealingRoles: this.revealingRoles,
       state: this.state,
       unclaimedRoles: this.unclaimedRoles,

@@ -54,10 +54,7 @@ function LeaderPanel({ numUsers }) {
   const renderStartGameButton = () => {
     const buttonLabel = gameState === GAME_STATE_PENDING ? 'Start game' : 'New game';
 
-    if (wrongNumPlayers) {
-      return <Button onClick={startGame} disabled>{buttonLabel}</Button>;
-    }
-    return <Button onClick={startGame}>{buttonLabel}</Button>;
+    return <Button onClick={startGame} disabled={wrongNumPlayers}>{buttonLabel}</Button>;
   };
 
   return (

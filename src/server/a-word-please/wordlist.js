@@ -1131,4 +1131,5 @@ module.exports = [
   'thermos',
   'mango',
   'black',
+  'monitor',
 ];
