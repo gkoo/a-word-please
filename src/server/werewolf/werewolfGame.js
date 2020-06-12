@@ -229,7 +229,7 @@ class WerewolfGame extends Game {
   beginDaytime() {
     this.state = WerewolfGame.STATE_DAYTIME;
     // Automatically switch to voting after 5 minutes
-    this.votingTimeoutId = setTimeout(() => enableVoting(), 300000);
+    this.votingTimeoutId = setTimeout(() => this.enableVoting(), 300000);
     this.broadcastGameDataToPlayers();
   }
 
