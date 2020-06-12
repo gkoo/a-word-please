@@ -273,6 +273,9 @@ export default function reducer(state = stateToUse, action) {
       state.socket.close();
       return {
         ...state,
+        gameData: null,
+        name: null,
+        roomData: null,
         socketConnected: false,
       }
 
