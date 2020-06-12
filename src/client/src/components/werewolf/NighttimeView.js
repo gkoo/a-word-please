@@ -7,6 +7,7 @@ import RobberView from './RobberView';
 import TroublemakerView from './TroublemakerView';
 import InsomniacView from './InsomniacView';
 import WerewolfView from './WerewolfView';
+import DrunkView from './DrunkView';
 import HunterView from './HunterView';
 import MasonView from './MasonView';
 import MinionView from './MinionView';
@@ -78,20 +79,24 @@ function NighttimeView() {
         return <VillagerView />;
       case ROLE_TANNER:
         return <TannerView />;
+      case ROLE_DRUNK:
+        return <DrunkView />;
+      case ROLE_INSOMNIAC:
+        return <InsomniacView />;
       default:
         return;
     }
   };
 
   return (
-    <div className='text-center'>
+    <div className='text-center pt-5'>
+      <h1>🌙</h1>
       {isAwake && renderWakeUp()}
-      {
-        !isAwake && (
-          <div className='my-3'>
-            {renderPassiveView()}
-          </div>
-        )
+      {!isAwake &&
+        <>
+          <div className='my-3'>{renderPassiveView()}</div>
+          <p><em>Waiting for others to finish their turns...</em></p>
+        </>
       }
     </div>
   );

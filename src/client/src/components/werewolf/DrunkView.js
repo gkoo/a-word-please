@@ -5,6 +5,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 
+import { LABELS, ROLE_DRUNK } from '../../constants';
 import { socketSelector } from '../../store/selectors';
 
 function DrunkView() {
@@ -16,17 +17,8 @@ function DrunkView() {
 
   return (
     <>
-      <h1>Wake up.</h1>
-      <Row className='my-3'>
-        <Col>
-          Your role will be switched with an unclaimed role. You may now go back to sleep.
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <Button onClick={swapRoleWithUnclaimed}>Go back to sleep</Button>
-        </Col>
-      </Row>
+      <p>{LABELS[ROLE_DRUNK]}: Your role will be switched with an unclaimed role sometime during the night.</p>
+      <p>You do not have any nighttime actions.</p>
     </>
   );
 }

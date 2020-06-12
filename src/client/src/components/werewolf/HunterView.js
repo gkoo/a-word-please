@@ -1,8 +1,16 @@
 import React from 'react';
 
+import { LABELS, ROLE_HUNTER } from '../../constants';
+
 function HunterView() {
   return (
-    <p>If you die, the person you vote to kill also dies.</p>
+    <>
+      <p>
+        {LABELS[ROLE_HUNTER]}: If you are eliminated, the person you vote to eliminate is also
+        eliminated.
+      </p>
+      <p>You do not have any nighttime actions.</p>
+    </>
   );
 }
 

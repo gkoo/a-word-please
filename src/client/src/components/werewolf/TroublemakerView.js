@@ -41,8 +41,7 @@ function TroublemakerView({ showWakeUp }) {
     <>
       {showWakeUp && <h1>Wake up.</h1>}
       <p>
-        Choose two other players and switch their roles. Those players will now be on the teams of
-        their new roles. Devious!
+        Choose two other players and switch their roles. Devious!
       </p>
       <Row>
         <Col>

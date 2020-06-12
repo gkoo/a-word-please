@@ -14,6 +14,9 @@ function WerewolfView() {
 
   return (
     <>
+      <p>
+        {LABELS[ROLE_WEREWOLF]}: Avoid persecution from the villagers!
+      </p>
       {
         otherWerewolves.length > 0 &&
           <p>
@@ -25,6 +28,7 @@ function WerewolfView() {
         otherWerewolves.length === 0 &&
           <p>It seems there aren't any other werewolves...</p>
       }
+      You do not have any nighttime actions.
     </>
   );
 }

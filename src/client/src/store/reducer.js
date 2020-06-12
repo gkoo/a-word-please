@@ -114,9 +114,10 @@ const testAwpGameData = {
   totalNumRounds: 13,
 };
 
-const roleToTest = ROLE_SEER;
+const roleToTest = ROLE_DOPPELGANGER;
 
 const testWerewolfGameData = {
+  wakeUpRole: roleToTest,
   gameId: GAME_WEREWOLF,
   players: {
     gordon: {
@@ -190,7 +191,6 @@ const testWerewolfGameData = {
     'aj': 'yuriko',
     'rishi': 'steve',
   },
-  wakeUpRole: ROLE_SEER,
 };
 
 const testState = {

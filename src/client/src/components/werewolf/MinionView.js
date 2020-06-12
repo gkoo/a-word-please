@@ -15,7 +15,7 @@ function MinionView() {
   return (
     <>
       <p>
-        Draw suspicion away from the werewolves. If the werewolves win, you win.
+        {LABELS[ROLE_MINION]}: Draw suspicion away from the werewolves. If the werewolves win, you win.
       </p>
       {
         werewolves.length > 0 &&
@@ -23,6 +23,8 @@ function MinionView() {
             <p>
               The {werewolves.length > 1 ? 'werewolves are' : 'werewolf is'}
               {werewolves.map(player => <PlayerLabel player={player}/>)}.
+            </p>
+            <p>
               They don't know that you are the {LABELS[ROLE_MINION]}.
             </p>
           </>

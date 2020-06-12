@@ -6,6 +6,8 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
+import PlayerLabel from './PlayerLabel';
+import RoleCard from './RoleCard';
 import { currPlayerSelector, playersSelector, socketSelector, unclaimedRolesSelector } from '../../store/selectors';
 import { LABELS, ROLE_INSOMNIAC } from '../../constants';
 
@@ -41,7 +43,7 @@ function SeerView({ showWakeUp }) {
     <>
       {showWakeUp && <h1>Wake up.</h1>}
       <p>
-        You may choose to look at another player's role, or you may choose to see
+        You may choose to look at another player's role or choose to see
         two of the unclaimed role cards.
       </p>
       {
@@ -57,11 +59,10 @@ function SeerView({ showWakeUp }) {
       }
       {
         revealedPlayer &&
-          <Row>
+          <Row className='mb-3'>
             <Col>
-              {revealedPlayer.name} is currently
-              {revealedPlayer.role === ROLE_INSOMNIAC ? ' an ' : ' a ' }
-              <u>{LABELS[revealedPlayer.role]}</u>.
+              <PlayerLabel player={revealedPlayer} />
+              <RoleCard role={revealedPlayer.role}/>
             </Col>
           </Row>
       }

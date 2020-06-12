@@ -56,7 +56,7 @@ const getDescription = role => {
     case ROLE_DOPPELGANGER:
       return 'Assume the role of another player';
     case ROLE_VILLAGER:
-      return 'You have no special traits';
+      return 'Just an ordinary person';
     default:
       return '';
   };
