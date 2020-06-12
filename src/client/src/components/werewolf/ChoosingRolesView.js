@@ -56,6 +56,12 @@ function ChoosingRolesView() {
   };
 
   const onToggleRole = id => {
+    if (allRolesChosen() && !roleIds.includes(id)) {
+      alert(
+        'You\'ve selected all the required roles. Please remove a role before selecting a new one'
+      );
+      return;
+    }
     const selected = selectedRoleIdMap[id];
     const newRoleIdMap = {
       ...selectedRoleIdMap,
@@ -86,7 +92,7 @@ function ChoosingRolesView() {
         role={role}
         chooseMode={true}
         callback={onToggleRole}
-        selected={roleIds.includes(id)}
+        selected={isSelected}
       />
     );
   };
@@ -130,7 +136,7 @@ function ChoosingRolesView() {
           </Col>
         </Row>
 
-        <Row>
+        <Row className='role-gallery'>
           {
             (!showOnlySelected || !!['werewolf1', 'werewolf2', 'werewolf3'].find(
               roleId => roleIds.includes(roleId)

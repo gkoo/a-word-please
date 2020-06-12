@@ -49,12 +49,10 @@ function LeaderPanel({ numUsers }) {
     socket.emit('debug');
   };
 
-  const wrongNumPlayers = numUsers < 2;
-
   const renderStartGameButton = () => {
     const buttonLabel = gameState === GAME_STATE_PENDING ? 'Start game' : 'New game';
 
-    return <Button onClick={startGame} disabled={wrongNumPlayers}>{buttonLabel}</Button>;
+    return <Button onClick={startGame}>{buttonLabel}</Button>;
   };
 
   return (

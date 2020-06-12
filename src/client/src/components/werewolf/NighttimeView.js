@@ -12,6 +12,7 @@ import MasonView from './MasonView';
 import MinionView from './MinionView';
 import TannerView from './TannerView';
 import VillagerView from './VillagerView';
+import RoleCard from './RoleCard';
 import {
   ROLE_WEREWOLF,
   ROLE_MINION,
@@ -82,51 +83,14 @@ function NighttimeView() {
     }
   };
 
-  const renderEmoji = () => {
-    switch (currPlayer.lastKnownRole) {
-      case ROLE_WEREWOLF:
-        return '🐺';
-      case ROLE_MASON:
-        return '⚒';
-      case ROLE_ROBBER:
-        return '💰';
-      case ROLE_SEER:
-        return '🔍';
-      case ROLE_DRUNK:
-        return '🍺';
-      case ROLE_INSOMNIAC:
-        return '☕️';
-      case ROLE_HUNTER:
-        return '🏹';
-      case ROLE_DOPPELGANGER:
-        return '👯‍♀️';
-      default:
-        return;
-    }
-  };
-
   return (
     <div className='text-center'>
-      <h1>
-        <span>
-          {isAwake ? '😳' : '😴'}
-        </span>
-      </h1>
-      <h4>
-        Your
-        {currPlayer.lastKnownRole !== currPlayer.originalRole ? ' last known ' : ' starting '}
-        role is: {LABELS[currPlayer.lastKnownRole]} {renderEmoji()}
-      </h4>
-      <h5>
-        Team {getTeamLabel(currPlayer.lastKnownRole)}
-      </h5>
       {isAwake && renderWakeUp()}
       {
         !isAwake && (
-          <>
+          <div className='my-3'>
             {renderPassiveView()}
-            <p><em><small>Roles may change throughout the night...</small></em></p>
-          </>
+          </div>
         )
       }
     </div>

@@ -114,7 +114,7 @@ const testAwpGameData = {
   totalNumRounds: 13,
 };
 
-const roleToTest = ROLE_DOPPELGANGER;
+const roleToTest = ROLE_SEER;
 
 const testWerewolfGameData = {
   gameId: GAME_WEREWOLF,
@@ -132,17 +132,17 @@ const testWerewolfGameData = {
       id: 'steve',
       name: 'Steve',
       color: 'indigo',
-      originalRole: ROLE_TROUBLEMAKER,
-      lastKnownRole: ROLE_TROUBLEMAKER,
-      role: ROLE_TROUBLEMAKER,
+      originalRole: ROLE_WEREWOLF,
+      lastKnownRole: ROLE_WEREWOLF,
+      role: ROLE_WEREWOLF,
     },
     yuriko: {
       id: 'yuriko',
       name: 'Yuriko',
       color: 'purple',
-      originalRole: ROLE_ROBBER,
-      lastKnownRole: ROLE_ROBBER,
-      role: ROLE_ROBBER,
+      originalRole: ROLE_WEREWOLF,
+      lastKnownRole: ROLE_WEREWOLF,
+      role: ROLE_WEREWOLF,
     },
     aj: {
       id: 'aj',
@@ -181,7 +181,8 @@ const testWerewolfGameData = {
     'robber',
     'tanner',
   ],
-  state: STATE_WW_CHOOSING_ROLES,
+  //state: STATE_WW_CHOOSING_ROLES,
+  state: STATE_WW_NIGHTTIME,
   unclaimedRoles: [ROLE_WEREWOLF, ROLE_DRUNK, ROLE_VILLAGER],
   votes: {
     'gordon': 'willy',
@@ -189,7 +190,7 @@ const testWerewolfGameData = {
     'aj': 'yuriko',
     'rishi': 'steve',
   },
-  wakeUpRole: roleToTest,
+  wakeUpRole: ROLE_SEER,
 };
 
 const testState = {

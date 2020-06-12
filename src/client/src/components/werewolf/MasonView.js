@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
+import PlayerLabel from './PlayerLabel';
 import { currPlayerSelector, playersSelector } from '../../store/selectors';
 import { LABELS, ROLE_MASON } from '../../constants';
 
@@ -15,7 +16,7 @@ function MasonView() {
     <>
       {
         !!otherMason &&
-          <p>Your fellow mason is {otherMason.name}.</p>
+          <p>Your fellow mason is <PlayerLabel player={otherMason}/></p>
       }
       {
         !otherMason &&

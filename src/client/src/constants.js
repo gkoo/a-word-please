@@ -1,5 +1,5 @@
 export const env = process.env.NODE_ENV;
-export const routePrefix = '/a-word-please';
+export const routePrefix = '';
 
 export const GAME_A_WORD_PLEASE = 1;
 export const GAME_WEREWOLF = 2;

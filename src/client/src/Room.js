@@ -20,7 +20,6 @@ function Room() {
   const dispatch = useDispatch();
   const gameState = useSelector(selectors.gameStateSelector);
   const roomState = useSelector(selectors.roomStateSelector);
-  const messages = useSelector(selectors.messagesSelector);
   const name = useSelector(selectors.nameSelector);
   const socket = useSelector(selectors.socketSelector);
   const socketConnected = useSelector(selectors.socketConnectedSelector);
@@ -33,8 +32,8 @@ function Room() {
 
   useEffect(() => {
     // We open the socket every time we join a room and close the socket when we leave (go back to
-    // homepage). This is so that when we leave, we don't continue to receive messages and the
-    // server doesn't mistake us for still being part of any game.
+    // homepage). This is so that when we leave, the server doesn't mistake us for still being part
+    // of any game.
     if (!socket) {
       dispatch(actions.newSocket());
       return;
@@ -87,15 +86,11 @@ function Room() {
       }
       {
         roomState === ROOM_STATE_LOBBY &&
-          <Lobby
-            messages={messages}
-            roomCode={roomCodeParam}
-            users={users}
-          />
+          <Lobby roomCode={roomCodeParam} users={users} />
       }
       {
         roomState !== ROOM_STATE_LOBBY &&
-          <Game socket={socket} messages={messages} />
+          <Game socket={socket} />
       }
       <NameModal show={!name} />
     </Layout>

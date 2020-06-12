@@ -160,19 +160,50 @@
 
 /* WEREWOLF */
 
-.role-card {
-  border-width: 4px;
-  border-style: solid;
-  min-height: 330px;
+.role-gallery .role-card {
+  float: left;
 }
 
-.role-card.choose-mode:hover {
+.role-gallery .card {
+  height: 330px;
+  margin-right: 0.25rem;
+}
+
+.role-card {
+  margin: 0 auto;
+}
+
+.role-card .card {
+  border-width: 4px;
+  border-style: solid;
+  margin: 0 auto;
+}
+
+.role-card,
+.role-card .card {
+  width: 80%;
+  max-width: 12rem;
+}
+
+.role-gallery .role-card,
+.role-gallery .card {
+  width: 12rem;
+}
+
+@media (min-width: 576px) {
+  .role-card,
+  .role-card .card {
+    width: 100%;
+  }
+}
+
+.role-card.choose-mode .card:hover {
   border-color: #fff;
   cursor: pointer;
 }
 
-.role-card.selected,
-.role-card.selected:hover {
+.role-card.selected .card,
+.role-card.selected .card:hover {
   border-color: #20c997;
 }
 

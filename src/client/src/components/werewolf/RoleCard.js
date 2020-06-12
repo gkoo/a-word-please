@@ -94,20 +94,24 @@ const getEmoji = role => {
 };
 
 function RoleCard({ id, role, chooseMode, selected, callback }) {
+  const noop = () => {};
+  const clickCallback = callback ? () => callback(id) : noop;
+
   return (
-    <Card
-      style={{ width: '12rem' }}
-      className={cx('float-left mr-1 my-1 role-card', { 'choose-mode': chooseMode, selected })}
-      onClick={() => callback(id)}
-    >
-      <Card.Img variant="top" src="/img/yoda.jpg" />
-      <Card.Body>
-        <Card.Title>{LABELS[role]} {getEmoji(role)}</Card.Title>
-        <Card.Text>
-          <em><small>{getDescription(role)}</small></em>
-        </Card.Text>
-      </Card.Body>
-    </Card>
+    <div className={cx('role-card', { 'choose-mode': chooseMode, selected })}>
+      <Card
+        className='my-1'
+        onClick={clickCallback}
+      >
+        <Card.Img variant="top" src="/img/yoda.jpg" />
+        <Card.Body>
+          <Card.Title>{getEmoji(role)} {LABELS[role]}</Card.Title>
+          <Card.Text>
+            <em><small>{getDescription(role)}</small></em>
+          </Card.Text>
+        </Card.Body>
+      </Card>
+    </div>
   );
 }
 
