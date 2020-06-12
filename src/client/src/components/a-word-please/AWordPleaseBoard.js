@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
+import cx from 'classnames';
 
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
@@ -99,7 +100,9 @@ function AWordPleaseBoard() {
           {
             clueGivers.map(clueGiver =>
               <>
-              {clues[clueGiver.id] && '✅ '}
+              <span className={cx('mr-1', { invisible: !clues[clueGiver.id] })}>
+                ✅
+              </span>
               <div className={`player-label ${players[clueGiver.id].color}`}>
                 {clueGiver.name}
               </div>

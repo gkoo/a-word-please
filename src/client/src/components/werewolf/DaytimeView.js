@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
+import cx from 'classnames';
 
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -8,6 +9,7 @@ import Button from 'react-bootstrap/Button';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup'
 
+import PlayerLabel from './PlayerLabel';
 import { LABELS, ROLE_DRUNK, STATE_WW_VOTING } from '../../constants';
 import * as selectors from '../../store/selectors';
 
@@ -44,27 +46,14 @@ function DaytimeView() {
   };
 
   return(
-    <div className='text-center'>
-      <h1>Good morning!</h1>
-      <h3>
-        Your last known role:{' '}
-        {
-          currPlayer.lastKnownRole === ROLE_DRUNK &&
-            <>
-              <u>???</u>
-              {' '}
-              ({LABELS[currPlayer.lastKnownRole]})
-            </>
-        }
-        {
-          currPlayer.lastKnownRole !== ROLE_DRUNK &&
-            <u>{LABELS[currPlayer.lastKnownRole]}</u>
-        }
-      </h3>
-      <p>
-        Hopefully you rested well, because the village needs to vote on who to eliminate. Start
-        deliberating!
-      </p>
+    <div className='px-5'>
+      <div className='mb-5'>
+        <h1>🌞</h1>
+        <h1>Good morning!</h1>
+        <p>
+          Hopefully you rested well, because the village needs to vote on who to eliminate.
+        </p>
+      </div>
       {
         gameState !== STATE_WW_VOTING &&
           <Button onClick={startVoting}>Start Voting</Button>
@@ -91,8 +80,8 @@ function DaytimeView() {
               {
                 Object.values(players).map(player =>
                   <div>
-                    {!!votes[player.id] && '✅ '}
-                    <span className='ml-1'>{player.name}</span>
+                    <span className={cx('mr-1', { invisible: !votes[player.id] })}>✅</span>
+                    <PlayerLabel player={player} />
                   </div>
                 )
               }
@@ -100,7 +89,7 @@ function DaytimeView() {
           </Row>
       }
       <Row className='my-5'>
-        <Col md={{ span: 6, offset: 3 }}>
+        <Col md={{ span: 8, offset: 2 }} lg={{ span: 8, offset: 2 }} xl={{ span: 6, offset: 3 }}>
         <Form.Group>
           <Form.Label>You may take notes in this area</Form.Label>
           <Form.Control

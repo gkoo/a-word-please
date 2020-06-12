@@ -89,8 +89,8 @@ function NighttimeView() {
   };
 
   return (
-    <div className='text-center pt-5'>
-      <h1>🌙</h1>
+    <div>
+      <h1 className='mb-5'>🌙</h1>
       {isAwake && renderWakeUp()}
       {!isAwake &&
         <>

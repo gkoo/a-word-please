@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
+import cx from 'classnames';
 
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
@@ -32,7 +33,7 @@ function GameplayView() {
 
   return (
     <Row>
-      <Col sm={8} className='main-panel py-5'>
+      <Col sm={8} className='main-panel py-5 text-center'>
         {
           gameState === STATE_WW_NIGHTTIME &&
             <NighttimeView />
