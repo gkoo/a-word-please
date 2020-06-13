@@ -65,6 +65,10 @@ class WerewolfGame extends Game {
   }
 
   newGame() {
+    this.roles = {};
+    this.votes = {}
+    this.unclaimedRoles = [];
+    this.revealingRoles = false;
     this.state = WerewolfGame.STATE_CHOOSING_ROLES;
     this.broadcastGameDataToPlayers();
   }
@@ -97,6 +101,7 @@ class WerewolfGame extends Game {
       case 'troublemakeRoles':
         if (currPlayer.originalRole === WerewolfGame.ROLE_TROUBLEMAKER) {
           this.switchRoles.apply(this, data.playerIds);
+          this.nextTurn();
         }
         return;
       case 'robRole':
@@ -222,12 +227,12 @@ class WerewolfGame extends Game {
     const tmpRole = player1.role;
     player1.setRole({ role: player2.role, isOriginal: false });
     player2.setRole({ role: tmpRole, isOriginal: false });
-    this.nextTurn();
   }
 
   beginDaytime() {
     this.state = WerewolfGame.STATE_DAYTIME;
     // Automatically switch to voting after 5 minutes
+    // start voting after 5 minutes
     this.votingTimeoutId = setTimeout(() => this.enableVoting(), 300000);
     this.broadcastGameDataToPlayers();
   }
