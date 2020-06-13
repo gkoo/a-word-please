@@ -49,6 +49,8 @@ const initialState = {
   nextAlertId: 0,
   socketConnected: false,
   messages: [],
+  showRolesModal: false,
+  showRulesModal: false,
   socket: null,
 };
 
@@ -130,7 +132,7 @@ const testWerewolfGameData = {
       id: 'gordon',
       name: 'Gordon',
       isLeader: true,
-      color: 'teal',
+      color: 'indigo',
       originalRole: roleToTest,
       lastKnownRole: roleToTest,
       role: roleToTest,
@@ -146,7 +148,7 @@ const testWerewolfGameData = {
     yuriko: {
       id: 'yuriko',
       name: 'Yuriko',
-      color: 'purple',
+      color: 'indigo',
       originalRole: ROLE_WEREWOLF,
       lastKnownRole: ROLE_WEREWOLF,
       role: ROLE_WEREWOLF,
@@ -154,7 +156,7 @@ const testWerewolfGameData = {
     aj: {
       id: 'aj',
       name: 'AJ',
-      color: 'pink',
+      color: 'indigo',
       originalRole: ROLE_SEER,
       lastKnownRole: ROLE_SEER,
       role: ROLE_SEER,
@@ -162,7 +164,7 @@ const testWerewolfGameData = {
     willy: {
       id: 'willy',
       name: 'Willy',
-      color: 'red',
+      color: 'indigo',
       originalRole: ROLE_ROBBER,
       lastKnownRole: ROLE_ROBBER,
       role: ROLE_ROBBER,
@@ -170,7 +172,7 @@ const testWerewolfGameData = {
     rishi: {
       id: 'rishi',
       name: 'Rishi',
-      color: 'orange',
+      color: 'indigo',
       originalRole: ROLE_VILLAGER,
       lastKnownRole: ROLE_VILLAGER,
       role: ROLE_VILLAGER,
@@ -191,9 +193,9 @@ const testWerewolfGameData = {
   //state: STATE_WW_CHOOSING_ROLES,
   //state: STATE_WW_NIGHTTIME,
   //state: STATE_WW_DAYTIME,
-  //state: STATE_WW_VOTING,
-  state: STATE_WW_VOTE_RESULTS,
-  unclaimedRoles: [ROLE_WEREWOLF, ROLE_DRUNK, ROLE_VILLAGER],
+  state: STATE_WW_VOTING,
+  //state: STATE_WW_VOTE_RESULTS,
+  unclaimedRoles: [ROLE_WEREWOLF, ROLE_DRUNK, ROLE_DOPPELGANGER],
   votes: {
     'gordon': 'willy',
     'steve': 'yuriko',
@@ -417,7 +419,12 @@ export default function reducer(state = stateToUse, action) {
 
       if (players) {
         Object.keys(players).forEach((playerId, idx) => {
-          const color = getColorForPlayerName(players[playerId].name);
+          let color;
+          if (action.payload.gameId === GAME_WEREWOLF) {
+            color = 'indigo';
+          } else {
+            color = getColorForPlayerName(players[playerId].name);
+          }
           newPlayers[playerId] = {
             ...state.gameData.players[playerId],
             ...players[playerId],
@@ -477,6 +484,16 @@ export default function reducer(state = stateToUse, action) {
       return {
         ...state,
         showAboutModal: action.payload.show,
+      };
+
+    case actions.TOGGLE_ROLES_MODAL:
+      if (!state.gameData) { return state; }
+      return {
+        ...state,
+        gameData: {
+          ...state.gameData,
+          showRolesModal: action.payload.show,
+        },
       };
 
     case actions.TOGGLE_RULES_MODAL:

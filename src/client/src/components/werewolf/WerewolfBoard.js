@@ -6,6 +6,7 @@ import Col from 'react-bootstrap/Col'
 
 import ChoosingRolesView from './ChoosingRolesView';
 import GameplayView from './GameplayView';
+import RolesModal from './RolesModal';
 import {
   STATE_WW_CHOOSING_ROLES,
   STATE_WW_NIGHTTIME,
@@ -17,9 +18,10 @@ import * as selectors from '../../store/selectors';
 
 function WerewolfBoard() {
   const gameState = useSelector(selectors.gameStateSelector);
+  const showRolesModal = useSelector(selectors.showRolesModalSelector);
 
   return (
-    <div className='board py-5'>
+    <div className='board werewolf py-5'>
       <Row>
         <Col>
           {
@@ -32,6 +34,7 @@ function WerewolfBoard() {
           }
         </Col>
       </Row>
+      <RolesModal show={showRolesModal}/>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import cx from 'classnames';
 
 import Row from 'react-bootstrap/Row'
@@ -17,6 +17,7 @@ import {
   STATE_WW_VOTING,
   STATE_WW_VOTE_RESULTS,
 } from '../../constants';
+import { toggleRolesModal } from '../../store/actions';
 import {
   currPlayerSelector,
   gameStateSelector,
@@ -31,9 +32,12 @@ function GameplayView() {
   const revealingRoles = useSelector(revealingRolesSelector);
   const socket = useSelector(socketSelector);
   const wakeUpRole = useSelector(wakeUpRoleSelector);
+  const dispatch = useDispatch();
   let isAwake = false;
 
   const newGame = () => socket.emit('startGame');
+
+  const onShowRolesModal = () => dispatch(toggleRolesModal({ show: true }));
 
   switch (gameState) {
     case STATE_WW_NIGHTTIME:
@@ -60,7 +64,8 @@ function GameplayView() {
       </Col>
       <Col sm={4} className='main-panel py-5 text-center'>
         {
-          revealingRoles && <Button onClick={newGame}>New Game</Button>
+          gameState === STATE_WW_VOTE_RESULTS && revealingRoles &&
+            <Button onClick={newGame}>New Game</Button>
         }
         <h1>
           <span>
@@ -73,7 +78,8 @@ function GameplayView() {
           role
         </h4>
         <RoleCard role={currPlayer.lastKnownRole} />
-        <p><em><small>Roles may change throughout the night...</small></em></p>
+        <div className='mb-3'><em><small>Roles may change throughout the night...</small></em></div>
+        <div><Button variant='link' onClick={onShowRolesModal}>Show role guide</Button></div>
       </Col>
     </Row>
   );

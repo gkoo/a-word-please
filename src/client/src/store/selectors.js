@@ -109,3 +109,7 @@ export const revealingRolesSelector = createSelector(
   gameDataSelector,
   gameData => gameData && gameData.revealingRoles
 );
+export const showRolesModalSelector = createSelector(
+  gameDataSelector,
+  gameData => gameData && gameData.showRolesModal
+);

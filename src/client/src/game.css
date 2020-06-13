@@ -207,3 +207,30 @@
 {
   border-radius: 0;
 }
+
+.role-label {
+  color: #fff;
+  display: inline-block;
+  border-radius: 5px;
+  min-width: 80px;
+  padding: 5px;
+  margin: 5px 0;
+}
+
+.role-label.werewolf {
+  background-color: #e74c3c;
+}
+
+.role-label.villager {
+  background-color: #00bc8c;
+}
+
+.role-label.tanner {
+  background-color: #f39c12;
+}
+
+@media (min-width: 768px) {
+  .roles-modal .modal-dialog {
+    max-width: 800px;
+  }
+}
