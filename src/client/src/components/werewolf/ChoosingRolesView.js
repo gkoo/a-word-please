@@ -33,7 +33,6 @@ import {
 } from '../../constants';
 
 function ChoosingRolesView() {
-  const [selectedRoleIdMap, setSelectedRoleIdMap] = useState({});
   const [showOnlySelected, setShowOnlySelected] = useState(false);
   const players = useSelector(playersSelector);
   const socket = useSelector(socketSelector);
@@ -56,27 +55,25 @@ function ChoosingRolesView() {
     socket.emit('playerAction', { action: 'beginNighttime' });
   };
 
-  const onToggleRole = id => {
-    if (allRolesChosen() && !roleIds.includes(id)) {
+  const onToggleRole = toggledRoleId => {
+    if (allRolesChosen() && !roleIds.includes(toggledRoleId)) {
       alert(
         'You\'ve selected all the required roles. Please remove a role before selecting a new one'
       );
       return;
     }
-    const selected = selectedRoleIdMap[id];
-    const newRoleIdMap = {
-      ...selectedRoleIdMap,
-    };
-    if (selectedRoleIdMap[id]) {
-      delete newRoleIdMap[id];
+    const roleIdIndex = roleIds.indexOf(toggledRoleId);
+    let newRoleIds;
+    if (roleIdIndex >= 0) {
+      newRoleIds = roleIds.slice(0, roleIdIndex).concat(roleIds.slice(roleIdIndex+1));
     } else {
-      newRoleIdMap[id] = true;
+      newRoleIds = [...roleIds];
+      newRoleIds.push(toggledRoleId);
     }
-    setSelectedRoleIdMap(newRoleIdMap);
 
     socket.emit('playerAction', {
       action: 'setRoleSelection',
-      roleIds: Object.keys(newRoleIdMap),
+      roleIds: newRoleIds,
     });
   };
 
