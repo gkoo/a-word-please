@@ -39,7 +39,7 @@ function VoteRevealCard({ player, revealingRoles }) {
         {
           (props) =>
             <Tooltip className='suspect-label' {...props}>
-              {suspect.name}
+              Vote: {suspect.name}
             </Tooltip>
         }
       </Overlay>
