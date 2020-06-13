@@ -129,6 +129,7 @@ function RoleCard({
   );
 
   const cardTitle = shouldRevealRole ? [getEmoji(role), LABELS[role]].join(' ') : '';
+  const longTitle = [ROLE_TROUBLEMAKER, ROLE_DOPPELGANGER].includes(role);
 
   return (
     <Card
@@ -138,7 +139,10 @@ function RoleCard({
     >
       <Card.Img variant="top" src='/img/yoda.jpg' className={cx({ invisible: !shouldRevealRole })}/>
       <Card.Body>
-        <Card.Title className={cx({ invisible: !shouldRevealRole })}>{getEmoji(role)} {LABELS[role]}</Card.Title>
+        <Card.Title className={cx({ invisible: !shouldRevealRole, h6: longTitle })}>
+          <span className='mr-2'>{getEmoji(role)}</span>
+          {LABELS[role]}
+        </Card.Title>
         {
           includeTeam &&
             <span className={teamClassName}>Team {getTeam(role)}</span>
