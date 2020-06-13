@@ -416,6 +416,12 @@ export default function reducer(state = stateToUse, action) {
       return state;
 
     case actions.RECEIVE_GAME_DATA:
+      const fieldsFromClient = ['showRolesModal'];
+      const dataFromClient = {};
+      fieldsFromClient.forEach(field => {
+        dataFromClient[field] = state.gameData[field];
+      });
+
       players = action.payload.players;
 
       newPlayers = {};
@@ -440,6 +446,7 @@ export default function reducer(state = stateToUse, action) {
         ...state,
         gameData: {
           ...action.payload,
+          ...dataFromClient,
           players: newPlayers,
         },
       };
