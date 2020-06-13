@@ -122,10 +122,10 @@ const testAwpGameData = {
   totalNumRounds: 13,
 };
 
-const roleToTest = ROLE_SEER;
+const roleToTest = ROLE_MINION;
 
 const testWerewolfGameData = {
-  wakeUpRole: ROLE_SEER,
+  wakeUpRole: ROLE_ROBBER,
   gameId: GAME_WEREWOLF,
   players: {
     gordon: {
@@ -149,9 +149,9 @@ const testWerewolfGameData = {
       id: 'yuriko',
       name: 'Yuriko',
       color: 'indigo',
-      originalRole: ROLE_WEREWOLF,
-      lastKnownRole: ROLE_WEREWOLF,
-      role: ROLE_WEREWOLF,
+      originalRole: ROLE_MASON,
+      lastKnownRole: ROLE_MASON,
+      role: ROLE_MASON,
     },
     aj: {
       id: 'aj',
@@ -206,6 +206,9 @@ const testWerewolfGameData = {
   },
 };
 
+//const testGameDataToUse = testAwpGameData;
+const testGameDataToUse = testWerewolfGameData;
+
 const testState = {
   alerts: [
     //{
@@ -221,7 +224,7 @@ const testState = {
   ],
   currUserId: 'gordon',
   debugEnabled: env !== 'production',
-  gameData: testWerewolfGameData,
+  gameData: testGameDataToUse,
   name: 'Gordon',
   nextAlertId: 5,
   roomData: {

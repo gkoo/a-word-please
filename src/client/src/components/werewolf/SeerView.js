@@ -6,7 +6,7 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-import PlayerLabel from './PlayerLabel';
+import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
 import RoleCard from './RoleCard';
 import { currPlayerSelector, playersSelector, socketSelector, unclaimedRolesSelector } from '../../store/selectors';
 import { LABELS, ROLE_INSOMNIAC } from '../../constants';
@@ -61,7 +61,7 @@ function SeerView({ showWakeUp }) {
         revealedPlayer &&
           <Row className='mb-3'>
             <Col>
-              <PlayerLabel player={revealedPlayer} />
+              <PlayerCheckboxLabel player={revealedPlayer} />
               <RoleCard role={revealedPlayer.role}/>
             </Col>
           </Row>

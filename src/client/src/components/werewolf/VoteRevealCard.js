@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import Overlay from 'react-bootstrap/Overlay'
 import Tooltip from 'react-bootstrap/Tooltip';
 
-import PlayerLabel from './PlayerLabel';
+import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
 import RoleCard from './RoleCard';
 import { playersSelector, votesSelector } from '../../store/selectors';
 
@@ -24,7 +24,7 @@ function VoteRevealCard({ player, revealingRoles }) {
     <>
       <RoleCard
         role={player.role}
-        cardContent={<PlayerLabel player={player}/>}
+        cardContent={<PlayerCheckboxLabel player={player}/>}
         revealingRole={revealingRoles}
         selected={true}
         refTarget={target}

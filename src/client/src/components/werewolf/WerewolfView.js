@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import PlayerLabel from './PlayerLabel';
+import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
 import { currPlayerSelector, playersSelector } from '../../store/selectors';
 import { LABELS, ROLE_WEREWOLF } from '../../constants';
 
@@ -21,7 +21,7 @@ function WerewolfView() {
         otherWerewolves.length > 0 &&
           <p>
             Your fellow {otherWerewolves.length > 1 ? 'werewolves are' : 'werewolf is'}:{' '}
-            {otherWerewolves.map(player => <PlayerLabel player={player}/>)}
+            {otherWerewolves.map(player => <PlayerCheckboxLabel player={player}/>)}
           </p>
       }
       {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import PlayerLabel from './PlayerLabel';
+import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
 import { currPlayerSelector, playersSelector } from '../../store/selectors';
 import { LABELS, ROLE_MINION, ROLE_WEREWOLF } from '../../constants';
 
@@ -22,7 +22,7 @@ function MinionView() {
           <>
             <p>
               The {werewolves.length > 1 ? 'werewolves are' : 'werewolf is'}
-              {werewolves.map(player => <PlayerLabel player={player}/>)}.
+              {werewolves.map(player => <PlayerCheckboxLabel player={player}/>)}
             </p>
             <p>
               They don't know that you are the {LABELS[ROLE_MINION]}.

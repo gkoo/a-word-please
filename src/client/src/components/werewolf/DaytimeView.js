@@ -9,7 +9,7 @@ import Button from 'react-bootstrap/Button';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup'
 
-import PlayerLabel from './PlayerLabel';
+import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
 import {
   LABELS,
   ROLE_WEREWOLF,
@@ -140,10 +140,10 @@ function DaytimeView() {
       }
       {
         gameState === STATE_WW_VOTING &&
-          <Row>
+          <Row className='mt-5'>
             <Col xs={6} className='text-center'>
-              <h3>Time to vote!</h3>
-              <em><small>You can change your vote until all votes are in</small></em>
+              <h3><u>Time to vote!</u></h3>
+              <div><em><small>You can change your vote until all votes are in</small></em></div>
               <br />
               <ToggleButtonGroup
                 onChange={onEditVote}
@@ -156,13 +156,16 @@ function DaytimeView() {
               </ToggleButtonGroup>
             </Col>
             <Col xs={6} className='text-center'>
-              <h3>Votes cast</h3>
+              <h3><u>Votes cast</u></h3>
               {
                 Object.values(players).map(player =>
-                  <div>
-                    <span className={cx('mr-1', { invisible: !votes[player.id] })}>✅</span>
-                    <PlayerLabel player={player} />
-                  </div>
+                  <>
+                    <PlayerCheckboxLabel
+                      player={player}
+                      checked={!!votes[player.id]}
+                    />
+                    <br />
+                  </>
                 )
               }
             </Col>

@@ -23,24 +23,8 @@
   font-family: Courier New;
 }
 
-.featured-word {
-  font-size: 96px;
-}
-
-.lowercase {
-  text-transform: lowercase;
-}
-
 .share-link {
   margin-top: 50px;
-}
-
-.correct {
-  color: #0f0;
-}
-
-.incorrect {
-  color: #f00;
 }
 
 /* GAME */
@@ -55,6 +39,31 @@
   min-width: 80px;
   padding: 5px;
   margin: 5px 0;
+}
+
+.checkbox-label {
+  position: relative;
+}
+
+.checkbox-label .checkbox-label-check {
+  position: absolute;
+  left: -30px;
+}
+
+.featured-word {
+  font-size: 96px;
+}
+
+.lowercase {
+  text-transform: lowercase;
+}
+
+.correct {
+  color: #0f0;
+}
+
+.incorrect {
+  color: #f00;
 }
 
 .clue-label .tooltip-inner,

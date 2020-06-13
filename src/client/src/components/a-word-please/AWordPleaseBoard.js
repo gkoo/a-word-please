@@ -18,6 +18,7 @@ import EnteringGuessView from './EnteringGuessView';
 import GameEndView from './GameEndView';
 import LeaderPanel from '../LeaderPanel';
 import TurnEndView from './TurnEndView';
+import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
 import * as selectors from '../../store/selectors';
 
 function AWordPleaseBoard() {
@@ -100,13 +101,11 @@ function AWordPleaseBoard() {
           {
             clueGivers.map(clueGiver =>
               <>
-              <span className={cx('mr-1', { invisible: !clues[clueGiver.id] })}>
-                ✅
-              </span>
-              <div className={`player-label ${players[clueGiver.id].color}`}>
-                {clueGiver.name}
-              </div>
-              <br />
+                <PlayerCheckboxLabel
+                  checked={!!clues[clueGiver.id]}
+                  player={clueGiver}
+                />
+                <br />
               </>
             )
           }

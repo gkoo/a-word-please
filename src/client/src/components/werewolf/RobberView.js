@@ -6,7 +6,7 @@ import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 
-import PlayerLabel from './PlayerLabel';
+import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
 import RoleCard from './RoleCard';
 import { currPlayerSelector, playersSelector, socketSelector } from '../../store/selectors';
 import { LABELS } from '../../constants';
@@ -52,7 +52,7 @@ function RobberView({ showWakeUp }) {
               <Col>
                 <p>Your new role:</p>
                 <RoleCard role={playerToRob.role}/>
-                <p><PlayerLabel player={playerToRob} /> is now the Robber.</p>
+                <p><PlayerCheckboxLabel player={playerToRob} /> is now the Robber.</p>
               </Col>
             </Row>
             <Row className='my-3'>
