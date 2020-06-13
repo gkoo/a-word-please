@@ -7,13 +7,7 @@ import Col from 'react-bootstrap/Col'
 import ChoosingRolesView from './ChoosingRolesView';
 import GameplayView from './GameplayView';
 import RolesModal from './RolesModal';
-import {
-  STATE_WW_CHOOSING_ROLES,
-  STATE_WW_NIGHTTIME,
-  STATE_WW_DAYTIME,
-  STATE_WW_VOTING,
-  STATE_WW_VOTE_RESULTS,
-} from '../../constants';
+import { STATE_WW_CHOOSING_ROLES, } from '../../constants';
 import * as selectors from '../../store/selectors';
 
 function WerewolfBoard() {

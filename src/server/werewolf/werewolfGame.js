@@ -65,11 +65,14 @@ class WerewolfGame extends Game {
   }
 
   newGame() {
+    this.eliminatedPlayerIds = null;
     this.roles = {};
     this.votes = {}
     this.unclaimedRoles = [];
     this.revealingRoles = false;
     this.state = WerewolfGame.STATE_CHOOSING_ROLES;
+    this.winners = [];
+
     this.broadcastGameDataToPlayers();
   }
 
@@ -256,12 +259,99 @@ class WerewolfGame extends Game {
 
     if (Object.keys(this.votes).length === Object.keys(this.players).length) {
       // All votes are in! Time to reveal votes.
-      setTimeout(() => this.revealVotes(), 1000);
+      setTimeout(() => this.determineWinners(), 1000);
     }
   }
 
-  revealVotes() {
+  // votes = {
+  //  'gordon': 'willy',
+  //  'willy': 'steve',
+  //  'yuriko': 'steve',
+  //  'steve': 'gordon'
+  // }
+  determineWinners() {
+    if (this.state !== WerewolfGame.STATE_VOTING) { return; }
+
     this.state = WerewolfGame.STATE_VOTE_RESULTS;
+
+    // Tally up the votes!
+    const voteList = Object.values(this.votes);
+    const voteTallies = {};
+    voteList.forEach(votedPlayerId => {
+      if (!voteTallies[votedPlayerId]) { voteTallies[votedPlayerId] = 0; }
+      ++voteTallies[votedPlayerId];
+    });
+    let playerIdsWithMostVotes = [];
+    let currMaxVoteCount = 0;
+    Object.entries(voteTallies).forEach(([votedPlayerId, count]) => {
+      if (count < currMaxVoteCount) { return; }
+      if (count === currMaxVoteCount) {
+        playerIdsWithMostVotes.push(votedPlayerId);
+        return;
+      } else {
+        // new highest vote count
+        playerIdsWithMostVotes = [votedPlayerId];
+        currMaxVoteCount = count;
+      }
+    });
+
+    // Figure out who's eliminated
+    const playerList = Object.values(this.players);
+    let eliminatedPlayers;
+    if (playerIdsWithMostVotes.length === playerList.length) {
+      // If no one receives more than one vote, no one dies.
+      eliminatedPlayers = []
+    } else {
+      eliminatedPlayers = playerIdsWithMostVotes.map(playerId => this.players[playerId]);
+    }
+
+    const hunterEliminated = !!eliminatedPlayers.find(
+      player => player.role === WerewolfGame.ROLE_HUNTER
+    );
+    if (hunterEliminated) {
+      // If the hunter is eliminated, the person he voted for also dies
+      const hunter = playerList.find(player => player.role === WerewolfGame.ROLE_HUNTER);
+      const hunterVictimPlayer = this.players[this.votes[hunter.id]];
+      if (!eliminatedPlayers.includes(hunterVictimPlayer)) {
+        eliminatedPlayers.push(hunterVictimPlayer);
+      }
+    }
+
+    const werewolfEliminated = !!eliminatedPlayers.find(
+      player => player.role === WerewolfGame.ROLE_WEREWOLF
+    );
+    const tannerEliminated = !!eliminatedPlayers.find(
+      player => player.role === WerewolfGame.ROLE_TANNER
+    );
+
+    // Figure out who's the winner
+    const winners = [];
+    let firstWinner; // villager or werewolf
+    const atLeastOneWerewolf = !!playerList.find(
+      player => player.role === WerewolfGame.ROLE_WEREWOLF
+    );
+
+    if (eliminatedPlayers.length === 0) {
+      if (atLeastOneWerewolf) {
+        firstWinner = WerewolfGame.ROLE_WEREWOLF;
+      } else {
+        firstWinner = WerewolfGame.ROLE_VILLAGER;
+      }
+    } else {
+      // At least one person was eliminated
+      if (werewolfEliminated) {
+        firstWinner = WerewolfGame.ROLE_VILLAGER;
+      } else if (!tannerEliminated) {
+        firstWinner = WerewolfGame.ROLE_WEREWOLF;
+      }
+    }
+
+    if (firstWinner !== undefined) { winners.push(firstWinner); }
+
+    if (tannerEliminated) { winners.push(WerewolfGame.ROLE_TANNER); }
+
+    this.winners = winners;
+    this.eliminatedPlayers = eliminatedPlayers;
     this.broadcastGameDataToPlayers();
   }
 
@@ -279,6 +369,7 @@ class WerewolfGame extends Game {
 
   serialize() {
     return {
+      eliminatedPlayerIds: this.eliminatedPlayers?.map(player => player.id),
       gameId: WerewolfGame.GAME_ID,
       players: this.players,
       roleIds: this.roleIds,
@@ -287,6 +378,7 @@ class WerewolfGame extends Game {
       unclaimedRoles: this.unclaimedRoles,
       votes: this.votes,
       wakeUpRole: this.wakeUpRole,
+      winners: this.winners,
     }
   }
 }

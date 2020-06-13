@@ -1,6 +1,5 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import cx from 'classnames';
 
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
@@ -33,18 +32,14 @@ function GameplayView() {
   const socket = useSelector(socketSelector);
   const wakeUpRole = useSelector(wakeUpRoleSelector);
   const dispatch = useDispatch();
-  let isAwake = false;
 
   const newGame = () => socket.emit('startGame');
 
   const onShowRolesModal = () => dispatch(toggleRolesModal({ show: true }));
 
-  switch (gameState) {
-    case STATE_WW_NIGHTTIME:
-      isAwake = currPlayer.originalRole === wakeUpRole && wakeUpRole !== ROLE_DRUNK;
-    default:
-      isAwake = true;
-  }
+  const isAwake = (gameState !== STATE_WW_NIGHTTIME) || (
+    currPlayer.originalRole === wakeUpRole && wakeUpRole !== ROLE_DRUNK
+  );
 
   return (
     <Row>

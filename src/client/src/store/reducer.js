@@ -193,8 +193,8 @@ const testWerewolfGameData = {
   //state: STATE_WW_CHOOSING_ROLES,
   //state: STATE_WW_NIGHTTIME,
   //state: STATE_WW_DAYTIME,
-  state: STATE_WW_VOTING,
-  //state: STATE_WW_VOTE_RESULTS,
+  //state: STATE_WW_VOTING,
+  state: STATE_WW_VOTE_RESULTS,
   unclaimedRoles: [ROLE_WEREWOLF, ROLE_DRUNK, ROLE_DOPPELGANGER],
   votes: {
     'gordon': 'willy',
@@ -204,6 +204,7 @@ const testWerewolfGameData = {
     'willy': 'steve',
     'rishi': 'steve',
   },
+  winners: [ROLE_WEREWOLF],
 };
 
 //const testGameDataToUse = testAwpGameData;

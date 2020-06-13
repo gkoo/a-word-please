@@ -13,7 +13,6 @@ import MasonView from './MasonView';
 import MinionView from './MinionView';
 import TannerView from './TannerView';
 import VillagerView from './VillagerView';
-import RoleCard from './RoleCard';
 import {
   ROLE_WEREWOLF,
   ROLE_MINION,
@@ -27,21 +26,8 @@ import {
   ROLE_VILLAGER,
   ROLE_DOPPELGANGER,
   ROLE_TANNER,
-  LABELS,
 } from '../../constants';
 import { currPlayerSelector, wakeUpRoleSelector } from '../../store/selectors';
-
-const getTeamLabel = role => {
-  switch (role) {
-    case ROLE_WEREWOLF:
-    case ROLE_MINION:
-      return LABELS[ROLE_WEREWOLF];
-    case ROLE_TANNER:
-      return LABELS[ROLE_TANNER];
-    default:
-      return LABELS[ROLE_VILLAGER];
-  }
-};
 
 function NighttimeView() {
   const currPlayer = useSelector(currPlayerSelector);
@@ -90,7 +76,7 @@ function NighttimeView() {
 
   return (
     <div>
-      <h1 className='mb-5'>🌙</h1>
+      <h1 className='mb-5'><span role='img' aria-label='Nighttime'>🌙</span></h1>
       {isAwake && renderWakeUp()}
       {!isAwake &&
         <>

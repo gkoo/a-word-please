@@ -9,12 +9,11 @@ import Col from 'react-bootstrap/Col';
 import RobberView from './RobberView';
 import SeerView from './SeerView';
 import TroublemakerView from './TroublemakerView';
-import { currPlayerSelector, playersSelector, socketSelector, unclaimedRolesSelector } from '../../store/selectors';
+import { currPlayerSelector, playersSelector, socketSelector } from '../../store/selectors';
 import { LABELS, ROLE_SEER, ROLE_TROUBLEMAKER, ROLE_ROBBER, ROLE_INSOMNIAC } from '../../constants';
 
 function DoppelgangerView() {
   const [copyPlayerId, setCopyPlayerId] = useState(null);
-  const [performedFollowupAction, setPerformedFollowupAction] = useState(false);
   const currPlayer = useSelector(currPlayerSelector);
   const players = useSelector(playersSelector);
   const socket = useSelector(socketSelector);

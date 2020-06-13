@@ -9,7 +9,7 @@ import Col from 'react-bootstrap/Col';
 import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
 import RoleCard from './RoleCard';
 import { currPlayerSelector, playersSelector, socketSelector, unclaimedRolesSelector } from '../../store/selectors';
-import { LABELS, ROLE_INSOMNIAC } from '../../constants';
+import { LABELS } from '../../constants';
 
 function SeerView({ showWakeUp }) {
   const [revealedPlayerId, setRevealedPlayerId] = useState(null);

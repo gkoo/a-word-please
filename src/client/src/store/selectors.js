@@ -113,3 +113,18 @@ export const showRolesModalSelector = createSelector(
   gameDataSelector,
   gameData => gameData && gameData.showRolesModal
 );
+export const winnersSelector = createSelector(
+  gameDataSelector,
+  gameData => gameData && gameData.winners
+);
+export const eliminatedPlayersSelector = createSelector(
+  gameDataSelector,
+  playersSelector,
+  (gameData, players) => {
+    return (
+      gameData?.eliminatedPlayerIds &&
+        players &&
+        gameData.eliminatedPlayerIds.map(id => players[id])
+    );
+  }
+);

@@ -9,7 +9,6 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
 import RoleCard from './RoleCard';
 import { currPlayerSelector, playersSelector, socketSelector } from '../../store/selectors';
-import { LABELS } from '../../constants';
 
 function RobberView({ showWakeUp }) {
   const [playerToRobId, setPlayerToRobId] = useState(null);

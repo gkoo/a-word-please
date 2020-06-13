@@ -116,7 +116,7 @@ function DaytimeView() {
   return(
     <div className='px-5'>
       <div className='mb-5'>
-        <h1>🌞</h1>
+        <h1><span role='img' aria-label='morning'>🌞</span></h1>
         <h1>Good morning!</h1>
         <p>
           The village needs to vote on who to eliminate. Start deliberating!

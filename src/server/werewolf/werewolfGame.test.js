@@ -22,23 +22,14 @@ beforeEach(() => {
   game.setup(users);
 });
 
-describe('toggleRole', () => {
-  describe('when selected', () => {
-    it('sets the role ID as selected', () => {
-      game.toggleRole({ roleId: 'werewolf1', selected: true });
-      expect(game.roleIds['werewolf1']).toBe(true);
-    });
-  });
+describe('setRoleIds', () => {
+  const roleIds = ['werewolf1'];
+  const subject = () => game.setRoleIds(roleIds);
 
-  describe('when not selected', () => {
-    beforeEach(() => {
-      game.roleIds['werewolf1'] = true;
-    });
-
-    it('sets the role ID as selected', () => {
-      game.toggleRole({ roleId: 'werewolf1', selected: false });
-      expect(game.roleIds['werewolf1']).toBe(false);
-    });
+  it('sets the selected role ids', () => {
+    subject();
+    expect(game.roleIds).toHaveLength(1);
+    expect(game.roleIds[0]).toBe(roleIds[0]);
   });
 });
 
@@ -46,14 +37,14 @@ describe('beginNighttime', () => {
   const subject = () => game.beginNighttime();
 
   beforeEach(() => {
-    game.roleIds = {
-      werewolf1: true,
-      seer: true,
-      troublemaker: true,
-      robber: true,
-      drunk: true,
-      insomniac: true,
-    };
+    game.roleIds = [
+      'werewolf1',
+      'seer',
+      'troublemaker',
+      'robber',
+      'drunk',
+      'insomniac',
+    ];
   });
 
   it('assigns roles to players and leaves three unclaimed', () => {
@@ -76,10 +67,10 @@ describe('beginNighttime', () => {
 
   describe('when the number of selected roles don\'t match', () => {
     beforeEach(() => {
-      game.roleIds = {
-        werewolf1: true,
-        seer: true,
-      };
+      game.roleIds = [
+        'werewolf1',
+        'seer',
+      ];
     });
 
     it('doesn\'t do anything', () => {
@@ -238,5 +229,147 @@ describe('nextTurn', () => {
     const oldWakeUpIdx = game.currentWakeUpIdx;
     subject();
     expect(game.currentWakeUpIdx).toBeGreaterThan(oldWakeUpIdx);
+  });
+});
+
+describe.only('determineWinners', () => {
+  let votes;
+  const subject = () => {
+    game.votes = votes;
+    game.determineWinners();
+  };
+
+  beforeEach(() => {
+    game.state = WerewolfGame.STATE_VOTING;
+    game.players['user1'].role = WerewolfGame.ROLE_WEREWOLF;
+    game.players['user2'].role = WerewolfGame.ROLE_TANNER;
+    game.players['user3'].role = WerewolfGame.ROLE_VILLAGER;
+  });
+
+  describe('when state doesn\'t match', () => {
+    beforeEach(() => {
+      game.state = WerewolfGame.STATE_NIGHTTIME;
+    });
+
+    it('does nothing', () => {
+      subject();
+      expect(game.winners).toHaveLength(0);
+    });
+  });
+
+  describe('when the werewolf has the most votes', () => {
+    beforeEach(() => {
+      votes = {
+        'user1': 'user2',
+        'user2': 'user1',
+        'user3': 'user1',
+      };
+    });
+
+    it('declares the villagers the winners', () => {
+      subject();
+      expect(game.winners).toHaveLength(1);
+      expect(game.winners[0]).toBe(WerewolfGame.ROLE_VILLAGER);
+    });
+  });
+
+  describe('when the villager has the most votes', () => {
+    beforeEach(() => {
+      votes = {
+        'user1': 'user3',
+        'user2': 'user3',
+        'user3': 'user1',
+      };
+    });
+
+    it('declares the werewolves the winners', () => {
+      subject();
+      expect(game.winners).toHaveLength(1);
+      expect(game.winners[0]).toBe(WerewolfGame.ROLE_WEREWOLF);
+    });
+  });
+
+  describe('when the tanner has the most votes', () => {
+    beforeEach(() => {
+      votes = {
+        'user1': 'user2',
+        'user2': 'user2',
+        'user3': 'user2',
+      };
+    });
+
+    it('declares the tanner the winner', () => {
+      subject();
+      expect(game.winners).toHaveLength(1);
+      expect(game.winners[0]).toBe(WerewolfGame.ROLE_TANNER);
+    });
+  });
+
+  describe('when all players have one vote', () => {
+    beforeEach(() => {
+      votes = {
+        'user1': 'user2',
+        'user2': 'user3',
+        'user3': 'user1',
+      };
+    });
+
+    describe('and there is at least one werewolf', () => {
+      it('declares the werewolves the winners', () => {
+        subject();
+        expect(game.winners).toHaveLength(1);
+        expect(game.winners[0]).toBe(WerewolfGame.ROLE_WEREWOLF);
+      });
+    });
+
+    describe('and there are no werewolves', () => {
+      beforeEach(() => {
+        game.players['user1'].role = WerewolfGame.ROLE_VILLAGER;
+      });
+
+      it('declares the villagers the winners', () => {
+        subject();
+        expect(game.winners).toHaveLength(1);
+        expect(game.winners[0]).toBe(WerewolfGame.ROLE_VILLAGER);
+      });
+    });
+  });
+
+  describe('when the hunter dies', () => {
+    beforeEach(() => {
+      game.players['user2'].role = WerewolfGame.ROLE_HUNTER;
+    });
+
+    describe('and the hunter voted to eliminate a werewolf', () => {
+      beforeEach(() => {
+        votes = {
+          'user1': 'user2',
+          'user2': 'user1',
+          'user3': 'user2',
+        };
+      });
+
+      it('declares the villagers the winners', () => {
+        subject();
+        expect(game.winners).toHaveLength(1);
+        expect(game.winners[0]).toBe(WerewolfGame.ROLE_VILLAGER);
+      });
+    });
+
+    describe('and the hunter voted to eliminate a villager', () => {
+      beforeEach(() => {
+        votes = {
+          'user1': 'user2',
+          'user2': 'user3',
+          'user3': 'user2',
+        };
+      });
+
+      it('declares the werewolves the winners', () => {
+        subject();
+        expect(game.winners).toHaveLength(1);
+        expect(game.winners[0]).toBe(WerewolfGame.ROLE_WEREWOLF);
+      });
+    });
   });
 });
