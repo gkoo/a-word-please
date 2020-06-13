@@ -61,6 +61,37 @@ const getDescription = role => {
   };
 };
 
+const getImgSrc = role => {
+  switch (role) {
+    case ROLE_WEREWOLF:
+      return '/img/doggo.jpg';
+    case ROLE_MINION:
+      return '/img/boo.jpg';
+    case ROLE_TANNER:
+      return '/img/bread.jpg';
+    case ROLE_MASON:
+      return '/img/probe.jpg';
+    case ROLE_SEER:
+      return '/img/yoda.jpg';
+    case ROLE_ROBBER:
+      return '/img/klappar.jpg';
+    case ROLE_TROUBLEMAKER:
+      return '/img/spiderchan.jpg';
+    case ROLE_DRUNK:
+      return '/img/stormtrooper.jpg';
+    case ROLE_INSOMNIAC:
+      return '/img/dude.jpg';
+    case ROLE_HUNTER:
+      return '/img/sailormoon.jpg';
+    case ROLE_DOPPELGANGER:
+      return '/img/sharkevie.jpg';
+    case ROLE_VILLAGER:
+      return '/img/mumen.jpg';
+    default:
+      return '';
+  };
+};
+
 const getEmoji = role => {
   switch (role) {
     case ROLE_WEREWOLF:
@@ -135,7 +166,7 @@ function RoleCard({
       onClick={clickCallback}
       ref={refTarget}
     >
-      <Card.Img variant="top" src='/img/yoda.jpg' className={cx({ invisible: !shouldRevealRole })}/>
+      <Card.Img variant="top" src={getImgSrc(role)} className={cx({ invisible: !shouldRevealRole })}/>
       <Card.Body>
         <Card.Title className={cx({ invisible: !shouldRevealRole, h6: longTitle })}>
           <span className='mr-2'>{getEmoji(role)}</span>
