@@ -46,7 +46,6 @@
 /* GAME */
 
 .main-panel {
-  background-color: #2a2a2a;
   border: 5px dashed #fff;
 }
 
@@ -58,13 +57,18 @@
   margin: 5px 0;
 }
 
-.clue-label .tooltip-inner {
+.clue-label .tooltip-inner,
+.suspect-label .tooltip-inner {
   background-color: #e0e0e0;
   color: #000;
 }
 
 .clue-label .arrow::before {
   border-right-color: #e0e0e0;
+}
+
+.suspect-label .arrow::before {
+  border-top-color: #e0e0e0;
 }
 
 .player-label.indigo {
@@ -160,51 +164,42 @@
 
 /* WEREWOLF */
 
-.role-gallery .role-card {
-  float: left;
-}
-
-.role-gallery .card {
-  height: 330px;
-  margin-right: 0.25rem;
+.gallery {
+  display: flex;
+  flex-flow: row wrap;
 }
 
 .role-card {
-  margin: 0 auto;
-}
-
-.role-card .card {
   border-width: 4px;
   border-style: solid;
   margin: 0 auto;
+  min-width: 140px;
+  max-width: 184px;
+  min-height: 277px;
 }
 
-.role-card,
-.role-card .card {
-  width: 80%;
-  max-width: 12rem;
+.role-card .card-img-top {
+  min-height: 150px;
 }
 
-.role-gallery .role-card,
-.role-gallery .card {
-  width: 12rem;
-}
-
-@media (min-width: 576px) {
-  .role-card,
-  .role-card .card {
-    width: 100%;
-  }
-}
-
-.role-card.choose-mode .card:hover {
+.role-card.choose-mode:hover {
   border-color: #fff;
   cursor: pointer;
 }
 
-.role-card.selected .card,
-.role-card.selected .card:hover {
-  border-color: #20c997;
+.role-card.werewolf.selected,
+.role-card.werewolf.selected:hover {
+  border-color: #e74c3c;
+}
+
+.role-card.villager.selected,
+.role-card.villager.selected:hover {
+  border-color: #00bc8c;
+}
+
+.role-card.tanner.selected,
+.role-card.tanner.selected:hover {
+  border-color: #f39c12;
 }
 
 .role-card.selected .card-img-top,

@@ -8,6 +8,7 @@ import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Form from 'react-bootstrap/Form'
+import CardDeck from 'react-bootstrap/CardDeck';
 
 import RoleCard from './RoleCard';
 import {
@@ -92,6 +93,7 @@ function ChoosingRolesView() {
         role={role}
         chooseMode={true}
         callback={onToggleRole}
+        includeTeam={true}
         selected={isSelected}
       />
     );
@@ -136,60 +138,27 @@ function ChoosingRolesView() {
           </Col>
         </Row>
 
-        <Row className='role-gallery'>
-          {
-            (!showOnlySelected || !!['werewolf1', 'werewolf2', 'werewolf3'].find(
-              roleId => roleIds.includes(roleId)
-            )) &&
-              <div className='clearfix mr-5 my-3'>
-                <h2>Team Werewolf</h2>
-                {renderRoleCard('werewolf1', ROLE_WEREWOLF)}
-                {renderRoleCard('werewolf2', ROLE_WEREWOLF)}
-                {renderRoleCard('werewolf3', ROLE_WEREWOLF)}
-                {renderRoleCard('minion', ROLE_MINION)}
-              </div>
-          }
-
-          {
-            (!showOnlySelected || roleIds.includes('tanner')) &&
-              <div className='clearfix my-3'>
-                <h2>Team Tanner</h2>
-                {renderRoleCard('tanner', ROLE_TANNER)}
-              </div>
-          }
-
-          {
-            (!showOnlySelected || !![
-              'mason1',
-              'mason2',
-              'seer',
-              'robber',
-              'troublemaker',
-              'drunk',
-              'insomniac',
-              'hunter',
-              'doppelganger',
-              'villager1',
-              'villager2',
-              'villager3',
-            ].find(roleId => roleIds.includes(roleId))) &&
-              <div className='clearfix my-3'>
-                <h2>Team Villagers</h2>
-                {renderRoleCard('mason1', ROLE_MASON)}
-                {renderRoleCard('mason2', ROLE_MASON)}
-                {renderRoleCard('seer', ROLE_SEER)}
-                {renderRoleCard('robber', ROLE_ROBBER)}
-                {renderRoleCard('troublemaker', ROLE_TROUBLEMAKER)}
-                {renderRoleCard('drunk', ROLE_DRUNK)}
-                {renderRoleCard('insomniac', ROLE_INSOMNIAC)}
-                {renderRoleCard('hunter', ROLE_HUNTER)}
-                {renderRoleCard('doppelganger', ROLE_DOPPELGANGER)}
-                {renderRoleCard('villager1', ROLE_VILLAGER)}
-                {renderRoleCard('villager2', ROLE_VILLAGER)}
-                {renderRoleCard('villager3', ROLE_VILLAGER)}
-              </div>
-          }
-        </Row>
+        <div className='gallery'>
+          <CardDeck>
+            {renderRoleCard('werewolf1', ROLE_WEREWOLF)}
+            {renderRoleCard('werewolf2', ROLE_WEREWOLF)}
+            {renderRoleCard('werewolf3', ROLE_WEREWOLF)}
+            {renderRoleCard('minion', ROLE_MINION)}
+            {renderRoleCard('tanner', ROLE_TANNER)}
+            {renderRoleCard('mason1', ROLE_MASON)}
+            {renderRoleCard('mason2', ROLE_MASON)}
+            {renderRoleCard('seer', ROLE_SEER)}
+            {renderRoleCard('robber', ROLE_ROBBER)}
+            {renderRoleCard('troublemaker', ROLE_TROUBLEMAKER)}
+            {renderRoleCard('drunk', ROLE_DRUNK)}
+            {renderRoleCard('insomniac', ROLE_INSOMNIAC)}
+            {renderRoleCard('hunter', ROLE_HUNTER)}
+            {renderRoleCard('doppelganger', ROLE_DOPPELGANGER)}
+            {renderRoleCard('villager1', ROLE_VILLAGER)}
+            {renderRoleCard('villager2', ROLE_VILLAGER)}
+            {renderRoleCard('villager3', ROLE_VILLAGER)}
+          </CardDeck>
+        </div>
       </div>
     </div>
   );

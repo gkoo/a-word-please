@@ -4,6 +4,7 @@ import cx from 'classnames';
 
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
+import Button from 'react-bootstrap/Button';
 
 import DaytimeView from './DaytimeView';
 import NighttimeView from './NighttimeView';
@@ -16,13 +17,23 @@ import {
   STATE_WW_VOTING,
   STATE_WW_VOTE_RESULTS,
 } from '../../constants';
-import { currPlayerSelector, gameStateSelector, wakeUpRoleSelector } from '../../store/selectors';
+import {
+  currPlayerSelector,
+  gameStateSelector,
+  revealingRolesSelector,
+  socketSelector,
+  wakeUpRoleSelector,
+} from '../../store/selectors';
 
 function GameplayView() {
   const gameState = useSelector(gameStateSelector);
   const currPlayer = useSelector(currPlayerSelector);
+  const revealingRoles = useSelector(revealingRolesSelector);
+  const socket = useSelector(socketSelector);
   const wakeUpRole = useSelector(wakeUpRoleSelector);
   let isAwake = false;
+
+  const newGame = () => socket.emit('startGame');
 
   switch (gameState) {
     case STATE_WW_NIGHTTIME:
@@ -47,7 +58,10 @@ function GameplayView() {
             <VoteResults />
         }
       </Col>
-      <Col sm={4} className='text-center main-panel py-5'>
+      <Col sm={4} className='main-panel py-5 text-center'>
+        {
+          revealingRoles && <Button onClick={newGame}>New Game</Button>
+        }
         <h1>
           <span>
             {isAwake ? '😳' : '😴'}

@@ -75,38 +75,44 @@ const testAwpGameData = {
       id: 'gordon',
       name: 'Gordon',
       isLeader: true,
-      color: 'blue',
+      color: 'red',
+      connected: true,
     },
     steve: {
       id: 'steve',
       name: 'Steve',
       color: 'indigo',
+      connected: true,
     },
     yuriko: {
       id: 'yuriko',
       name: 'Yuriko',
       color: 'purple',
+      connected: true,
     },
     aj: {
       id: 'aj',
       name: 'AJ',
       color: 'pink',
+      connected: true,
     },
     willy: {
       id: 'willy',
       name: 'Willy',
       color: 'red',
+      connected: true,
     },
     rishi: {
       id: 'rishi',
       name: 'Rishi',
       color: 'orange',
+      connected: true,
     },
   },
   roundNum: 0,
   skippedTurn: false,
-  state: GAME_STATE_PENDING,
-  //state: STATE_AWP_ENTERING_CLUES,
+  //state: GAME_STATE_PENDING,
+  state: STATE_AWP_ENTERING_CLUES,
   //state: STATE_AWP_REVIEWING_CLUES,
   //state: STATE_AWP_ENTERING_GUESS,
   //state: STATE_AWP_TURN_END,
@@ -114,10 +120,10 @@ const testAwpGameData = {
   totalNumRounds: 13,
 };
 
-const roleToTest = ROLE_DOPPELGANGER;
+const roleToTest = ROLE_SEER;
 
 const testWerewolfGameData = {
-  wakeUpRole: roleToTest,
+  wakeUpRole: ROLE_SEER,
   gameId: GAME_WEREWOLF,
   players: {
     gordon: {
@@ -183,12 +189,17 @@ const testWerewolfGameData = {
     'tanner',
   ],
   //state: STATE_WW_CHOOSING_ROLES,
-  state: STATE_WW_NIGHTTIME,
+  //state: STATE_WW_NIGHTTIME,
+  //state: STATE_WW_DAYTIME,
+  //state: STATE_WW_VOTING,
+  state: STATE_WW_VOTE_RESULTS,
   unclaimedRoles: [ROLE_WEREWOLF, ROLE_DRUNK, ROLE_VILLAGER],
   votes: {
     'gordon': 'willy',
     'steve': 'yuriko',
+    'yuriko': 'yuriko',
     'aj': 'yuriko',
+    'willy': 'steve',
     'rishi': 'steve',
   },
 };

@@ -93,25 +93,66 @@ const getEmoji = role => {
   }
 };
 
-function RoleCard({ id, role, chooseMode, selected, callback }) {
+function RoleCard({
+  id,
+  callback,
+  cardContent,
+  chooseMode,
+  className,
+  includeTeam,
+  refTarget,
+  revealingRole,
+  role,
+  selected,
+}) {
   const noop = () => {};
   const clickCallback = callback ? () => callback(id) : noop;
+  const team = getTeam(role);
+  const shouldRevealRole = revealingRole || revealingRole === undefined;
+
+  const teamClassName = cx({
+    'text-danger': team === LABELS[ROLE_WEREWOLF],
+    'text-success': team === LABELS[ROLE_VILLAGER],
+    'text-warning': team === LABELS[ROLE_TANNER],
+    invisible: !shouldRevealRole,
+  });
+
+  const cardClassName = cx(
+    `${className || ''} role-card my-2`,
+    {
+      'choose-mode': chooseMode,
+      'werewolf': shouldRevealRole && team === LABELS[ROLE_WEREWOLF],
+      'tanner': shouldRevealRole && team === LABELS[ROLE_TANNER],
+      'villager': shouldRevealRole && team === LABELS[ROLE_VILLAGER],
+      selected,
+    },
+  );
+
+  const cardTitle = shouldRevealRole ? [getEmoji(role), LABELS[role]].join(' ') : '';
 
   return (
-    <div className={cx('role-card', { 'choose-mode': chooseMode, selected })}>
-      <Card
-        className='my-1'
-        onClick={clickCallback}
-      >
-        <Card.Img variant="top" src="/img/yoda.jpg" />
-        <Card.Body>
-          <Card.Title>{getEmoji(role)} {LABELS[role]}</Card.Title>
-          <Card.Text>
-            <em><small>{getDescription(role)}</small></em>
-          </Card.Text>
-        </Card.Body>
-      </Card>
-    </div>
+    <Card
+      className={cardClassName}
+      onClick={clickCallback}
+      ref={refTarget}
+    >
+      <Card.Img variant="top" src='/img/yoda.jpg' className={cx({ invisible: !shouldRevealRole })}/>
+      <Card.Body>
+        <Card.Title className={cx({ invisible: !shouldRevealRole })}>{getEmoji(role)} {LABELS[role]}</Card.Title>
+        {
+          includeTeam &&
+            <span className={teamClassName}>Team {getTeam(role)}</span>
+        }
+        {/* Used to display PlayerLabel */}
+        {cardContent}
+        {
+          !cardContent &&
+            <Card.Text className={cx({ invisible: !shouldRevealRole })}>
+              <em><small>{getDescription(role)}</small></em>
+            </Card.Text>
+        }
+      </Card.Body>
+    </Card>
   );
 }
 
