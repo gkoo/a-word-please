@@ -43,6 +43,7 @@ const wakeUpOrder = [
   ROLE_SEER,
   ROLE_ROBBER,
   ROLE_TROUBLEMAKER,
+  ROLE_DRUNK,
   ROLE_INSOMNIAC,
 ];
 
