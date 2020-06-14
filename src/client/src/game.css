@@ -80,6 +80,15 @@
   border-top-color: #e0e0e0;
 }
 
+.team-label .tooltip-inner {
+  background-color: #e0e0e0;
+  color: #000;
+}
+
+.team-label .arrow::before {
+  border-left-color: #222;
+}
+
 .player-label.indigo {
   background-color: #6610f2;
 }
@@ -226,15 +235,18 @@
   margin: 5px 0;
 }
 
-.role-label.werewolf {
+.role-label.werewolf,
+.team-label.werewolf .tooltip-inner {
   background-color: #e74c3c;
 }
 
-.role-label.villager {
+.role-label.villager,
+.team-label.villager .tooltip-inner {
   background-color: #00bc8c;
 }
 
-.role-label.tanner {
+.role-label.tanner,
+.team-label.tanner .tooltip-inner {
   background-color: #f39c12;
 }
 

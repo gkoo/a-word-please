@@ -57,7 +57,6 @@ class WerewolfGame extends Game {
     this.votes = {};
     this.unclaimedRoles = [];
     this.revealingRoles = false;
-    this.numWakeUps = 0;
   }
 
   setup(users) {
@@ -67,6 +66,7 @@ class WerewolfGame extends Game {
 
   newGame() {
     this.eliminatedPlayerIds = null;
+    this.numWakeUps = 0;
     this.roles = {};
     this.votes = {}
     this.unclaimedRoles = [];
@@ -195,7 +195,7 @@ class WerewolfGame extends Game {
 
   performWakeUpActions() {
     if (this.currentWakeUpIdx >= WerewolfGame.WAKE_UP_ORDER.length) {
-      if (this.numWakeups === 0) {
+      if (this.numWakeUps === 0) {
         setTimeout(() => this.beginDaytime(), 10000);
       } else {
         this.beginDaytime();
