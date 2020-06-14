@@ -176,14 +176,11 @@ function RoleCard({
           includeTeam &&
             <span className={teamClassName}>Team {getTeam(role)}</span>
         }
+        <Card.Text className={cx({ invisible: !shouldRevealRole })}>
+          <em><small>{getDescription(role)}</small></em>
+        </Card.Text>
         {/* Used to display PlayerLabel */}
         {cardContent}
-        {
-          !cardContent &&
-            <Card.Text className={cx({ invisible: !shouldRevealRole })}>
-              <em><small>{getDescription(role)}</small></em>
-            </Card.Text>
-        }
       </Card.Body>
     </Card>
   );

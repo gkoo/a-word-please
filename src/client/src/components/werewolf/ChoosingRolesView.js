@@ -59,6 +59,10 @@ function ChoosingRolesView() {
       );
       return;
     }
+    if (toggledRoleId === ROLE_DOPPELGANGER) {
+      alert('Please upgrade to premium to access the Doppelganger role by buying me a coffee.');
+      return;
+    }
     const roleIdIndex = roleIds.indexOf(toggledRoleId);
     let newRoleIds;
     if (roleIdIndex >= 0) {
