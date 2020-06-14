@@ -47,6 +47,26 @@ describe('beginNighttime', () => {
     ];
   });
 
+  it('sets the game state to NIGHTTIME', () => {
+    subject();
+    expect(game.state).toBe(WerewolfGame.STATE_NIGHTTIME);
+  });
+});
+
+describe('assignRoles', () => {
+  const subject = () => game.assignRoles();
+
+  beforeEach(() => {
+    game.roleIds = [
+      'werewolf1',
+      'seer',
+      'troublemaker',
+      'robber',
+      'drunk',
+      'insomniac',
+    ];
+  });
+
   it('assigns roles to players and leaves three unclaimed', () => {
     subject();
     expect(game.unclaimedRoles).toHaveLength(3);
@@ -60,9 +80,16 @@ describe('beginNighttime', () => {
     expect(allRoles.includes(WerewolfGame.ROLE_INSOMNIAC)).toBe(true);
   });
 
-  it('sets the game state to NIGHTTIME', () => {
-    subject();
-    expect(game.state).toBe(WerewolfGame.STATE_NIGHTTIME);
+  describe('when ensuring there is a werewolf', () => {
+    beforeEach(() => {
+      game.ensureWerewolf = true;
+    });
+
+    it('assigns a werewolf to one of the players', () => {
+      subject();
+      const playerList = Object.values(game.players);
+      expect(!!playerList.find(player => player.role === WerewolfGame.ROLE_WEREWOLF)).toBe(true);
+    });
   });
 
   describe('when the number of selected roles don\'t match', () => {
@@ -73,9 +100,8 @@ describe('beginNighttime', () => {
       ];
     });
 
-    it('doesn\'t do anything', () => {
-      subject();
-      expect(game.state).toBe(WerewolfGame.STATE_CHOOSING_ROLES);
+    it('throws error', () => {
+      expect(subject).toThrow();
     });
   });
 });
@@ -90,6 +116,7 @@ describe('performWakeUpActions', () => {
   describe('when we\'ve traversed through the entire list of wake up roles', () => {
     beforeEach(() => {
       game.currentWakeUpIdx = WerewolfGame.WAKE_UP_ORDER.length;
+      game.numWakeUps = 2;
     });
 
     it('moves the game to DAYTIME', () => {
@@ -232,7 +259,7 @@ describe('nextTurn', () => {
   });
 });
 
-describe.only('determineWinners', () => {
+describe('determineWinners', () => {
   let votes;
   const subject = () => {
     game.votes = votes;

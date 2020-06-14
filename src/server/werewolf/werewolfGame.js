@@ -52,6 +52,7 @@ class WerewolfGame extends Game {
 
   constructor(io, roomCode) {
     super(io, roomCode);
+    this.ensureWerewolf = false;
     this.roleIds = []; // to sync client views
     this.roles = {}; // for actual game logic
     this.votes = {};
@@ -123,6 +124,10 @@ class WerewolfGame extends Game {
     switch (data.action) {
       case 'setRoleSelection':
         return this.setRoleIds(data.roleIds);
+      case 'setEnsureWerewolf':
+        this.ensureWerewolf = data.ensureWerewolf;
+        this.broadcastGameDataToPlayers();
+        return;
       case 'beginNighttime':
         return this.beginNighttime();
       case 'troublemakeRoles':
@@ -162,27 +167,20 @@ class WerewolfGame extends Game {
 
   setRoleIds(roleIds) {
     this.roleIds = roleIds;
+
+    const hasWerewolf = !!this.roleIds.find(roleId => roleId.startsWith('werewolf'));
+
+    if (!hasWerewolf) {
+      this.ensureWerewolf = false;
+    }
     this.broadcastGameDataToPlayers();
   }
 
   beginNighttime() {
     // Assign roles
-    const shuffledRoleIds = _.shuffle(this.roleIds);
-    const shuffledRoles = shuffledRoleIds.map(roleId => {
-      const formattedRoleId = roleId.replace(/[^a-z]/, '');
-      return WerewolfGame.ROLE_ID_TO_ENUM[formattedRoleId];
-    });
-
-    if (shuffledRoles.length !== this.getActivePlayers().length + 3) { return; }
-
-    this.getActivePlayers().forEach((player, idx) => {
-      const role = shuffledRoles[idx];
-      player.setRole({ role, isOriginalRole: true });
-    });
+    this.assignRoles();
 
     this.state = WerewolfGame.STATE_NIGHTTIME;
-
-    this.unclaimedRoles = shuffledRoles.slice(shuffledRoles.length - 3);
 
     // Let's broadcast now because we don't know if we're going to artificially delay the first
     // turn.
@@ -191,6 +189,40 @@ class WerewolfGame extends Game {
     // traverse through each role's wakeup actions
     this.currentWakeUpIdx = 0;
     this.performWakeUpActions();
+  }
+
+  assignRoles() {
+    const rolesToUse = this.roleIds.map(roleId => {
+      const formattedRoleId = roleId.replace(/[^a-z]/, '');
+      return WerewolfGame.ROLE_ID_TO_ENUM[formattedRoleId];
+    });
+
+    let shuffledRolesToAssign;
+    let shuffledRoles;
+
+    if (this.ensureWerewolf && rolesToUse.includes(WerewolfGame.ROLE_WEREWOLF)) {
+      // Need to guarantee at least one player is a werewolf.
+      const werewolfIdx = rolesToUse.indexOf(WerewolfGame.ROLE_WEREWOLF);
+      const rolesToShuffle = rolesToUse.slice(0, werewolfIdx).concat(
+        rolesToUse.slice(werewolfIdx + 1)
+      );
+      shuffledRoles = _.shuffle(rolesToShuffle);
+      shuffledRolesToAssign = _.shuffle(shuffledRoles.slice(3).concat([WerewolfGame.ROLE_WEREWOLF]));
+    } else {
+      shuffledRoles = _.shuffle(rolesToUse);
+      shuffledRolesToAssign = shuffledRoles.slice(3);
+    }
+
+    this.unclaimedRoles = shuffledRoles.slice(0, 3);
+
+    if (shuffledRolesToAssign.length !== this.getActivePlayers().length) {
+      throw new Error('lengths don\'t match!');
+    }
+
+    this.getActivePlayers().forEach((player, idx) => {
+      const role = shuffledRolesToAssign[idx];
+      player.setRole({ role, isOriginalRole: true });
+    });
   }
 
   performWakeUpActions() {
@@ -406,6 +438,7 @@ class WerewolfGame extends Game {
 
     return {
       eliminatedPlayerIds: this.eliminatedPlayers?.map(player => player.id),
+      ensureWerewolf: this.ensureWerewolf,
       gameId: WerewolfGame.GAME_ID,
       players: activePlayersToSend,
       roleIds: this.roleIds,

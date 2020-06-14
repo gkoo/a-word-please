@@ -13,6 +13,7 @@ import ListGroup from 'react-bootstrap/ListGroup'
 import RoleCard from './RoleCard';
 import {
   debugEnabledSelector,
+  ensureWerewolfSelector,
   playersSelector,
   roleIdsSelector,
   socketSelector,
@@ -40,6 +41,7 @@ function ChoosingRolesView() {
   const socket = useSelector(socketSelector);
   const roleIds = useSelector(roleIdsSelector);
   const debugEnabled = useSelector(debugEnabledSelector);
+  const ensureWerewolf = useSelector(ensureWerewolfSelector);
   const inlineInstructionsEl = useRef(null);
 
   const numPlayers = Object.keys(players).length;
@@ -108,6 +110,13 @@ function ChoosingRolesView() {
     });
   };
 
+  const onEnsureWerewolfChange = e => {
+    socket.emit('playerAction', {
+      action: 'setEnsureWerewolf',
+      ensureWerewolf: !ensureWerewolf,
+    });
+  };
+
   const renderRoleCard = (id, role) => {
     const isSelected = roleIds.includes(id);
 
@@ -147,9 +156,22 @@ function ChoosingRolesView() {
             </p>
         }
 
-        <Form.Group controlId='show-selected' onChange={() => setShowOnlySelected(!showOnlySelected)}>
-          <Form.Check type='checkbox' label='Show only selected roles'/>
-        </Form.Group>
+        <Form.Check
+          type='checkbox'
+          inline
+          id={`${domId}-show-selected`}
+          label='Show only selected roles'
+          checked={showOnlySelected}
+          onChange={() => setShowOnlySelected(!showOnlySelected)}
+        />
+        <Form.Check
+          type='checkbox'
+          inline
+          id={`${domId}-ensure-werewolf`}
+          label='Ensure at least one werewolf'
+          checked={ensureWerewolf}
+          onChange={onEnsureWerewolfChange}
+        />
       </div>
     );
   };

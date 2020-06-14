@@ -128,3 +128,7 @@ export const eliminatedPlayersSelector = createSelector(
     );
   }
 );
+export const ensureWerewolfSelector = createSelector(
+  gameDataSelector,
+  gameData => gameData?.ensureWerewolf
+);
