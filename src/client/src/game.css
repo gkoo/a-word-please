@@ -250,6 +250,19 @@
   background-color: #f39c12;
 }
 
+.fixed-header {
+  background-color: #222;
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+.fixed-header.show {
+  display: block;
+}
+
 @media (min-width: 768px) {
   .roles-modal .modal-dialog {
     max-width: 800px;

@@ -57,6 +57,7 @@ function RolesModal({ show }) {
           {
             roles.map(role =>
               <RoleCard
+                key={role}
                 role={role}
                 includeTeam={true}
               />

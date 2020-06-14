@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import cx from 'classnames';
 
 import Button from 'react-bootstrap/Button';
-import CardDeck from 'react-bootstrap/CardDeck';
 
 import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
 import VoteLabel from './VoteLabel';
