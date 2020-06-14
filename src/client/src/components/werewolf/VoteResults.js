@@ -20,7 +20,7 @@ const getTeam = role => {
     return ROLE_WEREWOLF;
   }
   if ([ROLE_TANNER].includes(role)) {
-    return ROLE_WEREWOLF;
+    return ROLE_TANNER;
   }
   return ROLE_VILLAGER;
 };
