@@ -38,7 +38,7 @@ function GameplayView() {
   const onShowRolesModal = () => dispatch(toggleRolesModal({ show: true }));
 
   const isAwake = (gameState !== STATE_WW_NIGHTTIME) || (
-    currPlayer.originalRole === wakeUpRole && wakeUpRole !== ROLE_DRUNK
+    currPlayer?.originalRole === wakeUpRole && wakeUpRole !== ROLE_DRUNK
   );
 
   return (
@@ -62,17 +62,22 @@ function GameplayView() {
           gameState === STATE_WW_VOTE_RESULTS && revealingRoles &&
             <Button onClick={newGame}>New Game</Button>
         }
-        <h1>
+        <h1 className='my-3'>
           <span>
             {isAwake ? '😳' : '😴'}
           </span>
         </h1>
-        <h4>
-          Your
-          {currPlayer.lastKnownRole !== currPlayer.originalRole ? ' last known ' : ' starting '}
-          role
-        </h4>
-        <RoleCard role={currPlayer.lastKnownRole} />
+        {
+          currPlayer &&
+            <>
+              <h4>
+                Your
+                {currPlayer.lastKnownRole !== currPlayer.originalRole ? ' last known ' : ' starting '}
+                role
+              </h4>
+              <RoleCard role={currPlayer.lastKnownRole} />
+            </>
+        }
         <div className='mb-3'><em><small>Roles may change throughout the night...</small></em></div>
         <div><Button variant='link' onClick={onShowRolesModal}>Show role guide</Button></div>
       </Col>

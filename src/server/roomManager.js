@@ -29,8 +29,7 @@ class RoomManager {
 
     const room = this.findOrCreateRoom(roomCode);
     socket.join(roomCode);
-    room.addUser(socket.id);
-    room.sendRoomData(socket);
+    room.addUser(socket);
   }
 
   // Returns the name of the Socket IO room

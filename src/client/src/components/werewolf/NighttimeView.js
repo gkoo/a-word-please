@@ -32,10 +32,10 @@ import { currPlayerSelector, wakeUpRoleSelector } from '../../store/selectors';
 function NighttimeView() {
   const currPlayer = useSelector(currPlayerSelector);
   const wakeUpRole = useSelector(wakeUpRoleSelector);
-  const isAwake = currPlayer.originalRole === wakeUpRole && wakeUpRole !== ROLE_DRUNK;
+  const isAwake = !!currPlayer && currPlayer.originalRole === wakeUpRole && wakeUpRole !== ROLE_DRUNK;
 
   const renderWakeUp = () => {
-    switch (currPlayer.originalRole) {
+    switch (currPlayer?.originalRole) {
       case ROLE_DOPPELGANGER:
         return <DoppelgangerView />;
       case ROLE_SEER:
@@ -52,7 +52,7 @@ function NighttimeView() {
   };
 
   const renderPassiveView = () => {
-    switch (currPlayer.originalRole) {
+    switch (currPlayer?.originalRole) {
       case ROLE_WEREWOLF:
         return <WerewolfView />;
       case ROLE_MINION:

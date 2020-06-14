@@ -72,6 +72,7 @@ class WerewolfGame extends Game {
     this.revealingRoles = false;
     this.state = WerewolfGame.STATE_CHOOSING_ROLES;
     this.winners = [];
+    Object.values(this.players).forEach(player => player.setPlaying());
 
     this.broadcastGameDataToPlayers();
   }
@@ -81,10 +82,28 @@ class WerewolfGame extends Game {
 
     if (!name) { return; }
 
-    this.players[user.id] = new WerewolfPlayer({
-      id,
-      name,
-    });
+
+    const disconnectedPlayer = Object.values(this.players).find(player => !player.connected);
+
+    if (!disconnectedPlayer) {
+      const newPlayer = new WerewolfPlayer({
+        id,
+        name,
+      });
+      this.players[id] = newPlayer;
+      if (this.state === WerewolfGame.STATE_CHOOSING_ROLES) {
+        newPlayer.setPlaying();
+      }
+      return;
+    }
+
+    // Reconnect player
+    const oldPlayerId = disconnectedPlayer.id;
+    disconnectedPlayer.name = name;
+    disconnectedPlayer.id = id;
+    disconnectedPlayer.connected = true;
+    this.players[id] = disconnectedPlayer;
+    delete this.players[oldPlayerId];
   }
 
   // TODO: handle reconnecting players
@@ -92,6 +111,10 @@ class WerewolfGame extends Game {
     if (this.players[id]) { this.players[id].connected = false; }
 
     this.broadcastGameDataToPlayers();
+  }
+
+  getActivePlayers() {
+    return Object.values(this.players).filter(player => player.connected && player.playing);
   }
 
   handlePlayerAction(playerId, data) {
@@ -149,9 +172,9 @@ class WerewolfGame extends Game {
       return WerewolfGame.ROLE_ID_TO_ENUM[formattedRoleId];
     });
 
-    if (shuffledRoles.length !== Object.keys(this.players).length + 3) { return; }
+    if (shuffledRoles.length !== this.getActivePlayers().length + 3) { return; }
 
-    Object.values(this.players).forEach((player, idx) => {
+    this.getActivePlayers().forEach((player, idx) => {
       const role = shuffledRoles[idx];
       player.setRole({ role, isOriginalRole: true });
     });
@@ -177,7 +200,7 @@ class WerewolfGame extends Game {
 
     this.wakeUpRole = WerewolfGame.WAKE_UP_ORDER[this.currentWakeUpIdx];
 
-    const wakeUpPlayers = Object.values(this.players).filter(
+    const wakeUpPlayers = this.getActivePlayers().filter(
       player => player.originalRole === this.wakeUpRole,
     );
 
@@ -257,7 +280,7 @@ class WerewolfGame extends Game {
     this.votes[playerId] = suspectId;
     this.broadcastGameDataToPlayers();
 
-    if (Object.keys(this.votes).length === Object.keys(this.players).length) {
+    if (Object.keys(this.votes).length === this.getActivePlayers().length) {
       // All votes are in! Time to reveal votes.
       setTimeout(() => this.determineWinners(), 1000);
     }
@@ -296,7 +319,7 @@ class WerewolfGame extends Game {
     });
 
     // Figure out who's eliminated
-    const playerList = Object.values(this.players);
+    const playerList = this.getActivePlayers();
     let eliminatedPlayers;
     if (playerIdsWithMostVotes.length === playerList.length) {
       // If no one receives more than one vote, no one dies.
@@ -368,10 +391,16 @@ class WerewolfGame extends Game {
   }
 
   serialize() {
+    const activePlayers = this.getActivePlayers();
+    const activePlayersToSend = {};
+    activePlayers.forEach(player => {
+      activePlayersToSend[player.id] = player;
+    });
+
     return {
       eliminatedPlayerIds: this.eliminatedPlayers?.map(player => player.id),
       gameId: WerewolfGame.GAME_ID,
-      players: this.players,
+      players: activePlayersToSend,
       roleIds: this.roleIds,
       revealingRoles: this.revealingRoles,
       state: this.state,

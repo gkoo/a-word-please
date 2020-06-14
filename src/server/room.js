@@ -27,12 +27,14 @@ function Room({ io, roomCode }) {
 Room.prototype = {
   getUserById: function(id) { return this.users[id]; },
 
-  addUser: function(id) {
+  addUser: function(socket) {
+    const { id } = socket;
     const user = new User({ id });
     this.users[id] = user;
     if (this.getUsers().length === 1) {
       this.promoteRandomLeader();
     }
+    this.sendRoomData(socket);
   },
 
   onUserDisconnect: function(id) {
@@ -46,12 +48,11 @@ Room.prototype = {
     }
     if (this.game) {
       this.game.removePlayer(id);
+      // Clean up game if no players left
       const connectedPlayer = Object.values(this.game.players).find(player => player.connected);
       if (!connectedPlayer) { this.game = null; }
     }
     this.broadcastToRoom('userDisconnect', id);
-
-    if (!name) { return; }
   },
 
   promoteRandomLeader: function() {

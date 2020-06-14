@@ -17,10 +17,11 @@ beforeEach(() => {
 });
 
 const userId = '123';
+const socket = { id: userId };
 
 describe('addUser', () => {
   it('adds a user', () => {
-    room.addUser(userId);
+    room.addUser(socket);
     expect(Object.keys(room.users)).toHaveLength(1);
     expect(room.users[userId]).toBeTruthy();
   });
@@ -28,7 +29,7 @@ describe('addUser', () => {
   describe('when there is only one user', () => {
     it('promotes the user to leader', () => {
       expect(Object.keys(room.users)).toHaveLength(0);
-      room.addUser(userId);
+      room.addUser(socket);
       expect(Object.keys(room.users)).toHaveLength(1);
       const user = room.getUserById(userId);
       expect(user.isLeader).toEqual(true);
@@ -38,8 +39,8 @@ describe('addUser', () => {
   describe('when there are two users', () => {
     it('does not change the leader', () => {
       const newUserId = '456';
-      room.addUser(userId);
-      room.addUser(newUserId);
+      room.addUser(socket);
+      room.addUser({ id: newUserId });
       const user = room.getUserById(userId);
       expect(user.isLeader).toEqual(true);
       const newUser = room.getUserById(newUserId);
@@ -50,7 +51,7 @@ describe('addUser', () => {
 
 describe('getUserById', () => {
   it('gets the correct user', () => {
-    room.addUser(userId);
+    room.addUser(socket);
     const user = room.getUserById(userId);
     expect(user.id).toEqual(userId);
   });
@@ -58,7 +59,7 @@ describe('getUserById', () => {
 
 describe('removeUser', () => {
   it('removes the user', () => {
-    room.addUser(userId);
+    room.addUser({ id: userId, name: 'John' });
     expect(Object.keys(room.users)).toHaveLength(1);
     const user = room.onUserDisconnect(userId);
     expect(Object.keys(room.users)).toHaveLength(0);
@@ -66,11 +67,11 @@ describe('removeUser', () => {
 
   describe('when the leader is removed', () => {
     it('promotes a random user', () => {
-      room.addUser(userId); // initial leader
+      room.addUser(socket); // initial leader
       expect(room.getUserById(userId).isLeader).toEqual(true);
-      room.addUser('456');
-      room.addUser('789');
-      room.addUser('abc');
+      room.addUser({ id: '456' });
+      room.addUser({ id: '789' });
+      room.addUser({ id: 'abc' });
       room.onUserDisconnect(userId);
       expect(room.getUserById('456').isLeader).toEqual(true);
     });
@@ -78,8 +79,8 @@ describe('removeUser', () => {
 
   describe('when there are no players left in the game', () => {
     it('destroys the game', () => {
-      room.addUser('123');
-      room.addUser('456');
+      room.addUser({ id: '123' });
+      room.addUser({ id: '456' });
       room.startGame('123');
       expect(Object.keys(room.users)).toHaveLength(2);
       room.onUserDisconnect('123');
@@ -94,8 +95,8 @@ describe('getLeader', () => {
   const subject = () => room.getLeader();
 
   beforeEach(() => {
-    room.addUser('123');
-    room.addUser('456');
+    room.addUser({ id: '123' });
+    room.addUser({ id: '456' });
   });
 
   it('returns the leader', () => {

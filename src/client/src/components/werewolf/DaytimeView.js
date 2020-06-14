@@ -84,7 +84,7 @@ function DaytimeView() {
   const unclaimedRoles = useSelector(selectors.unclaimedRolesSelector);
   const votes = useSelector(selectors.votesSelector);
 
-  const otherPlayers = Object.values(players).filter(player => player.id !== currPlayer.id);
+  const otherPlayers = Object.values(players).filter(player => player.id !== currPlayer?.id);
 
   const startVoting = () => socket.emit('playerAction', { action: 'startVoting' });
 
@@ -152,7 +152,7 @@ function DaytimeView() {
                 value={playerToEliminate}
               >
                 {otherPlayers.map(renderPlayerButton)}
-                {renderPlayerButton(currPlayer)}
+                {currPlayer && renderPlayerButton(currPlayer)}
               </ToggleButtonGroup>
             </Col>
             <Col xs={6} className='text-center'>
