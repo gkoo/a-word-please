@@ -57,6 +57,7 @@ class WerewolfGame extends Game {
     this.votes = {};
     this.unclaimedRoles = [];
     this.revealingRoles = false;
+    this.numWakeUps = 0;
   }
 
   setup(users) {
@@ -194,7 +195,11 @@ class WerewolfGame extends Game {
 
   performWakeUpActions() {
     if (this.currentWakeUpIdx >= WerewolfGame.WAKE_UP_ORDER.length) {
-      this.beginDaytime();
+      if (this.numWakeups === 0) {
+        setTimeout(() => this.beginDaytime(), 10000);
+      } else {
+        this.beginDaytime();
+      }
       return;
     }
 
@@ -219,6 +224,8 @@ class WerewolfGame extends Game {
       }
       return;
     }
+
+    ++this.numWakeUps;
 
     this.broadcastGameDataToPlayers();
 
