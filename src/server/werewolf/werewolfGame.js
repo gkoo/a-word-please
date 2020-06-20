@@ -161,6 +161,7 @@ class WerewolfGame extends Game {
 
   nextTurn() {
     // TODO: check for two insomniacs (due to Doppelganger)
+    console.log('next turn');
     ++this.currentWakeUpIdx;
     this.performWakeUpActions();
   }

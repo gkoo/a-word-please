@@ -109,6 +109,8 @@ class AWPGame extends Game {
       return;
     }
 
+    console.log('next turn');
+
     // Advance the playerOrderCursor
     // No action needed if we're advancing turn due to a player disconnect
     if (shouldIncrementRound) {
@@ -197,6 +199,7 @@ class AWPGame extends Game {
   }
 
   endGame() {
+    console.log('end game');
     this.state = Game.STATE_GAME_END;
     this.broadcastGameDataToPlayers();
   }
