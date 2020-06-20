@@ -89,8 +89,12 @@ class RoomManager {
     // socket.rooms gets cleared before we can do any cleanup. Just loop through rooms to find if
     // they have the socket and clean it up.
     Object.values(this.rooms).forEach(room => {
-      if (room.users[socket.id]) {
-        room.onUserDisconnect(socket.id);
+      if (!room.users[socket.id]) { return; }
+
+      room.onUserDisconnect(socket.id);
+      // If no users left in room, clean up the room.
+      if (Object.keys(room.users).length === 0) {
+        delete this.rooms[room.roomCode];
       }
     });
   }
