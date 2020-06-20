@@ -2,12 +2,10 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Button from 'react-bootstrap/Button';
-import Card from 'react-bootstrap/Card';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
-import cx from 'classnames';
 
 import LeaderPanel from './LeaderPanel';
 import UserList from './UserList';
@@ -36,25 +34,27 @@ function Lobby({ messages, roomCode, users }) {
           </Col>
         </Row>
         <Row className='my-3'>
-          <Col xs={6} md={{ offset: 2, span: 4 }}>
-            <Card
-              className={cx('game-tile', { selected: selectedGame === GAME_A_WORD_PLEASE})}
+          <Col xs={6} md={{ offset: 2, span: 8 }} className='text-center'>
+            <h3>Choose a game</h3>
+            <Button
+              variant='outline-info'
+              size='lg'
+              active={selectedGame === GAME_A_WORD_PLEASE}
               onClick={() => onChooseGame(GAME_A_WORD_PLEASE)}
+              className='mr-2'
             >
-              <Card.Body className='text-center'>
-                <h3>A Word, Please?</h3>
-              </Card.Body>
-            </Card>
-          </Col>
-          <Col xs={6} md={{ span: 4 }}>
-            <Card
-              className={cx('game-tile', { selected: selectedGame === GAME_WEREWOLF})}
+              <span role='img' aria-label='A Word, Please?' className='mr-2'>📝</span>
+              A Word, Please?
+            </Button>
+            <Button
+              variant='outline-info'
+              size='lg'
+              active={selectedGame === GAME_WEREWOLF}
               onClick={() => onChooseGame(GAME_WEREWOLF)}
             >
-              <Card.Body className='text-center'>
-                <h3>Werewolf</h3>
-              </Card.Body>
-            </Card>
+              <span role='img' aria-label='Werewolf' className='mr-2'>🐺</span>
+              Werewolf
+            </Button>
           </Col>
         </Row>
         {

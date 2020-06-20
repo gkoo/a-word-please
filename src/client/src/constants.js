@@ -1,6 +1,9 @@
 export const env = process.env.NODE_ENV;
 export const routePrefix = '';
 
+export const SITE_TITLE = 'Koo Fitness Club';
+export const API_BASE_URL = env === 'production' ? '' : 'http://localhost:5000';
+
 export const GAME_A_WORD_PLEASE = 1;
 export const GAME_WEREWOLF = 2;
 
@@ -48,3 +51,5 @@ export const LABELS = {
   [ROLE_DOPPELGANGER]: 'Doppelganger',
   [ROLE_TANNER]: 'Tanner',
 };
+
+export const sessionsPrefix = `${routePrefix}/gkoo`;

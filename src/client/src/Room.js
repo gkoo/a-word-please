@@ -6,7 +6,7 @@ import Game from './components/Game';
 import Layout from './Layout';
 import Lobby from './components/Lobby';
 import NameModal from './components/NameModal';
-import { ROOM_STATE_LOBBY } from './constants';
+import { API_BASE_URL, ROOM_STATE_LOBBY } from './constants';
 import * as actions from './store/actions';
 import * as selectors from './store/selectors';
 import { env } from './constants';
@@ -14,7 +14,7 @@ import { env } from './constants';
 import './bootstrap.min.css';
 import './game.css';
 
-const pingHealthEndpoint = () => window.fetch('/health').then(resp => {});
+const pingHealthEndpoint = () => window.fetch(`${API_BASE_URL}/health`).then(resp => {});
 
 function Room() {
   const dispatch = useDispatch();

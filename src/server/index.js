@@ -12,17 +12,23 @@ const RoomManager = require('./roomManager.js');
 const port = process.env.PORT || 5000;
 app.set('port', port);
 
+const roomManager = new RoomManager(io);
+
 app.use(express.static(path.join(__dirname, '../client/build')));
 
 app.get('/health', (req, res) => res.send('ok'));
+
+app.get('/api/sessions', (req, res) => {
+  res.json({
+    rooms: Object.keys(roomManager.rooms),
+  });
+});
 
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/build/index.html'));
 });
-
-const roomManager = new RoomManager(io);
 
 // Callbacks to pass to room
 const emitToSocket = (socketId, eventName, data) =>
