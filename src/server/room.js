@@ -1,5 +1,3 @@
-const uuid = require('uuid');
-
 const AWPGame = require('./a-word-please/awp-game.js');
 const WerewolfGame = require('./werewolf/werewolfGame.js');
 const User = require('./user.js');
@@ -39,7 +37,6 @@ Room.prototype = {
 
   onUserDisconnect: function(id) {
     const user = this.users[id];
-    const { name } = user;
 
     console.log(`${id} disconnected`);
     delete this.users[id];
@@ -90,10 +87,7 @@ Room.prototype = {
   },
 
   startGame: function() {
-    const {
-      broadcastToRoom,
-      io,
-    } = this;
+    const { io } = this;
     if (!this.selectedGame) { return; }
 
     this.state = STATE_GAME;
@@ -119,7 +113,7 @@ Room.prototype = {
     this.game.setup(this.users);
   },
 
-  nextTurn: function(userId) {
+  nextTurn: function() {
     console.log('starting next round');
     if (!this.game) { return false; }
     this.game.nextTurn();
@@ -130,7 +124,7 @@ Room.prototype = {
     this.game.handlePlayerAction(socket.id, data);
   },
 
-  endGame: function(gameInitiatorId) {
+  endGame: function() {
     if (!this.game) { return; }
     this.game.endGame();
   },

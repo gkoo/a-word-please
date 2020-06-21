@@ -1,0 +1,26 @@
+# AWP
+
+remove point if wrong guess on last turn
+
+
+# Werewolf
+
+Option to randomize roles
+Option to randomize + x werewolves
+
+warnings when including:
+* only 1 mason
+* insomniac but no troublemaker/robber
+
+conditionally show rules based on which game you're playing
+
+Show multiple in non-wake roles
+
+sort role modal by roles in game
+
+voting
+
+
+# General
+
+investigate bug w/ "Clean up room after everyone has left"

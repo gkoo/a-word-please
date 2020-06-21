@@ -10,7 +10,7 @@ import {
 
 import Homepage from './Homepage';
 import Room from './Room';
-import SessionsIndex from './components/SessionsIndex';
+import SessionIndex from './components/SessionIndex';
 import { env, routePrefix, sessionsPrefix } from './constants';
 import * as serviceWorker from './serviceWorker';
 import store from './store';
@@ -26,7 +26,7 @@ if (env === 'production' && !window.location.href.match(/koofitness\.club/)) {
         <Router>
           <Switch>
             <Route path={`${routePrefix}/rooms/:roomCode`} component={Room}/>
-            <Route path={`${sessionsPrefix}/sessions`} component={SessionsIndex}/>
+            <Route path={`${sessionsPrefix}/sessions`} component={SessionIndex}/>
             <Route path={routePrefix} component={Homepage}/>
             <Route>
               <Redirect to={routePrefix} />

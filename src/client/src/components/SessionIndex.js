@@ -8,7 +8,7 @@ import ListGroup from 'react-bootstrap/ListGroup'
 
 import { API_BASE_URL, routePrefix } from '../constants';
 
-function SessionsIndex() {
+function SessionIndex() {
   const [sessionsData, setSessionsData] = useState(null);
 
   useEffect(() => {
@@ -25,11 +25,15 @@ function SessionsIndex() {
           <ListGroup>
             {
               sessionsData?.rooms &&
-                sessionsData.rooms.map(roomCode =>
-                  <ListGroup.Item key={roomCode}>
-                    <Link to={`${routePrefix}/rooms/${roomCode}`}>{roomCode}</Link>
-                  </ListGroup.Item>
-                )
+                sessionsData.rooms.map(roomCode => {
+                  const parts = roomCode.split('-');
+                  const code = parts.length > 1 ? parts[1] : parts[0];
+                  return (
+                    <ListGroup.Item key={roomCode}>
+                      <Link to={`${routePrefix}/rooms/${code}`}>{code}</Link>
+                    </ListGroup.Item>
+                  );
+                })
             }
           </ListGroup>
         </Col>
@@ -38,4 +42,4 @@ function SessionsIndex() {
   );
 }
 
-export default SessionsIndex;
+export default SessionIndex;

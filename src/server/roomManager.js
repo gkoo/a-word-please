@@ -1,7 +1,5 @@
 const Room = require('./room.js');
 
-const broadcastTo = (roomId, eventName, data) => io.to(roomId).emit(eventName, data);
-
 const ROOM_CODE_PREFIX = 'room-';
 
 class RoomManager {
