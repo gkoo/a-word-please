@@ -1,46 +1,89 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import { toggleAboutModal } from '../store/actions';
 
-function RulesModal({ onClose, show }) {
+function AboutModal({ show }) {
+  const [showModal, setShowModal] = useState(false);
+  const dispatch = useDispatch();
+  const handleClose = () => showModal && dispatch(toggleAboutModal({ show: false }));
+
+  useEffect(() => {
+    if (show !== showModal) {
+      setShowModal(show);
+    }
+  }, [show, showModal]);
+
   return (
-    <Modal show={show} className='rules-modal'>
-      <Modal.Header>
+    <Modal show={show} className='rules-modal' onHide={handleClose} scrollable>
+      <Modal.Header closeButton>
         <Modal.Title>About</Modal.Title>
       </Modal.Header>
       <Modal.Body className='rules-modal-body'>
-        <p>
-          <em>A Word, Please?</em> is based on the board game{' '}
-          <a
-            href='https://justone-the-game.com/index.php?lang=en#download'
-            target='_blank'
-            rel='noopener noreferrer'
-          >
-            Just One
-          </a>. You can{' '}
-          <a
-            href='https://smile.amazon.com/dp/B07W3PJTL2/ref=cm_sw_r_tw_dp_U_x_u1-0EbECTKQSR'
-            target='_blank'
-            rel='noopener noreferrer'
-          >
-            buy it here
-          </a>!
-        </p>
+        <div>
+          <h3>The Site</h3>
+          <p>
+            I started building online games during the coronavirus quarantine in early 2020, as a
+            technical challenge for myself and also to do my small part to help keep people sane and
+            connected during difficult times.
+          </p>
+          <h5>
+            <em>Why is it called Koo Fitness Club?</em>
+          </h5>
+          <p>
+            One of my goals for this project was to do as much as I could for free. I happened to
+            have the koofitness.club domain already, so I just used it.
+          </p>
+        </div>
+
+        <hr />
+
+        <div>
+          <h3>The Games</h3>
+          <p>
+            <em>A Word, Please?</em> is based on the board game{' '}
+            <a
+              href='https://justone-the-game.com/index.php?lang=en#download'
+              target='_blank'
+              rel='noopener noreferrer'
+            >
+              Just One
+            </a>. {' '}
+            <a
+              href='https://smile.amazon.com/dp/B07W3PJTL2/ref=cm_sw_r_tw_dp_U_x_u1-0EbECTKQSR'
+              target='_blank'
+              rel='noopener noreferrer'
+            >
+              Buy it here
+            </a>!
+          </p>
+          <p>
+            <em>One Night Werewolf</em> is based on the tabletop game{' '} of the same name. {' '}
+            <a
+              href='https://smile.amazon.com/dp/B00HS7GG5G/ref=cm_sw_em_r_mt_dp_U_MB57Eb04K9MD3'
+              target='_blank'
+              rel='noopener noreferrer'
+            >
+              Buy it here!
+            </a>
+          </p>
+        </div>
+
+        <hr />
+
+        <div>
+          <h3>The Developer</h3>
+          <p>
+            You can find me on <a href="https://twitter.com/gordon_koo">Twitter</a>.
+          </p>
+        </div>
+
+        <hr />
 
         <p>
-          The code for this game is on{' '}
-          <a
-            href='https://www.github.com/gkoo/a-word-please'
-            target='_blank'
-            rel='noopener noreferrer'
-          >
-            Github
-          </a>!
-        </p>
-
-        <p>
-          Did you enjoy this game?{' '}
+          Did you enjoy playing games today?{' '}
           <a
             href='https://www.buymeacoffee.com/gkoo'
             target='_blank'
@@ -51,7 +94,7 @@ function RulesModal({ onClose, show }) {
         </p>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant='primary' onClick={onClose}>
+        <Button variant='primary' onClick={handleClose}>
           OK
         </Button>
       </Modal.Footer>
@@ -59,4 +102,4 @@ function RulesModal({ onClose, show }) {
   );
 }
 
-export default RulesModal;
+export default AboutModal;

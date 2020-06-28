@@ -6,6 +6,7 @@ import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
+import Card from 'react-bootstrap/Card';
 
 import LeaderPanel from './LeaderPanel';
 import UserList from './UserList';
@@ -34,46 +35,77 @@ function Lobby({ messages, roomCode, users }) {
           </Col>
         </Row>
         <Row className='my-3'>
-          <Col xs={6} md={{ offset: 2, span: 8 }} className='text-center'>
-            <h3>Choose a game</h3>
-            <Button
-              variant='outline-info'
-              size='lg'
-              active={selectedGame === GAME_A_WORD_PLEASE}
-              onClick={() => onChooseGame(GAME_A_WORD_PLEASE)}
-              className='mr-2'
-            >
-              <span role='img' aria-label='A Word, Please?' className='mr-2'>📝</span>
-              A Word, Please?
-            </Button>
-            <Button
-              variant='outline-info'
-              size='lg'
-              active={selectedGame === GAME_WEREWOLF}
-              onClick={() => onChooseGame(GAME_WEREWOLF)}
-            >
-              <span role='img' aria-label='Werewolf' className='mr-2'>🐺</span>
-              Werewolf
-            </Button>
+          <Col xs={12} md={8} lg={{ offset: 1, span: 7 }} className='text-center'>
+            <Card>
+              <Card.Body>
+                <Button
+                  variant='outline-info'
+                  size='lg'
+                  active={selectedGame === GAME_A_WORD_PLEASE}
+                  onClick={() => onChooseGame(GAME_A_WORD_PLEASE)}
+                  className='mr-2'
+                >
+                  <span role='img' aria-label='A Word, Please?' className='mr-2'>📝</span>
+                  A Word, Please?
+                </Button>
+                <Button
+                  variant='outline-info'
+                  size='lg'
+                  active={selectedGame === GAME_WEREWOLF}
+                  onClick={() => onChooseGame(GAME_WEREWOLF)}
+                >
+                  <span role='img' aria-label='Werewolf' className='mr-2'>🐺</span>
+                  Werewolf
+                </Button>
+                {
+                  !selectedGame &&
+                    <h3 className='my-3'>Please choose a game</h3>
+                }
+                {
+                  selectedGame &&
+                    <div className='p-3'>
+                      <Row>
+                        <Col>
+                          {
+                            selectedGame === GAME_A_WORD_PLEASE &&
+                              <>
+                                <h2>A Word, Please?</h2>
+                                <p>Work together to guess all of the words!</p>
+                                <p>
+                                  But make sure your clues aren't the same, or else they'll be hidden!
+                                </p>
+                              </>
+                          }
+                          {
+                            selectedGame === GAME_WEREWOLF &&
+                              <>
+                                <h2>One Night Werewolf</h2>
+                                <p>
+                                  <em>
+                                    You either die a Villager or live long enough to see yourself become
+                                    a Werewolf...
+                                  </em>
+                                </p>
+                              </>
+                          }
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col className='text-center'>
+                          <Button variant='link' onClick={onShowRulesModal}>How to play</Button>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col className='text-center'>
+                          <LeaderPanel numUsers={Object.keys(users).length}/>
+                        </Col>
+                      </Row>
+                    </div>
+                }
+              </Card.Body>
+            </Card>
           </Col>
-        </Row>
-        {
-          selectedGame &&
-            <div className='my-3'>
-              <Row>
-                <Col className='text-center'>
-                  <Button variant='link' onClick={onShowRulesModal}>How to play</Button>
-                </Col>
-              </Row>
-              <Row>
-                <Col className='text-center'>
-                  <LeaderPanel numUsers={Object.keys(users).length}/>
-                </Col>
-              </Row>
-            </div>
-        }
-        <Row>
-          <Col xs={{ span: 6, offset: 3 }}>
+          <Col xs={12} md={4} lg={3}>
             <UserList users={users} />
           </Col>
         </Row>

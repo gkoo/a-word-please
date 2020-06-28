@@ -20,7 +20,7 @@ function NameModal({ show }) {
     if (e) { e.preventDefault(); }
     socket.emit('saveName', name);
     dispatch(saveName(name));
-  }
+  };
 
   return (
     <Modal show={show}>

@@ -138,11 +138,6 @@
   margin-top: 50px;
 }
 
-.rules-modal-body {
-  max-height: 400px;
-  overflow-y: auto;
-}
-
 /* AWP */
 
 .duplicate .tooltip-inner span {
