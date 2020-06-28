@@ -563,6 +563,17 @@ export default function reducer(state = stateToUse, action) {
         showRulesModal: action.payload.show,
       };
 
+    case actions.UPDATE_SPECTRUM_GUESS:
+      const newGameData = {
+        ...state.gameData,
+        spectrumGuess: action.payload.guess,
+      };
+
+      return {
+        ...state,
+        gameData: newGameData,
+      };
+
     default:
       return state;
   }

@@ -164,5 +164,12 @@ export const clueSelector = createSelector(
 export const currPlayerIsActivePlayerSelector = createSelector(
   gameDataSelector,
   currPlayerSelector,
-  (gameData, currPlayer) => gameData?.activePlayerId === currPlayer.id,
+  (gameData, currPlayer) => {
+    if (!currPlayer) { return false; }
+    return gameData?.activePlayerId === currPlayer.id;
+  }
+);
+export const spectrumGuessSelector = createSelector(
+  gameDataSelector,
+  gameData => gameData?.spectrumGuess,
 );

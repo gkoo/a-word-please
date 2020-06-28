@@ -82,6 +82,7 @@ class WavelengthGame extends Game {
 
     this.currConcept = this.drawCard();
     this.spectrumValue = Math.floor(Math.random()*100) + 1; // From 1 to 100
+    this.spectrumGuess = 50; // initialize to 50, but players will be able to change
 
     this.broadcastGameDataToPlayers();
   }
@@ -90,6 +91,8 @@ class WavelengthGame extends Game {
     switch (data.action) {
       case 'submitClue':
         return this.receiveClue(data.clue);
+      case 'setSpectrumGuess':
+        return this.setSpectrumGuess(playerId, data.spectrumGuess);
       default:
         throw new Error(`Unexpected action ${data.action}`);
     }
@@ -98,6 +101,17 @@ class WavelengthGame extends Game {
   receiveClue(clue) {
     this.clue = clue;
     this.broadcastGameDataToPlayers();
+  }
+
+  setSpectrumGuess(playerId, guess) {
+    this.spectrumGuess = guess;
+    console.log('setting spectrum guess to ', guess);
+    // Don't emit back to the original player because it messes with the UI
+    const otherPlayers = this.getConnectedPlayers().filter(player => player.id !== playerId)
+    otherPlayers.forEach(player => {
+      // Don't broadcast entire game data because this might be called frequently
+      this.io.to(player.id).emit('spectrumGuessUpdate', guess);
+    });
   }
 
   serialize() {
@@ -110,7 +124,9 @@ class WavelengthGame extends Game {
       currConcept: this.currConcept,
       gameId: WavelengthGame.GAME_ID,
       numPoints: this.numPoints,
-      spectrumValue: this.spectrumValue;
+      players: this.players,
+      spectrumGuess: this.spectrumGuess,
+      spectrumValue: this.spectrumValue,
     };
   }
 }
