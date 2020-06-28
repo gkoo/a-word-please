@@ -5,6 +5,7 @@ import {
   env,
   GAME_A_WORD_PLEASE,
   GAME_WEREWOLF,
+  GAME_WAVELENGTH,
 
   ROLE_WEREWOLF,
   ROLE_MINION,
@@ -207,8 +208,57 @@ const testWerewolfGameData = {
   winners: [ROLE_WEREWOLF],
 };
 
+const testWavelengthGameData = {
+  activePlayerId: 'willy',
+  clue: 'It\'s not good',
+  currConcept: ['Bad', 'Good'],
+  gameId: GAME_WAVELENGTH,
+  numPoints: 0,
+  players: {
+    gordon: {
+      id: 'gordon',
+      name: 'Gordon',
+      isLeader: true,
+      color: 'red',
+      connected: true,
+    },
+    steve: {
+      id: 'steve',
+      name: 'Steve',
+      color: 'indigo',
+      connected: true,
+    },
+    yuriko: {
+      id: 'yuriko',
+      name: 'Yuriko',
+      color: 'purple',
+      connected: true,
+    },
+    aj: {
+      id: 'aj',
+      name: 'AJ',
+      color: 'pink',
+      connected: true,
+    },
+    willy: {
+      id: 'willy',
+      name: 'Willy',
+      color: 'red',
+      connected: true,
+    },
+    rishi: {
+      id: 'rishi',
+      name: 'Rishi',
+      color: 'orange',
+      connected: true,
+    },
+  },
+  spectrumValue: 25,
+};
+
 //const testGameDataToUse = testAwpGameData;
-const testGameDataToUse = testWerewolfGameData;
+//const testGameDataToUse = testWerewolfGameData;
+const testGameDataToUse = testWavelengthGameData;
 
 const testState = {
   alerts: [

@@ -6,6 +6,7 @@ export const API_BASE_URL = env === 'production' ? '' : 'http://localhost:5000';
 
 export const GAME_A_WORD_PLEASE = 1;
 export const GAME_WEREWOLF = 2;
+export const GAME_WAVELENGTH = 3;
 
 export const GAME_STATE_PENDING = 0;
 export const GAME_STATE_TURN_END = 1;

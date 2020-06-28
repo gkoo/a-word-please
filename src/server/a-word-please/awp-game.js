@@ -26,7 +26,7 @@ class AWPGame extends Game {
 
   setup(users) {
     super.setup(users);
-    this.createLexicon();
+    this.createDeck(wordlist);
     this.determinePlayerOrder();
     this.newGame();
   }
@@ -70,8 +70,8 @@ class AWPGame extends Game {
     // Remove clue from clues
     if (this.clues[id]) { delete this.clues[id]; }
 
-    if (id === this.guesserId) {
-      this.guesserId = this.playerOrder[playerOrderIdx % this.playerOrder.length];
+    if (id === this.activePlayerId) {
+      this.activePlayerId = this.playerOrder[playerOrderIdx % this.playerOrder.length];
       this.nextTurn(false);
     }
 
@@ -81,18 +81,6 @@ class AWPGame extends Game {
       // TODO: unmark duplicates
       this.checkIfAllCluesAreIn();
     }
-  }
-
-  createLexicon() {
-    //this.lexicon = ['water', 'fire', 'earth', 'air'];
-    this.lexicon = _.shuffle(wordlist);
-  }
-
-  determinePlayerOrder() {
-    const playerIds = this.getConnectedPlayers().map(player => player.id);
-    this.playerOrder = _.shuffle(playerIds);
-
-    this.guesserId = this.playerOrder[0];
   }
 
   nextTurn(shouldIncrementRound = true) {
@@ -114,12 +102,10 @@ class AWPGame extends Game {
     // Advance the playerOrderCursor
     // No action needed if we're advancing turn due to a player disconnect
     if (shouldIncrementRound) {
-      const playerOrderIdx = this.playerOrder.indexOf(this.guesserId);
-      this.guesserId = this.playerOrder[(playerOrderIdx + 1) % this.playerOrder.length]
+      this.advancePlayerTurn();
     }
 
-    this.currWord = this.lexicon[this.lexiconCursor];
-    this.lexiconCursor = (++this.lexiconCursor) % this.lexicon.length;
+    this.currWord = this.drawCard();
     this.state = AWPGame.STATE_ENTERING_CLUES;
 
     this.broadcastGameDataToPlayers();
@@ -132,7 +118,7 @@ class AWPGame extends Game {
       case 'revealClues':
         return this.revealCluesToGuesser();
       case 'submitGuess':
-        return this.receiveGuess(playerId, data.guess);
+        return this.receiveGuess(data.guess);
       case 'skipTurn':
         return this.skipTurn();
       default:
@@ -176,7 +162,7 @@ class AWPGame extends Game {
     this.broadcastGameDataToPlayers();
   }
 
-  receiveGuess(socketId, submittedGuess) {
+  receiveGuess(submittedGuess) {
     const guess = submittedGuess.substring(0, AWPGame.MAX_WORD_LENGTH);
     const formattedGuess = guess.toLowerCase().replace(/\s/g, '');
     this.currGuess = guess;
@@ -224,7 +210,6 @@ class AWPGame extends Game {
       clues,
       currGuess,
       currWord,
-      guesserId,
       numPoints,
       players,
       playerOrder,
@@ -238,7 +223,7 @@ class AWPGame extends Game {
       currGuess,
       currWord,
       gameId: AWPGame.GAME_ID,
-      guesserId,
+      guesserId: this.activePlayerId,
       numPoints,
       players,
       playerOrder,

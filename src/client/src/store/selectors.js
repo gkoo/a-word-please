@@ -53,7 +53,7 @@ export const numPointsSelector = createSelector(
 );
 export const playersSelector = createSelector(
   gameDataSelector,
-  gameData => gameData && gameData.players
+  gameData => gameData?.players
 );
 export const roundNumSelector = createSelector(
   gameDataSelector,
@@ -131,4 +131,38 @@ export const eliminatedPlayersSelector = createSelector(
 export const ensureWerewolfSelector = createSelector(
   gameDataSelector,
   gameData => gameData?.ensureWerewolf
+);
+
+// Wavelength
+export const spectrumValueSelector = createSelector(
+  gameDataSelector,
+  gameData => gameData?.spectrumValue,
+);
+export const currConceptSelector = createSelector(
+  gameDataSelector,
+  gameData => gameData?.currConcept,
+);
+export const activePlayerSelector = createSelector(
+  gameDataSelector,
+  playersSelector,
+  (gameData, players) => gameData?.activePlayerId && players[gameData.activePlayerId],
+);
+export const wavelengthGuessersSelector = createSelector(
+  gameDataSelector,
+  playersSelector,
+  (gameData, players) => {
+    if (!gameData) { return []; }
+
+    const { activePlayerId } = gameData;
+    return Object.values(players).filter(player => player.id !== activePlayerId);
+  }
+);
+export const clueSelector = createSelector(
+  gameDataSelector,
+  gameData => gameData?.clue,
+);
+export const currPlayerIsActivePlayerSelector = createSelector(
+  gameDataSelector,
+  currPlayerSelector,
+  (gameData, currPlayer) => gameData?.activePlayerId === currPlayer.id,
 );

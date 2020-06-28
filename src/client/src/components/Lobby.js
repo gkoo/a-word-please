@@ -12,7 +12,7 @@ import LeaderPanel from './LeaderPanel';
 import UserList from './UserList';
 import { toggleRulesModal } from '../store/actions';
 import { selectedGameSelector, socketSelector } from '../store/selectors';
-import { GAME_A_WORD_PLEASE, GAME_WEREWOLF } from '../constants';
+import { GAME_A_WORD_PLEASE, GAME_WEREWOLF, GAME_WAVELENGTH } from '../constants';
 
 function Lobby({ messages, roomCode, users }) {
   const dispatch = useDispatch();
@@ -44,6 +44,7 @@ function Lobby({ messages, roomCode, users }) {
                   active={selectedGame === GAME_A_WORD_PLEASE}
                   onClick={() => onChooseGame(GAME_A_WORD_PLEASE)}
                   className='mr-2'
+                  block
                 >
                   <span role='img' aria-label='A Word, Please?' className='mr-2'>📝</span>
                   A Word, Please?
@@ -53,9 +54,20 @@ function Lobby({ messages, roomCode, users }) {
                   size='lg'
                   active={selectedGame === GAME_WEREWOLF}
                   onClick={() => onChooseGame(GAME_WEREWOLF)}
+                  block
                 >
                   <span role='img' aria-label='Werewolf' className='mr-2'>🐺</span>
                   Werewolf
+                </Button>
+                <Button
+                  variant='outline-info'
+                  size='lg'
+                  active={selectedGame === GAME_WAVELENGTH}
+                  onClick={() => onChooseGame(GAME_WAVELENGTH)}
+                  block
+                >
+                  <span role='img' aria-label='Wavelength' className='mr-2'>📻</span>
+                  Wavelength
                 </Button>
                 {
                   !selectedGame &&
@@ -82,9 +94,18 @@ function Lobby({ messages, roomCode, users }) {
                                 <h2>One Night Werewolf</h2>
                                 <p>
                                   <em>
-                                    You either die a Villager or live long enough to see yourself become
-                                    a Werewolf...
+                                    You either die a Villager or live long enough to see yourself
+                                    become a Werewolf...
                                   </em>
+                                </p>
+                              </>
+                          }
+                          {
+                            selectedGame === GAME_WAVELENGTH &&
+                              <>
+                                <h2>Wavelength</h2>
+                                <p>
+                                  <em>Are you and your friends on the same wavelength?</em>
                                 </p>
                               </>
                           }
