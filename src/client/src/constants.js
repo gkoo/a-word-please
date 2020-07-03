@@ -28,6 +28,7 @@ export const STATE_WW_VOTE_RESULTS = 7;
 export const STATE_WAVELENGTH_CLUE_PHASE = 3;
 export const STATE_WAVELENGTH_GUESS_PHASE = 4;
 export const STATE_WAVELENGTH_REVEAL_PHASE = 5;
+export const STATE_WAVELENGTH_GAME_END_PHASE = 6;
 
 export const ROLE_WEREWOLF = 0;
 export const ROLE_MINION = 1;

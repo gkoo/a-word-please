@@ -275,21 +275,20 @@
 }
 
 .spectrum-band {
-  height: 100px;
   width: 5.55556%
 }
 
 .band2 {
-  background-color: #f00;
-  height: 50px;
+  background-color: #F39C12;
+  height: 33%;
 }
 
 .band3 {
-  background-color: #0f0;
-  height: 100px;
+  background-color: #00bc8c;
+  height: 66%;
 }
 
 .band4 {
-  background-color: #00f;
-  height: 150px;
+  background-color: #E74C3C;
+  height: 100%;
 }

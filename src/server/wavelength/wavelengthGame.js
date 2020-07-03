@@ -7,7 +7,9 @@ class WavelengthGame extends Game {
   static STATE_CLUE_PHASE = 3;
   static STATE_GUESS_PHASE = 4;
   static STATE_REVEAL_PHASE = 5;
+  static STATE_GAME_END_PHASE = 6;
   static SPECTRUM_MAX_VALUE = 180;
+  static TOTAL_NUM_ROUNDS = 13;
 
   constructor(io, roomCode) {
     super(io, roomCode);
@@ -78,6 +80,11 @@ class WavelengthGame extends Game {
   }
 
   nextTurn(shouldIncrementRound = true) {
+    if (this.roundNum >= WavelengthGame.TOTAL_NUM_ROUNDS - 1) {
+      return this.endGame();
+    }
+
+    ++this.roundNum;
     this.clue = null;
     this.state = WavelengthGame.STATE_CLUE_PHASE;
 
@@ -100,6 +107,8 @@ class WavelengthGame extends Game {
         return this.setSpectrumGuess(playerId, data.spectrumGuess);
       case 'submitGuess':
         return this.submitGuess();
+      case 'nextTurn':
+        return this.nextTurn();
       default:
         throw new Error(`Unexpected action ${data.action}`);
     }
@@ -138,6 +147,11 @@ class WavelengthGame extends Game {
     this.broadcastGameDataToPlayers();
   }
 
+  endGame() {
+    this.state = WavelengthGame.STATE_GAME_END_PHASE;
+    this.broadcastGameDataToPlayers();
+  }
+
   serialize() {
     const connectedPlayers = this.getConnectedPlayers();
     const { activePlayerId } = this;
@@ -149,9 +163,11 @@ class WavelengthGame extends Game {
       gameId: WavelengthGame.GAME_ID,
       numPoints: this.numPoints,
       players: this.players,
+      roundNum: this.roundNum,
       spectrumGuess: this.spectrumGuess,
       spectrumValue: this.spectrumValue,
       state: this.state,
+      totalNumRounds: WavelengthGame.TOTAL_NUM_ROUNDS,
     };
   }
 }

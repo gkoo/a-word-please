@@ -9,11 +9,12 @@ import Button from 'react-bootstrap/Button';
 import { updateSpectrumGuess } from '../../store/actions';
 import * as selectors from '../../store/selectors';
 
-function GuesserView() {
+function GuessPhase() {
   const dispatch = useDispatch();
   const clue = useSelector(selectors.clueSelector);
   const socket = useSelector(selectors.socketSelector);
   const spectrumGuess = useSelector(selectors.spectrumGuessSelector);
+  const currPlayerIsActivePlayer = useSelector(selectors.currPlayerIsActivePlayerSelector);
   const activePlayer = useSelector(selectors.activePlayerSelector);
   const currConcept = useSelector(selectors.currConceptSelector);
   const [controlledSpectrumGuess, setControlledSpectrumGuess] = useState(spectrumGuess);
@@ -49,9 +50,8 @@ function GuesserView() {
   return (
     <>
       <div className='text-center mb-5'>
-        <h2 className='spectrum-clue'>{clue}</h2>
+        <h2 className='spectrum-clue'>"{clue}"</h2>
       </div>
-      <p>Adjust the slider to where you think this clue falls on the spectrum</p>
       <Form>
         <Form.Control
           type="range"
@@ -59,6 +59,7 @@ function GuesserView() {
           min={0}
           max={180}
           value={controlledSpectrumGuess}
+          disabled={currPlayerIsActivePlayer}
         />
       </Form>
       <Row className='mb-5'>
@@ -69,11 +70,21 @@ function GuesserView() {
           {currConcept[1]}
         </Col>
       </Row>
-      <div className='text-center'>
-        <Button type='submit' onClick={onSubmitGuess}>Enter guess</Button>
-      </div>
+      {
+        !currPlayerIsActivePlayer &&
+          <>
+            <p>Adjust the slider to where you think this clue falls on the spectrum</p>
+            <div className='text-center'>
+              <Button type='submit' onClick={onSubmitGuess}>Enter guess</Button>
+            </div>
+          </>
+      }
+      {
+        currPlayerIsActivePlayer &&
+          <p>Your teammates are choosing a point on the spectrum based on the clue you've provided.</p>
+      }
     </>
   );
 }
 
-export default GuesserView;
+export default GuessPhase;
