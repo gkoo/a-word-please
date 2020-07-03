@@ -48,11 +48,20 @@ function GuesserView() {
 
   return (
     <>
-      <div className='text-center'>
-        <h1>The clue is:</h1>
-        <h2>{clue}</h2>
+      <div className='text-center mb-5'>
+        <h2 className='spectrum-clue'>{clue}</h2>
       </div>
-      <Row>
+      <p>Adjust the slider to where you think this clue falls on the spectrum</p>
+      <Form>
+        <Form.Control
+          type="range"
+          onChange={onChange}
+          min={0}
+          max={180}
+          value={controlledSpectrumGuess}
+        />
+      </Form>
+      <Row className='mb-5'>
         <Col md={{ span: 6 }}>
           {currConcept[0]}
         </Col>
@@ -60,21 +69,9 @@ function GuesserView() {
           {currConcept[1]}
         </Col>
       </Row>
-      <Form>
-        <Form.Group controlId="spectrumGuess">
-          <Form.Control
-            type="range"
-            onChange={onChange}
-            min={0}
-            max={180}
-            value={controlledSpectrumGuess}
-          />
-          <p>Adjust the slider to where you think the clue exists on the spectrum.</p>
-          <div className='text-center'>
-            <Button type='submit' onClick={onSubmitGuess}>Enter guess</Button>
-          </div>
-        </Form.Group>
-      </Form>
+      <div className='text-center'>
+        <Button type='submit' onClick={onSubmitGuess}>Enter guess</Button>
+      </div>
     </>
   );
 }

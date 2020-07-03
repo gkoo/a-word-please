@@ -8,13 +8,16 @@ import InputGroup from 'react-bootstrap/InputGroup'
 import Button from 'react-bootstrap/Button';
 
 import CluePhase from './CluePhase';
-import GuesserView from './GuesserView';
+import GuessPhase from './GuessPhase';
 import LeaderPanel from '../LeaderPanel';
 import PlayerLabel from '../common/PlayerLabel';
-import PsychicView from './PsychicView';
 import RevealPhase from './RevealPhase';
 import * as selectors from '../../store/selectors';
-import { STATE_WAVELENGTH_CLUE_PHASE, STATE_WAVELENGTH_REVEAL_PHASE } from '../../constants';
+import {
+  STATE_WAVELENGTH_CLUE_PHASE,
+  STATE_WAVELENGTH_GUESS_PHASE,
+  STATE_WAVELENGTH_REVEAL_PHASE,
+} from '../../constants';
 
 const MAX_CLUE_LENGTH = 100;
 
@@ -31,6 +34,7 @@ function WavelengthBoard() {
       <Row>
         <Col sm={8} className='main-panel py-5'>
           { gameState === STATE_WAVELENGTH_CLUE_PHASE && <CluePhase /> }
+          { gameState === STATE_WAVELENGTH_GUESS_PHASE && <GuessPhase /> }
           { gameState === STATE_WAVELENGTH_REVEAL_PHASE && <RevealPhase /> }
         </Col>
         <Col sm={4} className='main-panel text-center py-5'>

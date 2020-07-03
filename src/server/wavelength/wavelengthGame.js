@@ -5,7 +5,9 @@ const { easyConcepts, advancedConcepts } = require('./concepts.js');
 class WavelengthGame extends Game {
   static GAME_ID = Game.GAME_WAVELENGTH;
   static STATE_CLUE_PHASE = 3;
-  static STATE_REVEAL_PHASE = 4;
+  static STATE_GUESS_PHASE = 4;
+  static STATE_REVEAL_PHASE = 5;
+  static SPECTRUM_MAX_VALUE = 180;
 
   constructor(io, roomCode) {
     super(io, roomCode);
@@ -77,15 +79,15 @@ class WavelengthGame extends Game {
 
   nextTurn(shouldIncrementRound = true) {
     this.clue = null;
-    this.state = WavelengthGame.STATE_GUESSING;
+    this.state = WavelengthGame.STATE_CLUE_PHASE;
 
     if (shouldIncrementRound) {
       this.advancePlayerTurn();
     }
 
     this.currConcept = this.drawCard();
-    this.spectrumValue = Math.floor(Math.random()*180) + 1; // From 1 to 180
-    this.spectrumGuess = 50; // initialize to 50, but players will be able to change
+    this.spectrumValue = Math.floor(Math.random()*WavelengthGame.SPECTRUM_MAX_VALUE) + 1;
+    this.spectrumGuess = WavelengthGame.SPECTRUM_MAX_VALUE / 2;
 
     this.broadcastGameDataToPlayers();
   }
@@ -105,6 +107,7 @@ class WavelengthGame extends Game {
 
   receiveClue(clue) {
     this.clue = clue;
+    this.state = WavelengthGame.STATE_GUESS_PHASE;
     this.broadcastGameDataToPlayers();
   }
 
@@ -121,7 +124,7 @@ class WavelengthGame extends Game {
   submitGuess() {
     const bandWidth = 10;
     const { spectrumGuess, spectrumValue } = this;
-    this.state = WavelengthGame.STATE_REVEALING;
+    this.state = WavelengthGame.STATE_REVEAL_PHASE;
 
     if (spectrumGuess < spectrumValue + bandWidth/2 && spectrumGuess > spectrumValue - bandWidth/2) {
       // within first band
@@ -148,6 +151,7 @@ class WavelengthGame extends Game {
       players: this.players,
       spectrumGuess: this.spectrumGuess,
       spectrumValue: this.spectrumValue,
+      state: this.state,
     };
   }
 }

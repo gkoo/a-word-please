@@ -19,7 +19,7 @@
   text-align: center
 }
 
-.room-code, .featured-word {
+.room-code, .featured-word, .spectrum-clue {
   font-family: Courier New;
 }
 
@@ -265,10 +265,13 @@
 }
 
 /* Wavelength */
+.band-group, .bands-placeholder {
+  height: 150px;
+}
+
 .band-group {
   align-items: flex-end;
   display: flex;
-  height: 150px;
 }
 
 .spectrum-band {

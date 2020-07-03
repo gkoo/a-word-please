@@ -181,8 +181,9 @@ const testWerewolfGameData = {
 };
 
 const testWavelengthGameData = {
-  activePlayerId: 'gordon',
-  //clue: 'It\'s not good',
+  //activePlayerId: 'gordon',
+  activePlayerId: 'willy',
+  clue: 'It\'s not good',
   currConcept: ['Bad', 'Good'],
   gameId: constants.GAME_WAVELENGTH,
   numPoints: 0,
@@ -225,7 +226,10 @@ const testWavelengthGameData = {
       connected: true,
     },
   },
-  state: constants.STATE_WAVELENGTH_CLUE_PHASE,
+  //state: constants.STATE_WAVELENGTH_CLUE_PHASE,
+  //state: constants.STATE_WAVELENGTH_GUESS_PHASE,
+  state: constants.STATE_WAVELENGTH_REVEAL_PHASE,
+  spectrumGuess: 140,
   spectrumValue: 80,
 };
 
