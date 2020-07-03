@@ -1,40 +1,12 @@
 import io from 'socket.io-client';
 
 import * as actions from './actions';
-import {
-  env,
-  GAME_A_WORD_PLEASE,
-  GAME_WEREWOLF,
-  GAME_WAVELENGTH,
-
-  ROLE_WEREWOLF,
-  ROLE_MINION,
-  ROLE_MASON,
-  ROLE_SEER,
-  ROLE_ROBBER,
-  ROLE_TROUBLEMAKER,
-  ROLE_DRUNK,
-  ROLE_INSOMNIAC,
-  ROLE_HUNTER,
-  ROLE_VILLAGER,
-  ROLE_DOPPELGANGER,
-  ROLE_TANNER,
-
-  GAME_STATE_PENDING,
-  GAME_STATE_TURN_END,
-  GAME_STATE_GAME_END,
-  STATE_AWP_ENTERING_CLUES,
-  STATE_AWP_REVIEWING_CLUES,
-  STATE_AWP_ENTERING_GUESS,
-  STATE_WW_CHOOSING_ROLES,
-  STATE_WW_NIGHTTIME,
-  STATE_WW_DAYTIME,
-  STATE_WW_VOTING,
-  STATE_WW_VOTE_RESULTS,
-} from '../constants';
+import * as constants from '../constants';
 
 // Change to 1 to develop UI
 const useTestState = 0;
+
+const { env } = constants;
 
 const initialState = {
   alerts: [],
@@ -69,7 +41,7 @@ const testAwpGameData = {
   },
   currGuess: 'hydrant',
   currWord: 'water',
-  gameId: GAME_A_WORD_PLEASE,
+  gameId: constants.GAME_A_WORD_PLEASE,
   guesserId: 'willy',
   //guesserId: 'gordon',
   numPoints: 7,
@@ -114,20 +86,20 @@ const testAwpGameData = {
   },
   roundNum: 0,
   skippedTurn: false,
-  //state: GAME_STATE_PENDING,
-  state: STATE_AWP_ENTERING_CLUES,
-  //state: STATE_AWP_REVIEWING_CLUES,
-  //state: STATE_AWP_ENTERING_GUESS,
-  //state: STATE_AWP_TURN_END,
-  //state: STATE_AWP_GAME_END,
+  //state: constants.GAME_STATE_PENDING,
+  state: constants.STATE_AWP_ENTERING_CLUES,
+  //state: constants.STATE_AWP_REVIEWING_CLUES,
+  //state: constants.STATE_AWP_ENTERING_GUESS,
+  //state: constants.STATE_AWP_TURN_END,
+  //state: constants.STATE_AWP_GAME_END,
   totalNumRounds: 13,
 };
 
-const roleToTest = ROLE_MINION;
+const roleToTest = constants.ROLE_MINION;
 
 const testWerewolfGameData = {
-  wakeUpRole: ROLE_ROBBER,
-  gameId: GAME_WEREWOLF,
+  wakeUpRole: constants.ROLE_ROBBER,
+  gameId: constants.GAME_WEREWOLF,
   players: {
     gordon: {
       id: 'gordon',
@@ -142,41 +114,41 @@ const testWerewolfGameData = {
       id: 'steve',
       name: 'Steve',
       color: 'indigo',
-      originalRole: ROLE_WEREWOLF,
-      lastKnownRole: ROLE_WEREWOLF,
-      role: ROLE_WEREWOLF,
+      originalRole: constants.ROLE_WEREWOLF,
+      lastKnownRole: constants.ROLE_WEREWOLF,
+      role: constants.ROLE_WEREWOLF,
     },
     yuriko: {
       id: 'yuriko',
       name: 'Yuriko',
       color: 'indigo',
-      originalRole: ROLE_MASON,
-      lastKnownRole: ROLE_MASON,
-      role: ROLE_MASON,
+      originalRole: constants.ROLE_MASON,
+      lastKnownRole: constants.ROLE_MASON,
+      role: constants.ROLE_MASON,
     },
     aj: {
       id: 'aj',
       name: 'AJ',
       color: 'indigo',
-      originalRole: ROLE_SEER,
-      lastKnownRole: ROLE_SEER,
-      role: ROLE_SEER,
+      originalRole: constants.ROLE_SEER,
+      lastKnownRole: constants.ROLE_SEER,
+      role: constants.ROLE_SEER,
     },
     willy: {
       id: 'willy',
       name: 'Willy',
       color: 'indigo',
-      originalRole: ROLE_ROBBER,
-      lastKnownRole: ROLE_ROBBER,
-      role: ROLE_ROBBER,
+      originalRole: constants.ROLE_ROBBER,
+      lastKnownRole: constants.ROLE_ROBBER,
+      role: constants.ROLE_ROBBER,
     },
     rishi: {
       id: 'rishi',
       name: 'Rishi',
       color: 'indigo',
-      originalRole: ROLE_VILLAGER,
-      lastKnownRole: ROLE_VILLAGER,
-      role: ROLE_VILLAGER,
+      originalRole: constants.ROLE_VILLAGER,
+      lastKnownRole: constants.ROLE_VILLAGER,
+      role: constants.ROLE_VILLAGER,
     },
   },
   revealingRoles: true,
@@ -191,12 +163,12 @@ const testWerewolfGameData = {
     'robber',
     'tanner',
   ],
-  //state: STATE_WW_CHOOSING_ROLES,
-  //state: STATE_WW_NIGHTTIME,
-  //state: STATE_WW_DAYTIME,
-  //state: STATE_WW_VOTING,
-  state: STATE_WW_VOTE_RESULTS,
-  unclaimedRoles: [ROLE_WEREWOLF, ROLE_DRUNK, ROLE_DOPPELGANGER],
+  //state: constants.STATE_WW_CHOOSING_ROLES,
+  //state: constants.STATE_WW_NIGHTTIME,
+  //state: constants.STATE_WW_DAYTIME,
+  //state: constants.STATE_WW_VOTING,
+  state: constants.STATE_WW_VOTE_RESULTS,
+  unclaimedRoles: [constants.ROLE_WEREWOLF, constants.ROLE_DRUNK, constants.ROLE_DOPPELGANGER],
   votes: {
     'gordon': 'willy',
     'steve': 'yuriko',
@@ -205,14 +177,14 @@ const testWerewolfGameData = {
     'willy': 'steve',
     'rishi': 'steve',
   },
-  winners: [ROLE_WEREWOLF],
+  winners: [constants.ROLE_WEREWOLF],
 };
 
 const testWavelengthGameData = {
-  activePlayerId: 'willy',
-  clue: 'It\'s not good',
+  activePlayerId: 'gordon',
+  //clue: 'It\'s not good',
   currConcept: ['Bad', 'Good'],
-  gameId: GAME_WAVELENGTH,
+  gameId: constants.GAME_WAVELENGTH,
   numPoints: 0,
   players: {
     gordon: {
@@ -253,7 +225,8 @@ const testWavelengthGameData = {
       connected: true,
     },
   },
-  spectrumValue: 25,
+  state: constants.STATE_WAVELENGTH_CLUE_PHASE,
+  spectrumValue: 80,
 };
 
 //const testGameDataToUse = testAwpGameData;
@@ -480,7 +453,7 @@ export default function reducer(state = stateToUse, action) {
       if (players) {
         Object.keys(players).forEach((playerId, idx) => {
           let color;
-          if (action.payload.gameId === GAME_WEREWOLF) {
+          if (action.payload.gameId === constants.GAME_WEREWOLF) {
             color = 'indigo';
           } else {
             color = getColorForPlayerName(players[playerId].name);

@@ -263,3 +263,30 @@
     max-width: 800px;
   }
 }
+
+/* Wavelength */
+.band-group {
+  align-items: flex-end;
+  display: flex;
+  height: 150px;
+}
+
+.spectrum-band {
+  height: 100px;
+  width: 5.55556%
+}
+
+.band2 {
+  background-color: #f00;
+  height: 50px;
+}
+
+.band3 {
+  background-color: #0f0;
+  height: 100px;
+}
+
+.band4 {
+  background-color: #00f;
+  height: 150px;
+}

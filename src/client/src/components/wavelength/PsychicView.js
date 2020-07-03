@@ -5,18 +5,15 @@ import Form from 'react-bootstrap/Form'
 import InputGroup from 'react-bootstrap/InputGroup'
 import Button from 'react-bootstrap/Button';
 
-import LeaderPanel from '../LeaderPanel';
-import PlayerLabel from '../common/PlayerLabel';
+import Spectrum from './Spectrum';
 import * as selectors from '../../store/selectors';
 
 const MAX_CLUE_LENGTH = 100;
 
 function PsychicView() {
   const [formClue, setFormClue] = useState('');
-  const activePlayer = useSelector(selectors.activePlayerSelector);
   const clue = useSelector(selectors.clueSelector);
   const spectrumValue = useSelector(selectors.spectrumValueSelector);
-  const currConcept = useSelector(selectors.currConceptSelector);
   const socket = useSelector(selectors.socketSelector);
 
   const onEnterClue = e => {
@@ -34,12 +31,7 @@ function PsychicView() {
 
   return (
     <>
-      <div>
-        Spectrum Value: {spectrumValue}
-      </div>
-      <div>
-        Curr Concept: {currConcept[0]} ↔ {currConcept[1]}
-      </div>
+      <Spectrum disabled={true} value={spectrumValue} />
       {
         !clue &&
           <Form onSubmit={onSubmit}>

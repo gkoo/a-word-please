@@ -4,6 +4,8 @@ const { easyConcepts, advancedConcepts } = require('./concepts.js');
 
 class WavelengthGame extends Game {
   static GAME_ID = Game.GAME_WAVELENGTH;
+  static STATE_CLUE_PHASE = 3;
+  static STATE_REVEAL_PHASE = 4;
 
   constructor(io, roomCode) {
     super(io, roomCode);
@@ -75,13 +77,14 @@ class WavelengthGame extends Game {
 
   nextTurn(shouldIncrementRound = true) {
     this.clue = null;
+    this.state = WavelengthGame.STATE_GUESSING;
 
     if (shouldIncrementRound) {
       this.advancePlayerTurn();
     }
 
     this.currConcept = this.drawCard();
-    this.spectrumValue = Math.floor(Math.random()*100) + 1; // From 1 to 100
+    this.spectrumValue = Math.floor(Math.random()*180) + 1; // From 1 to 180
     this.spectrumGuess = 50; // initialize to 50, but players will be able to change
 
     this.broadcastGameDataToPlayers();
@@ -93,6 +96,8 @@ class WavelengthGame extends Game {
         return this.receiveClue(data.clue);
       case 'setSpectrumGuess':
         return this.setSpectrumGuess(playerId, data.spectrumGuess);
+      case 'submitGuess':
+        return this.submitGuess();
       default:
         throw new Error(`Unexpected action ${data.action}`);
     }
@@ -105,13 +110,29 @@ class WavelengthGame extends Game {
 
   setSpectrumGuess(playerId, guess) {
     this.spectrumGuess = guess;
-    console.log('setting spectrum guess to ', guess);
     // Don't emit back to the original player because it messes with the UI
     const otherPlayers = this.getConnectedPlayers().filter(player => player.id !== playerId)
     otherPlayers.forEach(player => {
       // Don't broadcast entire game data because this might be called frequently
       this.io.to(player.id).emit('spectrumGuessUpdate', guess);
     });
+  }
+
+  submitGuess() {
+    const bandWidth = 10;
+    const { spectrumGuess, spectrumValue } = this;
+    this.state = WavelengthGame.STATE_REVEALING;
+
+    if (spectrumGuess < spectrumValue + bandWidth/2 && spectrumGuess > spectrumValue - bandWidth/2) {
+      // within first band
+      this.numPoints += 4;
+    } else if (spectrumGuess < spectrumValue + bandWidth * 3/2 && spectrumGuess > spectrumValue - bandWidth * 3/2) {
+      this.numPoints += 3;
+    } else if (spectrumGuess < spectrumValue + bandWidth * 5/2 && spectrumGuess > spectrumValue - bandWidth * 5/2) {
+      this.numPoints += 2;
+    }
+
+    this.broadcastGameDataToPlayers();
   }
 
   serialize() {

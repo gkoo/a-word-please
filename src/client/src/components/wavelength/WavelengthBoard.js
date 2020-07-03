@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 
 import Row from 'react-bootstrap/Row'
@@ -7,17 +7,20 @@ import Form from 'react-bootstrap/Form'
 import InputGroup from 'react-bootstrap/InputGroup'
 import Button from 'react-bootstrap/Button';
 
+import CluePhase from './CluePhase';
 import GuesserView from './GuesserView';
 import LeaderPanel from '../LeaderPanel';
 import PlayerLabel from '../common/PlayerLabel';
 import PsychicView from './PsychicView';
+import RevealPhase from './RevealPhase';
 import * as selectors from '../../store/selectors';
+import { STATE_WAVELENGTH_CLUE_PHASE, STATE_WAVELENGTH_REVEAL_PHASE } from '../../constants';
 
 const MAX_CLUE_LENGTH = 100;
 
 function WavelengthBoard() {
   const activePlayer = useSelector(selectors.activePlayerSelector);
-  const currPlayerIsActivePlayer = useSelector(selectors.currPlayerIsActivePlayerSelector);
+  const gameState = useSelector(selectors.gameStateSelector);
   const numPoints = useSelector(selectors.numPointsSelector);
   const numRoundsLeft = useSelector(selectors.numRoundsLeftSelector);
   const users = useSelector(selectors.usersSelector);
@@ -27,14 +30,8 @@ function WavelengthBoard() {
     <div className='board py-5'>
       <Row>
         <Col sm={8} className='main-panel py-5'>
-          {
-            currPlayerIsActivePlayer &&
-              <PsychicView />
-          }
-          {
-            !currPlayerIsActivePlayer &&
-              <GuesserView />
-          }
+          { gameState === STATE_WAVELENGTH_CLUE_PHASE && <CluePhase /> }
+          { gameState === STATE_WAVELENGTH_REVEAL_PHASE && <RevealPhase /> }
         </Col>
         <Col sm={4} className='main-panel text-center py-5'>
           <LeaderPanel numUsers={Object.keys(users).length}/>
