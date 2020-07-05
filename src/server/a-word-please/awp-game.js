@@ -71,7 +71,6 @@ class AWPGame extends Game {
     if (this.clues[id]) { delete this.clues[id]; }
 
     if (id === this.activePlayerId) {
-      this.activePlayerId = this.playerOrder[playerOrderIdx % this.playerOrder.length];
       this.nextTurn(false);
     }
 
@@ -97,13 +96,9 @@ class AWPGame extends Game {
       return;
     }
 
-    console.log('next turn');
-
     // Advance the playerOrderCursor
     // No action needed if we're advancing turn due to a player disconnect
-    if (shouldIncrementRound) {
-      this.advancePlayerTurn();
-    }
+    this.advancePlayerTurn();
 
     this.currWord = this.drawCard();
     this.state = AWPGame.STATE_ENTERING_CLUES;

@@ -36,7 +36,6 @@ class WavelengthGame extends Game {
     this.roundNum = 0;
     this.numPoints = 0;
     this.determinePlayerOrder();
-    this.psychicId = this.playerOrder[0];
     this.nextTurn();
   }
 
@@ -66,8 +65,7 @@ class WavelengthGame extends Game {
       this.playerOrder.splice(playerOrderIdx, 1);
     }
 
-    if (id === this.psychicId) {
-      this.psychicId = this.playerOrder[playerOrderIdx % this.playerOrder.length];
+    if (id === this.activePlayerId) {
       this.nextTurn(false);
     }
 
@@ -80,8 +78,9 @@ class WavelengthGame extends Game {
 
     if (shouldIncrementRound) {
       ++this.roundNum;
-      this.advancePlayerTurn();
     }
+
+    this.advancePlayerTurn();
 
     if (this.roundNum > WavelengthGame.TOTAL_NUM_ROUNDS) {
       return this.endGame();

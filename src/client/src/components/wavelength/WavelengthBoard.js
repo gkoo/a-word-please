@@ -28,7 +28,8 @@ function WavelengthBoard() {
   const numPoints = useSelector(selectors.numPointsSelector);
   const numRoundsLeft = useSelector(selectors.numRoundsLeftSelector);
   const users = useSelector(selectors.usersSelector);
-  const wavelengthGuessers = useSelector(selectors.wavelengthGuessersSelector);
+  let wavelengthGuessers = useSelector(selectors.wavelengthGuessersSelector);
+  wavelengthGuessers = wavelengthGuessers.filter(player => player.connected);
 
   return (
     <div className='board py-5'>
