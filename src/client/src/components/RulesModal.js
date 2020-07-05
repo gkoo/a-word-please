@@ -6,7 +6,7 @@ import Modal from 'react-bootstrap/Modal';
 
 import { toggleRulesModal } from '../store/actions';
 
-function RulesModal({ onClose, show }) {
+function RulesModal({ show }) {
   const dispatch = useDispatch();
   const handleClose = () => show && dispatch(toggleRulesModal({ show: false }));
 
@@ -96,7 +96,7 @@ function RulesModal({ onClose, show }) {
         </p>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant='primary' onClick={onClose}>
+        <Button variant='primary' onClick={handleClose}>
           OK
         </Button>
       </Modal.Footer>
