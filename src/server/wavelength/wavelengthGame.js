@@ -10,7 +10,7 @@ class WavelengthGame extends Game {
   static STATE_GAME_END_PHASE = 6;
   static SPECTRUM_MAX_VALUE = 180;
   static SPECTRUM_BAND_WIDTH = 10;
-  static TOTAL_NUM_ROUNDS = 2;
+  static TOTAL_NUM_ROUNDS = 13;
 
   constructor(io, roomCode) {
     super(io, roomCode);

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useDispatch } from 'react-redux';
 
 import Button from 'react-bootstrap/Button';
@@ -6,15 +6,8 @@ import Modal from 'react-bootstrap/Modal';
 import { toggleAboutModal } from '../store/actions';
 
 function AboutModal({ show }) {
-  const [showModal, setShowModal] = useState(false);
   const dispatch = useDispatch();
-  const handleClose = () => showModal && dispatch(toggleAboutModal({ show: false }));
-
-  useEffect(() => {
-    if (show !== showModal) {
-      setShowModal(show);
-    }
-  }, [show, showModal]);
+  const handleClose = () => show && dispatch(toggleAboutModal({ show: false }));
 
   return (
     <Modal show={show} className='rules-modal' onHide={handleClose} scrollable>

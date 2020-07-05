@@ -1,11 +1,17 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
 
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
+import { toggleRulesModal } from '../store/actions';
+
 function RulesModal({ onClose, show }) {
+  const dispatch = useDispatch();
+  const handleClose = () => show && dispatch(toggleRulesModal({ show: false }));
+
   return (
-    <Modal show={show} className='rules-modal'>
+    <Modal show={show} className='rules-modal' onHide={handleClose} scrollable>
       <Modal.Header>
         <Modal.Title>How to play</Modal.Title>
       </Modal.Header>
