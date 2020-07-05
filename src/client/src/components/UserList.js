@@ -1,23 +1,22 @@
 import React from 'react';
 
 import Card from 'react-bootstrap/Card';
+import ListGroup from 'react-bootstrap/ListGroup'
 
-function PlayerList({ users }) {
+function UserList({ users }) {
   return (
     <Card>
       <Card.Body>
-        {
-          Object.values(users).map(user => {
-            return user.name && (
-              <div key={user.id}>
-                {user.isLeader && '👑'} {user.name}
-              </div>
+        <ListGroup className='text-center'>
+          {
+            Object.values(users).map(user =>
+              user.name && <ListGroup.Item key={user.id}>{user.name}</ListGroup.Item>
             )
-          })
-        }
+          }
+        </ListGroup>
       </Card.Body>
     </Card>
   );
 };
 
-export default PlayerList;
+export default UserList;

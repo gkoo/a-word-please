@@ -66,9 +66,21 @@ function Homepage() {
         <Row>
           <Col lg={{ offset: 1, span: 10 }} xl={{ offset: 2, span: 8 }}>
             <Jumbotron className='jumbotron'>
-              <h1>A Word, Please?</h1>
-              <p>Work together to guess all of the words!</p>
-              <p>But make sure your clues aren't the same, or else they'll be hidden!</p>
+              <h1>Koo Fitness Club</h1>
+              <p>Play games from a safe distance.</p>
+              <h3>Games</h3>
+              <p>
+                <span role='img' aria-label='pencil icon' className='mr-2'>📝</span>
+                A Word, Please?
+              </p>
+              <p>
+                <span role='img' aria-label='werewolf' className='mr-2'>🐺</span>
+                One Night Werewolf
+              </p>
+              <p>
+                <span role='img' aria-label='wavelength' className='mr-2'>📻</span>
+                Wavelength
+              </p>
             </Jumbotron>
           </Col>
         </Row>

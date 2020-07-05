@@ -19,7 +19,7 @@
   text-align: center
 }
 
-.room-code, .featured-word {
+.room-code, .featured-word, .spectrum-clue {
   font-family: Courier New;
 }
 
@@ -136,11 +136,6 @@
 
 .lobby-container {
   margin-top: 50px;
-}
-
-.rules-modal-body {
-  max-height: 400px;
-  overflow-y: auto;
 }
 
 /* AWP */
@@ -267,4 +262,38 @@
   .roles-modal .modal-dialog {
     max-width: 800px;
   }
+}
+
+/* Wavelength */
+.band-group, .bands-placeholder {
+  height: 150px;
+  overflow: hidden;
+}
+
+.band-group {
+  align-items: flex-end;
+  display: flex;
+}
+
+.spectrum-band {
+  width: 5.55556%
+}
+
+.spectrum-band.selected {
+  border: 1px solid #fff;
+}
+
+.band2 {
+  background-color: #F39C12;
+  height: 33%;
+}
+
+.band3 {
+  background-color: #00bc8c;
+  height: 66%;
+}
+
+.band4 {
+  background-color: #E74C3C;
+  height: 100%;
 }

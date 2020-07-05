@@ -17,6 +17,7 @@ export const SHOW_ALERT = 'SHOW_ALERT';
 export const TOGGLE_ABOUT_MODAL = 'TOGGLE_ABOUT_MODAL';
 export const TOGGLE_ROLES_MODAL = 'TOGGLE_ROLES_MODAL';
 export const TOGGLE_RULES_MODAL = 'TOGGLE_RULES_MODAL';
+export const UPDATE_SPECTRUM_GUESS = 'UPDATE_SPECTRUM_GUESS';
 export const USER_DISCONNECT = 'USER_DISCONNECT';
 
 export function connectSocket() {
@@ -140,5 +141,12 @@ export function toggleRulesModal({ show }) {
   return {
     payload: { show },
     type: TOGGLE_RULES_MODAL,
+  }
+}
+
+export function updateSpectrumGuess(guess) {
+  return {
+    payload: { guess },
+    type: UPDATE_SPECTRUM_GUESS,
   }
 }

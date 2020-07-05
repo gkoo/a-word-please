@@ -56,6 +56,7 @@ function Room() {
     socket.on('endGame', winnerIds => dispatch(actions.endGame(winnerIds)));
     socket.on('roomData', data => dispatch(actions.receiveRoomData(data)));
     socket.on('gameData', gameData => dispatch(actions.receiveGameData(gameData)));
+    socket.on('spectrumGuessUpdate', guess => dispatch(actions.updateSpectrumGuess(guess)));
     socket.on('newUser', user => dispatch(actions.newUser(user)));
     socket.on('userId', id => dispatch(actions.receiveUserId(id)));
     socket.on('userDisconnect', userId => dispatch(actions.userDisconnect(userId)));
@@ -63,9 +64,11 @@ function Room() {
     return () => {
       socket.removeAllListeners('debugInfo');
       socket.removeAllListeners('endGame');
-      socket.removeAllListeners('initData');
+      socket.removeAllListeners('roomData');
       socket.removeAllListeners('gameData');
       socket.removeAllListeners('newUser');
+      socket.removeAllListeners('spectrumGuessUpdate');
+      socket.removeAllListeners('userId');
       socket.removeAllListeners('userDisconnect');
     };
   }, [socket, dispatch]);

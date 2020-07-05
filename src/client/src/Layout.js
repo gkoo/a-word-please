@@ -17,8 +17,6 @@ function Layout({ children }) {
   const dispatch = useDispatch();
   const history = useHistory();
   const navigateHome = (e) => { e.preventDefault(); history.push(`/`) };
-  const onHideRulesModal = () => dispatch(actions.toggleRulesModal({ show: false }));
-  const onHideAboutModal = () => dispatch(actions.toggleAboutModal({ show: false }));
   const onShowRulesModal = () => dispatch(actions.toggleRulesModal({ show: true }));
   const onShowAboutModal = () => dispatch(actions.toggleAboutModal({ show: true }));
 
@@ -29,7 +27,7 @@ function Layout({ children }) {
     <Container>
       <NavBar variant='dark'>
         <Nav className="mr-auto">
-          <NavBar.Brand onClick={navigateHome} href={routePrefix}>{SITE_TITLE}</NavBar.Brand>
+          <NavBar.Brand onClick={navigateHome} href={`${routePrefix}/`}>{SITE_TITLE}</NavBar.Brand>
           <Nav.Link href="#" onClick={onShowRulesModal}>How to play</Nav.Link>
           <Nav.Link href="#" onClick={onShowAboutModal}>About</Nav.Link>
           <Nav.Link href="https://www.buymeacoffee.com/gkoo" target="_blank">
@@ -39,8 +37,8 @@ function Layout({ children }) {
       </NavBar>
       <AlertGroup />
       {children}
-      <RulesModal show={showRulesModal} onClose={onHideRulesModal} />
-      <AboutModal show={showAboutModal} onClose={onHideAboutModal} />
+      <RulesModal show={showRulesModal} />
+      <AboutModal show={showAboutModal} />
     </Container>
   );
 }
