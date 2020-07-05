@@ -267,6 +267,7 @@
 /* Wavelength */
 .band-group, .bands-placeholder {
   height: 150px;
+  overflow: hidden;
 }
 
 .band-group {
@@ -276,6 +277,10 @@
 
 .spectrum-band {
   width: 5.55556%
+}
+
+.spectrum-band.selected {
+  border: 1px solid #fff;
 }
 
 .band2 {

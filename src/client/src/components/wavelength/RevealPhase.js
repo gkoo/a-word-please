@@ -12,6 +12,7 @@ import {
 } from '../../store/selectors';
 
 function RevealPhase() {
+  const bandWidth = 10;
   const socket = useSelector(socketSelector);
   const spectrumGuess = useSelector(spectrumGuessSelector);
   const spectrumValue = useSelector(spectrumValueSelector);
@@ -20,6 +21,47 @@ function RevealPhase() {
   const nextTurn = e => {
     e.preventDefault();
     socket.emit('playerAction', { action: 'nextTurn' });
+  };
+
+  const inFirstBand = (
+    spectrumGuess >= spectrumValue - bandWidth*5/2 &&
+      spectrumGuess < spectrumValue - bandWidth*3/2
+  );
+  const inSecondBand = (
+    spectrumGuess >= spectrumValue - bandWidth*3/2 &&
+    spectrumGuess < spectrumValue - bandWidth/2
+  );
+  const inThirdBand = (
+    spectrumGuess >= spectrumValue - bandWidth/2 &&
+    spectrumGuess < spectrumValue + bandWidth/2
+  );
+  const inFourthBand = (
+    spectrumGuess >= spectrumValue + bandWidth/2 &&
+      spectrumGuess < spectrumValue + bandWidth*3/2
+  );
+  const inFifthBand = (
+    spectrumGuess >= spectrumValue + bandWidth*3/2 &&
+      spectrumGuess < spectrumValue + bandWidth*5/2
+  );
+  const gotPoints = inFirstBand || inSecondBand || inThirdBand || inFourthBand || inFifthBand;
+  const bandSelections = {
+    firstBand: inFirstBand,
+    secondBand: inSecondBand,
+    thirdBand: inThirdBand,
+    fourthBand: inFourthBand,
+    fifthBand: inFifthBand,
+  };
+
+  const renderPointsMessage = () => {
+    if (inFirstBand || inFifthBand) {
+      return '+2 points';
+    }
+    if (inSecondBand || inFourthBand) {
+      return '+3 points';
+    }
+    if (inThirdBand) {
+      return '+4 points';
+    }
   };
 
   return (
@@ -32,10 +74,25 @@ function RevealPhase() {
           <Spectrum
             disabled={true}
             guessValue={spectrumGuess}
-            value={spectrumValue}
             showBands={true}
+            bandSelections={bandSelections}
           />
+          {/* TODO: show how many points won */}
         </div>
+        <h3 className='my-5'>
+          {
+            (inFirstBand || inFifthBand) &&
+              '+2 points'
+          }
+          {
+            (inSecondBand || inFourthBand) &&
+              '+3 points'
+          }
+          {
+            inThirdBand &&
+              '+4 points'
+          }
+        </h3>
         <Button onClick={nextTurn}>Next Turn</Button>
       </div>
     </>

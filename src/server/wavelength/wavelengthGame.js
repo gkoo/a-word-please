@@ -9,7 +9,8 @@ class WavelengthGame extends Game {
   static STATE_REVEAL_PHASE = 5;
   static STATE_GAME_END_PHASE = 6;
   static SPECTRUM_MAX_VALUE = 180;
-  static TOTAL_NUM_ROUNDS = 13;
+  static SPECTRUM_BAND_WIDTH = 10;
+  static TOTAL_NUM_ROUNDS = 2;
 
   constructor(io, roomCode) {
     super(io, roomCode);
@@ -20,7 +21,6 @@ class WavelengthGame extends Game {
 
   setup(users) {
     super.setup(users);
-    console.log(process.env.NODE_ENV);
     const developmentConcepts = [
       ['Bad', 'Good'],
       ['Old', 'New'],
@@ -59,41 +59,39 @@ class WavelengthGame extends Game {
     if (this.players[id]) { this.players[id].connected = false; }
 
     // Remove from player order
-    //const playerOrderIdx = this.playerOrder.indexOf(id);
+    const playerOrderIdx = this.playerOrder.indexOf(id);
 
     // For some reason, players get disconnected without being in the game
-    //if (playerOrderIdx >= 0) {
-      //this.playerOrder.splice(playerOrderIdx, 1);
-    //}
+    if (playerOrderIdx >= 0) {
+      this.playerOrder.splice(playerOrderIdx, 1);
+    }
 
-    //if (id === this.psychicId) {
-      //this.psychicId = this.playerOrder[playerOrderIdx % this.playerOrder.length];
-      //this.nextTurn(false);
-    //}
+    if (id === this.psychicId) {
+      this.psychicId = this.playerOrder[playerOrderIdx % this.playerOrder.length];
+      this.nextTurn(false);
+    }
 
-    //this.broadcastGameDataToPlayers();
-
-    //if (this.state === AWPGame.STATE_ENTERING_CLUES) {
-      //// TODO: unmark duplicates
-      //this.checkIfAllCluesAreIn();
-    //}
+    this.broadcastGameDataToPlayers();
   }
 
   nextTurn(shouldIncrementRound = true) {
-    if (this.roundNum >= WavelengthGame.TOTAL_NUM_ROUNDS - 1) {
-      return this.endGame();
-    }
-
-    ++this.roundNum;
     this.clue = null;
     this.state = WavelengthGame.STATE_CLUE_PHASE;
 
     if (shouldIncrementRound) {
+      ++this.roundNum;
       this.advancePlayerTurn();
     }
 
+    if (this.roundNum > WavelengthGame.TOTAL_NUM_ROUNDS) {
+      return this.endGame();
+    }
+
     this.currConcept = this.drawCard();
-    this.spectrumValue = Math.floor(Math.random()*WavelengthGame.SPECTRUM_MAX_VALUE) + 1;
+    // having trouble with rendering the edges of the spectrum so let's add a padding of 25 on
+    // either end
+    const padding = WavelengthGame.SPECTRUM_BAND_WIDTH*5;
+    this.spectrumValue = Math.floor(Math.random()*(WavelengthGame.SPECTRUM_MAX_VALUE - padding)) + padding;
     this.spectrumGuess = WavelengthGame.SPECTRUM_MAX_VALUE / 2;
 
     this.broadcastGameDataToPlayers();
@@ -109,6 +107,8 @@ class WavelengthGame extends Game {
         return this.submitGuess();
       case 'nextTurn':
         return this.nextTurn();
+      case 'newGame':
+        return this.newGame();
       default:
         throw new Error(`Unexpected action ${data.action}`);
     }
@@ -131,16 +131,15 @@ class WavelengthGame extends Game {
   }
 
   submitGuess() {
-    const bandWidth = 10;
     const { spectrumGuess, spectrumValue } = this;
     this.state = WavelengthGame.STATE_REVEAL_PHASE;
 
-    if (spectrumGuess < spectrumValue + bandWidth/2 && spectrumGuess > spectrumValue - bandWidth/2) {
+    if (spectrumGuess >= spectrumValue - WavelengthGame.SPECTRUM_BAND_WIDTH/2 && spectrumGuess < spectrumValue + WavelengthGame.SPECTRUM_BAND_WIDTH/2) {
       // within first band
       this.numPoints += 4;
-    } else if (spectrumGuess < spectrumValue + bandWidth * 3/2 && spectrumGuess > spectrumValue - bandWidth * 3/2) {
+    } else if (spectrumGuess < spectrumValue + WavelengthGame.SPECTRUM_BAND_WIDTH * 3/2 && spectrumGuess >= spectrumValue - WavelengthGame.SPECTRUM_BAND_WIDTH * 3/2) {
       this.numPoints += 3;
-    } else if (spectrumGuess < spectrumValue + bandWidth * 5/2 && spectrumGuess > spectrumValue - bandWidth * 5/2) {
+    } else if (spectrumGuess < spectrumValue + WavelengthGame.SPECTRUM_BAND_WIDTH * 5/2 && spectrumGuess >= spectrumValue - WavelengthGame.SPECTRUM_BAND_WIDTH * 5/2) {
       this.numPoints += 2;
     }
 

@@ -18,7 +18,6 @@ function CluePhase() {
   const currConcept = useSelector(selectors.currConceptSelector);
   const currPlayerIsActivePlayer = useSelector(selectors.currPlayerIsActivePlayerSelector);
   const clue = useSelector(selectors.clueSelector);
-  const spectrumValue = useSelector(selectors.spectrumValueSelector);
   const socket = useSelector(selectors.socketSelector);
 
   const onEnterClue = e => {
@@ -43,7 +42,7 @@ function CluePhase() {
   return (
     <>
       <div className='mb-5'>
-      <Spectrum showSlider={true} value={spectrumValue} showBands={true} />
+      <Spectrum showSlider={true} showBands={true} />
       </div>
 
       <Row>
