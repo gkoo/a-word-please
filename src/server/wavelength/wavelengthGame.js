@@ -91,7 +91,9 @@ class WavelengthGame extends Game {
     // having trouble with rendering the edges of the spectrum so let's add a padding of 25 on
     // either end
     const padding = WavelengthGame.SPECTRUM_BAND_WIDTH*5;
-    this.spectrumValue = Math.floor(Math.random()*(WavelengthGame.SPECTRUM_MAX_VALUE - padding)) + padding;
+    this.spectrumValue = Math.floor(
+      Math.random()*(WavelengthGame.SPECTRUM_MAX_VALUE - WavelengthGame.SPECTRUM_BAND_WIDTH*5)
+    ) + WavelengthGame.SPECTRUM_BAND_WIDTH*5/2;
     this.spectrumGuess = WavelengthGame.SPECTRUM_MAX_VALUE / 2;
 
     this.broadcastGameDataToPlayers();
