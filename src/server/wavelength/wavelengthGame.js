@@ -8,8 +8,8 @@ class WavelengthGame extends Game {
   static STATE_GUESS_PHASE = 4;
   static STATE_REVEAL_PHASE = 5;
   static STATE_GAME_END_PHASE = 6;
-  static SPECTRUM_MAX_VALUE = 180;
-  static SPECTRUM_BAND_WIDTH = 10;
+  static SPECTRUM_MAX_VALUE = 200;
+  static SPECTRUM_BAND_WIDTH = 12;
   static TOTAL_NUM_ROUNDS = 13;
 
   constructor(io, roomCode) {
@@ -90,9 +90,7 @@ class WavelengthGame extends Game {
     // having trouble with rendering the edges of the spectrum so let's add a padding of 25 on
     // either end
     const padding = WavelengthGame.SPECTRUM_BAND_WIDTH*5;
-    this.spectrumValue = Math.floor(
-      Math.random()*(WavelengthGame.SPECTRUM_MAX_VALUE - WavelengthGame.SPECTRUM_BAND_WIDTH*5)
-    ) + WavelengthGame.SPECTRUM_BAND_WIDTH*5/2;
+    this.spectrumValue = Math.floor(Math.random()*WavelengthGame.SPECTRUM_MAX_VALUE);
     this.spectrumGuess = WavelengthGame.SPECTRUM_MAX_VALUE / 2;
 
     this.broadcastGameDataToPlayers();
@@ -135,12 +133,19 @@ class WavelengthGame extends Game {
     const { spectrumGuess, spectrumValue } = this;
     this.state = WavelengthGame.STATE_REVEAL_PHASE;
 
-    if (spectrumGuess >= spectrumValue - WavelengthGame.SPECTRUM_BAND_WIDTH/2 && spectrumGuess < spectrumValue + WavelengthGame.SPECTRUM_BAND_WIDTH/2) {
+    const band1LeftBound = spectrumValue - WavelengthGame.SPECTRUM_BAND_WIDTH * 5/2;
+    const band2LeftBound = spectrumValue - WavelengthGame.SPECTRUM_BAND_WIDTH * 3/2;
+    const band3LeftBound = spectrumValue - WavelengthGame.SPECTRUM_BAND_WIDTH/2;
+    const band4LeftBound = spectrumValue + WavelengthGame.SPECTRUM_BAND_WIDTH/2;
+    const band5LeftBound = spectrumValue + WavelengthGame.SPECTRUM_BAND_WIDTH * 3/2;
+    const band5RightBound = spectrumValue + WavelengthGame.SPECTRUM_BAND_WIDTH * 5/2;
+
+    if (spectrumGuess >= band3LeftBound && spectrumGuess < band4LeftBound) {
       // within first band
       this.numPoints += 4;
-    } else if (spectrumGuess < spectrumValue + WavelengthGame.SPECTRUM_BAND_WIDTH * 3/2 && spectrumGuess >= spectrumValue - WavelengthGame.SPECTRUM_BAND_WIDTH * 3/2) {
+    } else if (spectrumGuess >= band2LeftBound && spectrumGuess < band5LeftBound) {
       this.numPoints += 3;
-    } else if (spectrumGuess < spectrumValue + WavelengthGame.SPECTRUM_BAND_WIDTH * 5/2 && spectrumGuess >= spectrumValue - WavelengthGame.SPECTRUM_BAND_WIDTH * 5/2) {
+    } else if (spectrumGuess >= band1LeftBound && spectrumGuess < band5RightBound) {
       this.numPoints += 2;
     }
 
