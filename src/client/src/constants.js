@@ -58,7 +58,4 @@ export const LABELS = {
   [ROLE_TANNER]: 'Tanner',
 };
 
-export const SPECTRUM_MAX_VALUE = 200;
-export const SPECTRUM_BAND_WIDTH = 12;
-
 export const sessionsPrefix = `${routePrefix}/gkoo`;

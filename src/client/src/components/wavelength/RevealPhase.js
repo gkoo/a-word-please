@@ -10,9 +10,9 @@ import {
   spectrumGuessSelector,
   spectrumValueSelector,
 } from '../../store/selectors';
-import { SPECTRUM_BAND_WIDTH } from '../../constants';
 
 function RevealPhase() {
+  const bandWidth = 10;
   const socket = useSelector(socketSelector);
   const spectrumGuess = useSelector(spectrumGuessSelector);
   const spectrumValue = useSelector(spectrumValueSelector);
@@ -23,19 +23,26 @@ function RevealPhase() {
     socket.emit('playerAction', { action: 'nextTurn' });
   };
 
-  const band1LeftBound = spectrumValue - SPECTRUM_BAND_WIDTH * 5/2;
-  const band2LeftBound = spectrumValue - SPECTRUM_BAND_WIDTH * 3/2;
-  const band3LeftBound = spectrumValue - SPECTRUM_BAND_WIDTH/2;
-  const band4LeftBound = spectrumValue + SPECTRUM_BAND_WIDTH/2;
-  const band5LeftBound = spectrumValue + SPECTRUM_BAND_WIDTH * 3/2;
-  const band5RightBound = spectrumValue + SPECTRUM_BAND_WIDTH * 5/2;
-
-  const inFirstBand = spectrumGuess >= band1LeftBound && spectrumGuess < band2LeftBound;
-  const inSecondBand = spectrumGuess >= band2LeftBound && spectrumGuess < band3LeftBound;
-  const inThirdBand = spectrumGuess >= band3LeftBound && spectrumGuess < band4LeftBound;
-  const inFourthBand = spectrumGuess >= band4LeftBound && spectrumGuess < band5LeftBound;
-  const inFifthBand = spectrumGuess >= band5LeftBound && band5RightBound;
-
+  const inFirstBand = (
+    spectrumGuess >= spectrumValue - bandWidth*5/2 &&
+      spectrumGuess < spectrumValue - bandWidth*3/2
+  );
+  const inSecondBand = (
+    spectrumGuess >= spectrumValue - bandWidth*3/2 &&
+    spectrumGuess < spectrumValue - bandWidth/2
+  );
+  const inThirdBand = (
+    spectrumGuess >= spectrumValue - bandWidth/2 &&
+    spectrumGuess < spectrumValue + bandWidth/2
+  );
+  const inFourthBand = (
+    spectrumGuess >= spectrumValue + bandWidth/2 &&
+      spectrumGuess < spectrumValue + bandWidth*3/2
+  );
+  const inFifthBand = (
+    spectrumGuess >= spectrumValue + bandWidth*3/2 &&
+      spectrumGuess < spectrumValue + bandWidth*5/2
+  );
   const gotPoints = inFirstBand || inSecondBand || inThirdBand || inFourthBand || inFifthBand;
   const bandSelections = {
     firstBand: inFirstBand,

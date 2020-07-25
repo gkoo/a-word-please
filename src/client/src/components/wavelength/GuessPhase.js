@@ -6,7 +6,6 @@ import Col from 'react-bootstrap/Col'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button';
 
-import { SPECTRUM_MAX_VALUE } from '../../constants';
 import { updateSpectrumGuess } from '../../store/actions';
 import * as selectors from '../../store/selectors';
 
@@ -58,7 +57,7 @@ function GuessPhase() {
           type="range"
           onChange={onChange}
           min={0}
-          max={SPECTRUM_MAX_VALUE}
+          max={180}
           value={controlledSpectrumGuess}
           disabled={currPlayerIsActivePlayer}
         />
