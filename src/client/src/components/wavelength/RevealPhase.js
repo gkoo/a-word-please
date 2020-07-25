@@ -34,7 +34,7 @@ function RevealPhase() {
   const inSecondBand = spectrumGuess >= band2LeftBound && spectrumGuess < band3LeftBound;
   const inThirdBand = spectrumGuess >= band3LeftBound && spectrumGuess < band4LeftBound;
   const inFourthBand = spectrumGuess >= band4LeftBound && spectrumGuess < band5LeftBound;
-  const inFifthBand = spectrumGuess >= band5LeftBound && band5RightBound;
+  const inFifthBand = spectrumGuess >= band5LeftBound && spectrumGuess < band5RightBound;
 
   const gotPoints = inFirstBand || inSecondBand || inThirdBand || inFourthBand || inFifthBand;
   const bandSelections = {
