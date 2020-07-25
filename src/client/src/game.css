@@ -265,7 +265,8 @@
 }
 
 /* Wavelength */
-.band-group, .bands-placeholder {
+.band-container {
+  position: relative;
   height: 150px;
   overflow: hidden;
 }
@@ -273,10 +274,15 @@
 .band-group {
   align-items: flex-end;
   display: flex;
+  height: 150px;
+  overflow: hidden;
+  padding: 0 5px;
+  position: absolute;
+  width: 30%; /* change this if band_width changes (6*5) */
 }
 
 .spectrum-band {
-  width: 5.55556%
+  width: 20%; /* 1/5 of the band-group */
 }
 
 .spectrum-band.selected {
