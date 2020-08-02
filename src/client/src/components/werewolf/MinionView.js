@@ -1,16 +1,23 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
+import Button from 'react-bootstrap/Button';
+
 import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
-import { currPlayerSelector, playersSelector } from '../../store/selectors';
+import { currPlayerSelector, playersSelector, socketSelector } from '../../store/selectors';
 import { LABELS, ROLE_MINION, ROLE_WEREWOLF } from '../../constants';
 
 function MinionView() {
   const currPlayer = useSelector(currPlayerSelector);
   const players = useSelector(playersSelector);
+  const socket = useSelector(socketSelector);
   const werewolves = Object.values(players).filter(
     player => player.id !== currPlayer.id && player.originalRole === ROLE_WEREWOLF
   );
+
+  const endTurn = () => {
+    socket.emit('playerAction', { action: 'endTurn' });
+  };
 
   return (
     <>
@@ -33,6 +40,9 @@ function MinionView() {
         werewolves.length === 0 &&
           <p>It seems there aren't any werewolves...</p>
       }
+      <div className='text-center'>
+        <Button onClick={endTurn}>OK</Button>
+      </div>
     </>
   );
 }

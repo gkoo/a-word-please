@@ -28,6 +28,9 @@ class WerewolfGame extends Game {
 
   static WAKE_UP_ORDER = [
     WerewolfGame.ROLE_DOPPELGANGER,
+    WerewolfGame.ROLE_WEREWOLF,
+    WerewolfGame.ROLE_MINION,
+    WerewolfGame.ROLE_MASON,
     WerewolfGame.ROLE_SEER,
     WerewolfGame.ROLE_ROBBER,
     WerewolfGame.ROLE_TROUBLEMAKER,
@@ -141,11 +144,6 @@ class WerewolfGame extends Game {
           this.robRole(playerId, data.playerId);
         }
         return;
-      case 'swapRoleWithUnclaimed':
-        if (currPlayer.originalRole === WerewolfGame.ROLE_DRUNK) {
-          this.swapRoleWithUnclaimed(playerId);
-        }
-        return;
       case 'startVoting':
         return this.enableVoting();
       case 'voteToEliminate':
@@ -159,9 +157,27 @@ class WerewolfGame extends Game {
     }
   }
 
+  endWerewolfTurn() {
+    const numPlayersToWaitFor = Object.values(this.players).filter(
+      player => player.role === WerewolfGame.ROLE_WEREWOLF
+    );
+    if (++this.werewolvesReady >= numPlayersToWaitFor) {
+      this.nextTurn();
+    }
+  }
+
   nextTurn() {
     // TODO: check for two insomniacs (due to Doppelganger)
+    const numPlayersToWaitFor = Object.values(this.players).filter(
+      player => player.role === this.wakeUpRole
+    ).length;
+
+    if (++this.playersOfCurrentRoleReady < numPlayersToWaitFor) {
+      // We need to wait for everyone to be ready
+      return;
+    }
     console.log('next turn');
+    this.playersOfCurrentRoleReady = 0;
     ++this.currentWakeUpIdx;
     this.performWakeUpActions();
   }
@@ -220,14 +236,25 @@ class WerewolfGame extends Game {
       throw new Error('lengths don\'t match!');
     }
 
+    shuffledRolesToAssign = [
+      WerewolfGame.ROLE_WEREWOLF,
+      WerewolfGame.ROLE_WEREWOLF,
+      WerewolfGame.ROLE_VILLAGER,
+      WerewolfGame.ROLE_VILLAGER,
+      WerewolfGame.ROLE_VILLAGER,
+      WerewolfGame.ROLE_VILLAGER,
+    ];
+
     this.getActivePlayers().forEach((player, idx) => {
       const role = shuffledRolesToAssign[idx];
+      console.log(`assigning role ${role} to player`);
       player.setRole({ role, isOriginalRole: true });
     });
   }
 
   performWakeUpActions() {
     if (this.currentWakeUpIdx >= WerewolfGame.WAKE_UP_ORDER.length) {
+      // We are done with nighttime! Let's transition to Daytime!
       if (this.numWakeUps === 0) {
         setTimeout(() => this.beginDaytime(), 10000);
       } else {

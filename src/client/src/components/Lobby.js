@@ -49,20 +49,18 @@ function Lobby({ messages, roomCode, users }) {
                   <span role='img' aria-label='A Word, Please?' className='mr-2'>📝</span>
                   A Word, Please?
                 </Button>
-                {
-                  /*
-                    <Button
-                      variant='outline-info'
-                      size='lg'
-                      active={selectedGame === GAME_WEREWOLF}
-                      onClick={() => onChooseGame(GAME_WEREWOLF)}
-                      block
-                    >
-                      <span role='img' aria-label='Werewolf' className='mr-2'>🐺</span>
-                      Werewolf
-                    </Button>
-                  */
-                }
+
+                <Button
+                  variant='outline-info'
+                  size='lg'
+                  active={selectedGame === GAME_WEREWOLF}
+                  onClick={() => onChooseGame(GAME_WEREWOLF)}
+                  block
+                >
+                  <span role='img' aria-label='Werewolf' className='mr-2'>🐺</span>
+                  Werewolf
+                </Button>
+
                 <Button
                   variant='outline-info'
                   size='lg'
@@ -73,6 +71,7 @@ function Lobby({ messages, roomCode, users }) {
                   <span role='img' aria-label='Wavelength' className='mr-2'>📻</span>
                   Wavelength
                 </Button>
+
                 {
                   !selectedGame &&
                     <h3 className='my-3'>Please choose a game</h3>

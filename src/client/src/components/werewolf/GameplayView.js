@@ -7,6 +7,7 @@ import Button from 'react-bootstrap/Button';
 
 import DaytimeView from './DaytimeView';
 import NighttimeView from './NighttimeView';
+import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
 import RoleCard from './RoleCard';
 import VoteResults from './VoteResults';
 import {
@@ -20,6 +21,7 @@ import { toggleRolesModal } from '../../store/actions';
 import {
   currPlayerSelector,
   gameStateSelector,
+  playersSelector,
   revealingRolesSelector,
   socketSelector,
   wakeUpRoleSelector,
@@ -29,6 +31,7 @@ function GameplayView() {
   const gameState = useSelector(gameStateSelector);
   const currPlayer = useSelector(currPlayerSelector);
   const revealingRoles = useSelector(revealingRolesSelector);
+  const players = useSelector(playersSelector);
   const socket = useSelector(socketSelector);
   const wakeUpRole = useSelector(wakeUpRoleSelector);
   const dispatch = useDispatch();
@@ -80,6 +83,10 @@ function GameplayView() {
         }
         <div className='mb-3'><em><small>Roles may change throughout the night...</small></em></div>
         <div><Button variant='link' onClick={onShowRolesModal}>Show role guide</Button></div>
+        <h4>Players</h4>
+        {
+          Object.values(players).map(player => <PlayerCheckboxLabel player={player}/>)
+        }
       </Col>
     </Row>
   );

@@ -1,16 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 
+import Button from 'react-bootstrap/Button';
+
 import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
-import { currPlayerSelector, playersSelector } from '../../store/selectors';
+import { currPlayerSelector, playersSelector, socketSelector } from '../../store/selectors';
 import { LABELS, ROLE_WEREWOLF } from '../../constants';
 
 function WerewolfView() {
+  const [ready, setReady] = useState(false);
   const currPlayer = useSelector(currPlayerSelector);
   const players = useSelector(playersSelector);
+  const socket = useSelector(socketSelector);
   const otherWerewolves = Object.values(players).filter(
     player => player.id !== currPlayer.id && player.originalRole === ROLE_WEREWOLF
   );
+
+  const endTurn = () => {
+    socket.emit('playerAction', { action: 'endTurn' });
+    setReady(true);
+  };
 
   return (
     <>
@@ -28,7 +37,16 @@ function WerewolfView() {
         otherWerewolves.length === 0 &&
           <p>It seems there aren't any other werewolves...</p>
       }
-      You do not have any nighttime actions.
+      {
+        !ready &&
+          <div className='text-center'>
+            <Button onClick={endTurn}>OK</Button>
+          </div>
+      }
+      {
+        ready &&
+          <em>Waiting for other werewolves to end turn...</em>
+      }
     </>
   );
 }

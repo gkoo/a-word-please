@@ -9,7 +9,7 @@ import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup'
 
 import { currPlayerSelector, playersSelector, socketSelector } from '../../store/selectors';
 
-function TroublemakerView({ showWakeUp }) {
+function TroublemakerView() {
   const [targets, setTargets] = useState([]);
   const currPlayer = useSelector(currPlayerSelector);
   const players = useSelector(playersSelector);
@@ -39,7 +39,7 @@ function TroublemakerView({ showWakeUp }) {
 
   return (
     <>
-      {showWakeUp && <h1>Wake up.</h1>}
+      <h1>Wake up.</h1>
       <p>
         Choose two other players and switch their roles. Devious!
       </p>

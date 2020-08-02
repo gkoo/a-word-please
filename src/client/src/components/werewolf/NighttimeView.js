@@ -32,18 +32,26 @@ import { currPlayerSelector, wakeUpRoleSelector } from '../../store/selectors';
 function NighttimeView() {
   const currPlayer = useSelector(currPlayerSelector);
   const wakeUpRole = useSelector(wakeUpRoleSelector);
-  const isAwake = !!currPlayer && currPlayer.originalRole === wakeUpRole && wakeUpRole !== ROLE_DRUNK;
+  const isAwake = !!currPlayer && currPlayer.originalRole === wakeUpRole;
 
   const renderWakeUp = () => {
     switch (currPlayer?.originalRole) {
       case ROLE_DOPPELGANGER:
         return <DoppelgangerView />;
+      case ROLE_WEREWOLF:
+        return <WerewolfView />;
+      case ROLE_MINION:
+        return <MinionView />;
+      case ROLE_MASON:
+        return <MasonView />;
       case ROLE_SEER:
-        return <SeerView showWakeUp={true} />;
+        return <SeerView />;
       case ROLE_ROBBER:
-        return <RobberView showWakeUp={true} />;
+        return <RobberView />;
       case ROLE_TROUBLEMAKER:
-        return <TroublemakerView showWakeUp={true} />;
+        return <TroublemakerView />;
+      case ROLE_DRUNK:
+        return <DrunkView />;
       case ROLE_INSOMNIAC:
         return <InsomniacView />;
       default:
@@ -53,20 +61,12 @@ function NighttimeView() {
 
   const renderPassiveView = () => {
     switch (currPlayer?.originalRole) {
-      case ROLE_WEREWOLF:
-        return <WerewolfView />;
-      case ROLE_MINION:
-        return <MinionView />;
-      case ROLE_MASON:
-        return <MasonView />;
       case ROLE_HUNTER:
         return <HunterView />;
       case ROLE_VILLAGER:
         return <VillagerView />;
       case ROLE_TANNER:
         return <TannerView />;
-      case ROLE_DRUNK:
-        return <DrunkView />;
       case ROLE_INSOMNIAC:
         return <InsomniacView />;
       default:

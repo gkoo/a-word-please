@@ -29,10 +29,6 @@ import {
 import * as selectors from '../../store/selectors';
 
 const nonWakeUpRoles = [
-  ROLE_WEREWOLF,
-  ROLE_MINION,
-  ROLE_MASON,
-  ROLE_DRUNK,
   ROLE_HUNTER,
   ROLE_VILLAGER,
   ROLE_TANNER,
@@ -40,6 +36,9 @@ const nonWakeUpRoles = [
 
 const wakeUpOrder = [
   ROLE_DOPPELGANGER,
+  ROLE_WEREWOLF,
+  ROLE_MINION,
+  ROLE_MASON,
   ROLE_SEER,
   ROLE_ROBBER,
   ROLE_TROUBLEMAKER,

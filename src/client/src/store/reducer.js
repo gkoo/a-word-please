@@ -450,7 +450,7 @@ export default function reducer(state = stateToUse, action) {
       const fieldsFromClient = ['showRolesModal'];
       const dataFromClient = {};
       fieldsFromClient.forEach(field => {
-        dataFromClient[field] = state.gameData[field];
+        dataFromClient[field] = state.gameData && state.gameData[field];
       });
 
       players = action.payload.players;

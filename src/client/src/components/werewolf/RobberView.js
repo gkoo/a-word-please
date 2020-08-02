@@ -10,7 +10,7 @@ import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
 import RoleCard from './RoleCard';
 import { currPlayerSelector, playersSelector, socketSelector } from '../../store/selectors';
 
-function RobberView({ showWakeUp }) {
+function RobberView() {
   const [playerToRobId, setPlayerToRobId] = useState(null);
   const players = useSelector(playersSelector);
   const currPlayer = useSelector(currPlayerSelector);
@@ -33,7 +33,7 @@ function RobberView({ showWakeUp }) {
 
   return (
     <>
-      {showWakeUp && <h1>Wake up.</h1>}
+      <h1>Wake up.</h1>
       <p>
         Choose another player. You will switch roles with that player and then look at your
         new role.

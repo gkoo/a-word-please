@@ -11,7 +11,7 @@ import RoleCard from './RoleCard';
 import { currPlayerSelector, playersSelector, socketSelector, unclaimedRolesSelector } from '../../store/selectors';
 import { LABELS } from '../../constants';
 
-function SeerView({ showWakeUp }) {
+function SeerView() {
   const [revealedPlayerId, setRevealedPlayerId] = useState(null);
   const [revealedUnclaimedRoles, setRevealedUnclaimedRoles] = useState(null);
   const unclaimedRoles = useSelector(unclaimedRolesSelector);
@@ -41,7 +41,7 @@ function SeerView({ showWakeUp }) {
 
   return (
     <>
-      {showWakeUp && <h1>Wake up.</h1>}
+      <h1>Wake up.</h1>
       <p>
         You may choose to look at another player's role or choose to see
         two of the unclaimed role cards.
