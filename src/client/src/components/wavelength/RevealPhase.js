@@ -36,25 +36,12 @@ function RevealPhase() {
   const inFourthBand = spectrumGuess >= band4LeftBound && spectrumGuess < band5LeftBound;
   const inFifthBand = spectrumGuess >= band5LeftBound && spectrumGuess < band5RightBound;
 
-  const gotPoints = inFirstBand || inSecondBand || inThirdBand || inFourthBand || inFifthBand;
   const bandSelections = {
     firstBand: inFirstBand,
     secondBand: inSecondBand,
     thirdBand: inThirdBand,
     fourthBand: inFourthBand,
     fifthBand: inFifthBand,
-  };
-
-  const renderPointsMessage = () => {
-    if (inFirstBand || inFifthBand) {
-      return '+2 points';
-    }
-    if (inSecondBand || inFourthBand) {
-      return '+3 points';
-    }
-    if (inThirdBand) {
-      return '+4 points';
-    }
   };
 
   return (

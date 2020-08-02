@@ -14,6 +14,7 @@ function CluesView({ largeView, redactDuplicates }) {
           const clueData = clues[playerId];
           return (
             <ClueCard
+              key={`clue-${playerId}`}
               clueData={clueData}
               playerId={playerId}
               isRedacted={redactDuplicates && clueData.isDuplicate}

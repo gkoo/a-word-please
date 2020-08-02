@@ -17,7 +17,6 @@ function CluePhase() {
   const activePlayer = useSelector(selectors.activePlayerSelector);
   const currConcept = useSelector(selectors.currConceptSelector);
   const currPlayerIsActivePlayer = useSelector(selectors.currPlayerIsActivePlayerSelector);
-  const clue = useSelector(selectors.clueSelector);
   const socket = useSelector(selectors.socketSelector);
 
   const onEnterClue = e => {
