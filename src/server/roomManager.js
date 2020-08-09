@@ -74,7 +74,7 @@ class RoomManager {
   handleEndGame(socket) {
     const room = this.getRoom(socket);
     if (!room) { return; }
-    room.endGame(socket.id);
+    room.endGame();
   }
 
   handlePlayerAction(socket, data) {

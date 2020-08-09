@@ -58,7 +58,10 @@ function LeaderPanel({ numUsers }) {
   return (
     <div>
       <ButtonGroup>
-        {[GAME_STATE_PENDING, GAME_STATE_GAME_END].includes(gameState) && renderStartGameButton()}
+        {
+          gameState === GAME_STATE_PENDING &&
+          <Button onClick={startGame}>Start Game</Button>
+        }
         {
           gameState === GAME_STATE_TURN_END &&
             <Button onClick={nextTurn}>Next Turn</Button>

@@ -2,7 +2,9 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 
 import Button from 'react-bootstrap/Button';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
 
+import BackToLobbyButton from '../common/BackToLobbyButton';
 import { numPointsSelector, socketSelector } from '../../store/selectors';
 
 function GameEndPhase() {
@@ -19,7 +21,10 @@ function GameEndPhase() {
       <h1>Game over!</h1>
       <p>You got {numPoints} points. You are amazing!</p>
       <div className='my-5'>
-        <Button onClick={newGame}>New Game</Button>
+        <ButtonGroup>
+          <Button onClick={newGame}>New Game</Button>
+          <BackToLobbyButton/>
+        </ButtonGroup>
       </div>
     </div>
   );

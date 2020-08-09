@@ -1,20 +1,26 @@
 import React from 'react';
-
 import { useSelector } from 'react-redux';
 
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
+import Button from 'react-bootstrap/Button';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
 
+import BackToLobbyButton from '../common/BackToLobbyButton';
 import * as selectors from '../../store/selectors';
 
 function GameEndView() {
+  const socket = useSelector(selectors.socketSelector);
   const numPoints = useSelector(selectors.numPointsSelector);
+
+  const newGame = e => {
+    e.preventDefault();
+    socket.emit('startGame');
+  };
 
   let message = '';
 
   switch (numPoints) {
     case 13:
-      message = 'Whoa! Perfection! Congratulations!';
+      message = 'You are a true master of language and a champion of gamery!';
       break;
     case 12:
       message = 'Wowsers! It\'s hard to do better than 12!';
@@ -48,13 +54,17 @@ function GameEndView() {
   }
 
   return (
-    <Row>
-      <Col className='text-center'>
-        <h1>Game Over!</h1>
-        <h2>Total Points: {numPoints}</h2>
-        <p>{message}</p>
-      </Col>
-    </Row>
+    <div className='text-center'>
+      <h1>Game Over!</h1>
+      <h2>Total Points: {numPoints}</h2>
+      <p>{message}</p>
+      <div className='my-5'>
+        <ButtonGroup>
+          <Button onClick={newGame}>New game</Button>
+          <BackToLobbyButton/>
+        </ButtonGroup>
+      </div>
+    </div>
   )
 }
 

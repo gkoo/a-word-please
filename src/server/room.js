@@ -1,4 +1,5 @@
 const AWPGame = require('./a-word-please/awp-game.js');
+const Game = require('./game.js');
 const WerewolfGame = require('./werewolf/werewolfGame.js');
 const WavelengthGame = require('./wavelength/wavelengthGame.js');
 const User = require('./user.js');
@@ -127,6 +128,10 @@ Room.prototype = {
 
   handlePlayerAction: function(socket, data) {
     if (!this.game) { return; }
+    if (data.action === 'backToLobby') {
+      this.backToLobby();
+      return;
+    }
     this.game.handlePlayerAction(socket.id, data);
   },
 
@@ -135,9 +140,10 @@ Room.prototype = {
     this.game.endGame();
   },
 
-  revealClues: function() {
-    if (!this.game) { return; }
-    this.game.revealCluesToGuesser();
+  backToLobby: function() {
+    this.state = STATE_LOBBY;
+    this.game = null;
+    this.broadcastToRoom('roomData', this.getRoomData());
   },
 
   getRoomData: function({ socketId, includeCurrUserId } = {}) {
