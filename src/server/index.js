@@ -46,7 +46,6 @@ io.on('connection', socket => {
   socket.on('joinRoom', roomCode => roomManager.joinRoom(socket, roomCode));
   socket.on('saveName', name => roomManager.handleSetName(socket, name));
   socket.on('chooseGame', gameId => roomManager.handleChooseGame(socket, gameId));
-  socket.on('setPending', () => roomManager.onSetPending(socket));
   socket.on('startGame', () => roomManager.handleStartGame(socket));
   socket.on('nextTurn', () => roomManager.handleNextTurn(socket));
   socket.on('endGame', () => roomManager.handleEndGame(socket));

@@ -135,8 +135,6 @@ Room.prototype = {
     this.game.endGame();
   },
 
-  setPending: function() { return this.game && this.game.setPending(); },
-
   revealClues: function() {
     if (!this.game) { return; }
     this.game.revealCluesToGuesser();
@@ -164,7 +162,7 @@ Room.prototype = {
     const roomData = this.getRoomData({ socketId: socket.id, includeCurrUserId: true });
     this.io.to(socket.id).emit('roomData', roomData)
 
-    let gameData = this.game ? this.game.serialize() : { state: AWPGame.STATE_PENDING };
+    let gameData = this.game ? this.game.serialize() : { state: Game.STATE_PENDING };
     this.io.to(socket.id).emit('gameData', gameData)
   },
 
