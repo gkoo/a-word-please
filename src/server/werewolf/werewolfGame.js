@@ -236,15 +236,6 @@ class WerewolfGame extends Game {
       throw new Error('lengths don\'t match!');
     }
 
-    shuffledRolesToAssign = [
-      WerewolfGame.ROLE_WEREWOLF,
-      WerewolfGame.ROLE_WEREWOLF,
-      WerewolfGame.ROLE_VILLAGER,
-      WerewolfGame.ROLE_VILLAGER,
-      WerewolfGame.ROLE_VILLAGER,
-      WerewolfGame.ROLE_VILLAGER,
-    ];
-
     this.getActivePlayers().forEach((player, idx) => {
       const role = shuffledRolesToAssign[idx];
       console.log(`assigning role ${role} to player`);
