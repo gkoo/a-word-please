@@ -10,11 +10,11 @@ function AboutModal({ show }) {
   const handleClose = () => show && dispatch(toggleAboutModal({ show: false }));
 
   return (
-    <Modal show={show} className='rules-modal' onHide={handleClose} scrollable>
+    <Modal show={show} onHide={handleClose} scrollable>
       <Modal.Header closeButton>
         <Modal.Title>About</Modal.Title>
       </Modal.Header>
-      <Modal.Body className='rules-modal-body'>
+      <Modal.Body>
         <div>
           <h3>The Site</h3>
           <p>
@@ -86,11 +86,6 @@ function AboutModal({ show }) {
           </a>
         </p>
       </Modal.Body>
-      <Modal.Footer>
-        <Button variant='primary' onClick={handleClose}>
-          OK
-        </Button>
-      </Modal.Footer>
     </Modal>
   );
 }

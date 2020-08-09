@@ -22,6 +22,8 @@ const initialState = {
   nextAlertId: 0,
   socketConnected: false,
   messages: [],
+  showAboutModal: false,
+  showReleaseNotesModal: false,
   showRolesModal: false,
   showRulesModal: false,
   socket: null,
@@ -98,6 +100,7 @@ const testAwpGameData = {
 const roleToTest = constants.ROLE_MINION;
 
 const testWerewolfGameData = {
+  eliminatedPlayerIds: ['gordon'],
   wakeUpRole: constants.ROLE_ROBBER,
   gameId: constants.GAME_WEREWOLF,
   players: {
@@ -525,6 +528,12 @@ export default function reducer(state = stateToUse, action) {
       return {
         ...state,
         showAboutModal: action.payload.show,
+      };
+
+    case actions.TOGGLE_RELEASE_NOTES_MODAL:
+      return {
+        ...state,
+        showReleaseNotesModal: action.payload.show,
       };
 
     case actions.TOGGLE_ROLES_MODAL:

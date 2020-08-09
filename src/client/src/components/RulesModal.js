@@ -11,11 +11,11 @@ function RulesModal({ show }) {
   const handleClose = () => show && dispatch(toggleRulesModal({ show: false }));
 
   return (
-    <Modal show={show} className='rules-modal' onHide={handleClose} scrollable>
-      <Modal.Header>
+    <Modal show={show} onHide={handleClose} scrollable>
+      <Modal.Header closeButton>
         <Modal.Title>How to play</Modal.Title>
       </Modal.Header>
-      <Modal.Body className='rules-modal-body'>
+      <Modal.Body>
         <p>
           <em>A Word, Please?</em> is a cooperative game where everyone works together to guess as
           many mystery words as possible.
@@ -95,11 +95,6 @@ function RulesModal({ show }) {
           Each game starts with 13 turns. The game ends when there are no more turns left.
         </p>
       </Modal.Body>
-      <Modal.Footer>
-        <Button variant='primary' onClick={handleClose}>
-          OK
-        </Button>
-      </Modal.Footer>
     </Modal>
   );
 }

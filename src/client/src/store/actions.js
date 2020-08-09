@@ -15,6 +15,7 @@ export const SAVE_NAME = 'SAVE_NAME';
 export const SET_ROOM_CODE = 'SET_ROOM_CODE';
 export const SHOW_ALERT = 'SHOW_ALERT';
 export const TOGGLE_ABOUT_MODAL = 'TOGGLE_ABOUT_MODAL';
+export const TOGGLE_RELEASE_NOTES_MODAL = 'TOGGLE_RELEASE_NOTES_MODAL';
 export const TOGGLE_ROLES_MODAL = 'TOGGLE_ROLES_MODAL';
 export const TOGGLE_RULES_MODAL = 'TOGGLE_RULES_MODAL';
 export const UPDATE_SPECTRUM_GUESS = 'UPDATE_SPECTRUM_GUESS';
@@ -128,6 +129,13 @@ export function toggleAboutModal({ show }) {
     payload: { show },
     type: TOGGLE_ABOUT_MODAL,
   }
+}
+
+export function toggleReleaseNotesModal({ show }) {
+  return {
+    payload: { show },
+    type: TOGGLE_RELEASE_NOTES_MODAL,
+  };
 }
 
 export function toggleRolesModal({ show }) {
