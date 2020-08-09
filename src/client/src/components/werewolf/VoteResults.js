@@ -3,11 +3,12 @@ import { useSelector } from 'react-redux';
 import cx from 'classnames';
 
 import Button from 'react-bootstrap/Button';
+import Table from 'react-bootstrap/Table'
 
 import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
-import VoteLabel from './VoteLabel';
 import * as selectors from '../../store/selectors';
 import {
+  LABELS,
   ROLE_WEREWOLF,
   ROLE_MINION,
   ROLE_TANNER,
@@ -22,6 +23,40 @@ const getTeam = role => {
     return ROLE_TANNER;
   }
   return ROLE_VILLAGER;
+};
+
+const renderPlayerRow = (player, players, votes, eliminatedPlayers) => {
+  const team = getTeam(player.role);
+  const roleLabelClass = cx({
+    werewolf: team === ROLE_WEREWOLF,
+    tanner: team === ROLE_TANNER,
+    villager: team === ROLE_VILLAGER,
+  });
+  const voterIsEliminated = eliminatedPlayers.indexOf(player) >= 0;
+
+  return (
+    <tr>
+      <td>
+        <span role='img' aria-label='Eliminated player' className='mr-2'>
+          { voterIsEliminated && '💀' }
+        </span>
+        {player.name}
+      </td>
+      <td>
+        {players[votes[player.id]].name}
+      </td>
+      <td>
+        <span className={`team-label ${roleLabelClass}`}>
+          {LABELS[player.role]}
+        </span>
+      </td>
+      {/*
+      <td>
+        {LABELS[player.originalRole]}
+      </td>
+      */}
+    </tr>
+  );
 };
 
 function VoteResults() {
@@ -73,19 +108,23 @@ function VoteResults() {
           {winnerPlayers.map(player => <PlayerCheckboxLabel player={player} />)}
         </div>
       </div>
-      {
-        playersToDisplay.map(
-          player => (
-            <VoteLabel
-              voter={player}
-              suspect={players[votes[player.id]]}
-              voterIsEliminated={eliminatedPlayers.indexOf(player) >= 0}
-              revealingRoles={revealingRoles}
-              team={getTeam(player.role)}
-            />
-          )
-        )
-      }
+      <Table>
+        <thead>
+          <tr>
+            <th>Player</th>
+            <th>Voted For</th>
+            <th>Role</th>
+            {/*<th>Starting Role</th>*/}
+          </tr>
+        </thead>
+        <tbody>
+          {
+            playersToDisplay.map(
+              player => renderPlayerRow(player, players, votes, eliminatedPlayers)
+            )
+          }
+        </tbody>
+      </Table>
     </div>
   );
 }
