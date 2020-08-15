@@ -14,6 +14,11 @@ function ReleaseNotesModal({ show }) {
         <Modal.Title>Release Notes</Modal.Title>
       </Modal.Header>
       <Modal.Body>
+        <h3>Aug 15, 2020</h3>
+        <ul>
+          <li>Added Spectator option</li>
+        </ul>
+
         <h3>Aug 9, 2020</h3>
         <ul>
           <li>Added "Back to lobby" button for game end view</li>
