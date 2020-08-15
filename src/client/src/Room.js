@@ -23,7 +23,7 @@ function Room() {
   const name = useSelector(selectors.nameSelector);
   const socket = useSelector(selectors.socketSelector);
   const socketConnected = useSelector(selectors.socketConnectedSelector);
-  const users = useSelector(selectors.usersSelector);
+  const connectedUsers = useSelector(selectors.connectedUsersSelector);
   const [pingInterval, setPingInterval] = useState();
 
   const roomCodeParam = useParams().roomCode;
@@ -89,7 +89,7 @@ function Room() {
       }
       {
         roomState === ROOM_STATE_LOBBY &&
-          <Lobby roomCode={roomCodeParam} users={users} />
+          <Lobby roomCode={roomCodeParam} users={connectedUsers} />
       }
       {
         roomState !== ROOM_STATE_LOBBY &&

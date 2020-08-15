@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
+import Form from 'react-bootstrap/Form'
 import Modal from 'react-bootstrap/Modal';
 import Row from 'react-bootstrap/Row';
 
@@ -11,10 +12,12 @@ import { socketSelector } from '../store/selectors';
 
 function NameModal({ show }) {
   const [name, setName] = useState('');
+  const [isSpectator, setIsSpectator] = useState(false);
   const socket = useSelector(socketSelector);
   const dispatch = useDispatch();
 
   const onNameChange = e => setName(e.target.value);
+  const onIsSpectatorChange = e => setIsSpectator(e.target.checked);
 
   const handleSave = (e) => {
     if (e) { e.preventDefault(); }
@@ -35,6 +38,18 @@ function NameModal({ show }) {
             </Col>
             <Col>
               <input type='text' onChange={onNameChange} value={name} />
+            </Col>
+          </Row>
+          <Row>
+            <Col xs={{ offset: 4 }}>
+              <Form.Group controlId='isspectatorinput'>
+                <Form.Check
+                  type="checkbox"
+                  label="Join as spectator"
+                  onChange={onIsSpectatorChange}
+                  value={isSpectator}
+                />
+              </Form.Group>
             </Col>
           </Row>
         </form>

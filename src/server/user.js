@@ -2,6 +2,7 @@ function User({ id, name }) {
   this.id = id;
   this.name = name;
   this.isLeader = false;
+  this.connected = true;
 
   this.setName = name => {
     this.name = name;
@@ -16,11 +17,12 @@ function User({ id, name }) {
   }
 
   this.serialize = () => {
-    const { id, isLeader, name } = this;
+    const { id, connected, isLeader, name } = this;
     return {
       id,
       isLeader,
       name,
+      connected,
     };
   }
 }

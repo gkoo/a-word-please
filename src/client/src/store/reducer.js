@@ -381,6 +381,7 @@ export default function reducer(state = stateToUse, action) {
               ...oldUser,
               name,
               isLeader,
+              connected: true,
             },
           },
         },
@@ -395,8 +396,9 @@ export default function reducer(state = stateToUse, action) {
       newUsers = {};
 
       Object.keys(state.roomData?.users).forEach(userId => {
-        if (disconnectedUserId !== userId) {
-          newUsers[userId] = state.roomData?.users[userId];
+        newUsers[userId] = state.roomData?.users[userId];
+        if (disconnectedUserId === userId) {
+          newUsers[userId].connected = false;
         }
       });
 
@@ -419,6 +421,10 @@ export default function reducer(state = stateToUse, action) {
         alerts: newAlerts,
         // Increment the id for the next alert
         nextAlertId: state.nextAlertId + 1,
+        roomData: {
+          ...state.roomData,
+          users: newUsers,
+        },
         // Mark the user as disconnected
         players: {
           ...state.gameData.players,
@@ -427,7 +433,6 @@ export default function reducer(state = stateToUse, action) {
             connected: false,
           },
         },
-        users: newUsers,
       }
 
     case actions.NEW_ALERT:
