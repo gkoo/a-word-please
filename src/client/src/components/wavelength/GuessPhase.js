@@ -6,6 +6,7 @@ import Col from 'react-bootstrap/Col'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button';
 
+import Spectrum from './Spectrum';
 import { SPECTRUM_MAX_VALUE } from '../../constants';
 import { updateSpectrumGuess } from '../../store/actions';
 import * as selectors from '../../store/selectors';
@@ -52,6 +53,9 @@ function GuessPhase() {
       <div className='text-center mb-5'>
         <h2 className='spectrum-clue'>"{clue}"</h2>
       </div>
+      {
+        currPlayerIsActivePlayer && <Spectrum showSlider={false} showBands={true} />
+      }
       <Form>
         <Form.Control
           type="range"

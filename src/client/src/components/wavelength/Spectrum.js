@@ -48,24 +48,26 @@ function Spectrum({ guessValue, showBands, showSlider, value, bandSelections }) 
       </div>
       {
         (showSlider || (guessValue !== undefined && guessValue !== null)) &&
-          <Form>
-            <Form.Control
-              type="range"
-              min={0}
-              max={SPECTRUM_MAX_VALUE}
-              value={sliderValueToDisplay}
-              disabled
-            />
-          </Form>
+          <>
+            <Form>
+              <Form.Control
+                type="range"
+                min={0}
+                max={SPECTRUM_MAX_VALUE}
+                value={sliderValueToDisplay}
+                disabled
+              />
+            </Form>
+            <Row>
+              <Col md={{ span: 6 }} className='text-left'>
+                {currConcept[0]}
+              </Col>
+              <Col md={{ span: 6 }} className='text-right'>
+                {currConcept[1]}
+              </Col>
+            </Row>
+          </>
       }
-      <Row>
-        <Col md={{ span: 6 }} className='text-left'>
-          {currConcept[0]}
-        </Col>
-        <Col md={{ span: 6 }} className='text-right'>
-          {currConcept[1]}
-        </Col>
-      </Row>
     </>
   );
 }
