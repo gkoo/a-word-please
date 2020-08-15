@@ -3,6 +3,10 @@ import { createSelector } from 'reselect';
 export const alertMessageSelector = state => state.alertMessage;
 export const debugEnabledSelector = state => state.debugEnabled;
 export const usersSelector = state => state.roomData?.users;
+export const connectedUsersSelector = createSelector(
+  usersSelector,
+  users => Object.values(users).filter(user => user.connected),
+);
 export const messagesSelector = state => state.messages;
 export const nameSelector = state => state.name;
 export const socketSelector = state => state.socket;
