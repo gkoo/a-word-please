@@ -49,12 +49,6 @@ function LeaderPanel({ numUsers }) {
     socket.emit('debug');
   };
 
-  const renderStartGameButton = () => {
-    const buttonLabel = gameState === GAME_STATE_PENDING ? 'Start game' : 'New game';
-
-    return <Button onClick={startGame}>{buttonLabel}</Button>;
-  };
-
   return (
     <div>
       <ButtonGroup>

@@ -10,6 +10,7 @@ import Card from 'react-bootstrap/Card';
 
 import LeaderPanel from './LeaderPanel';
 import UserList from './UserList';
+import StartGameButton from './common/StartGameButton';
 import { toggleRulesModal } from '../store/actions';
 import { selectedGameSelector, socketSelector } from '../store/selectors';
 import { GAME_A_WORD_PLEASE, GAME_WEREWOLF, GAME_WAVELENGTH } from '../constants';
@@ -121,7 +122,7 @@ function Lobby({ messages, roomCode, users }) {
                       </Row>
                       <Row>
                         <Col className='text-center'>
-                          <LeaderPanel numUsers={Object.keys(users).length}/>
+                          <StartGameButton />
                         </Col>
                       </Row>
                     </div>

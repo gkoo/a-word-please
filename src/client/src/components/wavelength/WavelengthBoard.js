@@ -17,14 +17,11 @@ import {
   STATE_WAVELENGTH_GAME_END_PHASE,
 } from '../../constants';
 
-const MAX_CLUE_LENGTH = 100;
-
 function WavelengthBoard() {
   const activePlayer = useSelector(selectors.activePlayerSelector);
   const gameState = useSelector(selectors.gameStateSelector);
   const numPoints = useSelector(selectors.numPointsSelector);
   const numRoundsLeft = useSelector(selectors.numRoundsLeftSelector);
-  const users = useSelector(selectors.usersSelector);
   let wavelengthGuessers = useSelector(selectors.wavelengthGuessersSelector);
   wavelengthGuessers = wavelengthGuessers.filter(player => player.connected);
 
