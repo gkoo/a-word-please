@@ -61,9 +61,9 @@ export function newSocket(socket) {
   }
 }
 
-export function newUser({ id, name, isLeader }) {
+export function newUser(data) {
   return {
-    payload: { id, name, isLeader },
+    payload: data,
     type: NEW_USER,
   }
 }

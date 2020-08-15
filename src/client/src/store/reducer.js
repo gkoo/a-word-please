@@ -31,6 +31,8 @@ const initialState = {
 
 const testAwpGameData = {
   //clues: {},
+  activePlayerId: 'willy',
+  //activePlayerId: 'gordon',
   clues: {
     'steve': {
       clue: 'wet',
@@ -44,8 +46,6 @@ const testAwpGameData = {
   currGuess: 'hydrant',
   currWord: 'water',
   gameId: constants.GAME_A_WORD_PLEASE,
-  guesserId: 'willy',
-  //guesserId: 'gordon',
   numPoints: 7,
   players: {
     gordon: {
@@ -352,7 +352,6 @@ export default function reducer(state = stateToUse, action) {
 
     case actions.NEW_USER:
       const userId = action.payload.id;
-      const isLeader = action.payload.isLeader;
       name = action.payload.name;
       const oldUser = state.roomData?.users[userId] || {};
 
@@ -379,9 +378,7 @@ export default function reducer(state = stateToUse, action) {
             ...state.roomData?.users,
             [userId]: {
               ...oldUser,
-              name,
-              isLeader,
-              connected: true,
+              ...action.payload,
             },
           },
         },

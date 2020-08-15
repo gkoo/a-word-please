@@ -8,7 +8,6 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Card from 'react-bootstrap/Card';
 
-import LeaderPanel from './LeaderPanel';
 import UserList from './UserList';
 import StartGameButton from './common/StartGameButton';
 import { toggleRulesModal } from '../store/actions';
@@ -39,6 +38,7 @@ function Lobby({ messages, roomCode, users }) {
           <Col xs={12} md={8} lg={{ offset: 1, span: 7 }} className='text-center'>
             <Card>
               <Card.Body>
+                <h3 className='my-3'>Please choose a game</h3>
                 <Button
                   variant='outline-info'
                   size='lg'
@@ -73,10 +73,6 @@ function Lobby({ messages, roomCode, users }) {
                   Wavelength
                 </Button>
 
-                {
-                  !selectedGame &&
-                    <h3 className='my-3'>Please choose a game</h3>
-                }
                 {
                   selectedGame &&
                     <div className='p-3'>

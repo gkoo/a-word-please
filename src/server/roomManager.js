@@ -44,12 +44,12 @@ class RoomManager {
     room.chooseGame(gameId);
   }
 
-  handleSetName(socket, name) {
+  handleSetName(socket, name, isSpectator) {
     const { id } = socket;
     const room = this.getRoom(socket);
     console.log(`Client ${id} set name to: ${name}`);
     if (!room) { return; }
-    room.setUserName(socket, id, name);
+    room.setUserName(id, name, isSpectator);
   }
 
   handleReconnect(socket) {

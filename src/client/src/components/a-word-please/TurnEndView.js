@@ -11,7 +11,7 @@ import * as selectors from '../../store/selectors';
 function TurnEndView() {
   const currWord = useSelector(selectors.currWordSelector);
   const currGuess = useSelector(selectors.currGuessSelector);
-  const guesser = useSelector(selectors.guesserSelector);
+  const activePlayer = useSelector(selectors.activePlayerSelector);
   const skippedTurn = useSelector(selectors.skippedTurnSelector);
 
   const isCorrectGuess = !!currGuess && currGuess.toLowerCase() === currWord.toLowerCase();
@@ -34,13 +34,13 @@ function TurnEndView() {
           {
             skippedTurn &&
               <>
-                <p>{guesser && guesser.name} skipped the turn.</p>
+                <p>{activePlayer && activePlayer.name} skipped the turn.</p>
               </>
           }
           {
             !skippedTurn &&
               <>
-                <p>{guesser && guesser.name} guessed</p>
+                <p>{activePlayer && activePlayer.name} guessed</p>
                 <h1 className={classes}>
                   {currGuess}
                 </h1>

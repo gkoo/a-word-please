@@ -6,14 +6,16 @@ import Modal from 'react-bootstrap/Modal';
 
 import CluesView from './CluesView';
 import {
-  currPlayerIsGuesserSelector,
-  guesserSelector,
+  currPlayerIsActivePlayerSelector,
+  currUserIsSpectatorSelector,
+  activePlayerSelector,
   socketSelector,
 } from '../../store/selectors';
 
 function DuplicatesModal({ show }) {
-  const currPlayerIsGuesser = useSelector(currPlayerIsGuesserSelector);
-  const guesser = useSelector(guesserSelector);
+  const currPlayerIsGuesser = useSelector(currPlayerIsActivePlayerSelector);
+  const activePlayer = useSelector(activePlayerSelector);
+  const isSpectator = useSelector(currUserIsSpectatorSelector);
   const socket = useSelector(socketSelector);
 
   const onRevealClues = e => {
@@ -25,14 +27,18 @@ function DuplicatesModal({ show }) {
   };
 
   return (
-    <Modal show={show && !currPlayerIsGuesser} className='mt-5 duplicates-modal' animation={false}>
+    <Modal
+      show={show && !currPlayerIsGuesser && !isSpectator}
+      className='mt-5 duplicates-modal'
+      animation={false}
+    >
       <Modal.Body className='text-center'>
         <h3>Your clues</h3>
         <div>
           <CluesView redactDuplicates={false} />
         </div>
       </Modal.Body>
-      <Button onClick={onRevealClues}>Show Clues To {guesser && guesser.name}</Button>
+      <Button onClick={onRevealClues}>Show Clues To {activePlayer && activePlayer.name}</Button>
     </Modal>
   );
 }

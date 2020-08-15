@@ -71,13 +71,17 @@ Room.prototype = {
 
   getLeader: function() { return Object.values(this.users).find(user => user.isLeader); },
 
-  setUserName: function(socket, id, name) {
+  setUserName: function(id, name, isSpectator) {
     const user = this.users[id];
     user.setName(name);
+    if (isSpectator) {
+      user.setSpectator();
+    }
     this.broadcastToRoom('newUser', user.serialize());
 
     if (!this.game) { return; }
-    this.game.addPlayer(user);
+    if (!isSpectator) { this.game.addPlayer(user); }
+
     this.broadcastToRoom('gameData', this.game.serialize());
   },
 

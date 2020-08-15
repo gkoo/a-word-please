@@ -32,6 +32,7 @@ function EnteringCluesView({
 }) {
   const [clue, setClue] = useState('');
   const socket = useSelector(selectors.socketSelector);
+  const isSpectator = useSelector(selectors.currUserIsSpectatorSelector);
 
   const onEnterClue = e => {
     e.preventDefault();
@@ -52,7 +53,7 @@ function EnteringCluesView({
 
   const currPlayerClue = currPlayer && clues[currPlayer.id];
 
-  if (currPlayerIsGuesser) {
+  if (currPlayerIsGuesser || isSpectator) {
     return (
       <Row className='text-center'>
         <Col>

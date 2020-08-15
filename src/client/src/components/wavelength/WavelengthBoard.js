@@ -7,6 +7,7 @@ import Col from 'react-bootstrap/Col'
 import CluePhase from './CluePhase';
 import GameEndPhase from './GameEndPhase';
 import GuessPhase from './GuessPhase';
+import LeaderPanel from '../LeaderPanel';
 import PlayerLabel from '../common/PlayerLabel';
 import RevealPhase from './RevealPhase';
 import * as selectors from '../../store/selectors';
@@ -19,9 +20,12 @@ import {
 
 function WavelengthBoard() {
   const activePlayer = useSelector(selectors.activePlayerSelector);
+  const currUserIsSpectator = useSelector(selectors.currUserIsSpectatorSelector);
   const gameState = useSelector(selectors.gameStateSelector);
   const numPoints = useSelector(selectors.numPointsSelector);
   const numRoundsLeft = useSelector(selectors.numRoundsLeftSelector);
+  const spectatorUsers = useSelector(selectors.spectatorUsersSelector);
+  const users = useSelector(selectors.usersSelector);
   let wavelengthGuessers = useSelector(selectors.wavelengthGuessersSelector);
   wavelengthGuessers = wavelengthGuessers.filter(player => player.connected);
 
@@ -35,6 +39,10 @@ function WavelengthBoard() {
           { gameState === STATE_WAVELENGTH_GAME_END_PHASE && <GameEndPhase /> }
         </Col>
         <Col sm={4} className='main-panel text-center py-5'>
+          {
+            !currUserIsSpectator &&
+              <LeaderPanel numUsers={Object.keys(users).length}/>
+          }
           <Row className='pb-4'>
             <Col sm={6}>
               <u>Points</u>
@@ -64,6 +72,20 @@ function WavelengthBoard() {
                 <br />
               </>
             )
+          }
+          {
+            !!spectatorUsers.length &&
+              <>
+                <h3 className='mt-5'><u>Spectators</u></h3>
+                {
+                  spectatorUsers.map(spectatorUser =>
+                    <>
+                      <PlayerLabel player={spectatorUser} />
+                      <br />
+                    </>
+                  )
+                }
+              </>
           }
         </Col>
       </Row>

@@ -25,7 +25,8 @@ class Game {
   }
 
   setup(users) {
-    Object.values(users).forEach(user => this.addPlayer(user));
+    const playerUsers = Object.values(users).filter(user => !user.isSpectator);
+    playerUsers.forEach(user => this.addPlayer(user));
   }
 
   getConnectedPlayers() {

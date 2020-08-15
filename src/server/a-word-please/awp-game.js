@@ -214,11 +214,11 @@ class AWPGame extends Game {
     } = this;
 
     return {
+      activePlayerId: this.activePlayerId,
       clues,
       currGuess,
       currWord,
       gameId: AWPGame.GAME_ID,
-      guesserId: this.activePlayerId,
       numPoints,
       players,
       playerOrder,

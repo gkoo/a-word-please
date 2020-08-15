@@ -23,19 +23,20 @@ import * as selectors from '../../store/selectors';
 function AWordPleaseBoard() {
   const clues = useSelector(selectors.cluesSelector);
   const currPlayer = useSelector(selectors.currPlayerSelector);
-  const currPlayerIsGuesser = useSelector(selectors.currPlayerIsGuesserSelector);
+  const currPlayerIsGuesser = useSelector(selectors.currPlayerIsActivePlayerSelector);
   const currWord = useSelector(selectors.currWordSelector);
   const gameState = useSelector(selectors.gameStateSelector);
-  const guesser = useSelector(selectors.guesserSelector);
+  const activePlayer = useSelector(selectors.activePlayerSelector);
   const numPoints = useSelector(selectors.numPointsSelector);
   const numRoundsLeft = useSelector(selectors.numRoundsLeftSelector);
   const players = useSelector(selectors.playersSelector);
   const users = useSelector(selectors.usersSelector);
+  const spectatorUsers = useSelector(selectors.spectatorUsersSelector);
 
   let clueGivers;
-  if (guesser) {
+  if (activePlayer) {
     clueGivers = Object.values(players).filter(player =>
-      player.id !== guesser.id && player.connected
+      player.id !== activePlayer.id && player.connected
     );
   } else {
     clueGivers = [];
@@ -53,7 +54,7 @@ function AWordPleaseBoard() {
                 currPlayer={currPlayer}
                 currPlayerIsGuesser={currPlayerIsGuesser}
                 currWord={currWord}
-                guesser={guesser}
+                guesser={activePlayer}
               />
           }
           {
@@ -63,7 +64,7 @@ function AWordPleaseBoard() {
                 clueGivers={clueGivers}
                 currPlayerIsGuesser={currPlayerIsGuesser}
                 currWord={currWord}
-                guesser={guesser}
+                guesser={activePlayer}
               />
           }
           {
@@ -90,10 +91,12 @@ function AWordPleaseBoard() {
             </Col>
           </Row>
           {
-            guesser &&
+            activePlayer &&
               <>
                 <h3><u>Guesser</u></h3>
-                <div className={`inline-player-label player-label ${players[guesser.id].color}`}>{guesser.name}</div>
+                <div className={`inline-player-label player-label ${players[activePlayer.id].color}`}>
+                  {activePlayer.name}
+                </div>
               </>
           }
           <h3 className='mt-5'><u>Clue Givers</u></h3>
@@ -107,6 +110,22 @@ function AWordPleaseBoard() {
                 <br />
               </>
             )
+          }
+          {
+            !!spectatorUsers.length &&
+              <>
+                <h3 className='mt-5'><u>Spectators</u></h3>
+                {
+                  spectatorUsers.map(spectatorUser =>
+                    <>
+                      <PlayerCheckboxLabel
+                        player={spectatorUser}
+                      />
+                      <br />
+                    </>
+                  )
+                }
+              </>
           }
         </Col>
       </Row>

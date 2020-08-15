@@ -5,6 +5,7 @@ import Button from 'react-bootstrap/Button';
 
 import Spectrum from './Spectrum';
 import {
+  currUserIsSpectatorSelector,
   clueSelector,
   socketSelector,
   spectrumGuessSelector,
@@ -16,6 +17,7 @@ function RevealPhase() {
   const socket = useSelector(socketSelector);
   const spectrumGuess = useSelector(spectrumGuessSelector);
   const spectrumValue = useSelector(spectrumValueSelector);
+  const isSpectator = useSelector(currUserIsSpectatorSelector);
   const clue = useSelector(clueSelector);
 
   const nextTurn = e => {
@@ -57,7 +59,6 @@ function RevealPhase() {
             showBands={true}
             bandSelections={bandSelections}
           />
-          {/* TODO: show how many points won */}
         </div>
         <h3 className='my-5'>
           {
@@ -73,7 +74,7 @@ function RevealPhase() {
               '+4 points'
           }
         </h3>
-        <Button onClick={nextTurn}>Next Turn</Button>
+        {!isSpectator && <Button onClick={nextTurn}>Next Turn</Button>}
       </div>
     </>
   );

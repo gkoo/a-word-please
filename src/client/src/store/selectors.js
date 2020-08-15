@@ -5,8 +5,12 @@ export const debugEnabledSelector = state => state.debugEnabled;
 export const usersSelector = state => state.roomData?.users;
 export const connectedUsersSelector = createSelector(
   usersSelector,
-  users => Object.values(users).filter(user => user.connected),
+  users => users && Object.values(users).filter(user => user.connected),
 );
+export const spectatorUsersSelector = createSelector(
+  usersSelector,
+  users => users && Object.values(users).filter(user => user.isSpectator),
+)
 export const messagesSelector = state => state.messages;
 export const nameSelector = state => state.name;
 export const socketSelector = state => state.socket;
@@ -36,10 +40,6 @@ export const cluesSelector = createSelector(
   gameDataSelector,
   gameData => gameData && gameData.clues
 );
-export const guesserIdSelector = createSelector(
-  gameDataSelector,
-  gameData => gameData && gameData.guesserId
-);
 export const currWordSelector = createSelector(
   gameDataSelector,
   gameData => gameData && gameData.currWord
@@ -60,6 +60,11 @@ export const playersSelector = createSelector(
   gameDataSelector,
   gameData => gameData?.players
 );
+export const activePlayerSelector = createSelector(
+  gameDataSelector,
+  playersSelector,
+  (gameData, players) => gameData?.activePlayerId && players[gameData.activePlayerId],
+);
 export const roundNumSelector = createSelector(
   gameDataSelector,
   gameData => gameData && gameData.roundNum
@@ -73,20 +78,10 @@ export const totalNumRoundsSelector = createSelector(
   gameData => gameData && gameData.totalNumRounds
 );
 
-export const currPlayerIsGuesserSelector = createSelector(
-  currUserIdSelector,
-  guesserIdSelector,
-  (currUserId, guesserId) => currUserId === guesserId,
-);
 export const currPlayerSelector = createSelector(
   currUserIdSelector,
   playersSelector,
   (currUserId, players) => players && players[currUserId],
-);
-export const guesserSelector = createSelector(
-  playersSelector,
-  guesserIdSelector,
-  (players, guesserId) => players && players[guesserId]
 );
 export const numRoundsLeftSelector = createSelector(
   roundNumSelector,
@@ -147,11 +142,6 @@ export const currConceptSelector = createSelector(
   gameDataSelector,
   gameData => gameData?.currConcept,
 );
-export const activePlayerSelector = createSelector(
-  gameDataSelector,
-  playersSelector,
-  (gameData, players) => gameData?.activePlayerId && players[gameData.activePlayerId],
-);
 export const wavelengthGuessersSelector = createSelector(
   gameDataSelector,
   playersSelector,
@@ -166,10 +156,16 @@ export const clueSelector = createSelector(
   gameDataSelector,
   gameData => gameData?.clue,
 );
+export const currUserIsSpectatorSelector = createSelector(
+  currUserSelector,
+  currUser => currUser?.isSpectator,
+);
 export const currPlayerIsActivePlayerSelector = createSelector(
   gameDataSelector,
   currPlayerSelector,
-  (gameData, currPlayer) => {
+  currUserIsSpectatorSelector,
+  (gameData, currPlayer, isSpectator) => {
+    if (isSpectator) { return false; }
     if (!currPlayer) { return false; }
     return gameData?.activePlayerId === currPlayer.id;
   }

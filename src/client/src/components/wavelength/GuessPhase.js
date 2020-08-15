@@ -16,6 +16,7 @@ function GuessPhase() {
   const socket = useSelector(selectors.socketSelector);
   const spectrumGuess = useSelector(selectors.spectrumGuessSelector);
   const currPlayerIsActivePlayer = useSelector(selectors.currPlayerIsActivePlayerSelector);
+  const currUserIsSpectator = useSelector(selectors.currUserIsSpectatorSelector);
   const activePlayer = useSelector(selectors.activePlayerSelector);
   const currConcept = useSelector(selectors.currConceptSelector);
   const [controlledSpectrumGuess, setControlledSpectrumGuess] = useState(spectrumGuess);
@@ -41,12 +42,10 @@ function GuessPhase() {
   };
 
   if (!clue) {
-    return (
-      <>
-        <h1>Waiting for {activePlayer.name} to enter a clue...</h1>
-      </>
-    );
+    return <h1>Waiting for {activePlayer.name} to enter a clue...</h1>;
   }
+
+  const isGuesser = !currPlayerIsActivePlayer && !currUserIsSpectator;
 
   return (
     <>
@@ -60,7 +59,7 @@ function GuessPhase() {
           min={0}
           max={SPECTRUM_MAX_VALUE}
           value={controlledSpectrumGuess}
-          disabled={currPlayerIsActivePlayer}
+          disabled={!isGuesser}
         />
       </Form>
       <Row className='mb-5'>
@@ -72,7 +71,7 @@ function GuessPhase() {
         </Col>
       </Row>
       {
-        !currPlayerIsActivePlayer &&
+        isGuesser &&
           <>
             <p>Adjust the slider to where you think this clue falls on the spectrum</p>
             <div className='text-center'>
@@ -81,7 +80,7 @@ function GuessPhase() {
           </>
       }
       {
-        currPlayerIsActivePlayer &&
+        !isGuesser &&
           <p>Your teammates are choosing a point on the spectrum based on the clue you've provided.</p>
       }
     </>
