@@ -9,7 +9,7 @@ import Form from 'react-bootstrap/Form'
 import * as selectors from '../../store/selectors';
 import { SPECTRUM_MAX_VALUE, SPECTRUM_BAND_WIDTH } from '../../constants';
 
-function Spectrum({ guessValue, showBands, showSlider, value, bandSelections }) {
+function Spectrum({ guessValue, showBands, showSlider, bandSelections }) {
   const currConcept = useSelector(selectors.currConceptSelector);
   const spectrumValue = useSelector(selectors.spectrumValueSelector);
 
