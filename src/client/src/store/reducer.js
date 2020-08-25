@@ -490,6 +490,14 @@ export default function reducer(state = stateToUse, action) {
     case actions.RECEIVE_ROOM_DATA:
       const newRoomData = action.payload;
       const { roomData } = state;
+      const oldCurrUserId = window.localStorage.getItem('socketId');
+
+      if (oldCurrUserId) {
+        delete newRoomData.currUserId;
+      } else {
+        window.localStorage.setItem('socketId', newRoomData.currUserId);
+      }
+
       return {
         ...state,
         roomData: {

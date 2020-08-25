@@ -52,10 +52,11 @@ class RoomManager {
     room.setUserName(id, name, isSpectator);
   }
 
-  handleReconnect(socket) {
-    const room = this.getRoom(socket);
+  handleReconnect(socket, { originalSocketId, roomCode }) {
+    const room = this.findOrCreateRoom(roomCode);
     if (!room) { return; }
-    room.sendRoomData(socket);
+
+    room.maybeReconnect(socket, originalSocketId);
   }
 
   handleStartGame(socket) {

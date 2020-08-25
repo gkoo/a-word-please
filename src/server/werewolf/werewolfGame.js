@@ -87,7 +87,6 @@ class WerewolfGame extends Game {
 
     if (!name) { return; }
 
-
     const disconnectedPlayer = Object.values(this.players).find(player => !player.connected);
 
     if (!disconnectedPlayer) {
@@ -113,7 +112,7 @@ class WerewolfGame extends Game {
 
   // TODO: handle reconnecting players
   removePlayer(id) {
-    if (this.players[id]) { this.players[id].connected = false; }
+    super.removePlayer(id);
 
     this.broadcastGameDataToPlayers();
   }

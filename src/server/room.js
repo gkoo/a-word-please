@@ -150,6 +150,14 @@ Room.prototype = {
     this.broadcastToRoom('roomData', this.getRoomData());
   },
 
+  maybeReconnect: function(socket, originalSocketId) {
+    this.addUser(socket);
+
+    if (this.game) {
+      this.game.maybeReconnect(user, originalSocketId);
+    }
+  },
+
   getRoomData: function({ socketId, includeCurrUserId } = {}) {
     const users = {};
     const { roomCode, state, selectedGame } = this;
