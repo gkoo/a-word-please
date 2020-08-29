@@ -14,6 +14,17 @@ function ReleaseNotesModal({ show }) {
         <Modal.Title>Release Notes</Modal.Title>
       </Modal.Header>
       <Modal.Body>
+        <h3>Aug 29, 2020</h3>
+        <ul>
+          <li>
+            Made reconnecting more seamless. Before, when you disconnected from the game, you had to
+            refresh to rejoin the game. Now, you will automatically rejoin.
+          </li>
+          <li>
+            Added alert notification for when you disconnect
+          </li>
+        </ul>
+
         <h3>Aug 15, 2020</h3>
         <ul>
           <li>Added Spectator option</li>
