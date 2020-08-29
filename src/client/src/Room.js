@@ -21,6 +21,7 @@ function Room() {
   const gameState = useSelector(selectors.gameStateSelector);
   const roomState = useSelector(selectors.roomStateSelector);
   const name = useSelector(selectors.nameSelector);
+  const currUserIsSpectator = useSelector(selectors.currUserIsSpectatorSelector);
   const socket = useSelector(selectors.socketSelector);
   const socketConnected = useSelector(selectors.socketConnectedSelector);
   const connectedUsers = useSelector(selectors.connectedUsersSelector);
@@ -46,22 +47,21 @@ function Room() {
     }
 
     socket.emit('joinRoom', socketIoRoomName);
-  }, [socket, dispatch, socketConnected, roomCodeParam]);
+  }, [socket, dispatch, socketConnected, socketIoRoomName]);
 
   useEffect(() => {
     if (!socket) { return; }
 
-    socket.on('reconnect', () => {
-      const originalSocketId = window.localStorage.getItem('socketId');
-      console.log('emitting reconnect');
-      socket.emit('reconnect-room', { originalSocketId, roomCode: socketIoRoomName })
-    });
     socket.on('debugInfo', data => dispatch(actions.receiveDebugInfo(data)));
+    socket.on(
+      'disconnect',
+      () => dispatch(actions.newAlert({ message: 'You have disconnected', type: 'danger' })),
+    );
     socket.on('endGame', winnerIds => dispatch(actions.endGame(winnerIds)));
     socket.on('roomData', data => dispatch(actions.receiveRoomData(data)));
     socket.on('gameData', gameData => dispatch(actions.receiveGameData(gameData)));
-    socket.on('spectrumGuessUpdate', guess => dispatch(actions.updateSpectrumGuess(guess)));
     socket.on('newUser', user => dispatch(actions.newUser(user)));
+    socket.on('spectrumGuessUpdate', guess => dispatch(actions.updateSpectrumGuess(guess)));
     socket.on('userId', id => dispatch(actions.receiveUserId(id)));
     socket.on('userDisconnect', userId => dispatch(actions.userDisconnect(userId)));
 
@@ -77,10 +77,32 @@ function Room() {
     };
   }, [socket, dispatch]);
 
+  // Attempt to rejoin room when reconnecting
+  useEffect(() => {
+    if (!socket) { return; }
+
+    socket.on('reconnect', () => {
+      const originalSocketId = window.localStorage.getItem('socketId');
+      dispatch(actions.newAlert({ message: 'You have reconnected', type: 'success' }));
+      socket.emit(
+        'reconnect-room',
+        {
+          originalSocketId,
+          name,
+          isSpectator: currUserIsSpectator,
+          roomCode: socketIoRoomName,
+        },
+      )
+    });
+
+    return () => {
+      socket.removeAllListeners('reconnect');
+    };
+  }, [socket, dispatch, name, currUserIsSpectator, socketIoRoomName]);
+
   useEffect(() => {
     // Keep the server alive!
     if (env === 'production') {
-      console.log('setting ping interval');
       setPingInterval(window.setInterval(pingHealthEndpoint, 60000));
       return () => { console.log('clearing ping interval'); window.clearInterval(pingInterval); };
     }
