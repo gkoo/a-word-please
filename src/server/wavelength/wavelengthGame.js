@@ -28,7 +28,7 @@ class WavelengthGame extends Game {
     ];
     const allConcepts = easyConcepts.concat(advancedConcepts);
     const concepts = process.env.NODE_ENV === 'development' ? developmentConcepts : allConcepts;
-    this.createDeck(concepts);
+    this.deck = new Deck(concepts);
     this.newGame();
   }
 
@@ -79,7 +79,7 @@ class WavelengthGame extends Game {
       return this.endGame();
     }
 
-    this.currConcept = this.drawCard();
+    this.currConcept = this.deck.drawCard();
     // having trouble with rendering the edges of the spectrum so let's add a padding of 25 on
     // either end
     const padding = WavelengthGame.SPECTRUM_BAND_WIDTH*5;

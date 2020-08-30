@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const uuid = require('uuid');
 
+const Deck = require('../deck');
 const Game = require('../game');
 const Player = require('../player.js');
 const wordlist = require('./wordlist.js');
@@ -26,7 +27,7 @@ class AWPGame extends Game {
 
   setup(users) {
     super.setup(users);
-    this.createDeck(wordlist);
+    this.deck = new Deck(wordlist);
     this.determinePlayerOrder();
     this.newGame();
   }
@@ -91,7 +92,7 @@ class AWPGame extends Game {
     // No action needed if we're advancing turn due to a player disconnect
     this.advancePlayerTurn();
 
-    this.currWord = this.drawCard();
+    this.currWord = this.deck.drawCard();
     this.state = AWPGame.STATE_ENTERING_CLUES;
 
     this.broadcastGameDataToPlayers();

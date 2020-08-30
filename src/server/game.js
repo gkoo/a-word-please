@@ -48,16 +48,6 @@ class Game {
     }
   }
 
-  createDeck(cards) {
-    this.deck = _.shuffle(cards);
-  }
-
-  drawCard() {
-    const currCard = this.deck[this.deckCursor];
-    this.deckCursor = (++this.deckCursor) % this.deck.length;
-    return currCard;
-  }
-
   maybeReconnect(user, originalSocketId) {
     // Look for the player based on their socketId.
     const player = Object.values(this.players).find(p => p.socketId === originalSocketId);
