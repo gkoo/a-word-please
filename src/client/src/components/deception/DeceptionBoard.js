@@ -1,23 +1,26 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 
 import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
 import RulesView from './RulesView';
+import CauseOfDeathView from './CauseOfDeathView';
 import ChooseMeansView from './ChooseMeansView';
+import InitialSceneTilesView from './InitialSceneTilesView';
+import LocationView from './LocationView';
 import {
   STATE_DECEPTION_EXPLAIN_RULES,
   STATE_DECEPTION_CHOOSE_MEANS_EVIDENCE,
   STATE_DECEPTION_WITNESSING,
-  STATE_DECEPTION_SCIENTIST_INITIAL_TILES,
+  STATE_DECEPTION_SCIENTIST_CAUSE_OF_DEATH,
+  STATE_DECEPTION_SCIENTIST_LOCATION,
+  STATE_DECEPTION_SCIENTIST_SCENE_TILES,
 } from '../../constants';
 import {
   gameDataSelector,
   gameStateSelector,
-  socketSelector,
   spectatorUsersSelector,
 } from '../../store/selectors';
 
@@ -37,6 +40,15 @@ function DeceptionBoard() {
         }
         {
           gameState === STATE_DECEPTION_CHOOSE_MEANS_EVIDENCE && <ChooseMeansView />
+        }
+        {
+          gameState === STATE_DECEPTION_SCIENTIST_CAUSE_OF_DEATH && <CauseOfDeathView />
+        }
+        {
+          gameState === STATE_DECEPTION_SCIENTIST_LOCATION && <LocationView />
+        }
+        {
+          gameState === STATE_DECEPTION_SCIENTIST_SCENE_TILES && <InitialSceneTilesView />
         }
       </Col>
       <Col sm={4} className='main-panel text-center py-5'>

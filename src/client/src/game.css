@@ -303,3 +303,10 @@
   background-color: #E74C3C;
   height: 100%;
 }
+
+/* Deception */
+
+.deception-tile-card {
+  min-width: 150px;
+  max-width: 280px;
+}

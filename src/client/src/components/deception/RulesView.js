@@ -2,10 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 
 import Button from 'react-bootstrap/Button';
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
 
-import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
 import { socketSelector } from '../../store/selectors';
 
 function RulesView() {

@@ -5,6 +5,8 @@ const Game = require('../game');
 const Player = require('../player');
 const evidenceList = require('./evidenceList');
 const methodList = require('./methodList');
+const locationTileList = require('./locationTileList');
+const sceneTileList = require('./sceneTileList');
 
 // Each player gets 4 "means of murder" cards and 4 "key evidence" cards
 // Before game starts, murderer chooses one means of murder and one key evidence
@@ -26,9 +28,11 @@ class DeceptionGame extends Game {
   // identity
   static STATE_CHOOSE_MEANS_EVIDENCE = 4;
   // (optional) Witness learns murderer and accomplice identity
-  static STATE_WITNESSING = 4; // optional
-  // Scientist chooses cause of death, location, and four misc tile markers
-  static STATE_SCIENTIST_INITIAL_TILES = 5;
+  static STATE_WITNESSING = 5; // optional
+  // Scientist chooses cause of death, location, and four scene tile markers
+  static STATE_SCIENTIST_CAUSE_OF_DEATH = 6;
+  static STATE_SCIENTIST_LOCATION = 7;
+  static STATE_SCIENTIST_INITIAL_TILES = 8;
 
   // reserve 0 to make truthy/falsy logic easier
   static ROLE_SCIENTIST = 1;
@@ -46,6 +50,8 @@ class DeceptionGame extends Game {
     super(io, roomCode);
     this.playerClass = DeceptionPlayer;
     this.playersReady = {}; // keep track of who has read the rules
+    this.murderMethod = null;
+    this.keyEvidence = null;
   }
 
   setup(users) {
@@ -54,11 +60,60 @@ class DeceptionGame extends Game {
   }
 
   newGame() {
+    this.playersReady = {};
+    this.murderMethod = null;
+    this.keyEvidence = null;
+
     this.assignRoles();
     this.dealCards();
-    this.playersReady = {};
+    this.createTiles();
     this.state = DeceptionGame.STATE_EXPLAIN_RULES;
     this.broadcastGameDataToPlayers();
+  }
+
+  createTiles() {
+    this.createCauseOfDeathTile();
+    this.createLocationTiles();
+    this.createSceneTileDeck();
+  }
+
+  createCauseOfDeathTile() {
+    this.causeOfDeathTile = new Tile({
+      id: 0,
+      label: 'Cause of Death',
+      options: [
+        'Suffocation',
+        'Loss of Blood',
+        'Illness/Disease',
+        'Poisoning',
+        'Accident',
+      ],
+      type: Tile.TYPE_CAUSE_OF_DEATH,
+    });
+  }
+
+  createLocationTiles() {
+    this.locationTiles = locationTileList.map((locationTileData, idx) =>
+      new Tile(
+        id: idx,
+        label: locationTileData.label,
+        options: locationTileData.options,
+        type: Tile.TYPE_LOCATION,
+      );
+    );
+  }
+
+  createSceneTileDeck() {
+    const sceneTiles = sceneTileList.map((sceneTileData, idx) =>
+      new Tile(
+        id: idx,
+        label: sceneTileData.label,
+        options: sceneTileData.options,
+        type: Tile.TYPE_SCENE,
+      );
+    );
+    this.sceneTileDeck = new Deck(sceneTiles);
+    this.sceneTileDeck.shuffle();
   }
 
   assignRoles() {
@@ -116,6 +171,12 @@ class DeceptionGame extends Game {
     switch (data.action) {
       case 'readRules':
         return this.readRules(playerId);
+      case 'chooseMeansAndEvidence':
+        return this.chooseMeansAndEvidence(playerId, data);
+      case 'selectCauseOfDeath':
+        return this.selectCauseOfDeath(playerId, data);
+      case 'selectLocation':
+        return this.selectLocation(playerId, data);
     }
   }
 
@@ -128,13 +189,88 @@ class DeceptionGame extends Game {
     this.broadcastGameDataToPlayers();
   }
 
+  chooseMeansAndEvidence(playerId, data) {
+    const player = this.players[playerId];
+
+    if (!player.isMurderer()) {
+      throw 'Non-murderer tried to choose means and evidence!';
+    }
+
+    this.murderMethod = player.methodCards.find(method => method.id === data.methodId);
+    this.keyEvidence = player.evidenceCards.find(evidence => evidence.id === data.evidenceId);
+
+    this.state = DeceptionGame.STATE_SCIENTIST_INITIAL_TILES;
+    this.broadcastGameDataToPlayers();
+  }
+
+  selectCauseOfDeath(playerId, data) {
+    const player = this.players[playerId];
+
+    if (!player.isScientist()) {
+      throw 'Non-scientist tried to select cause of death!';
+    }
+
+    this.causeOfDeathTile.selectOption(data.causeOfDeath);
+
+    this.state = DeceptionGame.STATE_SCIENTIST_LOCATION;
+    this.broadcastGameDataToPlayers();
+  }
+
+  selectLocation(playerId, data) {
+    const player = this.players[playerId];
+    const { location, locationTileId } = data;
+
+    if (!player.isScientist()) {
+      throw 'Non-scientist tried to select location!';
+    }
+
+    this.selectedLocationTile = this.locationTiles.find(
+      locationTile => locationTile.id === locationTileId
+    );
+
+    if (!this.selectedLocationTile) {
+      throw 'Couldn\'t find the selected location tile!';
+    }
+
+    this.selectedLocationTile.selectOption(location);
+
+    // Prepare for choosing scene tiles
+    this.state = DeceptionGame.STATE_SCIENTIST_INITIAL_SCENE_TILES;
+    this.sceneTiles = [];
+
+    const numSceneTiles = 4;
+    for (let i = 0; i < numInitialSceneTiles; ++i) {
+      this.sceneTiles.push(this.sceneTileDeck.drawCard());
+    }
+    this.broadcastGameDataToPlayers();
+  }
+
   serialize() {
-    return {
+    const {
+      locationTiles,
+      state,
+    } = this;
+
+    let data = {
+      causeOfDeathTile: this.causeOfDeathTile,
       gameId: DeceptionGame.GAME_ID,
+      keyEvidence: this.keyEvidence,
+      murderMethod: this.murderMethod,
+      sceneTiles: this.sceneTiles,
+      selectedLocationTile: this.selectedLocationTile,
       playersReady: this.playersReady,
       players: this.players,
-      state: this.state,
+      state,
+    };
+
+    if (state === DeceptionGame.STATE_SCIENTIST_LOCATION) {
+      data = {
+        ...data,
+        locationTiles,
+      }
     }
+
+    return data;
   }
 }
 

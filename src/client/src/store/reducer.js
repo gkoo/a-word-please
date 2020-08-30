@@ -185,7 +185,122 @@ const testWavelengthGameData = {
 };
 
 const testDeceptionGameData = {
+  causeOfDeathTile: {
+    label: 'Cause Of Death',
+    options: [
+      'Suffocation',
+      'Loss of Blood',
+      'Illness/Disease',
+      'Poisoning',
+      'Accident',
+    ],
+    selectedOption: 'Poisoning',
+  },
   gameId: constants.GAME_DECEPTION,
+  /*
+  locationTiles: [
+    {
+      id: 1,
+      label: 'Location of Crime',
+      options: [
+        'Pub',
+        'Bookstore',
+        'Restaurant',
+        'Hotel',
+        'Hospital',
+        'Building Site',
+      ],
+    },
+    {
+      id: 2,
+      label: 'Location of Crime',
+      options: [
+        'Playground',
+        'Classroom',
+        'Dormitory',
+        'Cafeteria',
+        'Elevator',
+        'Toilet',
+      ],
+    },
+    {
+      id: 3,
+      label: 'Location of Crime',
+      options: [
+        'Vacation Home',
+        'Park',
+        'Supermarket',
+        'School',
+        'Woods',
+        'Bank',
+      ],
+    },
+    {
+      id: 4,
+      label: 'Location of Crime',
+      options: [
+        'Living Room',
+        'Bedroom',
+        'Storeroom',
+        'Bathroom',
+        'Kitchen',
+        'Balcony',
+      ],
+    },
+  ],
+  */
+  keyEvidence: 'Notebook',
+  sceneTiles: [
+    {
+      id: 1,
+      label: 'Social Relationship',
+      options: [
+        'Relatives',
+        'Friends',
+        'Colleagues',
+        'Employer/Employee',
+        'Lovers',
+        'Strangers',
+      ],
+    },
+    {
+      id: 2,
+      label: 'Victim\'s Build',
+      options: [
+        'Large',
+        'Thin',
+        'Tall',
+        'Short',
+        'Disfigured',
+        'Fit',
+      ],
+    },
+    {
+      id: 3,
+      label: 'Sudden Incident',
+      options: [
+        'Power Failure',
+        'Fire',
+        'Conflict',
+        'Loss of Valuables',
+        'Scream',
+        'Nothing',
+      ],
+    },
+    {
+      id: 4,
+      label: 'Victim\'s Identity',
+      options: [
+        'Child',
+        'Young Adult',
+        'Middle-Aged',
+        'Senior',
+        'Male',
+        'Female',
+      ],
+    },
+  ],
+  murderMethod: 'Brick',
   playersReady: {
     'gordon': 1
   },
@@ -194,14 +309,58 @@ const testDeceptionGameData = {
       id: 'gordon',
       name: 'Gordon',
       color: 'red',
-      role: constants.ROLE_MURDERER,
+      role: constants.ROLE_SCIENTIST,
+      methodCards: [
+        {
+          id: 1,
+          label: 'Virus',
+          type: 0,
+        },
+        {
+          id: 2,
+          label: 'Wine',
+          type: 0,
+        },
+        {
+          id: 3,
+          label: 'Scissors',
+          type: 0,
+        },
+        {
+          id: 4,
+          label: 'Arson',
+          type: 0,
+        }
+      ],
+      evidenceCards: [
+        {
+          id: 1,
+          label: 'Iron',
+          type: 0,
+        },
+        {
+          id: 2,
+          label: 'Snacks',
+          type: 0,
+        },
+        {
+          id: 3,
+          label: 'Rubber Stamp',
+          type: 0,
+        },
+        {
+          id: 4,
+          label: 'Photograph',
+          type: 0,
+        }
+      ],
     },
     yuriko: {
       id: 'yuriko',
       name: 'Yuriko',
       color: 'purple',
       connected: true,
-      role: constants.ROLE_SCIENTIST,
+      role: constants.ROLE_MURDERER,
     },
     aj: {
       id: 'aj',
@@ -211,10 +370,25 @@ const testDeceptionGameData = {
       role: constants.ROLE_INVESTIGATOR,
     },
   },
+  selectedLocationTile: {
+    id: 4,
+    label: 'Location of Crime',
+    options: [
+      'Living Room',
+      'Bedroom',
+      'Storeroom',
+      'Bathroom',
+      'Kitchen',
+      'Balcony',
+    ],
+    selectedOption: 'Living Room',
+  },
   //state: constants.STATE_DECEPTION_EXPLAIN_RULES,
-  state: constants.STATE_DECEPTION_CHOOSE_MEANS_EVIDENCE,
+  //state: constants.STATE_DECEPTION_CHOOSE_MEANS_EVIDENCE,
   //state: constants.STATE_DECEPTION_WITNESSING,
-  //state: constants.STATE_DECEPTION_SCIENTIST_INITIAL_TILES,
+  //state: constants.STATE_DECEPTION_SCIENTIST_CAUSE_OF_DEATH,
+  //state: constants.STATE_DECEPTION_SCIENTIST_LOCATION,
+  state: constants.STATE_DECEPTION_SCIENTIST_SCENE_TILES,
 }
 
 //const testGameDataToUse = testAwpGameData;

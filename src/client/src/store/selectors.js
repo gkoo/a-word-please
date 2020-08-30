@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+import { ROLE_SCIENTIST, ROLE_MURDERER } from '../constants';
 
 export const alertMessageSelector = state => state.alertMessage;
 export const debugEnabledSelector = state => state.debugEnabled;
@@ -170,4 +171,19 @@ export const currPlayerIsActivePlayerSelector = createSelector(
 export const spectrumGuessSelector = createSelector(
   gameDataSelector,
   gameData => gameData?.spectrumGuess,
+);
+
+// Deception
+export const murdererSelector = createSelector(
+  playersSelector,
+  players => Object.values(players).find(player => player.role === ROLE_MURDERER),
+);
+export const scientistSelector = createSelector(
+  playersSelector,
+  players => Object.values(players).find(player => player.role === ROLE_SCIENTIST),
+);
+export const currPlayerIsScientistSelector = createSelector(
+  scientistSelector,
+  currPlayerSelector,
+  (scientist, currPlayer) => scientist.id === currPlayer.id,
 );
