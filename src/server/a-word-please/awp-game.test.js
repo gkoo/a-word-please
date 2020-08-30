@@ -105,12 +105,12 @@ describe('removePlayer', () => {
   describe('when it is the player\'s turn', () => {
     beforeEach(() => {
       game.playerOrder = ['1', '2', '3'];
-      game.guesserId = playerToRemoveId;
+      game.activePlayerId = playerToRemoveId;
     });
 
     it('advances to the next turn', () => {
       subject();
-      expect(game.guesserId).toEqual('2');
+      expect(game.activePlayerId).toEqual('2');
     });
 
     it('doesn\'t change the round number', () => {
@@ -122,7 +122,7 @@ describe('removePlayer', () => {
 
   describe('when the game is in entering guess state', () => {
     beforeEach(() => {
-      game.guesserId = '2';
+      game.activePlayerId = '2';
       game.playerOrder = ['1', '2', '3'];
       game.playerOrderCursor = 2;
       game.clues = {
@@ -147,7 +147,7 @@ describe('removePlayer', () => {
 
   describe('when the game state is entering clues', () => {
     beforeEach(() => {
-      game.guesserId = '2';
+      game.activePlayerId = '2';
       game.playerOrder = ['1', '2', '3'];
       game.playerOrderCursor = 2;
       game.state = AWPGame.STATE_ENTERING_CLUES;
@@ -181,9 +181,9 @@ describe('nextTurn', () => {
 
   it('changes the guesser', () => {
     subject();
-    const { guesserId } = game;
+    const { activePlayerId } = game;
     subject();
-    expect(game.guesserId).not.toEqual(guesserId);
+    expect(game.activePlayerId).not.toEqual(activePlayerId);
   });
 
   it('increments the round number', () => {

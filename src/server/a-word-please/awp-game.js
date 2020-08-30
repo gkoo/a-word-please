@@ -51,7 +51,6 @@ class AWPGame extends Game {
   removePlayer(id) {
     super.removePlayer(id)
 
-    // Remove from player order
     const playerOrderIdx = this.playerOrder.indexOf(id);
 
     // For some reason, players get disconnected without being in the game
