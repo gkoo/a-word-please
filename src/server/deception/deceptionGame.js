@@ -187,6 +187,10 @@ class DeceptionGame extends Game {
         return this.selectLocation(playerId, data);
       case 'selectInitialSceneTiles':
         return this.selectInitialSceneTiles(playerId, data);
+      case 'startNextRound':
+        return this.nextRound();
+      case 'replaceSceneTile':
+        return this.replaceSceneTile(playerId, data);
     }
   }
 
@@ -272,6 +276,29 @@ class DeceptionGame extends Game {
     this.broadcastGameDataToPlayers();
   }
 
+  startNextRound() {
+    this.state = DeceptionGame.STATE_REPLACE_SCENE;
+    this.newSceneTile = this.sceneTileDeck.drawCard();
+    this.broadcastGameDataToPlayers();
+  }
+
+  replaceSceneTile(playerId, data) {
+    const player = this.players[playerId];
+
+    if (!player.isScientist()) {
+      throw 'Non-scientist tried to replace scene tile!';
+    }
+
+    const { tileIdToReplace, newSceneSelection } = data;
+    this.newSceneTile.selectOption(newSceneSelection);
+    const replacedTileIdx = this.sceneTiles.findIndex(tile => tile.id === tileIdToReplace);
+    const replacedTiles = this.sceneTiles.splice(replacedTileIdx, 1, this.newSceneTile);
+    this.oldSceneTile = replacedTiles[0];
+
+    this.state = DeceptionGame.STATE_DELIBERATION;
+    this.broadcastGameDataToPlayers();
+  }
+
   serialize() {
     const {
       locationTiles,
@@ -301,6 +328,13 @@ class DeceptionGame extends Game {
       data = {
         ...data,
         locationTiles,
+      }
+    }
+
+    if (state === DeceptionGame.STATE_REPLACE_SCENE) {
+      data = {
+        ...data,
+        newSceneTile,
       }
     }
 

@@ -67,6 +67,7 @@ function DeceptionBoard() {
           Object.values(players).map(player =>
             <>
               <PlayerCheckboxLabel
+                key={player.id}
                 checked={showReadyCheckmarks && !!playersReady[player.id]}
                 player={player}
               />
@@ -80,12 +81,9 @@ function DeceptionBoard() {
               <h3 className='mt-5'><u>Spectators</u></h3>
               {
                 spectatorUsers.map(spectatorUser =>
-                  <>
-                    <PlayerCheckboxLabel
-                      player={spectatorUser}
-                    />
-                    <br />
-                  </>
+                  <div key={spectatorUser.id}>
+                    <PlayerCheckboxLabel player={spectatorUser}/>
+                  </div>
                 )
               }
             </>

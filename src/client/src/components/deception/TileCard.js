@@ -9,7 +9,21 @@ import {
   TILE_DECEPTION_SCENE,
 } from '../../constants';
 
-function TileCard({ tileId, label, tileType, options, value, onSelect, disabled }) {
+function TileCard({
+  disabled,
+  label,
+  onClose,
+  onSelect,
+  options,
+  showClose,
+  tileId,
+  tileType,
+  value,
+}) {
+  if (showClose && !onClose) {
+    throw 'showClose is true but no onClose callback was provided!';
+  }
+
   const [selectedOption, setSelectedOption] = useState(value);
 
   const onOptionChange = (option) => {
@@ -23,6 +37,8 @@ function TileCard({ tileId, label, tileType, options, value, onSelect, disabled 
     setSelectedOption(optionToSelect);
     onSelect(optionToSelect, tileIdToSelect);
   };
+
+  const onCloseButtonClick = () => onClose(tileId);
 
   let buttonVariant;
 
@@ -43,6 +59,18 @@ function TileCard({ tileId, label, tileType, options, value, onSelect, disabled 
   return (
     <Card className='deception-tile-card my-2'>
       <Card.Body>
+        {
+          showClose &&
+            <Button
+              variant='warning'
+              type='button'
+              className='close'
+              aria-label='Close'
+              onClick={onCloseButtonClick}
+            >
+              <span aria-hidden='true'>&times;</span>
+            </Button>
+        }
         <h3 className='text-center'>{label}</h3>
         {
           options.map(option =>
