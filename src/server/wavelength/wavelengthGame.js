@@ -1,5 +1,5 @@
 const Game = require('../game');
-const Player = require('../player.js');
+const Player = require('../player');
 const { easyConcepts, advancedConcepts } = require('./concepts.js');
 
 class WavelengthGame extends Game {

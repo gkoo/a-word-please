@@ -6,6 +6,7 @@ class Game {
   static GAME_A_WORD_PLEASE = 1;
   static GAME_WEREWOLF = 2;
   static GAME_WAVELENGTH = 3;
+  static GAME_DECEPTION = 4;
 
   static STATE_PENDING = 0;
   static STATE_TURN_END = 1;
@@ -16,6 +17,7 @@ class Game {
     this.roomCode = roomCode;
     this.deckCursor = 0;
     this.players = {};
+    this.playerClass = Player;
   }
 
   broadcastToRoom(eventName, data) {
@@ -78,7 +80,7 @@ class Game {
   addPlayer({ id, name }) {
     if (!name) { return; }
 
-    this.players[id] = new Player({
+    this.players[id] = new this.playerClass({
       id,
       name,
       socketId: id,

@@ -1,17 +1,15 @@
 const AWPGame = require('./a-word-please/awp-game.js');
+const DeceptionGame = require('./deception/deceptionGame.js');
 const Game = require('./game.js');
 const WerewolfGame = require('./werewolf/werewolfGame.js');
 const WavelengthGame = require('./wavelength/wavelengthGame.js');
 const User = require('./user.js');
 
-const GAME_A_WORD_PLEASE = 1;
-const GAME_WEREWOLF = 2;
-const GAME_WAVELENGTH = 3;
-
 const VALID_GAMES = [
-  GAME_A_WORD_PLEASE,
-  GAME_WEREWOLF,
-  GAME_WAVELENGTH,
+  Game.GAME_A_WORD_PLEASE,
+  Game.GAME_WEREWOLF,
+  Game.GAME_WAVELENGTH,
+  Game.GAME_DECEPTION,
 ];
 
 const STATE_LOBBY = 1;
@@ -110,14 +108,17 @@ Room.prototype = {
     }
 
     switch (this.selectedGame) {
-      case GAME_A_WORD_PLEASE:
+      case Game.GAME_A_WORD_PLEASE:
         this.game = new AWPGame(this.io, this.roomCode);
         break;
-      case GAME_WEREWOLF:
+      case Game.GAME_WEREWOLF:
         this.game = new WerewolfGame(this.io, this.roomCode);
         break;
-      case GAME_WAVELENGTH:
+      case Game.GAME_WAVELENGTH:
         this.game = new WavelengthGame(this.io, this.roomCode);
+        break;
+      case Game.GAME_DECEPTION:
+        this.game = new DeceptionGame(this.io, this.roomCode);
         break;
       default:
         throw 'Unrecognized game type chosen';

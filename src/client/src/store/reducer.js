@@ -29,15 +29,45 @@ const initialState = {
   socket: null,
 };
 
+const testPlayersData = {
+  gordon: {
+    id: 'gordon',
+    name: 'Gordon',
+    isLeader: true,
+    color: 'red',
+    connected: true,
+  },
+  yuriko: {
+    id: 'yuriko',
+    name: 'Yuriko',
+    color: 'purple',
+    connected: true,
+  },
+  aj: {
+    id: 'aj',
+    name: 'AJ',
+    color: 'pink',
+    connected: true,
+  },
+  willy: {
+    id: 'willy',
+    name: 'Willy',
+    color: 'red',
+    connected: true,
+  },
+  rishi: {
+    id: 'rishi',
+    name: 'Rishi',
+    color: 'orange',
+    connected: true,
+  },
+};
+
 const testAwpGameData = {
   //clues: {},
   activePlayerId: 'willy',
   //activePlayerId: 'gordon',
   clues: {
-    'steve': {
-      clue: 'wet',
-      isDuplicate: true,
-    },
     'gordon': {
       clue: 'fire',
       isDuplicate: false,
@@ -47,45 +77,7 @@ const testAwpGameData = {
   currWord: 'water',
   gameId: constants.GAME_A_WORD_PLEASE,
   numPoints: 7,
-  players: {
-    gordon: {
-      id: 'gordon',
-      name: 'Gordon',
-      isLeader: true,
-      color: 'red',
-      connected: true,
-    },
-    steve: {
-      id: 'steve',
-      name: 'Steve',
-      color: 'indigo',
-      connected: true,
-    },
-    yuriko: {
-      id: 'yuriko',
-      name: 'Yuriko',
-      color: 'purple',
-      connected: true,
-    },
-    aj: {
-      id: 'aj',
-      name: 'AJ',
-      color: 'pink',
-      connected: true,
-    },
-    willy: {
-      id: 'willy',
-      name: 'Willy',
-      color: 'red',
-      connected: true,
-    },
-    rishi: {
-      id: 'rishi',
-      name: 'Rishi',
-      color: 'orange',
-      connected: true,
-    },
-  },
+  players: testPlayersData,
   roundNum: 0,
   skippedTurn: false,
   //state: constants.GAME_STATE_PENDING,
@@ -112,14 +104,6 @@ const testWerewolfGameData = {
       originalRole: roleToTest,
       lastKnownRole: roleToTest,
       role: roleToTest,
-    },
-    steve: {
-      id: 'steve',
-      name: 'Steve',
-      color: 'indigo',
-      originalRole: constants.ROLE_WEREWOLF,
-      lastKnownRole: constants.ROLE_WEREWOLF,
-      role: constants.ROLE_WEREWOLF,
     },
     yuriko: {
       id: 'yuriko',
@@ -174,11 +158,10 @@ const testWerewolfGameData = {
   unclaimedRoles: [constants.ROLE_WEREWOLF, constants.ROLE_DRUNK, constants.ROLE_DOPPELGANGER],
   votes: {
     'gordon': 'willy',
-    'steve': 'yuriko',
     'yuriko': 'yuriko',
     'aj': 'yuriko',
-    'willy': 'steve',
-    'rishi': 'steve',
+    'willy': 'gordon',
+    'rishi': 'willy',
   },
   winners: [constants.ROLE_WEREWOLF],
 };
@@ -190,45 +173,7 @@ const testWavelengthGameData = {
   currConcept: ['Bad', 'Good'],
   gameId: constants.GAME_WAVELENGTH,
   numPoints: 0,
-  players: {
-    gordon: {
-      id: 'gordon',
-      name: 'Gordon',
-      isLeader: true,
-      color: 'red',
-      connected: true,
-    },
-    steve: {
-      id: 'steve',
-      name: 'Steve',
-      color: 'indigo',
-      connected: true,
-    },
-    yuriko: {
-      id: 'yuriko',
-      name: 'Yuriko',
-      color: 'purple',
-      connected: true,
-    },
-    aj: {
-      id: 'aj',
-      name: 'AJ',
-      color: 'pink',
-      connected: true,
-    },
-    willy: {
-      id: 'willy',
-      name: 'Willy',
-      color: 'red',
-      connected: true,
-    },
-    rishi: {
-      id: 'rishi',
-      name: 'Rishi',
-      color: 'orange',
-      connected: true,
-    },
-  },
+  players: testPlayersData,
   roundNum: 13,
   //state: constants.STATE_WAVELENGTH_CLUE_PHASE,
   state: constants.STATE_WAVELENGTH_GUESS_PHASE,
@@ -239,9 +184,43 @@ const testWavelengthGameData = {
   totalNumRounds: 13,
 };
 
+const testDeceptionGameData = {
+  gameId: constants.GAME_DECEPTION,
+  playersReady: {
+    'gordon': 1
+  },
+  players: {
+    gordon: {
+      id: 'gordon',
+      name: 'Gordon',
+      color: 'red',
+      role: constants.ROLE_MURDERER,
+    },
+    yuriko: {
+      id: 'yuriko',
+      name: 'Yuriko',
+      color: 'purple',
+      connected: true,
+      role: constants.ROLE_SCIENTIST,
+    },
+    aj: {
+      id: 'aj',
+      name: 'AJ',
+      color: 'pink',
+      connected: true,
+      role: constants.ROLE_INVESTIGATOR,
+    },
+  },
+  //state: constants.STATE_DECEPTION_EXPLAIN_RULES,
+  state: constants.STATE_DECEPTION_CHOOSE_MEANS_EVIDENCE,
+  //state: constants.STATE_DECEPTION_WITNESSING,
+  //state: constants.STATE_DECEPTION_SCIENTIST_INITIAL_TILES,
+}
+
 //const testGameDataToUse = testAwpGameData;
 //const testGameDataToUse = testWerewolfGameData;
-const testGameDataToUse = testWavelengthGameData;
+//const testGameDataToUse = testWavelengthGameData;
+const testGameDataToUse = testDeceptionGameData;
 
 const testState = {
   alerts: [
@@ -263,6 +242,7 @@ const testState = {
   nextAlertId: 5,
   roomData: {
     selectedGame: null,
+    state: constants.ROOM_STATE_GAME,
     users: {
       gordon: {
         id: 'gordon',
@@ -272,6 +252,7 @@ const testState = {
       steve: {
         id: 'steve',
         name: 'Steve',
+        isSpectator: true,
       },
       yuriko: {
         id: 'yuriko',
