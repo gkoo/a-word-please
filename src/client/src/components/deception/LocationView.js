@@ -3,8 +3,6 @@ import { useSelector } from 'react-redux';
 
 import Button from 'react-bootstrap/Button'
 import CardDeck from 'react-bootstrap/CardDeck';
-import ToggleButton from 'react-bootstrap/ToggleButton'
-import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup'
 
 import TileCard from './TileCard';
 import {

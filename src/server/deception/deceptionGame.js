@@ -29,10 +29,16 @@ class DeceptionGame extends Game {
   static STATE_CHOOSE_MEANS_EVIDENCE = 4;
   // (optional) Witness learns murderer and accomplice identity
   static STATE_WITNESSING = 5; // optional
-  // Scientist chooses cause of death, location, and four scene tile markers
+  // Scientist chooses cause of death
   static STATE_SCIENTIST_CAUSE_OF_DEATH = 6;
+  // Scientist chooses location
   static STATE_SCIENTIST_LOCATION = 7;
-  static STATE_SCIENTIST_INITIAL_TILES = 8;
+  // Scientist chooses scene markers
+  static STATE_SCIENTIST_INITIAL_SCENE_TILES = 8;
+  // Players make their cases
+  static STATE_DELIBERATION = 9;
+  // Scientist replaces a scene tile
+  static STATE_REPLACE_SCENE = 10;
 
   // reserve 0 to make truthy/falsy logic easier
   static ROLE_SCIENTIST = 1;
@@ -43,6 +49,7 @@ class DeceptionGame extends Game {
 
   static MIN_PLAYERS = 4;
   static MAX_PLAYERS = 12;
+  static NUM_TURNS = 3;
 
   static NUM_CLUE_CARDS_PER_PLAYER = 4;
 
@@ -61,6 +68,7 @@ class DeceptionGame extends Game {
 
   newGame() {
     this.playersReady = {};
+    this.roundNum = 0;
     this.murderMethod = null;
     this.keyEvidence = null;
 
@@ -177,6 +185,8 @@ class DeceptionGame extends Game {
         return this.selectCauseOfDeath(playerId, data);
       case 'selectLocation':
         return this.selectLocation(playerId, data);
+      case 'selectInitialSceneTiles':
+        return this.selectInitialSceneTiles(playerId, data);
     }
   }
 
@@ -245,9 +255,27 @@ class DeceptionGame extends Game {
     this.broadcastGameDataToPlayers();
   }
 
+  selectInitialSceneTiles(playerId, data) {
+    const player = this.players[playerId];
+    const { sceneSelections } = data;
+
+    if (!player.isScientist()) {
+      throw 'Non-scientist tried to select location!';
+    }
+
+    Object.entries(sceneSelections).forEach([id, option] => {
+      tile = this.sceneTiles.find(tile => tile.id === id);
+      tile.selectOption(option);
+    });
+
+    this.state = DeceptionGame.STATE_DELIBERATION;
+    this.broadcastGameDataToPlayers();
+  }
+
   serialize() {
     const {
       locationTiles,
+      playersReady,
       state,
     } = this;
 
@@ -258,10 +286,16 @@ class DeceptionGame extends Game {
       murderMethod: this.murderMethod,
       sceneTiles: this.sceneTiles,
       selectedLocationTile: this.selectedLocationTile,
-      playersReady: this.playersReady,
       players: this.players,
       state,
     };
+
+    if (state === DeceptionGame.STATE_EXPLAIN_RULES) {
+      data = {
+        ...data,
+        playersReady,
+      };
+    }
 
     if (state === DeceptionGame.STATE_SCIENTIST_LOCATION) {
       data = {

@@ -194,6 +194,7 @@ const testDeceptionGameData = {
       'Poisoning',
       'Accident',
     ],
+    type: constants.TILE_DECEPTION_CAUSE_OF_DEATH,
     selectedOption: 'Poisoning',
   },
   gameId: constants.GAME_DECEPTION,
@@ -262,6 +263,8 @@ const testDeceptionGameData = {
         'Lovers',
         'Strangers',
       ],
+      selectedOption: 'Lovers',
+      type: constants.TILE_DECEPTION_SCENE,
     },
     {
       id: 2,
@@ -274,6 +277,8 @@ const testDeceptionGameData = {
         'Disfigured',
         'Fit',
       ],
+      selectedOption: 'Fit',
+      type: constants.TILE_DECEPTION_SCENE,
     },
     {
       id: 3,
@@ -286,6 +291,8 @@ const testDeceptionGameData = {
         'Scream',
         'Nothing',
       ],
+      selectedOption: 'Scream',
+      type: constants.TILE_DECEPTION_SCENE,
     },
     {
       id: 4,
@@ -298,6 +305,8 @@ const testDeceptionGameData = {
         'Male',
         'Female',
       ],
+      selectedOption: 'Young Adult',
+      type: constants.TILE_DECEPTION_SCENE,
     },
   ],
   murderMethod: 'Brick',
@@ -335,23 +344,23 @@ const testDeceptionGameData = {
       evidenceCards: [
         {
           id: 1,
-          label: 'Iron',
-          type: 0,
+          label: 'Smile',
+          type: 1,
         },
         {
           id: 2,
-          label: 'Snacks',
-          type: 0,
+          label: 'Saliva',
+          type: 1,
         },
         {
           id: 3,
-          label: 'Rubber Stamp',
-          type: 0,
+          label: 'Fart Smell',
+          type: 1,
         },
         {
           id: 4,
-          label: 'Photograph',
-          type: 0,
+          label: 'Voicemail',
+          type: 1,
         }
       ],
     },
@@ -361,6 +370,50 @@ const testDeceptionGameData = {
       color: 'purple',
       connected: true,
       role: constants.ROLE_MURDERER,
+      methodCards: [
+        {
+          id: 5,
+          label: 'Dumbo',
+          type: 0,
+        },
+        {
+          id: 6,
+          label: 'Spiders',
+          type: 0,
+        },
+        {
+          id: 7,
+          label: 'Talking Loud',
+          type: 0,
+        },
+        {
+          id: 8,
+          label: 'Insults',
+          type: 0,
+        }
+      ],
+      evidenceCards: [
+        {
+          id: 5,
+          label: 'Black Powder',
+          type: 1,
+        },
+        {
+          id: 6,
+          label: 'Lipstick',
+          type: 1,
+        },
+        {
+          id: 7,
+          label: 'Mustard Stain',
+          type: 1,
+        },
+        {
+          id: 8,
+          label: 'Oil Spill',
+          type: 1,
+        }
+      ],
     },
     aj: {
       id: 'aj',
@@ -368,6 +421,50 @@ const testDeceptionGameData = {
       color: 'pink',
       connected: true,
       role: constants.ROLE_INVESTIGATOR,
+      methodCards: [
+        {
+          id: 9,
+          label: 'Embarrassment',
+          type: 0,
+        },
+        {
+          id: 10,
+          label: 'Laughter',
+          type: 0,
+        },
+        {
+          id: 11,
+          label: 'Happiness',
+          type: 0,
+        },
+        {
+          id: 12,
+          label: 'Sadness',
+          type: 0,
+        }
+      ],
+      evidenceCards: [
+        {
+          id: 1,
+          label: 'Footprint',
+          type: 1,
+        },
+        {
+          id: 2,
+          label: 'Receipt',
+          type: 1,
+        },
+        {
+          id: 3,
+          label: 'Facebook Post',
+          type: 1,
+        },
+        {
+          id: 4,
+          label: 'Fingernail Clipping',
+          type: 1,
+        }
+      ],
     },
   },
   selectedLocationTile: {
@@ -382,13 +479,16 @@ const testDeceptionGameData = {
       'Balcony',
     ],
     selectedOption: 'Living Room',
+    type: constants.TILE_DECEPTION_LOCATION,
   },
   //state: constants.STATE_DECEPTION_EXPLAIN_RULES,
   //state: constants.STATE_DECEPTION_CHOOSE_MEANS_EVIDENCE,
   //state: constants.STATE_DECEPTION_WITNESSING,
   //state: constants.STATE_DECEPTION_SCIENTIST_CAUSE_OF_DEATH,
   //state: constants.STATE_DECEPTION_SCIENTIST_LOCATION,
-  state: constants.STATE_DECEPTION_SCIENTIST_SCENE_TILES,
+  //state: constants.STATE_DECEPTION_SCIENTIST_SCENE_TILES,
+  state: constants.STATE_DECEPTION_DELIBERATION,
+  //state: constants.STATE_DECEPTION_REPLACE_SCENE,
 }
 
 //const testGameDataToUse = testAwpGameData;
