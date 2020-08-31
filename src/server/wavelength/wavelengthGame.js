@@ -39,7 +39,7 @@ class WavelengthGame extends Game {
     this.nextTurn();
   }
 
-  addPlayer(user) {
+  addPlayer({ id, name }) {
     super.addPlayer({ id, name });
 
     if (this.playerOrder) {
