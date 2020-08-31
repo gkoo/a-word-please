@@ -1,17 +1,20 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import PlayerView from './PlayerView';
+import CardDeck from 'react-bootstrap/CardDeck';
 
+import PlayerView from './PlayerView';
+import { ROLE_SCIENTIST } from '../../constants';
 import { playersSelector } from '../../store/selectors';
 
 function PlayerGroupView() {
   const players = useSelector(playersSelector);
+  const nonScientistPlayers = Object.values(players).filter(player => player.role !== ROLE_SCIENTIST);
 
   return (
-    <>
-      {Object.values(players).map(player => <PlayerView key={player.id} player={player} />)}
-    </>
+    <CardDeck>
+      {nonScientistPlayers.map(player => <PlayerView key={player.id} player={player} />)}
+    </CardDeck>
   );
 }
 

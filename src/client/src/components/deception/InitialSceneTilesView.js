@@ -6,8 +6,6 @@ import CardDeck from 'react-bootstrap/CardDeck';
 
 import TileCard from './TileCard';
 import {
-  currPlayerSelector,
-  currPlayerIsScientistSelector,
   gameDataSelector,
   murdererSelector,
   socketSelector,
@@ -15,7 +13,6 @@ import {
 
 function InitialTilesView() {
   const [sceneSelections, setSceneSelections] = useState({});
-  const currPlayerIsScientist = useSelector(currPlayerIsScientistSelector);
   const gameData = useSelector(gameDataSelector);
   const murdererPlayer = useSelector(murdererSelector);
   const socket = useSelector(socketSelector);

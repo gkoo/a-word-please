@@ -6,7 +6,6 @@ import CardDeck from 'react-bootstrap/CardDeck';
 
 import TileCard from './TileCard';
 import {
-  currPlayerSelector,
   currPlayerIsScientistSelector,
   gameDataSelector,
   murdererSelector,
@@ -21,18 +20,14 @@ function LocationView() {
   const murdererPlayer = useSelector(murdererSelector);
   const socket = useSelector(socketSelector);
 
-  const { causeOfDeathTile } = gameData;
-
   const onLocationChange = (location, tileId) => {
-    const { locationTiles } = gameData;
-
     setSelectedLocation(location);
     setSelectedLocationTile(tileId);
   };
 
   const onSubmit = () => {
     if (!selectedLocationTile) {
-      throw 'Tried to submit an empty cause of death!';
+      throw new Error('Tried to submit an empty cause of death!');
     }
 
     socket.emit('handlePlayerAction', {
@@ -66,7 +61,8 @@ function LocationView() {
 
             return (
               <TileCard
-                id={locationTile.id}
+                tileId={locationTile.id}
+                tileType={locationTile.type}
                 label={locationTile.label}
                 options={locationTile.options}
                 onSelect={onLocationChange}

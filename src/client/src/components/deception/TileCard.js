@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
@@ -21,7 +21,7 @@ function TileCard({
   value,
 }) {
   if (showClose && !onClose) {
-    throw 'showClose is true but no onClose callback was provided!';
+    throw new Error('showClose is true but no onClose callback was provided!');
   }
 
   const [selectedOption, setSelectedOption] = useState(value);
@@ -53,7 +53,7 @@ function TileCard({
       buttonVariant = 'outline-warning';
       break;
     default:
-      throw `Unrecognized tile type: ${tileType}`;
+      throw new Error(`Unrecognized tile type: ${tileType}`);
   }
 
   return (

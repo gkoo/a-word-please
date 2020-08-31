@@ -6,15 +6,24 @@ import CardDeck from 'react-bootstrap/CardDeck';
 import TileCard from './TileCard';
 import {
   gameDataSelector,
-  playersSelector,
 } from '../../store/selectors';
 
-function TilesView() {
+function TilesView({ showHeaders }) {
   const gameData = useSelector(gameDataSelector);
   const { causeOfDeathTile, sceneTiles, selectedLocationTile } = gameData;
 
   return (
     <>
+      {
+        showHeaders &&
+          <>
+            <h3>Cause of Death and Location Tiles</h3>
+            <p>
+              The forensic scientist has provided information for the investigators below. Use this
+              information to narrow down which player is most likely to be the murderer!
+            </p>
+          </>
+      }
       <CardDeck>
         {/* Cause of Death */}
         <TileCard
@@ -36,7 +45,16 @@ function TilesView() {
         />
       </CardDeck>
 
-      {/* Scene Tiles */}
+      {
+        showHeaders &&
+          <>
+            <h3>Scene Tiles</h3>
+            <p>
+              At the end of each round, the forensic scientist will replace one scene tile with a new one
+              to lead the investigators closer to catching the culprit.
+            </p>
+          </>
+      }
       <CardDeck>
         {
           sceneTiles.map(sceneTile =>

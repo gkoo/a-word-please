@@ -310,3 +310,8 @@
   min-width: 150px;
   max-width: 280px;
 }
+
+.deception-player-card {
+  min-width: 120px;
+  max-width: 200px;
+}

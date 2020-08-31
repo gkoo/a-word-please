@@ -71,6 +71,7 @@ class DeceptionGame extends Game {
     this.roundNum = 0;
     this.murderMethod = null;
     this.keyEvidence = null;
+    this.accuseLog = {};
 
     this.assignRoles();
     this.dealCards();
@@ -191,6 +192,14 @@ class DeceptionGame extends Game {
         return this.nextRound();
       case 'replaceSceneTile':
         return this.replaceSceneTile(playerId, data);
+      case 'accusePlayer':
+        return this.accusePlayer(playerId, data);
+      case 'changeAccuseDetails':
+        return this.changeAccuseDetails(playerId, data);
+      case 'confirmAccusation':
+        return this.confirmAccusation(playerId);
+      case 'endAccusation':
+        return this.endAccusation();
     }
   }
 
@@ -259,9 +268,8 @@ class DeceptionGame extends Game {
     this.broadcastGameDataToPlayers();
   }
 
-  selectInitialSceneTiles(playerId, data) {
+  selectInitialSceneTiles(playerId, { sceneSelections }) {
     const player = this.players[playerId];
-    const { sceneSelections } = data;
 
     if (!player.isScientist()) {
       throw 'Non-scientist tried to select location!';
@@ -282,14 +290,13 @@ class DeceptionGame extends Game {
     this.broadcastGameDataToPlayers();
   }
 
-  replaceSceneTile(playerId, data) {
+  replaceSceneTile(playerId, { tileIdToReplace, newSceneSelection }) {
     const player = this.players[playerId];
 
     if (!player.isScientist()) {
       throw 'Non-scientist tried to replace scene tile!';
     }
 
-    const { tileIdToReplace, newSceneSelection } = data;
     this.newSceneTile.selectOption(newSceneSelection);
     const replacedTileIdx = this.sceneTiles.findIndex(tile => tile.id === tileIdToReplace);
     const replacedTiles = this.sceneTiles.splice(replacedTileIdx, 1, this.newSceneTile);
@@ -299,14 +306,84 @@ class DeceptionGame extends Game {
     this.broadcastGameDataToPlayers();
   }
 
+  accusePlayer(playerId, { suspectId }) {
+    const player = this.players[playerId];
+
+    if (player.isScientist()) {
+      throw 'Scientist cannot accuse players';
+    }
+
+    if (!!this.accuserId || !!this.suspectId) {
+      // Someone is already accusing. This could happen due to a race condition.
+      return;
+    }
+
+    this.accuserId = player.id;
+    this.suspectId = suspectId;
+    this.accusedMethod = null;
+    this.accusedEvidence = null;
+    this.accuseLog[player.id] = 1;
+    this.accusationActive = true;
+    this.accusationResult = null;
+
+    this.broadcastGameDataToPlayers();
+  }
+
+  changeAccuseDetails(playerId, { type, value }) {
+    if (playerId !== this.accuserId) {
+      throw 'Non-accuser tried to change accuse details!';
+    }
+
+    const player = this.players[playerId];
+    if (type === 'evidence') {
+      this.accusedEvidence = value;
+    } else if (type === 'method') {
+      this.accusedMethod = value;
+    }
+
+    this.broadcastGameDataToPlayers();
+  }
+
+  confirmAccusation(playerId) {
+    if (playerId !== this.accuserId) {
+      throw 'Non-accuser tried to confirm accusation!';
+    }
+
+    // All three of these must be correct for investigators to win.
+    const isMurdererGuessCorrect = this.players[this.suspectId].role === DeceptionGame.ROLE_MURDERER;
+    const isMethodGuessCorrect = this.accusedMethod === this.murderMethod.label;
+    const isEvidenceGuessCorrect = this.accusedEvidence === this.evidenceMethod.label;
+
+    if (isMurdererGuessCorrect && isMethodGuessCorrect && isEvidenceGuessCorrect) {
+      // Investigators win!
+      this.state = DeceptionGame.STATE_GAME_END;
+      this.broadcastGameDataToPlayers();
+      return;
+    } else {
+      const accuser = this.players[this.accuserId];
+      const suspect = this.players[this.suspectId];
+      this.accusationResult = false;
+    }
+  }
+
+  endAccusation() {
+    this.accusationActive = false;
+    this.broadcastGameDataToPlayers();
+  }
+
   serialize() {
     const {
+      accusationActive,
+      accusationResult,
+      accusedEvidence,
+      accusedMethod,
       locationTiles,
       playersReady,
       state,
     } = this;
 
     let data = {
+      accuseLog: this.accuseLog,
       causeOfDeathTile: this.causeOfDeathTile,
       gameId: DeceptionGame.GAME_ID,
       keyEvidence: this.keyEvidence,
@@ -317,25 +394,39 @@ class DeceptionGame extends Game {
       state,
     };
 
-    if (state === DeceptionGame.STATE_EXPLAIN_RULES) {
-      data = {
-        ...data,
-        playersReady,
-      };
-    }
+    switch (state) {
+      case DeceptionGame.STATE_EXPLAIN_RULES:
+        data = {
+          ...data,
+          playersReady,
+        };
+        break;
 
-    if (state === DeceptionGame.STATE_SCIENTIST_LOCATION) {
-      data = {
-        ...data,
-        locationTiles,
-      }
-    }
+      case DeceptionGame.STATE_SCIENTIST_LOCATION:
+        data = {
+          ...data,
+          locationTiles,
+        }
+        break;
 
-    if (state === DeceptionGame.STATE_REPLACE_SCENE) {
-      data = {
-        ...data,
-        newSceneTile,
-      }
+      case DeceptionGame.STATE_REPLACE_SCENE:
+        data = {
+          ...data,
+          newSceneTile,
+        }
+        break;
+
+      case DeceptionGame.STATE_DECEPTION_DELIBERATION:
+        data = {
+          ...data,
+          accusationActive,
+          accusationResult,
+          accusedEvidence,
+          accusedMethod,
+          newSceneTile,
+          oldSceneTile,
+        }
+        break;
     }
 
     return data;

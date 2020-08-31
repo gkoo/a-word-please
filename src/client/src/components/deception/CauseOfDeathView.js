@@ -30,7 +30,7 @@ function CauseOfDeathView() {
 
   const onSubmit = () => {
     if (!selectedCauseOfDeath) {
-      throw 'Tried to submit an empty cause of death!';
+      throw new Error('Tried to submit an empty cause of death!');
     }
 
     socket.emit('handlePlayerAction', {
@@ -55,10 +55,11 @@ function CauseOfDeathView() {
       <Row>
         <Col sm={{ offset: 2, span: 8 }} md={{ offset: 3, span: 6 }}>
           <TileCard
-            id={causeOfDeathTile.id}
+            tileId={causeOfDeathTile.id}
             label={causeOfDeathTile.label}
             options={causeOfDeathTile.options}
             onSelect={onCauseOfDeathChange}
+            tileType={causeOfDeathTile.type}
           />
         </Col>
       </Row>

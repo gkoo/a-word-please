@@ -15,7 +15,6 @@ import {
 
 function ReplaceSceneView() {
   const [tileIdToReplace, setTileIdToReplace] = useState(null);
-  const [showNewSceneTileModal, setShowNewSceneTileModal] = useState(false);
 
   const currPlayerIsScientist = useSelector(currPlayerIsScientistSelector);
   const gameData = useSelector(gameDataSelector);
