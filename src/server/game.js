@@ -1,7 +1,5 @@
 const _ = require('lodash');
 
-const Player = require('./player.js');
-
 class Game {
   static GAME_A_WORD_PLEASE = 1;
   static GAME_WEREWOLF = 2;

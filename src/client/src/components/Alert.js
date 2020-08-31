@@ -16,7 +16,6 @@ function Alert({ id, message, type }) {
     }, DELAY);
   }, [id, dispatch]);
 
-  // https://react-bootstrap.github.io/components/alerts/
   return (
     <BootstrapAlert variant={type}>
       {message}
