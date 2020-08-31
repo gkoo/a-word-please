@@ -56,16 +56,45 @@ class Game {
     return currCard;
   }
 
+  maybeReconnect(user, originalSocketId) {
+    // Look for the player based on their socketId.
+    const player = Object.values(this.players).find(p => p.socketId === originalSocketId);
+
+    // In case a game started while the player was reconnecting
+    if (!player) {
+      if (user.name) {
+        // Only add user to the game if they have a name
+        this.addPlayer(user);
+      }
+      return;
+    }
+
+    // There was a player here before. Let's restore her.
+    player.socketId = user.socketId;
+    player.connected = true;
+    broadcastGameDataToPlayers();
+  }
+
   newGame() {
     throw new Error('newGame not implemented!');
   }
 
-  addPlayer(user) {
-    throw new Error('addPlayer not implemented!');
+  // Players will start off with an id equal to their socket.id. However, this won't necessarily
+  // always be the case. If there is a temporary disconnect and the player reconnects, we will
+  // attempt to reconnect them to the same ID that they had before, but using their new socket.id
+  // value for communication.
+  addPlayer({ id, name }) {
+    if (!name) { return; }
+
+    this.players[id] = new Player({
+      id,
+      name,
+      socketId: id,
+    });
   }
 
-  removePlayer() {
-    throw new Error('removePlayer not implemented!');
+  removePlayer(id) {
+    if (this.players[id]) { this.players[id].connected = false; }
   }
 
   handlePlayerAction() {

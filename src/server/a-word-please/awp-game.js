@@ -37,19 +37,10 @@ class AWPGame extends Game {
     this.nextTurn();
   }
 
-  addPlayer(user) {
-    const { id, name } = user;
+  addPlayer({ id, name }) {
+    super.addPlayer({ id, name });
 
-    if (!name) { return; }
-
-    this.players[user.id] = new Player({
-      id,
-      name,
-    });
-
-    if (this.playerOrder) {
-      this.playerOrder.push(user.id);
-    }
+    if (this.playerOrder) { this.playerOrder.push(id); }
   }
 
   getConnectedPlayers() {
@@ -57,7 +48,7 @@ class AWPGame extends Game {
   }
 
   removePlayer(id) {
-    if (this.players[id]) { this.players[id].connected = false; }
+    super.removePlayer(id)
 
     // Remove from player order
     const playerOrderIdx = this.playerOrder.indexOf(id);

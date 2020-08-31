@@ -40,14 +40,7 @@ class WavelengthGame extends Game {
   }
 
   addPlayer(user) {
-    const { id, name } = user;
-
-    if (!name) { return; }
-
-    this.players[user.id] = new Player({
-      id,
-      name,
-    });
+    super.addPlayer({ id, name });
 
     if (this.playerOrder) {
       this.playerOrder.push(user.id);
@@ -55,7 +48,7 @@ class WavelengthGame extends Game {
   }
 
   removePlayer(id) {
-    if (this.players[id]) { this.players[id].connected = false; }
+    super.removePlayer(id);
 
     // Remove from player order
     const playerOrderIdx = this.playerOrder.indexOf(id);
