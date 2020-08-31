@@ -22,7 +22,7 @@ function NameModal({ show }) {
   const handleSave = (e) => {
     if (e) { e.preventDefault(); }
     socket.emit('saveName', { name, isSpectator });
-    dispatch(saveName(name));
+    dispatch(saveName({ name, isSpectator }));
   };
 
   return (

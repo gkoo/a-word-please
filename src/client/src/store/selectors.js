@@ -20,6 +20,7 @@ export const currUserSelector = createSelector(
   usersSelector,
   (currUserId, users) => users[currUserId],
 );
+export const currUserIsSpectatorSelector = state => state.isSpectator;
 export const roomCodeSelector = state => state.roomCode;
 export const selectedGameSelector = state => state.roomData?.selectedGame;
 export const showRulesModalSelector = state => state.showRulesModal;
@@ -155,10 +156,6 @@ export const wavelengthGuessersSelector = createSelector(
 export const clueSelector = createSelector(
   gameDataSelector,
   gameData => gameData?.clue,
-);
-export const currUserIsSpectatorSelector = createSelector(
-  currUserSelector,
-  currUser => currUser?.isSpectator,
 );
 export const currPlayerIsActivePlayerSelector = createSelector(
   gameDataSelector,

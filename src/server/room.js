@@ -151,9 +151,9 @@ Room.prototype = {
     this.broadcastToRoom('roomData', this.getRoomData());
   },
 
-  maybeReconnect: function(socket, originalSocketId) {
+  maybeReconnect: function(socket, name, isSpectator, originalSocketId) {
     const user = this.addUser(socket);
-    this.sendRoomData(socket);
+    this.setUserName(socket.id, name, isSpectator);
 
     if (this.game) {
       this.game.maybeReconnect(user, originalSocketId);

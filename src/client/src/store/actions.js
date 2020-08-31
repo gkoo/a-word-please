@@ -96,9 +96,9 @@ export function receiveUserId(userId) {
   }
 }
 
-export function saveName(name) {
+export function saveName({ name, isSpectator }) {
   return {
-    payload: { name },
+    payload: { name, isSpectator },
     type: SAVE_NAME,
   }
 }

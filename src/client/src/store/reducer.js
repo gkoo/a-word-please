@@ -509,10 +509,13 @@ export default function reducer(state = stateToUse, action) {
 
     case actions.SAVE_NAME:
       name = action.payload.name;
+      const { isSpectator } = action.payload;
+
       return {
         ...state,
         debugEnabled: (name && name.toLowerCase() === 'gordon') || state.debugEnabled, // >_<
-        name: name,
+        name,
+        isSpectator,
       };
 
     case actions.SET_ROOM_CODE:

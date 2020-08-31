@@ -52,11 +52,9 @@ class RoomManager {
     room.setUserName(id, name, isSpectator);
   }
 
-  handleReconnect(socket, { originalSocketId, roomCode }) {
-    const room = this.findOrCreateRoom(roomCode);
-    if (!room) { return; }
-
-    room.maybeReconnect(socket, originalSocketId);
+  handleReconnect(socket, { originalSocketId, name, isSpectator, roomCode }) {
+    this.joinRoom(socket, roomCode);
+    this.findOrCreateRoom(roomCode).maybeReconnect(socket, name, isSpectator, originalSocketId);
   }
 
   handleStartGame(socket) {
