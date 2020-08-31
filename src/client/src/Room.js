@@ -29,7 +29,6 @@ function Room() {
   const roomCodeParam = useParams().roomCode;
 
   const ROOM_CODE_PREFIX = 'room-';
-  const socketIoRoomName = `${ROOM_CODE_PREFIX}${roomCodeParam}`;
 
   useEffect(() => {
     // We open the socket every time we join a room and close the socket when we leave (go back to
@@ -45,17 +44,14 @@ function Room() {
       return;
     }
 
+    const socketIoRoomName = `${ROOM_CODE_PREFIX}${roomCodeParam}`;
     socket.emit('joinRoom', socketIoRoomName);
   }, [socket, dispatch, socketConnected, roomCodeParam]);
 
   useEffect(() => {
     if (!socket) { return; }
 
-    socket.on('reconnect', () => {
-      const originalSocketId = window.localStorage.getItem('socketId');
-      console.log('emitting reconnect');
-      socket.emit('reconnect-room', { originalSocketId, roomCode: socketIoRoomName })
-    });
+    socket.on('connect', () => socket.emit('reconnect'));
     socket.on('debugInfo', data => dispatch(actions.receiveDebugInfo(data)));
     socket.on('endGame', winnerIds => dispatch(actions.endGame(winnerIds)));
     socket.on('roomData', data => dispatch(actions.receiveRoomData(data)));

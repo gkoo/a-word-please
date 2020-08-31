@@ -37,7 +37,6 @@ Room.prototype = {
       this.promoteRandomLeader();
     }
     this.sendRoomData(socket);
-    return user;
   },
 
   onUserDisconnect: function(id) {
@@ -151,15 +150,6 @@ Room.prototype = {
     this.broadcastToRoom('roomData', this.getRoomData());
   },
 
-  maybeReconnect: function(socket, originalSocketId) {
-    const user = this.addUser(socket);
-    this.sendRoomData(socket);
-
-    if (this.game) {
-      this.game.maybeReconnect(user, originalSocketId);
-    }
-  },
-
   getRoomData: function({ socketId, includeCurrUserId } = {}) {
     const users = {};
     const { roomCode, state, selectedGame } = this;
@@ -180,7 +170,7 @@ Room.prototype = {
 
   sendRoomData: function(socket) {
     const roomData = this.getRoomData({ socketId: socket.id, includeCurrUserId: true });
-    this.io.to(socket.id).emit('roomData', roomData);
+    this.io.to(socket.id).emit('roomData', roomData)
 
     let gameData = this.game ? this.game.serialize() : { state: Game.STATE_PENDING };
     this.io.to(socket.id).emit('gameData', gameData)
