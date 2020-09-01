@@ -103,23 +103,23 @@ class DeceptionGame extends Game {
 
   createLocationTiles() {
     this.locationTiles = locationTileList.map((locationTileData, idx) =>
-      new Tile(
+      new Tile({
         id: idx,
         label: locationTileData.label,
         options: locationTileData.options,
         type: Tile.TYPE_LOCATION,
-      );
+      })
     );
   }
 
   createSceneTileDeck() {
     const sceneTiles = sceneTileList.map((sceneTileData, idx) =>
-      new Tile(
+      new Tile({
         id: idx,
         label: sceneTileData.label,
         options: sceneTileData.options,
         type: Tile.TYPE_SCENE,
-      );
+      })
     );
     this.sceneTileDeck = new Deck(sceneTiles);
     this.sceneTileDeck.shuffle();
@@ -275,7 +275,7 @@ class DeceptionGame extends Game {
       throw 'Non-scientist tried to select location!';
     }
 
-    Object.entries(sceneSelections).forEach([id, option] => {
+    Object.entries(sceneSelections).forEach(([id, option]) => {
       tile = this.sceneTiles.find(tile => tile.id === id);
       tile.selectOption(option);
     });
