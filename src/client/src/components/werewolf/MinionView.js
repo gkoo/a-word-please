@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 
 import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
 import { currPlayerSelector, playersSelector, socketSelector } from '../../store/selectors';
-import { LABELS, ROLE_MINION, ROLE_WEREWOLF } from '../../constants';
+import { WEREWOLF_ROLE_LABELS, ROLE_MINION, ROLE_WEREWOLF } from '../../constants';
 
 function MinionView() {
   const currPlayer = useSelector(currPlayerSelector);
@@ -22,7 +22,7 @@ function MinionView() {
   return (
     <>
       <p>
-        {LABELS[ROLE_MINION]}: Draw suspicion away from the werewolves. If the werewolves win, you win.
+        {WEREWOLF_ROLE_LABELS[ROLE_MINION]}: Draw suspicion away from the werewolves. If the werewolves win, you win.
       </p>
       {
         werewolves.length > 0 &&
@@ -32,7 +32,7 @@ function MinionView() {
               {werewolves.map(player => <PlayerCheckboxLabel player={player}/>)}
             </p>
             <p>
-              They don't know that you are the {LABELS[ROLE_MINION]}.
+              They don't know that you are the {WEREWOLF_ROLE_LABELS[ROLE_MINION]}.
             </p>
           </>
       }

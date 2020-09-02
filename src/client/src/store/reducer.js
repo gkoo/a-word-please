@@ -624,8 +624,9 @@ const testDeceptionGameData = {
   //state: constants.STATE_DECEPTION_SCIENTIST_CAUSE_OF_DEATH,
   //state: constants.STATE_DECEPTION_SCIENTIST_LOCATION,
   //state: constants.STATE_DECEPTION_SCIENTIST_SCENE_TILES,
-  state: constants.STATE_DECEPTION_DELIBERATION,
+  //state: constants.STATE_DECEPTION_DELIBERATION,
   //state: constants.STATE_DECEPTION_REPLACE_SCENE,
+  state: constants.GAME_STATE_GAME_END,
 }
 
 //const testGameDataToUse = testAwpGameData;

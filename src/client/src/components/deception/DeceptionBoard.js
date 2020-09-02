@@ -9,10 +9,12 @@ import RulesView from './RulesView';
 import CauseOfDeathView from './CauseOfDeathView';
 import ChooseMeansView from './ChooseMeansView';
 import DeliberationView from './DeliberationView';
+import GameEndView from './GameEndView';
 import InitialSceneTilesView from './InitialSceneTilesView';
 import LocationView from './LocationView';
 import ReplaceSceneView from './ReplaceSceneView';
 import {
+  GAME_STATE_GAME_END,
   STATE_DECEPTION_EXPLAIN_RULES,
   STATE_DECEPTION_CHOOSE_MEANS_EVIDENCE,
   STATE_DECEPTION_WITNESSING,
@@ -59,6 +61,9 @@ function DeceptionBoard() {
         }
         {
           gameState === STATE_DECEPTION_REPLACE_SCENE && <ReplaceSceneView />
+        }
+        {
+          gameState === GAME_STATE_GAME_END && <GameEndView />
         }
       </Col>
       <Col sm={4} md={3} className='main-panel text-center py-5'>

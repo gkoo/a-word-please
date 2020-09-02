@@ -49,7 +49,7 @@ class DeceptionGame extends Game {
 
   static MIN_PLAYERS = 4;
   static MAX_PLAYERS = 12;
-  static NUM_TURNS = 3;
+  static NUM_ROUNDS = 3;
 
   static NUM_CLUE_CARDS_PER_PLAYER = 4;
 
@@ -68,7 +68,7 @@ class DeceptionGame extends Game {
 
   newGame() {
     this.playersReady = {};
-    this.roundNum = 0;
+    this.roundNum = 1;
     this.murderMethod = null;
     this.keyEvidence = null;
     this.accuseLog = {};
@@ -188,8 +188,8 @@ class DeceptionGame extends Game {
         return this.selectLocation(playerId, data);
       case 'selectInitialSceneTiles':
         return this.selectInitialSceneTiles(playerId, data);
-      case 'startNextRound':
-        return this.nextRound();
+      case 'endRound':
+        return this.endRound();
       case 'replaceSceneTile':
         return this.replaceSceneTile(playerId, data);
       case 'accusePlayer':
@@ -284,9 +284,13 @@ class DeceptionGame extends Game {
     this.broadcastGameDataToPlayers();
   }
 
-  startNextRound() {
-    this.state = DeceptionGame.STATE_REPLACE_SCENE;
-    this.newSceneTile = this.sceneTileDeck.drawCard();
+  endRound() {
+    if (this.roundNum >= DeceptionGame.NUM_ROUNDS) {
+      this.state = DeceptionGame.STATE_GAME_END;
+    } else {
+      this.state = DeceptionGame.STATE_REPLACE_SCENE;
+      this.newSceneTile = this.sceneTileDeck.drawCard();
+    }
     this.broadcastGameDataToPlayers();
   }
 
@@ -302,6 +306,7 @@ class DeceptionGame extends Game {
     const replacedTiles = this.sceneTiles.splice(replacedTileIdx, 1, this.newSceneTile);
     this.oldSceneTile = replacedTiles[0];
 
+    ++this.roundNum;
     this.state = DeceptionGame.STATE_DELIBERATION;
     this.broadcastGameDataToPlayers();
   }
@@ -357,6 +362,7 @@ class DeceptionGame extends Game {
     if (isMurdererGuessCorrect && isMethodGuessCorrect && isEvidenceGuessCorrect) {
       // Investigators win!
       this.state = DeceptionGame.STATE_GAME_END;
+      this.accusationResult = true;
       this.broadcastGameDataToPlayers();
       return;
     } else {
@@ -388,8 +394,10 @@ class DeceptionGame extends Game {
       gameId: DeceptionGame.GAME_ID,
       keyEvidence: this.keyEvidence,
       murderMethod: this.murderMethod,
+      roundNum: this.roundNum,
       sceneTiles: this.sceneTiles,
       selectedLocationTile: this.selectedLocationTile,
+      totalNumRounds: DeceptionGame.NUM_ROUNDS,
       players: this.players,
       state,
     };
@@ -425,8 +433,14 @@ class DeceptionGame extends Game {
           accusedMethod,
           newSceneTile,
           oldSceneTile,
-        }
+        };
         break;
+
+      case DeceptionGame.STATE_GAME_END:
+        data = {
+          ...data,
+          accusationResult,
+        };
     }
 
     return data;

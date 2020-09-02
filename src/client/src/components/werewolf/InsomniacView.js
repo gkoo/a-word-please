@@ -7,7 +7,7 @@ import Button from 'react-bootstrap/Button';
 
 import RoleCard from './RoleCard';
 import { currPlayerSelector, socketSelector, wakeUpRoleSelector } from '../../store/selectors';
-import { LABELS, ROLE_INSOMNIAC } from '../../constants';
+import { WEREWOLF_ROLE_LABELS, ROLE_INSOMNIAC } from '../../constants';
 
 function InsomniacView() {
   const currPlayer = useSelector(currPlayerSelector);
@@ -41,7 +41,7 @@ function InsomniacView() {
 
   // passive view
   return (
-    <p>{LABELS[ROLE_INSOMNIAC]}: You will wake up at the end of the night to look at your role.</p>
+    <p>{WEREWOLF_ROLE_LABELS[ROLE_INSOMNIAC]}: You will wake up at the end of the night to look at your role.</p>
   );
 }
 

@@ -11,7 +11,7 @@ import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup'
 
 import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
 import {
-  LABELS,
+  WEREWOLF_ROLE_LABELS,
   ROLE_WEREWOLF,
   ROLE_MINION,
   ROLE_MASON,
@@ -57,7 +57,7 @@ const renderTurnOrder = (sessionRoles) => {
   wakeUpOrder.forEach(wakeUpRole => {
     if (sessionRoles.includes(wakeUpRole)) {
       components.push(
-        <div className={getRoleLabelClasses(wakeUpRole)}>{LABELS[wakeUpRole]}</div>
+        <div className={getRoleLabelClasses(wakeUpRole)}>{WEREWOLF_ROLE_LABELS[wakeUpRole]}</div>
       );
     }
   });
@@ -130,7 +130,7 @@ function DaytimeView() {
         <h3>Non-wake roles</h3>
         {
           sessionNonWakeRoles.map(
-            role => <><div className={getRoleLabelClasses(role)}>{LABELS[role]}</div><br/></>
+            role => <><div className={getRoleLabelClasses(role)}>{WEREWOLF_ROLE_LABELS[role]}</div><br/></>
           )
         }
       </div>

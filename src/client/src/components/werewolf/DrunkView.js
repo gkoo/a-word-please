@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import Button from 'react-bootstrap/Button';
 
 import { socketSelector } from '../../store/selectors';
-import { LABELS, ROLE_DRUNK } from '../../constants';
+import { WEREWOLF_ROLE_LABELS, ROLE_DRUNK } from '../../constants';
 
 function DrunkView() {
   const socket = useSelector(socketSelector);
@@ -15,7 +15,7 @@ function DrunkView() {
 
   return (
     <>
-      <p>{LABELS[ROLE_DRUNK]}: Your role will now be switched with an unclaimed role.</p>
+      <p>{WEREWOLF_ROLE_LABELS[ROLE_DRUNK]}: Your role will now be switched with an unclaimed role.</p>
       <div className='text-center'>
         <Button onClick={endTurn}>OK</Button>
       </div>

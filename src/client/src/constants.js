@@ -50,6 +50,14 @@ export const TILE_DECEPTION_CAUSE_OF_DEATH = 0;
 export const TILE_DECEPTION_LOCATION = 1;
 export const TILE_DECEPTION_SCENE = 2;
 
+export const DECEPTION_ROLE_LABELS = {
+  [ROLE_SCIENTIST]: 'Scientist',
+  [ROLE_MURDERER]: 'Murderer',
+  [ROLE_INVESTIGATOR]: 'Investigator',
+  [ROLE_WITNESS]: 'Witness',
+  [ROLE_ACCOMPLICE]: 'Accomplice',
+};
+
 // Werewolf
 export const STATE_WW_CHOOSING_ROLES = 3;
 export const STATE_WW_NIGHTTIME = 4;
@@ -70,7 +78,7 @@ export const ROLE_VILLAGER = 9;
 export const ROLE_DOPPELGANGER = 10;
 export const ROLE_TANNER = 11;
 
-export const LABELS = {
+export const WEREWOLF_ROLE_LABELS = {
   [ROLE_WEREWOLF]: 'Werewolf',
   [ROLE_MINION]: 'Minion',
   [ROLE_MASON]: 'Mason',

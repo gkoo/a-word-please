@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 
 import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
 import { currPlayerSelector, playersSelector, socketSelector } from '../../store/selectors';
-import { LABELS, ROLE_WEREWOLF } from '../../constants';
+import { WEREWOLF_ROLE_LABELS, ROLE_WEREWOLF } from '../../constants';
 
 function WerewolfView() {
   const [ready, setReady] = useState(false);
@@ -24,7 +24,7 @@ function WerewolfView() {
   return (
     <>
       <p>
-        {LABELS[ROLE_WEREWOLF]}: Avoid persecution from the villagers!
+        {WEREWOLF_ROLE_LABELS[ROLE_WEREWOLF]}: Avoid persecution from the villagers!
       </p>
       {
         otherWerewolves.length > 0 &&

@@ -10,7 +10,7 @@ import RobberView from './RobberView';
 import SeerView from './SeerView';
 import TroublemakerView from './TroublemakerView';
 import { currPlayerSelector, playersSelector, socketSelector } from '../../store/selectors';
-import { LABELS, ROLE_SEER, ROLE_TROUBLEMAKER, ROLE_ROBBER, ROLE_INSOMNIAC } from '../../constants';
+import { WEREWOLF_ROLE_LABELS, ROLE_SEER, ROLE_TROUBLEMAKER, ROLE_ROBBER, ROLE_INSOMNIAC } from '../../constants';
 
 function DoppelgangerView() {
   const [copyPlayerId, setCopyPlayerId] = useState(null);
@@ -43,6 +43,8 @@ function DoppelgangerView() {
         return <TroublemakerView showWakeUp={false} />;
       case ROLE_ROBBER:
         return <RobberView showWakeUp={false} />;
+      default:
+        return <div />;
     }
   };
 
@@ -69,7 +71,7 @@ function DoppelgangerView() {
             <Col>
               You are now
               {copyPlayer.role === ROLE_INSOMNIAC ? ' an ' : ' a ' }
-              <u>{LABELS[copyPlayer.role]}</u>.
+              <u>{WEREWOLF_ROLE_LABELS[copyPlayer.role]}</u>.
             </Col>
           </Row>
       }

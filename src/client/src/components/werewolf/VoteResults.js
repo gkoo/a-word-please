@@ -8,7 +8,7 @@ import Table from 'react-bootstrap/Table'
 import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
 import * as selectors from '../../store/selectors';
 import {
-  LABELS,
+  WEREWOLF_ROLE_LABELS,
   ROLE_WEREWOLF,
   ROLE_MINION,
   ROLE_TANNER,
@@ -47,12 +47,12 @@ const renderPlayerRow = (player, players, votes, eliminatedPlayers) => {
       </td>
       <td>
         <span className={`team-label ${roleLabelClass}`}>
-          {LABELS[player.role]}
+          {WEREWOLF_ROLE_LABELS[player.role]}
         </span>
       </td>
       {/*
       <td>
-        {LABELS[player.originalRole]}
+        {WEREWOLF_ROLE_LABELS[player.originalRole]}
       </td>
       */}
     </tr>
