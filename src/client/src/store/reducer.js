@@ -311,6 +311,12 @@ export default function reducer(state = stateToUse, action) {
   let name, newAlerts, newPlayers, newUsers, players;
 
   switch(action.type) {
+    case actions.CLEAR_NAME:
+      return {
+        ...state,
+        name: undefined,
+      };
+
     case actions.CONNECT_SOCKET:
       state.socket.open();
       return {

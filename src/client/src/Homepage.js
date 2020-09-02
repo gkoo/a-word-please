@@ -15,7 +15,13 @@ import Row from 'react-bootstrap/Row';
 
 import Layout from './Layout';
 import { routePrefix } from './constants';
-import { disconnectSocket, receiveGameData, setRoomCode, saveName } from './store/actions';
+import {
+  clearName,
+  disconnectSocket,
+  receiveGameData,
+  setRoomCode,
+  saveName,
+} from './store/actions';
 import { socketConnectedSelector } from './store/selectors';
 
 import './bootstrap.min.css';
@@ -49,7 +55,7 @@ function Homepage() {
 
   const joinRoom = () => {
     dispatch(receiveGameData({}));
-    dispatch(saveName(null));
+    dispatch(clearName());
     dispatch(setRoomCode(newRoomCode));
     history.push(`${routePrefix}/rooms/${newRoomCode}`);
   };
