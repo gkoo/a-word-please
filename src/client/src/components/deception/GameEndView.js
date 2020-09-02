@@ -15,11 +15,10 @@ import {
 
 function GameEndView() {
   const gameData = useSelector(gameDataSelector);
-  const murdererPlayer = useSelector(murdererSelector);
   const players = useSelector(playersSelector);
   const socket = useSelector(socketSelector);
 
-  const onNewGame = () => socket.emit('handlePlayerAction', { action: 'newGame' });
+  const onNewGame = () => socket.emit('playerAction', { action: 'newGame' });
 
   return (
     <>

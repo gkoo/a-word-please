@@ -3,6 +3,7 @@ const DeceptionPlayer = require('./deceptionPlayer');
 const Deck = require('../deck');
 const Game = require('../game');
 const Player = require('../player');
+const Tile = require('./tile');
 const evidenceList = require('./evidenceList');
 const methodList = require('./methodList');
 const locationTileList = require('./locationTileList');
@@ -24,21 +25,22 @@ class DeceptionGame extends Game {
 
   // (optional) Explain the rules to first time players
   static STATE_EXPLAIN_RULES = 3;
+  static STATE_SHOW_ROLES = 4;
   // Murderer chooses means of murder and key evidence. (optional) Accomplice learns murderer
   // identity
-  static STATE_CHOOSE_MEANS_EVIDENCE = 4;
+  static STATE_CHOOSE_MEANS_EVIDENCE = 5;
   // (optional) Witness learns murderer and accomplice identity
-  static STATE_WITNESSING = 5; // optional
-  // Scientist chooses cause of death
-  static STATE_SCIENTIST_CAUSE_OF_DEATH = 6;
+  static STATE_WITNESSING = 6; // optional
+  // Murderer chooses cause of death
+  static STATE_SCIENTIST_CAUSE_OF_DEATH = 7;
   // Scientist chooses location
-  static STATE_SCIENTIST_LOCATION = 7;
+  static STATE_SCIENTIST_LOCATION = 8;
   // Scientist chooses scene markers
-  static STATE_SCIENTIST_INITIAL_SCENE_TILES = 8;
+  static STATE_SCIENTIST_INITIAL_SCENE_TILES = 9;
   // Players make their cases
-  static STATE_DELIBERATION = 9;
+  static STATE_DELIBERATION = 10;
   // Scientist replaces a scene tile
-  static STATE_REPLACE_SCENE = 10;
+  static STATE_REPLACE_SCENE = 11;
 
   // reserve 0 to make truthy/falsy logic easier
   static ROLE_SCIENTIST = 1;
@@ -178,8 +180,10 @@ class DeceptionGame extends Game {
 
   handlePlayerAction(playerId, data) {
     switch (data.action) {
-      case 'readRules':
-        return this.readRules(playerId);
+      case 'ready':
+        return this.playerReady(playerId);
+      case 'acknowledgeRole':
+        return this.acknowledgeRole(playerId);
       case 'chooseMeansAndEvidence':
         return this.chooseMeansAndEvidence(playerId, data);
       case 'selectCauseOfDeath':
@@ -203,26 +207,49 @@ class DeceptionGame extends Game {
     }
   }
 
-  readRules(playerId) {
+  playerReady(playerId) {
     this.playersReady[playerId] = 1;
-    if (Object.keys(this.playersReady) >= Object.keys(this.players)) {
-      // Everyone has read the rules and we're ready to start the game!
+    this.broadcastGameDataToPlayers();
+
+    //if (Object.keys(this.playersReady).length < Object.keys(this.players).length) {
+      //return;
+    //}
+
+    // Everyone is ready!
+    this.playersReady = {};
+    switch (this.state) {
+      case DeceptionGame.STATE_EXPLAIN_RULES:
+        this.state = DeceptionGame.STATE_SHOW_ROLES;
+        break;
+      case DeceptionGame.STATE_SHOW_ROLES:
+        this.state = DeceptionGame.STATE_CHOOSE_MEANS_EVIDENCE;
+        break;
+      default:
+        throw 'Unexpected state change!'
+    }
+    setTimeout(() => this.broadcastGameDataToPlayers(), 500);
+  }
+
+  acknowledgeRole(playerId) {
+    this.acknowledgedRolesMap[playerId] = 1;
+    if (Object.keys(this.acknowledgedRolesMap).length >= Object.keys(this.players).length) {
+      // Everyone has acknowledged their role and we're ready to start the game!
       this.state = DeceptionGame.STATE_CHOOSE_MEANS_EVIDENCE;
     }
     this.broadcastGameDataToPlayers();
   }
 
-  chooseMeansAndEvidence(playerId, data) {
+  chooseMeansAndEvidence(playerId, { methodId, evidenceId }) {
     const player = this.players[playerId];
 
     if (!player.isMurderer()) {
       throw 'Non-murderer tried to choose means and evidence!';
     }
 
-    this.murderMethod = player.methodCards.find(method => method.id === data.methodId);
-    this.keyEvidence = player.evidenceCards.find(evidence => evidence.id === data.evidenceId);
+    this.murderMethod = player.methodCards.find(method => method.id === methodId);
+    this.keyEvidence = player.evidenceCards.find(evidence => evidence.id === evidenceId);
 
-    this.state = DeceptionGame.STATE_SCIENTIST_INITIAL_TILES;
+    this.state = DeceptionGame.STATE_SCIENTIST_CAUSE_OF_DEATH;
     this.broadcastGameDataToPlayers();
   }
 
@@ -262,7 +289,7 @@ class DeceptionGame extends Game {
     this.sceneTiles = [];
 
     const numSceneTiles = 4;
-    for (let i = 0; i < numInitialSceneTiles; ++i) {
+    for (let i = 0; i < numSceneTiles; ++i) {
       this.sceneTiles.push(this.sceneTileDeck.drawCard());
     }
     this.broadcastGameDataToPlayers();
@@ -275,9 +302,16 @@ class DeceptionGame extends Game {
       throw 'Non-scientist tried to select location!';
     }
 
-    Object.entries(sceneSelections).forEach(([id, option]) => {
-      tile = this.sceneTiles.find(tile => tile.id === id);
-      tile.selectOption(option);
+    Object.keys(sceneSelections).forEach((id) => {
+      const option = sceneSelections[id];
+      for (let i = 0; i < this.sceneTiles.length; ++i) {
+        const tile = this.sceneTiles[i];
+        // I think the id gets converted to a string when it's the property of an object?
+        if (tile.id === parseInt(id, 10)) {
+          tile.selectOption(option);
+          break;
+        }
+      }
     });
 
     this.state = DeceptionGame.STATE_DELIBERATION;
@@ -357,19 +391,16 @@ class DeceptionGame extends Game {
     // All three of these must be correct for investigators to win.
     const isMurdererGuessCorrect = this.players[this.suspectId].role === DeceptionGame.ROLE_MURDERER;
     const isMethodGuessCorrect = this.accusedMethod === this.murderMethod.label;
-    const isEvidenceGuessCorrect = this.accusedEvidence === this.evidenceMethod.label;
+    const isEvidenceGuessCorrect = this.accusedEvidence === this.keyEvidence.label;
 
     if (isMurdererGuessCorrect && isMethodGuessCorrect && isEvidenceGuessCorrect) {
       // Investigators win!
       this.state = DeceptionGame.STATE_GAME_END;
       this.accusationResult = true;
-      this.broadcastGameDataToPlayers();
-      return;
     } else {
-      const accuser = this.players[this.accuserId];
-      const suspect = this.players[this.suspectId];
       this.accusationResult = false;
     }
+    this.broadcastGameDataToPlayers();
   }
 
   endAccusation() {
@@ -384,6 +415,8 @@ class DeceptionGame extends Game {
       accusedEvidence,
       accusedMethod,
       locationTiles,
+      newSceneTile,
+      oldSceneTile,
       playersReady,
       state,
     } = this;
@@ -404,6 +437,7 @@ class DeceptionGame extends Game {
 
     switch (state) {
       case DeceptionGame.STATE_EXPLAIN_RULES:
+      case DeceptionGame.STATE_SHOW_ROLES:
         data = {
           ...data,
           playersReady,
@@ -424,15 +458,17 @@ class DeceptionGame extends Game {
         }
         break;
 
-      case DeceptionGame.STATE_DECEPTION_DELIBERATION:
+      case DeceptionGame.STATE_DELIBERATION:
         data = {
           ...data,
+          accuserId: this.accuserId,
           accusationActive,
           accusationResult,
           accusedEvidence,
           accusedMethod,
           newSceneTile,
           oldSceneTile,
+          suspectId: this.suspectId,
         };
         break;
 

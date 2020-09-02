@@ -59,6 +59,7 @@ function TilesView({ showHeaders }) {
         {
           sceneTiles.map(sceneTile =>
             <TileCard
+              key={sceneTile.id}
               id={sceneTile.id}
               label={sceneTile.label}
               options={sceneTile.options}

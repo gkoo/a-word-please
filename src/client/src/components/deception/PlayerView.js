@@ -19,11 +19,11 @@ function PlayerView({ player }) {
 
   const className = 'mx-1';
 
-  const playerIsCurrPlayer = player.id === currPlayer.id;
-  const currPlayerIsScientist = currPlayer.role === ROLE_SCIENTIST;
-  const alreadyAccused = !!gameData.accuseLog[currPlayer.id];
+  const playerIsCurrPlayer = player.id === currPlayer?.id;
+  const currPlayerIsScientist = currPlayer?.role === ROLE_SCIENTIST;
+  const alreadyAccused = !!gameData.accuseLog[currPlayer?.id];
 
-  const accusePlayer = () => socket.emit('handlePlayerAction', {
+  const accusePlayer = () => socket.emit('playerAction', {
     action: 'accusePlayer',
     suspectId: player.id,
   });

@@ -29,7 +29,7 @@ function AccusePlayerModal({ show, onDetailsChange, onConfirmAccusation, endAccu
 
   const accuser = players[accuserId];
   const suspect = players[suspectId];
-  const currPlayerIsAccuser = currPlayer.id === accuserId;
+  const currPlayerIsAccuser = currPlayer?.id === accuserId;
   const showingResults = accusationResult !== undefined && accusationResult !== null;
 
   const onSelectDetail = (type, value) => {

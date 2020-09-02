@@ -13,9 +13,11 @@ import GameEndView from './GameEndView';
 import InitialSceneTilesView from './InitialSceneTilesView';
 import LocationView from './LocationView';
 import ReplaceSceneView from './ReplaceSceneView';
+import ShowRolesView from './ShowRolesView';
 import {
   GAME_STATE_GAME_END,
   STATE_DECEPTION_EXPLAIN_RULES,
+  STATE_DECEPTION_SHOW_ROLES,
   STATE_DECEPTION_CHOOSE_MEANS_EVIDENCE,
   STATE_DECEPTION_WITNESSING,
   STATE_DECEPTION_SCIENTIST_CAUSE_OF_DEATH,
@@ -36,13 +38,19 @@ function DeceptionBoard() {
   const spectatorUsers = useSelector(spectatorUsersSelector);
 
   const { playersReady, players } = gameData;
-  const showReadyCheckmarks = gameState === STATE_DECEPTION_EXPLAIN_RULES;
+  const showReadyCheckmarks = [
+    STATE_DECEPTION_EXPLAIN_RULES,
+    STATE_DECEPTION_SHOW_ROLES,
+  ].includes(gameState);
 
   return (
     <Row>
       <Col sm={8} md={9} className='main-panel py-5'>
         {
           gameState === STATE_DECEPTION_EXPLAIN_RULES && <RulesView />
+        }
+        {
+          gameState === STATE_DECEPTION_SHOW_ROLES && <ShowRolesView />
         }
         {
           gameState === STATE_DECEPTION_CHOOSE_MEANS_EVIDENCE && <ChooseMeansView />
@@ -69,15 +77,13 @@ function DeceptionBoard() {
       <Col sm={4} md={3} className='main-panel text-center py-5'>
         <h3><u>Players</u></h3>
         {
-          Object.values(players).map(player =>
-            <>
+          Object.values(players).filter(player => player.connected).map(player =>
+            <div key={player.id}>
               <PlayerCheckboxLabel
-                key={player.id}
                 checked={showReadyCheckmarks && !!playersReady[player.id]}
                 player={player}
               />
-              <br />
-            </>
+            </div>
           )
         }
         {

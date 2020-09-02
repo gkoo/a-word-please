@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { ROLE_SCIENTIST, ROLE_MURDERER } from '../constants';
+import { ROLE_SCIENTIST, ROLE_MURDERER, ROLE_ACCOMPLICE, ROLE_WITNESS } from '../constants';
 
 export const alertMessageSelector = state => state.alertMessage;
 export const debugEnabledSelector = state => state.debugEnabled;
@@ -164,8 +164,7 @@ export const currPlayerIsActivePlayerSelector = createSelector(
   currUserIsSpectatorSelector,
   (gameData, currPlayer, isSpectator) => {
     if (isSpectator) { return false; }
-    if (!currPlayer) { return false; }
-    return gameData?.activePlayerId === currPlayer.id;
+    return gameData?.activePlayerId === currPlayer?.id;
   }
 );
 export const spectrumGuessSelector = createSelector(
@@ -178,12 +177,20 @@ export const murdererSelector = createSelector(
   playersSelector,
   players => Object.values(players).find(player => player.role === ROLE_MURDERER),
 );
+export const accompliceSelector = createSelector(
+  playersSelector,
+  players => Object.values(players).find(player => player.role === ROLE_ACCOMPLICE),
+);
 export const scientistSelector = createSelector(
   playersSelector,
   players => Object.values(players).find(player => player.role === ROLE_SCIENTIST),
 );
+export const witnessSelector = createSelector(
+  playersSelector,
+  players => Object.values(players).find(player => player.role === ROLE_WITNESS),
+);
 export const currPlayerIsScientistSelector = createSelector(
   scientistSelector,
   currPlayerSelector,
-  (scientist, currPlayer) => scientist.id === currPlayer.id,
+  (scientist, currPlayer) => scientist.id === currPlayer?.id,
 );

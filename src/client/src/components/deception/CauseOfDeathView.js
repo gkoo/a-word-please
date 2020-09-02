@@ -33,7 +33,7 @@ function CauseOfDeathView() {
       throw new Error('Tried to submit an empty cause of death!');
     }
 
-    socket.emit('handlePlayerAction', {
+    socket.emit('playerAction', {
       action: 'selectCauseOfDeath',
       causeOfDeath: selectedCauseOfDeath,
     });
@@ -48,8 +48,8 @@ function CauseOfDeathView() {
     <>
       <h1>Hi Scientist</h1>
       <p>The murderer is: {murdererPlayer.name}</p>
-      <p>The method of murder is: {gameData.murderMethod}</p>
-      <p>The key evidence is: {gameData.keyEvidence}</p>
+      <p>The method of murder is: {gameData.murderMethod.label}</p>
+      <p>The key evidence is: {gameData.keyEvidence.label}</p>
       <p>Choose a cause of death based on the method of murder and key evidence.</p>
 
       <Row>

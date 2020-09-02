@@ -1,3 +1,5 @@
+const Tile = require('./tile');
+
 module.exports = [
   {
     label: 'Social Relationship',
@@ -9,6 +11,7 @@ module.exports = [
       'Lovers',
       'Strangers',
     ],
+    type: Tile.TYPE_SCENE,
   },
   {
     label: 'Victim\'s Build',
@@ -20,6 +23,7 @@ module.exports = [
       'Disfigured',
       'Fit',
     ],
+    type: Tile.TYPE_SCENE,
   },
   {
     label: 'Sudden Incident',
@@ -31,6 +35,7 @@ module.exports = [
       'Scream',
       'Nothing',
     ],
+    type: Tile.TYPE_SCENE,
   },
   {
     label: 'Victim\'s Identity',
@@ -42,6 +47,7 @@ module.exports = [
       'Male',
       'Female',
     ],
+    type: Tile.TYPE_SCENE,
   },
   {
     label: 'Personality',
@@ -53,6 +59,7 @@ module.exports = [
       'Forceful',
       'Perverted',
     ],
+    type: Tile.TYPE_SCENE,
   },
   {
     label: 'Trace at the Scene',
@@ -64,6 +71,7 @@ module.exports = [
       'Bodily Fluid',
       'Scar',
     ],
+    type: Tile.TYPE_SCENE,
   },
   {
     label: 'Hint on Corpse',
@@ -75,6 +83,7 @@ module.exports = [
       'Partial',
       'All-over',
     ],
+    type: Tile.TYPE_SCENE,
   },
   {
     label: 'Victim\'s Expression',
@@ -86,6 +95,7 @@ module.exports = [
       'Blank',
       'Angry',
     ],
+    type: Tile.TYPE_SCENE,
   },
   {
     label: 'Victim\'s Clothes',
@@ -97,6 +107,7 @@ module.exports = [
       'Bizarre',
       'Naked',
     ],
+    type: Tile.TYPE_SCENE,
   },
   {
     label: 'In Progress',
@@ -108,6 +119,7 @@ module.exports = [
       'Visit',
       'Dining',
     ],
+    type: Tile.TYPE_SCENE,
   },
   {
     label: 'State of the Scene',
@@ -119,6 +131,7 @@ module.exports = [
       'Disorderly',
       'Tidy',
     ],
+    type: Tile.TYPE_SCENE,
   },
   {
     label: 'Duration of Crime',
@@ -130,6 +143,7 @@ module.exports = [
       'Few Days',
       'Unclear',
     ],
+    type: Tile.TYPE_SCENE,
   },
   {
     label: 'Evidence Left Behind',
@@ -141,6 +155,7 @@ module.exports = [
       'Personal',
       'Unrelated',
     ],
+    type: Tile.TYPE_SCENE,
   },
   {
     label: 'Weather',
@@ -152,6 +167,7 @@ module.exports = [
       'Cold',
       'Hot',
     ],
+    type: Tile.TYPE_SCENE,
   },
   {
     label: 'Time of Death',
@@ -163,6 +179,7 @@ module.exports = [
       'Evening',
       'Night',
     ],
+    type: Tile.TYPE_SCENE,
   },
   {
     label: 'Corpse Condition',
@@ -174,6 +191,7 @@ module.exports = [
       'Intact',
       'Twisted',
     ],
+    type: Tile.TYPE_SCENE,
   },
   {
     label: 'Noticed by Bystander',
@@ -185,6 +203,7 @@ module.exports = [
       'Action',
       'Nothing',
     ],
+    type: Tile.TYPE_SCENE,
   },
   {
     label: 'General Impression',
@@ -196,5 +215,6 @@ module.exports = [
       'Horrible',
       'Suspenseful',
     ],
+    type: Tile.TYPE_SCENE,
   },
 ];

@@ -345,9 +345,9 @@ const testDeceptionGameData = {
     //selectedOption: 'Lovers',
     //type: constants.TILE_DECEPTION_SCENE,
   //},
-  playersReady: {
-    'gordon': 1
-  },
+  //playersReady: {
+    //'gordon': 1
+  //},
   players: {
     gordon: {
       id: 'gordon',
@@ -404,7 +404,7 @@ const testDeceptionGameData = {
       name: 'Yuriko',
       color: 'purple',
       connected: true,
-      role: constants.ROLE_MURDERER,
+      role: constants.ROLE_ACCOMPLICE,
       methodCards: [
         {
           id: 5,
@@ -455,7 +455,7 @@ const testDeceptionGameData = {
       name: 'AJ',
       color: 'pink',
       connected: true,
-      role: constants.ROLE_INVESTIGATOR,
+      role: constants.ROLE_WITNESS,
       methodCards: [
         {
           id: 9,
@@ -506,7 +506,7 @@ const testDeceptionGameData = {
       name: 'Willy',
       color: 'red',
       connected: true,
-      role: constants.ROLE_INVESTIGATOR,
+      role: constants.ROLE_MURDERER,
       methodCards: [
         {
           id: 13,
@@ -619,15 +619,16 @@ const testDeceptionGameData = {
     type: constants.TILE_DECEPTION_LOCATION,
   },
   //state: constants.STATE_DECEPTION_EXPLAIN_RULES,
+  //state: constants.STATE_DECEPTION_SHOW_ROLES,
   //state: constants.STATE_DECEPTION_CHOOSE_MEANS_EVIDENCE,
   //state: constants.STATE_DECEPTION_WITNESSING,
   //state: constants.STATE_DECEPTION_SCIENTIST_CAUSE_OF_DEATH,
-  //state: constants.STATE_DECEPTION_SCIENTIST_LOCATION,
+  state: constants.STATE_DECEPTION_SCIENTIST_LOCATION,
   //state: constants.STATE_DECEPTION_SCIENTIST_SCENE_TILES,
   //state: constants.STATE_DECEPTION_DELIBERATION,
   //state: constants.STATE_DECEPTION_REPLACE_SCENE,
-  state: constants.GAME_STATE_GAME_END,
-}
+  //state: constants.GAME_STATE_GAME_END,
+};
 
 //const testGameDataToUse = testAwpGameData;
 //const testGameDataToUse = testWerewolfGameData;

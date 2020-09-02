@@ -27,9 +27,9 @@ function DeliberationView() {
     totalNumRounds,
   } = gameData;
 
-  const onEndRound = () => socket.emit('handlePlayerAction', { action: 'endRound' });
+  const onEndGame = () => socket.emit('playerAction', { action: 'endGame' });
 
-  const onEndAccusation = () => socket.emit('endAccusation');
+  const onEndAccusation = () => socket.emit('playerAction', { action: 'endAccusation' });
 
   const onAccusedDetailsChange = (type, value) => socket.emit(
     'changeAccuseDetails',
@@ -41,7 +41,7 @@ function DeliberationView() {
   );
 
   const onConfirmAccusation = () => socket.emit(
-    'handlePlayerAction',
+    'playerAction',
     { action: 'confirmAccusation' }
   );
 
@@ -51,7 +51,7 @@ function DeliberationView() {
         currPlayerIsScientist && roundNum < totalNumRounds &&
           <div className='text-center my-2'>
               <p>Forensic Scientist: When everyone is done making their case, start the next round.</p>
-              <Button onClick={onEndRound}>
+              <Button onClick={onEndGame}>
                 Start Next Round
               </Button>
           </div>
@@ -63,12 +63,12 @@ function DeliberationView() {
                 Forensic Scientist: This is the last round. When everyone is done making an
                 accusation, please end the round
               </p>
-              <Button onClick={onEndRound}>
-                End Round
+              <Button onClick={onEndGame}>
+                End Game
               </Button>
           </div>
       }
-      <TilesView showHeaders={true}Card/>
+      <TilesView showHeaders={true}/>
       <hr />
       <h3>Players</h3>
       <p>

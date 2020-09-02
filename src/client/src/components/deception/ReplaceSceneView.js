@@ -29,7 +29,7 @@ function ReplaceSceneView() {
   };
 
   const onSubmit = (newSceneSelection) => {
-    socket.emit('handlePlayerAction', {
+    socket.emit('playerAction', {
       action: 'replaceSceneTile',
       newSceneSelection,
       tileIdToReplace,

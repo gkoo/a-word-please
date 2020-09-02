@@ -13,7 +13,7 @@ class Tile {
 
   selectOption(option) {
     if (!this.options.includes(option)) {
-      raise 'Tried to select non-existent option';
+      throw 'Tried to select non-existent option';
     }
 
     this.selectedOption = option;

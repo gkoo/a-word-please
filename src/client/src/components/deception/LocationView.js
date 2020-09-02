@@ -26,11 +26,11 @@ function LocationView() {
   };
 
   const onSubmit = () => {
-    if (!selectedLocationTile) {
-      throw new Error('Tried to submit an empty cause of death!');
+    if (selectedLocationTile === null) {
+      throw new Error('Tried to submit an empty location!');
     }
 
-    socket.emit('handlePlayerAction', {
+    socket.emit('playerAction', {
       action: 'selectLocation',
       locationTileId: selectedLocationTile,
       location: selectedLocation,
@@ -46,8 +46,8 @@ function LocationView() {
     <>
       <h1>Hi Scientist</h1>
       <p>The murderer is: {murdererPlayer.name}</p>
-      <p>The method of murder is: {gameData.murderMethod}</p>
-      <p>The key evidence is: {gameData.keyEvidence}</p>
+      <p>The method of murder is: {gameData.murderMethod.label}</p>
+      <p>The key evidence is: {gameData.keyEvidence.label}</p>
       <p>
         Choose a location based on the method of murder and key evidence. You can only choose one.
       </p>
@@ -74,7 +74,7 @@ function LocationView() {
       </CardDeck>
 
       <div className='text-center mt-3'>
-        <Button disabled={!!selectedLocationTile || !!selectedLocation} onClick={onSubmit}>
+        <Button disabled={!selectedLocationTile && !selectedLocation} onClick={onSubmit}>
           OK
         </Button>
       </div>

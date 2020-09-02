@@ -1,3 +1,5 @@
+const Tile = require('./tile');
+
 module.exports = [
   {
     label: 'Location of Crime',
@@ -9,6 +11,7 @@ module.exports = [
       'Hospital',
       'Building Site',
     ],
+    type: Tile.TYPE_LOCATION,
   },
   {
     label: 'Location of Crime',
@@ -20,6 +23,7 @@ module.exports = [
       'Elevator',
       'Toilet',
     ],
+    type: Tile.TYPE_LOCATION,
   },
   {
     label: 'Location of Crime',
@@ -31,6 +35,7 @@ module.exports = [
       'Woods',
       'Bank',
     ],
+    type: Tile.TYPE_LOCATION,
   },
   {
     label: 'Location of Crime',
@@ -42,5 +47,6 @@ module.exports = [
       'Kitchen',
       'Balcony',
     ],
+    type: Tile.TYPE_LOCATION,
   },
 ];

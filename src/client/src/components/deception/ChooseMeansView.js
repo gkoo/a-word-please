@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import Button from 'react-bootstrap/Button'
-import ToggleButton from 'react-bootstrap/ToggleButton'
-import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup'
+import Card from 'react-bootstrap/Card'
 
 import {
   currPlayerSelector,
@@ -11,7 +10,10 @@ import {
 } from '../../store/selectors';
 
 import {
+  DECEPTION_ROLE_LABELS,
+  ROLE_INVESTIGATOR,
   ROLE_MURDERER,
+  ROLE_SCIENTIST,
 } from '../../constants';
 
 function ChooseMeansView() {
@@ -25,12 +27,10 @@ function ChooseMeansView() {
     return <h1>Waiting for the murderer to choose means and evidence...</h1>;
   }
 
-  const onMethodChange = (value) => setSelectedMethod(value);
-  const onEvidenceChange = (value) => setSelectedEvidence(value);
   const onSubmit = () => {
     if (!selectedMethod || !selectedEvidence) { return; }
 
-    socket.emit('handlePlayerAction', {
+    socket.emit('playerAction', {
       action: 'chooseMeansAndEvidence',
       methodId: selectedMethod,
       evidenceId: selectedEvidence,
@@ -39,27 +39,56 @@ function ChooseMeansView() {
 
   return (
     <>
-      <h1>Please choose your means of murder and key evidence</h1>
+      <h1>You are the {DECEPTION_ROLE_LABELS[ROLE_MURDERER]}!</h1>
 
-      <h3>Methods of Murder</h3>
-      <ToggleButtonGroup name='method-toggle' onChange={onMethodChange} type='radio'>
-        {
-          currPlayer?.methodCards?.map(method =>
-            <ToggleButton key={method.id} value={method.id}>{method.label}</ToggleButton>
-          )
-        }
-      </ToggleButtonGroup>
+      <p>
+        Choose the details of your grisly murder. The {DECEPTION_ROLE_LABELS[ROLE_SCIENTIST]} will
+        use these details to provide clues to the {DECEPTION_ROLE_LABELS[ROLE_INVESTIGATOR]}s.
+      </p>
 
-      <h3>Key Evidence</h3>
-      <ToggleButtonGroup name='evidence-toggle' onChange={onEvidenceChange} type='radio'>
-        {
-          currPlayer?.evidenceCards?.map(evidence =>
-            <ToggleButton key={evidence.id} value={evidence.id}>{evidence.label}</ToggleButton>
-          )
-        }
-      </ToggleButtonGroup>
+      <Card className='my-2'>
+        <Card.Body>
+          <Card.Title>
+            <h3>Methods of Murder</h3>
+          </Card.Title>
+          <p>Your instrument of death. Choose wisely.</p>
+          {
+            currPlayer?.methodCards?.map(method =>
+              <Button
+                variant='outline-danger'
+                className='mx-1'
+                active={selectedMethod === method.id}
+                onClick={() => setSelectedMethod(method.id)}
+              >
+                {method.label}
+              </Button>
+            )
+          }
+        </Card.Body>
+      </Card>
 
-      <div>
+      <Card className='my-2'>
+        <Card.Body>
+          <Card.Title>
+            <h3>Key Evidence</h3>
+          </Card.Title>
+          <p>No killer is perfect. What did you leave behind?</p>
+          {
+            currPlayer?.evidenceCards?.map(evidence =>
+              <Button
+                variant='outline-danger'
+                className='mx-1'
+                active={selectedEvidence === evidence.id}
+                onClick={() => setSelectedEvidence(evidence.id)}
+              >
+                {evidence.label}
+              </Button>
+            )
+          }
+        </Card.Body>
+      </Card>
+
+      <div className='text-center mt-3'>
         <Button onClick={onSubmit} disabled={!selectedMethod || !selectedEvidence}>OK</Button>
       </div>
     </>
