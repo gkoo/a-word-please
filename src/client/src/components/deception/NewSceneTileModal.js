@@ -17,7 +17,7 @@ function NewSceneTileModal({ show, onClose }) {
   const gameData = useSelector(gameDataSelector);
   const { newSceneTile } = gameData;
 
-  const onTileSelectionChange = (selection, tileId) => {
+  const onTileSelectionChange = (selection) => {
     setSceneSelection(selection);
   };
 
@@ -43,7 +43,12 @@ function NewSceneTileModal({ show, onClose }) {
           </Col>
         </Row>
       </Modal.Body>
-      <Button onClick={onSubmit}>Confirm Scene Tile Selection</Button>
+      {
+        sceneSelection &&
+          <Button onClick={onSubmit}>
+            Confirm Scene Tile Selection
+          </Button>
+      }
     </Modal>
   );
 }

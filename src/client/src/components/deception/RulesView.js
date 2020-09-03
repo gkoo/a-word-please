@@ -3,19 +3,40 @@ import { useSelector } from 'react-redux';
 
 import Button from 'react-bootstrap/Button';
 
-import { currPlayerSelector, gameDataSelector, socketSelector } from '../../store/selectors';
+import { ROLE_ACCOMPLICE, ROLE_WITNESS } from '../../constants';
+import {
+  currPlayerSelector,
+  currUserIsSpectatorSelector,
+  gameDataSelector,
+  socketSelector,
+} from '../../store/selectors';
 
 function RulesView() {
-  const [playWithAccomplice, setPlayWithAccomplice] = useState(false);
-  const [playWithWitness, setPlayWithWitness] = useState(false);
   const currPlayer = useSelector(currPlayerSelector);
+  const currUserIsSpectator = useSelector(currUserIsSpectatorSelector);
   const gameData = useSelector(gameDataSelector);
   const socket = useSelector(socketSelector);
 
-  const { playersReady } = gameData;
+  const { includeAccomplice, includeWitness, playersReady } = gameData;
 
   const onReady = () => {
     socket.emit('playerAction', { action: 'ready' });
+  };
+
+  const togglePlayWithWitness = () => {
+    socket.emit('playerAction', {
+      action: 'toggleRole',
+      role: ROLE_WITNESS,
+      shouldInclude: !includeWitness,
+    });
+  };
+
+  const togglePlayWithAccomplice = () => {
+    socket.emit('playerAction', {
+      action: 'toggleRole',
+      role: ROLE_ACCOMPLICE,
+      shouldInclude: !includeAccomplice,
+    });
   };
 
   return (
@@ -25,34 +46,32 @@ function RulesView() {
       <p>One person will be murderer.</p>
       <p>Everyone else investigators.</p>
 
-      {/* Uncomment when ready
       <div className='text-center my-3'>
         <Button
-          active={playWithAccomplice}
+          active={includeAccomplice}
           variant='outline-info'
           className='mx-3'
-          onClick={() => setPlayWithAccomplice(!playWithAccomplice)}
+          onClick={() => togglePlayWithAccomplice()}
         >
           Play with Accomplice
         </Button>
         <Button
-          active={playWithWitness}
+          active={includeWitness}
           variant='outline-info'
-          onClick={() => setPlayWithWitness(!playWithWitness)}
+          onClick={() => togglePlayWithWitness()}
         >
           Play with Witness
         </Button>
       </div>
-      */}
 
       {
-        !playersReady[currPlayer.id] &&
+        !currUserIsSpectator && !playersReady[currPlayer?.id] &&
           <Button onClick={onReady}>
             Ready?
           </Button>
       }
       {
-        playersReady[currPlayer.id] &&
+        !currUserIsSpectator && playersReady[currPlayer?.id] &&
           <Button disabled>
             Waiting for others...
           </Button>

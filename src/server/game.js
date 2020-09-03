@@ -96,7 +96,8 @@ class Game {
   }
 
   endGame() {
-    throw new Error('endGame not implemented!');
+    this.state = Game.STATE_GAME_END;
+    this.broadcastGameDataToPlayers();
   }
 
   setPending() {

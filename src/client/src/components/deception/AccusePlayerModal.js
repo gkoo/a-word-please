@@ -97,17 +97,17 @@ function AccusePlayerModal({ show, onDetailsChange, onConfirmAccusation, endAccu
               {
                 suspect.evidenceCards.map(evidenceCard => {
                   let isActiveEvidence;
+
                   if (currPlayerIsAccuser) {
                     isActiveEvidence = selectedKeyEvidence === evidenceCard.label;
                   } else {
-                    isActiveEvidence = accusedEvidence;
+                    isActiveEvidence = accusedEvidence === evidenceCard.label;
                   }
 
                   return (
                     <Button
                       variant='outline-info'
                       size='sm'
-                      disabled={showingResults || !currPlayerIsAccuser}
                       active={isActiveEvidence}
                       onClick={() => onSelectDetail('evidence', evidenceCard.label)}
                       block

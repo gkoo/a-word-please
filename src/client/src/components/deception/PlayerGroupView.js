@@ -7,13 +7,13 @@ import PlayerView from './PlayerView';
 import { ROLE_SCIENTIST } from '../../constants';
 import { playersSelector } from '../../store/selectors';
 
-function PlayerGroupView() {
+function PlayerGroupView(props) {
   const players = useSelector(playersSelector);
   const nonScientistPlayers = Object.values(players).filter(player => player.role !== ROLE_SCIENTIST);
 
   return (
     <CardDeck>
-      {nonScientistPlayers.map(player => <PlayerView key={player.id} player={player} />)}
+      {nonScientistPlayers.map(player => <PlayerView key={player.id} player={player} {...props} />)}
     </CardDeck>
   );
 }

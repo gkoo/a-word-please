@@ -49,7 +49,9 @@ function ReplaceSceneView() {
           currPlayerIsScientist &&
             <>
               <p>
-                Forensic Scientist: Choose a scene tile to replace.
+                Forensic Scientist: Choose a scene tile to replace. If a scene tile isn't
+                particularly helpful, or perhaps it was leading the investigators astray, remove it
+                and replace it with a new randomly drawn scene tile.
               </p>
               <p>
                 <Button

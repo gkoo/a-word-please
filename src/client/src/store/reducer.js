@@ -190,7 +190,7 @@ const testDeceptionGameData = {
   accuserId: 'yuriko',
   accusedMethod: 'Sneezing',
   accusationActive: false,
-  accusationResult: false,
+  accusationResult: true,
   suspectId: 'willy',
   causeOfDeathTile: {
     label: 'Cause Of Death',
@@ -354,7 +354,7 @@ const testDeceptionGameData = {
       id: 'gordon',
       name: 'Gordon',
       color: 'red',
-      role: constants.ROLE_SCIENTIST,
+      role: constants.ROLE_MURDERER,
       methodCards: [
         {
           id: 1,
@@ -507,7 +507,7 @@ const testDeceptionGameData = {
       name: 'Willy',
       color: 'red',
       connected: true,
-      role: constants.ROLE_MURDERER,
+      role: constants.ROLE_SCIENTIST,
       methodCards: [
         {
           id: 13,
@@ -626,9 +626,11 @@ const testDeceptionGameData = {
   //state: constants.STATE_DECEPTION_SCIENTIST_CAUSE_OF_DEATH,
   //state: constants.STATE_DECEPTION_SCIENTIST_LOCATION,
   //state: constants.STATE_DECEPTION_SCIENTIST_SCENE_TILES,
-  state: constants.STATE_DECEPTION_DELIBERATION,
+  //state: constants.STATE_DECEPTION_DELIBERATION,
   //state: constants.STATE_DECEPTION_REPLACE_SCENE,
-  //state: constants.GAME_STATE_GAME_END,
+  state: constants.GAME_STATE_GAME_END,
+  witnessSuspectId: 'aj',
+  witnessGuessCorrect: true,
 };
 
 //const testGameDataToUse = testAwpGameData;

@@ -31,14 +31,14 @@ function DeliberationView() {
     totalNumRounds,
   } = gameData;
 
-  const onEndGame = () => socket.emit('playerAction', { action: 'endGame' });
+  const onEndRound = () => socket.emit('playerAction', { action: 'endRound' });
 
   const onEndAccusation = () => socket.emit('playerAction', { action: 'endAccusation' });
 
   const onAccusedDetailsChange = (type, value) => socket.emit(
-    'changeAccuseDetails',
+    'playerAction',
     {
-      action: 'updateAccusedMurderMethod',
+      action: 'changeAccuseDetails',
       type,
       value,
     }
@@ -49,27 +49,27 @@ function DeliberationView() {
     { action: 'confirmAccusation' }
   );
 
+  const isLastRound = roundNum >= totalNumRounds;
+
   return (
     <>
       {
-        currPlayerIsScientist && roundNum < totalNumRounds &&
+        currPlayerIsScientist && !isLastRound &&
           <div className='text-center my-2'>
-              <p>Forensic Scientist: When everyone is done making their case, start the next round.</p>
-              <Button onClick={onEndGame}>
-                Start Next Round
-              </Button>
-          </div>
-      }
-      {
-        currPlayerIsScientist && roundNum >= totalNumRounds &&
-          <div className='text-center my-2'>
-              <p>
-                Forensic Scientist: This is the last round. When everyone is done making an
-                accusation, please end the round
-              </p>
-              <Button onClick={onEndGame}>
-                End Game
-              </Button>
+            {
+              !isLastRound &&
+                <p>Forensic Scientist: When everyone is done making their case, start the next round.</p>
+            }
+            {
+              isLastRound &&
+                <p>
+                  Forensic Scientist: This is the last round. When everyone is done making an
+                  accusation, please end the round
+                </p>
+            }
+            <Button onClick={onEndRound}>
+              { roundNum < totalNumRounds ? 'Start Next Round' : 'End Game' }
+            </Button>
           </div>
       }
       <TilesView showHeaders={!hideRules} />
@@ -81,9 +81,13 @@ function DeliberationView() {
             <p>
               At any time during deliberation, you can accuse another player who you think is the
               murderer. You are allowed to make an accusation exactly one time. When you do, you must
-              specify the murder method and the key evidence that you think the murderer chose. If the
-              guess is correct, the investigators win the game! If the guess is incorrect, you receive no
-              additional information, and you are not allowed to accuse for the rest of the game.
+              specify the murder method and the key evidence that you think the murderer chose.
+            </p>
+            <p>
+              If the guess is correct, the investigators win the game! If the guess is incorrect,
+              you receive no additional information&mdash;you do not get to learn if you guessed
+              only the evidence correct, only the player correct, etc.&mdash;and you are not allowed
+              to accuse for the rest of the game.
             </p>
             <p>
               The murderer is allowed to make an accusation as well. The forensic scientist is not allowed
@@ -91,7 +95,7 @@ function DeliberationView() {
             </p>
           </>
       }
-      <PlayerGroupView />
+      <PlayerGroupView showAccuseButtons={true} />
       <AccusePlayerModal
         show={accusationActive}
         endAccusation={onEndAccusation}

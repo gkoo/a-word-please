@@ -170,12 +170,6 @@ class AWPGame extends Game {
     this.broadcastGameDataToPlayers();
   }
 
-  endGame() {
-    console.log('end game');
-    this.state = Game.STATE_GAME_END;
-    this.broadcastGameDataToPlayers();
-  }
-
   // Send all players back to the lobby
   setPending() {
     this.state = Game.STATE_PENDING;

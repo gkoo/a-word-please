@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import Button from 'react-bootstrap/Button'
 import CardDeck from 'react-bootstrap/CardDeck';
 
+import PlayerGroupView from './PlayerGroupView';
 import TileCard from './TileCard';
 import {
   currPlayerIsScientistSelector,
@@ -38,8 +39,12 @@ function LocationView() {
   };
 
   if (!currPlayerIsScientist) {
-    // TODO: should show everyone's clue cards here?
-    return <h1>Waiting for the scientist to choose initial tiles...</h1>;
+    return (
+      <>
+        <h1 className='mb-5'>Waiting for the scientist to choose initial tiles...</h1>;
+        <PlayerGroupView showAccuseButtons={false}/>
+      </>
+    )
   }
 
   return (

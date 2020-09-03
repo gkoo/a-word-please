@@ -7,16 +7,22 @@ import Table from 'react-bootstrap/Table'
 import TileCard from './TileCard';
 import {
   gameDataSelector,
+  scientistSelector,
 } from '../../store/selectors';
 
 function SceneTileReplacedModal({ show, onClose }) {
   const gameData = useSelector(gameDataSelector);
+  const scientist = useSelector(scientistSelector);
 
   const { oldSceneTile, newSceneTile } = gameData;
 
   return (
     <Modal show={show} onHide={onClose}>
-      <Modal.Header closeButton/>
+      <Modal.Header closeButton>
+        <Modal.Title>
+          {scientist.name} replaced a scene tile!
+        </Modal.Title>
+      </Modal.Header>
       <Modal.Body>
         <Table bordered>
           <thead>

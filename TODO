@@ -1,3 +1,17 @@
+# Deception
+
+Prevent accusations during Replace Scene
+
+show PlayerGroupView while Murderer is making choices
+
+In ChoosingMeansView, make Key Evidence buttons diff color
+
+Make Scientist info prettier
+
+In WitnessGuessView, why can non-murderer select a toggle button?
+
+Figure out Witness Guessing
+
 # AWP
 
 remove point if wrong guess on last turn

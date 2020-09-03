@@ -190,6 +190,11 @@ export const witnessSelector = createSelector(
   playersSelector,
   players => Object.values(players).find(player => player.role === ROLE_WITNESS),
 );
+export const currPlayerIsMurdererSelector = createSelector(
+  murdererSelector,
+  currPlayerSelector,
+  (murderer, currPlayer) => murderer.id === currPlayer?.id,
+);
 export const currPlayerIsScientistSelector = createSelector(
   scientistSelector,
   currPlayerSelector,

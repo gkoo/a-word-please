@@ -5,14 +5,17 @@ import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 
-import { ROLE_SCIENTIST } from '../../constants';
+import {
+  DECEPTION_ROLE_LABELS,
+  ROLE_SCIENTIST,
+} from '../../constants';
 import {
   currPlayerSelector,
   gameDataSelector,
   socketSelector,
 } from '../../store/selectors';
 
-function PlayerView({ player }) {
+function PlayerView({ player, showAccuseButtons, showRoles }) {
   const gameData = useSelector(gameDataSelector);
   const currPlayer = useSelector(currPlayerSelector);
   const socket = useSelector(socketSelector);
@@ -31,14 +34,25 @@ function PlayerView({ player }) {
   return (
     <Card className='deception-player-card my-1'>
       <Card.Body>
-        <h5>{player.name}</h5>
+        <Card.Title>
+          {player.name}
+          {
+            showRoles &&
+              <>
+                <br />
+                <Badge variant='warning'>{DECEPTION_ROLE_LABELS[player.role]}</Badge>
+              </>
+          }
+        </Card.Title>
         <p>
           <strong>Murder Methods</strong>:{' '}
           {
             player.methodCards.map(card =>
-              <Badge variant='danger' className={className}>
-                {card.label}
-              </Badge>
+              <h5>
+                <Badge variant='danger' className={className}>
+                  {card.label}
+                </Badge>
+              </h5>
             )
           }
         </p>
@@ -46,15 +60,17 @@ function PlayerView({ player }) {
           <strong>Key Evidence</strong>:{' '}
           {
             player.evidenceCards.map(card =>
-              <Badge variant='info' className={className}>
-                {card.label}
-              </Badge>
+              <h5>
+                <Badge variant='light' className={className}>
+                  {card.label}
+                </Badge>
+              </h5>
             )
           }
         </p>
       </Card.Body>
       {
-        !alreadyAccused && !currPlayerIsScientist && !playerIsCurrPlayer &&
+        showAccuseButtons && !alreadyAccused && !currPlayerIsScientist && !playerIsCurrPlayer &&
           <Card.Footer className='text-center'>
             <Button variant='danger' onClick={accusePlayer}>
               Accuse

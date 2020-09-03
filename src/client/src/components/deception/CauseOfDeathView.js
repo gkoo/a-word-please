@@ -5,6 +5,7 @@ import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
+import PlayerGroupView from './PlayerGroupView';
 import TileCard from './TileCard';
 import {
   currPlayerSelector,
@@ -40,8 +41,12 @@ function CauseOfDeathView() {
   };
 
   if (!currPlayerIsScientist) {
-    // TODO: should show everyone's clue cards here?
-    return <h1>Waiting for the scientist to choose initial tiles...</h1>;
+    return (
+      <>
+        <h1 className='mb-5'>Waiting for the scientist to choose initial tiles...</h1>;
+        <PlayerGroupView showAccuseButtons={false}/>
+      </>
+    )
   }
 
   return (

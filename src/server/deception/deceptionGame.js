@@ -74,8 +74,11 @@ class DeceptionGame extends Game {
     this.murderMethod = null;
     this.keyEvidence = null;
     this.accuseLog = {};
+    this.accusationActive = false;
+    this.accusationResult = undefined;
+    this.witnessGuessCorrect = undefined;
+    this.witnessSuspect = null;
 
-    this.assignRoles();
     this.dealCards();
     this.createTiles();
     this.state = DeceptionGame.STATE_EXPLAIN_RULES;
@@ -132,6 +135,12 @@ class DeceptionGame extends Game {
       DeceptionGame.ROLE_SCIENTIST,
       DeceptionGame.ROLE_MURDERER,
     ];
+    if (this.includeAccomplice) {
+      rolesToUse.push(DeceptionGame.ROLE_ACCOMPLICE);
+    }
+    if (this.includeWitness) {
+      rolesToUse.push(DeceptionGame.ROLE_WITNESS);
+    }
     const numPlayers = Object.values(this.players).length;
     const numInvestigators = numPlayers - rolesToUse.length;
     let i;
@@ -182,6 +191,8 @@ class DeceptionGame extends Game {
     switch (data.action) {
       case 'ready':
         return this.playerReady(playerId);
+      case 'toggleRole':
+        return this.toggleRole(playerId, data);
       case 'acknowledgeRole':
         return this.acknowledgeRole(playerId);
       case 'chooseMeansAndEvidence':
@@ -204,6 +215,10 @@ class DeceptionGame extends Game {
         return this.confirmAccusation(playerId);
       case 'endAccusation':
         return this.endAccusation();
+      case 'setWitnessGuess':
+        return this.setWitnessGuess(playerId, data);
+      case 'guessWitness':
+        return this.guessWitness(playerId, data);
     }
   }
 
@@ -219,6 +234,7 @@ class DeceptionGame extends Game {
     this.playersReady = {};
     switch (this.state) {
       case DeceptionGame.STATE_EXPLAIN_RULES:
+        this.assignRoles();
         this.state = DeceptionGame.STATE_SHOW_ROLES;
         break;
       case DeceptionGame.STATE_SHOW_ROLES:
@@ -228,6 +244,16 @@ class DeceptionGame extends Game {
         throw 'Unexpected state change!'
     }
     setTimeout(() => this.broadcastGameDataToPlayers(), 500);
+  }
+
+  toggleRole(playerId, { role, shouldInclude }) {
+    if (role === DeceptionGame.ROLE_WITNESS) {
+      this.includeWitness = shouldInclude;
+    }
+    if (role === DeceptionGame.ROLE_ACCOMPLICE) {
+      this.includeAccomplice = shouldInclude;
+    }
+    this.broadcastGameDataToPlayers();
   }
 
   acknowledgeRole(playerId) {
@@ -404,7 +430,34 @@ class DeceptionGame extends Game {
   }
 
   endAccusation() {
+    this.accuserId = null;
+    this.suspectId = null;
     this.accusationActive = false;
+    this.broadcastGameDataToPlayers();
+  }
+
+  setWitnessGuess(playerId, data) {
+    const player = this.players[playerId];
+
+    if (!player.isMurderer()) {
+      throw 'Non-murderer tried to set witness guess';
+    }
+
+    this.witnessSuspectId = this.players[data.playerId];
+    this.broadcastGameDataToPlayers();
+  }
+
+  guessWitness(playerId, data) {
+    const player = this.players[playerId];
+
+    if (!player.isMurderer()) {
+      throw 'Non-murderer tried to guess witness';
+    }
+
+
+    const witnessSuspect = this.players[this.witnessSuspectId];
+
+    this.witnessGuessCorrect = witnessSuspect.role === DeceptionGame.ROLE_WITNESS;
     this.broadcastGameDataToPlayers();
   }
 
@@ -440,6 +493,8 @@ class DeceptionGame extends Game {
       case DeceptionGame.STATE_SHOW_ROLES:
         data = {
           ...data,
+          includeAccomplice: this.includeAccomplice,
+          includeWitness: this.includeWitness,
           playersReady,
         };
         break;
@@ -476,6 +531,8 @@ class DeceptionGame extends Game {
         data = {
           ...data,
           accusationResult,
+          witnessGuessCorrect: this.witnessGuessCorrect,
+          witnessSuspectId: this.witnessSuspectId,
         };
     }
 

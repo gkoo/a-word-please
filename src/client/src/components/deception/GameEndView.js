@@ -5,20 +5,28 @@ import cx from 'classnames';
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 
+import GuessWitnessView from './GuessWitnessView';
+import PlayerGroupView from './PlayerGroupView';
 import { DECEPTION_ROLE_LABELS, ROLE_MURDERER } from '../../constants';
 import {
   gameDataSelector,
-  murdererSelector,
   playersSelector,
   socketSelector,
+  witnessSelector,
 } from '../../store/selectors';
 
 function GameEndView() {
   const gameData = useSelector(gameDataSelector);
   const players = useSelector(playersSelector);
   const socket = useSelector(socketSelector);
+  const witness = useSelector(witnessSelector);
 
-  const onNewGame = () => socket.emit('playerAction', { action: 'newGame' });
+  const onNewGame = () => socket.emit('startGame');
+
+  if (witness && gameData.accusationResult) {
+    // Time for murderer to guess who the witness is
+    return <GuessWitnessView />;
+  }
 
   return (
     <>
@@ -47,11 +55,13 @@ function GameEndView() {
         </tbody>
       </Table>
 
-      <div className='text-center mt-5'>
+      <div className='text-center my-5'>
         <Button onClick={onNewGame}>
           New Game
         </Button>
       </div>
+
+      <PlayerGroupView showRoles={true} showAccuseButtons={false} />
     </>
   );
 }

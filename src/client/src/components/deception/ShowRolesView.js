@@ -47,7 +47,7 @@ function ShowRolesView() {
           <h1>You are {article} {DECEPTION_ROLE_LABELS[currPlayer?.role]}!</h1>
       }
       {
-        !currUserIsSpectator &&
+        currUserIsSpectator &&
           <h1>You are a spectator!</h1>
       }
       {

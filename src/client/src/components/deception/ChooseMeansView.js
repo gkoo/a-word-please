@@ -4,17 +4,17 @@ import { useSelector } from 'react-redux';
 import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
 
-import {
-  currPlayerSelector,
-  socketSelector,
-} from '../../store/selectors';
-
+import PlayerGroupView from './PlayerGroupView';
 import {
   DECEPTION_ROLE_LABELS,
   ROLE_INVESTIGATOR,
   ROLE_MURDERER,
   ROLE_SCIENTIST,
 } from '../../constants';
+import {
+  currPlayerSelector,
+  socketSelector,
+} from '../../store/selectors';
 
 function ChooseMeansView() {
   const [selectedMethod, setSelectedMethod] = useState(null);
@@ -24,7 +24,12 @@ function ChooseMeansView() {
   const socket = useSelector(socketSelector);
 
   if (!currPlayerIsMurderer) {
-    return <h1>Waiting for the murderer to choose means and evidence...</h1>;
+    return (
+      <>
+        <h1 className='mb-5'>Waiting for the murderer to choose means and evidence...</h1>
+        <PlayerGroupView showAccuseButtons={false}/>
+      </>
+    );
   }
 
   const onSubmit = () => {
