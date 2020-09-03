@@ -27,6 +27,7 @@ const initialState = {
   showRolesModal: false,
   showRulesModal: false,
   socket: null,
+  userPreferences: {},
 };
 
 const testPlayersData = {
@@ -623,9 +624,9 @@ const testDeceptionGameData = {
   //state: constants.STATE_DECEPTION_CHOOSE_MEANS_EVIDENCE,
   //state: constants.STATE_DECEPTION_WITNESSING,
   //state: constants.STATE_DECEPTION_SCIENTIST_CAUSE_OF_DEATH,
-  state: constants.STATE_DECEPTION_SCIENTIST_LOCATION,
+  //state: constants.STATE_DECEPTION_SCIENTIST_LOCATION,
   //state: constants.STATE_DECEPTION_SCIENTIST_SCENE_TILES,
-  //state: constants.STATE_DECEPTION_DELIBERATION,
+  state: constants.STATE_DECEPTION_DELIBERATION,
   //state: constants.STATE_DECEPTION_REPLACE_SCENE,
   //state: constants.GAME_STATE_GAME_END,
 };
@@ -676,6 +677,7 @@ const testState = {
   showAboutModal: false,
   showRulesModal: false,
   socket: null,
+  userPreferences: {},
 };
 
 const stateToUse = useTestState ? testState : initialState;
@@ -969,6 +971,19 @@ export default function reducer(state = stateToUse, action) {
       return {
         ...state,
         gameData: newGameData,
+      };
+
+    case actions.UPDATE_USER_PREFERENCE:
+      const { userPreferences } = state;
+      const { preferenceName, preferenceValue } = action.payload;
+      userPreferences[preferenceName] = preferenceValue;
+
+      return {
+        ...state,
+        userPreferences: {
+          ...userPreferences,
+          [preferenceName]: preferenceValue,
+        },
       };
 
     default:

@@ -11,6 +11,7 @@ import {
   currPlayerIsScientistSelector,
   gameDataSelector,
   socketSelector,
+  userPreferencesSelector,
 } from '../../store/selectors';
 
 function DeliberationView() {
@@ -18,6 +19,9 @@ function DeliberationView() {
   const gameData = useSelector(gameDataSelector);
   const socket = useSelector(socketSelector);
   const currPlayerIsScientist = useSelector(currPlayerIsScientistSelector);
+  const userPreferences = useSelector(userPreferencesSelector);
+
+  const { hideRules, collapseTiles } = userPreferences;
 
   const {
     accusationActive,
@@ -68,20 +72,25 @@ function DeliberationView() {
               </Button>
           </div>
       }
-      <TilesView showHeaders={true}/>
+      <TilesView showHeaders={!hideRules} />
       <hr />
-      <h3>Players</h3>
-      <p>
-        At any time during deliberation, you can accuse another player who you think is the
-        murderer. You are allowed to make an accusation exactly one time. When you do, you must
-        specify the murder method and the key evidence that you think the murderer chose. If the
-        guess is correct, the investigators win the game! If the guess is incorrect, you receive no
-        additional information, and you are not allowed to accuse for the rest of the game.
-      </p>
-      <p>
-        The murderer is allowed to make an accusation as well. The forensic scientist is not allowed
-        to accuse.
-      </p>
+      {
+        !hideRules &&
+          <>
+            <h3>Players</h3>
+            <p>
+              At any time during deliberation, you can accuse another player who you think is the
+              murderer. You are allowed to make an accusation exactly one time. When you do, you must
+              specify the murder method and the key evidence that you think the murderer chose. If the
+              guess is correct, the investigators win the game! If the guess is incorrect, you receive no
+              additional information, and you are not allowed to accuse for the rest of the game.
+            </p>
+            <p>
+              The murderer is allowed to make an accusation as well. The forensic scientist is not allowed
+              to accuse.
+            </p>
+          </>
+      }
       <PlayerGroupView />
       <AccusePlayerModal
         show={accusationActive}

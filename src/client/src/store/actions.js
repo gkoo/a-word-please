@@ -20,6 +20,7 @@ export const TOGGLE_RELEASE_NOTES_MODAL = 'TOGGLE_RELEASE_NOTES_MODAL';
 export const TOGGLE_ROLES_MODAL = 'TOGGLE_ROLES_MODAL';
 export const TOGGLE_RULES_MODAL = 'TOGGLE_RULES_MODAL';
 export const UPDATE_SPECTRUM_GUESS = 'UPDATE_SPECTRUM_GUESS';
+export const UPDATE_USER_PREFERENCE = 'UPDATE_USER_PREFERENCE';
 export const USER_DISCONNECT = 'USER_DISCONNECT';
 
 export function clearName() {
@@ -163,5 +164,12 @@ export function updateSpectrumGuess(guess) {
   return {
     payload: { guess },
     type: UPDATE_SPECTRUM_GUESS,
+  }
+}
+
+export function updateUserPreference(preferenceName, preferenceValue) {
+  return {
+    payload: { preferenceName, preferenceValue },
+    type: UPDATE_USER_PREFERENCE,
   }
 }

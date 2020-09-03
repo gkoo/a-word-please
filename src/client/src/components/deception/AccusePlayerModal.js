@@ -75,7 +75,6 @@ function AccusePlayerModal({ show, onDetailsChange, onConfirmAccusation, endAccu
                   } else {
                     isActiveMethod = accusedMethod === methodCard.label;
                   }
-                  console.log(`${methodCard.label}: isActiveMethod? ${isActiveMethod}`);
 
                   return (
                     <Button

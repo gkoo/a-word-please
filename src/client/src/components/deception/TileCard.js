@@ -10,6 +10,7 @@ import {
 } from '../../constants';
 
 function TileCard({
+  collapse,
   disabled,
   label,
   onClose,
@@ -56,6 +57,12 @@ function TileCard({
       throw new Error(`Unrecognized tile type: ${tileType}`);
   }
 
+  let optionsToDisplay = options;
+
+  if (collapse) {
+    optionsToDisplay = options.filter(option => selectedOption === option);
+  }
+
   return (
     <Card className='deception-tile-card my-2'>
       <Card.Body>
@@ -73,7 +80,7 @@ function TileCard({
         }
         <h3 className='text-center'>{label}</h3>
         {
-          options.map(option =>
+          optionsToDisplay.map(option =>
             <Button
               key={option}
               variant={buttonVariant}

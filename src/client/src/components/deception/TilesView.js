@@ -6,10 +6,15 @@ import CardDeck from 'react-bootstrap/CardDeck';
 import TileCard from './TileCard';
 import {
   gameDataSelector,
+  userPreferencesSelector,
 } from '../../store/selectors';
 
 function TilesView({ showHeaders }) {
   const gameData = useSelector(gameDataSelector);
+  const userPreferences = useSelector(userPreferencesSelector);
+
+  const { collapseTiles } = userPreferences;
+
   const { causeOfDeathTile, sceneTiles, selectedLocationTile } = gameData;
 
   return (
@@ -32,6 +37,7 @@ function TilesView({ showHeaders }) {
           options={causeOfDeathTile.options}
           value={causeOfDeathTile.selectedOption}
           tileType={causeOfDeathTile.type}
+          collapse={collapseTiles}
           disabled={true}
         />
         {/* Location of Crime */}
@@ -41,6 +47,7 @@ function TilesView({ showHeaders }) {
           options={selectedLocationTile.options}
           value={selectedLocationTile.selectedOption}
           tileType={selectedLocationTile.type}
+          collapse={collapseTiles}
           disabled={true}
         />
       </CardDeck>
@@ -65,6 +72,7 @@ function TilesView({ showHeaders }) {
               options={sceneTile.options}
               value={sceneTile.selectedOption}
               tileType={sceneTile.type}
+              collapse={collapseTiles}
               disabled={true}
             />
           )

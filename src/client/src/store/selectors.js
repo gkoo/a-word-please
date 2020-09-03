@@ -30,6 +30,7 @@ export const showReleaseNotesModalSelector = state => state.showReleaseNotesModa
 export const alertsSelector = state => state.alerts;
 export const socketConnectedSelector = state => state.socketConnected;
 export const roomStateSelector = state => state.roomData?.state;
+export const userPreferencesSelector = state => state.userPreferences;
 
 // Game Data
 // A Word, Please?
