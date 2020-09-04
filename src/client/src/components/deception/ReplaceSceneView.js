@@ -53,14 +53,6 @@ function ReplaceSceneView() {
                 particularly helpful, or perhaps it was leading the investigators astray, remove it
                 and replace it with a new randomly drawn scene tile.
               </p>
-              <p>
-                <Button
-                  variant='link'
-                >
-                  {/* make this pop up a modal with the DeliberationView */}
-                  View Board
-                </Button>
-              </p>
             </>
         }
 
