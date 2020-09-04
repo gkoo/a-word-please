@@ -230,9 +230,9 @@ class DeceptionGame extends Game {
     this.playersReady[playerId] = 1;
     this.broadcastGameDataToPlayers();
 
-    //if (Object.keys(this.playersReady).length < Object.keys(this.players).length) {
-      //return;
-    //}
+    if (Object.keys(this.playersReady).length < Object.keys(this.players).length) {
+      return;
+    }
 
     // Everyone is ready!
     this.playersReady = {};
