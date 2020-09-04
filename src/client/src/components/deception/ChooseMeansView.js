@@ -93,9 +93,13 @@ function ChooseMeansView() {
         </Card.Body>
       </Card>
 
-      <div className='text-center mt-3'>
-        <Button onClick={onSubmit} disabled={!selectedMethod || !selectedEvidence}>OK</Button>
+      <div className='text-center my-3'>
+        <Button onClick={onSubmit} disabled={!selectedMethod || !selectedEvidence}>
+          Confirm Means and Evidence
+        </Button>
       </div>
+
+      <PlayerGroupView showAccuseButtons={false}/>
     </>
   );
 }
