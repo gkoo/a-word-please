@@ -74,8 +74,12 @@ class DeceptionGame extends Game {
     this.murderMethod = null;
     this.keyEvidence = null;
     this.accuseLog = {};
+    this.accuserId = null;
+    this.accusedEvidence = null;
+    this.accusedMethod = null;
     this.accusationActive = false;
     this.accusationResult = undefined;
+    this.suspectId = null;
     this.witnessGuessCorrect = undefined;
     this.witnessSuspect = null;
 
@@ -443,7 +447,7 @@ class DeceptionGame extends Game {
       throw 'Non-murderer tried to set witness guess';
     }
 
-    this.witnessSuspectId = this.players[data.playerId];
+    this.witnessSuspectId = data.playerId;
     this.broadcastGameDataToPlayers();
   }
 

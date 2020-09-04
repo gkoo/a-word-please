@@ -43,7 +43,7 @@ function CauseOfDeathView() {
   if (!currPlayerIsScientist) {
     return (
       <>
-        <h1 className='mb-5'>Waiting for the scientist to choose initial tiles...</h1>;
+        <h1 className='mb-5'>Waiting for the scientist to choose initial tiles...</h1>
         <PlayerGroupView showAccuseButtons={false}/>
       </>
     )

@@ -3,8 +3,6 @@ import { useSelector } from 'react-redux';
 import cx from 'classnames';
 
 import Button from 'react-bootstrap/Button';
-import ToggleButton from 'react-bootstrap/ToggleButton';
-import ToggleButtonGroup from 'react-bootstrap/ToggleButtonGroup';
 
 import PlayerGroupView from './PlayerGroupView';
 import { DECEPTION_ROLE_LABELS, ROLE_ACCOMPLICE, ROLE_INVESTIGATOR, ROLE_MURDERER, ROLE_SCIENTIST, ROLE_WITNESS } from '../../constants';
@@ -53,7 +51,7 @@ function GuessWitnessView() {
       <div className='text-center'>
         <h1>CAUGHT!</h1>
         <p>
-          {murderer.name} was the {DECEPTION_ROLE_LABELS[ROLE_MURDERER]}! Now he has the chance to
+          {murderer.name} was the {DECEPTION_ROLE_LABELS[ROLE_MURDERER]}! Now {murderer.name} has the chance to
           guess who the {DECEPTION_ROLE_LABELS[ROLE_WITNESS]} is and go free!
         </p>
         {
@@ -65,15 +63,18 @@ function GuessWitnessView() {
           witnessGuessCorrect === undefined &&
             <>
               <h3>{murderer.name}, who is the {DECEPTION_ROLE_LABELS[ROLE_WITNESS]}?</h3>
-              <ToggleButtonGroup name='witness-suspects' value={witnessSuspectId} onChange={onSuspectWitness}>
-                {
-                  candidatePlayers.map(player =>
-                    <ToggleButton variant='outline-info' value={player.id}>
-                      {player.name}
-                    </ToggleButton>
-                  )
-                }
-              </ToggleButtonGroup>
+              {
+                candidatePlayers.map(player =>
+                  <Button
+                    variant='outline-info'
+                    className='mx-1'
+                    active={witnessSuspectId === player.id}
+                    onClick={() => onSuspectWitness(player.id)}
+                  >
+                    {player.name}
+                  </Button>
+                )
+              }
 
               {
                 currPlayerIsMurderer &&

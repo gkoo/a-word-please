@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 
 import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
@@ -22,7 +21,6 @@ import {
   STATE_DECEPTION_EXPLAIN_RULES,
   STATE_DECEPTION_SHOW_ROLES,
   STATE_DECEPTION_CHOOSE_MEANS_EVIDENCE,
-  STATE_DECEPTION_WITNESSING,
   STATE_DECEPTION_SCIENTIST_CAUSE_OF_DEATH,
   STATE_DECEPTION_SCIENTIST_LOCATION,
   STATE_DECEPTION_SCIENTIST_SCENE_TILES,

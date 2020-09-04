@@ -20,7 +20,6 @@ import {
   disconnectSocket,
   receiveGameData,
   setRoomCode,
-  saveName,
 } from './store/actions';
 import { socketConnectedSelector } from './store/selectors';
 

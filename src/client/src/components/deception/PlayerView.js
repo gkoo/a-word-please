@@ -44,30 +44,26 @@ function PlayerView({ player, showAccuseButtons, showRoles }) {
               </>
           }
         </Card.Title>
-        <p>
-          <strong>Murder Methods</strong>:{' '}
-          {
-            player.methodCards.map(card =>
-              <h5>
-                <Badge variant='danger' className={className}>
-                  {card.label}
-                </Badge>
-              </h5>
-            )
-          }
-        </p>
-        <p>
-          <strong>Key Evidence</strong>:{' '}
-          {
-            player.evidenceCards.map(card =>
-              <h5>
-                <Badge variant='light' className={className}>
-                  {card.label}
-                </Badge>
-              </h5>
-            )
-          }
-        </p>
+        <strong>Murder Methods</strong>:{' '}
+        {
+          player.methodCards.map(card =>
+            <h5>
+              <Badge variant='danger' className={className}>
+                {card.label}
+              </Badge>
+            </h5>
+          )
+        }
+        <strong>Key Evidence</strong>:{' '}
+        {
+          player.evidenceCards.map(card =>
+            <h5>
+              <Badge variant='light' className={className}>
+                {card.label}
+              </Badge>
+            </h5>
+          )
+        }
       </Card.Body>
       {
         showAccuseButtons && !alreadyAccused && !currPlayerIsScientist && !playerIsCurrPlayer &&

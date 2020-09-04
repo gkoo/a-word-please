@@ -1,5 +1,13 @@
 # Deception
 
+show murder means and evidence on replace scene tile
+
+hide "View Board" button
+
+suggestions for min num players for witness/accomplice
+
+prevent starting game w/ less than 4 players
+
 Prevent accusations during Replace Scene
 
 show PlayerGroupView while Murderer is making choices

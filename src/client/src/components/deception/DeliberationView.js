@@ -21,7 +21,7 @@ function DeliberationView() {
   const currPlayerIsScientist = useSelector(currPlayerIsScientistSelector);
   const userPreferences = useSelector(userPreferencesSelector);
 
-  const { hideRules, collapseTiles } = userPreferences;
+  const { hideRules } = userPreferences;
 
   const {
     accusationActive,
