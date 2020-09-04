@@ -272,7 +272,7 @@ class DeceptionGame extends Game {
   chooseMeansAndEvidence(playerId, { methodId, evidenceId }) {
     const player = this.players[playerId];
 
-    if (!player.isMurderer()) {
+    if (player.role !== DeceptionGame.ROLE_MURDERER) {
       throw 'Non-murderer tried to choose means and evidence!';
     }
 
@@ -286,7 +286,7 @@ class DeceptionGame extends Game {
   selectCauseOfDeath(playerId, data) {
     const player = this.players[playerId];
 
-    if (!player.isScientist()) {
+    if (player.role !== DeceptionGame.ROLE_SCIENTIST) {
       throw 'Non-scientist tried to select cause of death!';
     }
 
@@ -300,7 +300,7 @@ class DeceptionGame extends Game {
     const player = this.players[playerId];
     const { location, locationTileId } = data;
 
-    if (!player.isScientist()) {
+    if (player.role !== DeceptionGame.ROLE_SCIENTIST) {
       throw 'Non-scientist tried to select location!';
     }
 
@@ -328,7 +328,7 @@ class DeceptionGame extends Game {
   selectInitialSceneTiles(playerId, { sceneSelections }) {
     const player = this.players[playerId];
 
-    if (!player.isScientist()) {
+    if (player.role !== DeceptionGame.ROLE_SCIENTIST) {
       throw 'Non-scientist tried to select location!';
     }
 
@@ -361,7 +361,7 @@ class DeceptionGame extends Game {
   replaceSceneTile(playerId, { tileIdToReplace, newSceneSelection }) {
     const player = this.players[playerId];
 
-    if (!player.isScientist()) {
+    if (player.role !== DeceptionGame.ROLE_SCIENTIST) {
       throw 'Non-scientist tried to replace scene tile!';
     }
 
@@ -378,7 +378,7 @@ class DeceptionGame extends Game {
   accusePlayer(playerId, { suspectId }) {
     const player = this.players[playerId];
 
-    if (player.isScientist()) {
+    if (player.role === DeceptionGame.ROLE_SCIENTIST) {
       throw 'Scientist cannot accuse players';
     }
 
@@ -443,7 +443,7 @@ class DeceptionGame extends Game {
   setWitnessGuess(playerId, data) {
     const player = this.players[playerId];
 
-    if (!player.isMurderer()) {
+    if (player.role !== DeceptionGame.ROLE_MURDERER) {
       throw 'Non-murderer tried to set witness guess';
     }
 
@@ -454,7 +454,7 @@ class DeceptionGame extends Game {
   guessWitness(playerId, data) {
     const player = this.players[playerId];
 
-    if (!player.isMurderer()) {
+    if (player.role !== DeceptionGame.ROLE_MURDERER) {
       throw 'Non-murderer tried to guess witness';
     }
 

@@ -1,4 +1,3 @@
-const DeceptionGame = require('./DeceptionGame');
 const Player = require('../player');
 
 class DeceptionPlayer extends Player {
@@ -10,14 +9,6 @@ class DeceptionPlayer extends Player {
 
   setRole(role) {
     this.role = role;
-  }
-
-  isScientist() {
-    return this.role === DeceptionGame.ROLE_SCIENTIST;
-  }
-
-  isMurderer() {
-    return this.role === DeceptionGame.ROLE_MURDERER;
   }
 
   serialize() {
