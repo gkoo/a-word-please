@@ -5,6 +5,8 @@ import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 
+import ClueBadge from './ClueBadge';
+
 import {
   DECEPTION_ROLE_LABELS,
   ROLE_SCIENTIST,
@@ -19,8 +21,6 @@ function PlayerView({ player, showAccuseButtons, showRoles }) {
   const gameData = useSelector(gameDataSelector);
   const currPlayer = useSelector(currPlayerSelector);
   const socket = useSelector(socketSelector);
-
-  const className = 'mx-1';
 
   const playerIsCurrPlayer = player.id === currPlayer?.id;
   const currPlayerIsScientist = currPlayer?.role === ROLE_SCIENTIST;
@@ -48,9 +48,7 @@ function PlayerView({ player, showAccuseButtons, showRoles }) {
         {
           player.methodCards.map(card =>
             <h5>
-              <Badge variant='danger' className={className}>
-                {card.label}
-              </Badge>
+              <ClueBadge type='method' label={card.label} />
             </h5>
           )
         }
@@ -58,9 +56,7 @@ function PlayerView({ player, showAccuseButtons, showRoles }) {
         {
           player.evidenceCards.map(card =>
             <h5>
-              <Badge variant='light' className={className}>
-                {card.label}
-              </Badge>
+              <ClueBadge type='evidence' label={card.label} />
             </h5>
           )
         }

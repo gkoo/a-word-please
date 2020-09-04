@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import Button from 'react-bootstrap/Button';
 import CardDeck from 'react-bootstrap/CardDeck';
 
+import ClueBadge from './ClueBadge';
 import DeliberationView from './DeliberationView';
 import NewSceneTileModal from './NewSceneTileModal';
 import TileCard from './TileCard';
@@ -52,6 +52,14 @@ function ReplaceSceneView() {
                 Forensic Scientist: Choose a scene tile to replace. If a scene tile isn't
                 particularly helpful, or perhaps it was leading the investigators astray, remove it
                 and replace it with a new randomly drawn scene tile.
+              </p>
+              <p>
+                The method of murder is:{' '}
+                <ClueBadge label={gameData.murderMethod.label} type='method'/>
+              </p>
+              <p>
+                The key evidence is:{' '}
+                <ClueBadge label={gameData.keyEvidence.label} type='evidence'/>
               </p>
             </>
         }
