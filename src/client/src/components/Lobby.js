@@ -12,7 +12,12 @@ import UserList from './UserList';
 import StartGameButton from './common/StartGameButton';
 import { toggleRulesModal } from '../store/actions';
 import { selectedGameSelector, socketSelector } from '../store/selectors';
-import { GAME_A_WORD_PLEASE, GAME_WEREWOLF, GAME_WAVELENGTH } from '../constants';
+import {
+  GAME_A_WORD_PLEASE,
+  GAME_DECEPTION,
+  GAME_WEREWOLF,
+  GAME_WAVELENGTH,
+} from '../constants';
 
 function Lobby({ messages, roomCode, users }) {
   const dispatch = useDispatch();
@@ -73,6 +78,17 @@ function Lobby({ messages, roomCode, users }) {
                   Wavelength
                 </Button>
 
+                <Button
+                  variant='outline-info'
+                  size='lg'
+                  active={selectedGame === GAME_DECEPTION}
+                  onClick={() => onChooseGame(GAME_DECEPTION)}
+                  block
+                >
+                  <span role='img' aria-label='Deception' className='mr-2'>🔪</span>
+                  Deception
+                </Button>
+
                 {
                   selectedGame &&
                     <div className='p-3'>
@@ -106,6 +122,15 @@ function Lobby({ messages, roomCode, users }) {
                                 <h2>Wavelength</h2>
                                 <p>
                                   <em>Are you and your friends on the same wavelength?</em>
+                                </p>
+                              </>
+                          }
+                          {
+                            selectedGame === GAME_DECEPTION &&
+                              <>
+                                <h2>Deception</h2>
+                                <p>
+                                  <em>Analyze the evidence to find the murderer!</em>
                                 </p>
                               </>
                           }

@@ -149,7 +149,7 @@ describe('performWakeUpActions', () => {
 
   describe('when it is the Drunk\'s turn', () => {
     beforeEach(() => {
-      game.currentWakeUpIdx = 4;
+      game.currentWakeUpIdx = 7;
       game.unclaimedRoles = [
         WerewolfGame.ROLE_WEREWOLF,
         WerewolfGame.ROLE_WEREWOLF,

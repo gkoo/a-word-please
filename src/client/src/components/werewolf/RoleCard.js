@@ -3,7 +3,7 @@ import cx from 'classnames';
 
 import Card from 'react-bootstrap/Card'
 import {
-  LABELS,
+  WEREWOLF_ROLE_LABELS,
   ROLE_WEREWOLF,
   ROLE_MINION,
   ROLE_MASON,
@@ -22,11 +22,11 @@ const getTeam = role => {
   switch (role) {
     case ROLE_WEREWOLF:
     case ROLE_MINION:
-      return LABELS[ROLE_WEREWOLF];
+      return WEREWOLF_ROLE_LABELS[ROLE_WEREWOLF];
     case ROLE_TANNER:
-      return LABELS[ROLE_TANNER];
+      return WEREWOLF_ROLE_LABELS[ROLE_TANNER];
     default:
-      return LABELS[ROLE_VILLAGER];
+      return WEREWOLF_ROLE_LABELS[ROLE_VILLAGER];
   };
 };
 
@@ -141,9 +141,9 @@ function RoleCard({
   const shouldRevealRole = revealingRole || revealingRole === undefined;
 
   const teamClassName = cx({
-    'text-danger': team === LABELS[ROLE_WEREWOLF],
-    'text-success': team === LABELS[ROLE_VILLAGER],
-    'text-warning': team === LABELS[ROLE_TANNER],
+    'text-danger': team === WEREWOLF_ROLE_LABELS[ROLE_WEREWOLF],
+    'text-success': team === WEREWOLF_ROLE_LABELS[ROLE_VILLAGER],
+    'text-warning': team === WEREWOLF_ROLE_LABELS[ROLE_TANNER],
     invisible: !shouldRevealRole,
   });
 
@@ -151,9 +151,9 @@ function RoleCard({
     `${className || ''} role-card my-2`,
     {
       'choose-mode': chooseMode,
-      'werewolf': shouldRevealRole && team === LABELS[ROLE_WEREWOLF],
-      'tanner': shouldRevealRole && team === LABELS[ROLE_TANNER],
-      'villager': shouldRevealRole && team === LABELS[ROLE_VILLAGER],
+      'werewolf': shouldRevealRole && team === WEREWOLF_ROLE_LABELS[ROLE_WEREWOLF],
+      'tanner': shouldRevealRole && team === WEREWOLF_ROLE_LABELS[ROLE_TANNER],
+      'villager': shouldRevealRole && team === WEREWOLF_ROLE_LABELS[ROLE_VILLAGER],
       selected,
     },
   );
@@ -170,7 +170,7 @@ function RoleCard({
       <Card.Body>
         <Card.Title className={cx({ invisible: !shouldRevealRole, h6: longTitle })}>
           <span className='mr-2'>{getEmoji(role)}</span>
-          {LABELS[role]}
+          {WEREWOLF_ROLE_LABELS[role]}
         </Card.Title>
         {
           includeTeam &&

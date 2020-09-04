@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 
 import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
 import { currPlayerSelector, playersSelector, socketSelector } from '../../store/selectors';
-import { LABELS, ROLE_MASON } from '../../constants';
+import { WEREWOLF_ROLE_LABELS, ROLE_MASON } from '../../constants';
 
 function MasonView() {
   const [ready, setReady] = useState(false);
@@ -29,7 +29,7 @@ function MasonView() {
       }
       {
         !otherMason &&
-          <p>It seems there isn't another {LABELS[ROLE_MASON]}...</p>
+          <p>It seems there isn't another {WEREWOLF_ROLE_LABELS[ROLE_MASON]}...</p>
       }
       {
         !ready &&

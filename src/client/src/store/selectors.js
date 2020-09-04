@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+import { ROLE_SCIENTIST, ROLE_MURDERER, ROLE_ACCOMPLICE, ROLE_WITNESS } from '../constants';
 
 export const alertMessageSelector = state => state.alertMessage;
 export const debugEnabledSelector = state => state.debugEnabled;
@@ -29,6 +30,7 @@ export const showReleaseNotesModalSelector = state => state.showReleaseNotesModa
 export const alertsSelector = state => state.alerts;
 export const socketConnectedSelector = state => state.socketConnected;
 export const roomStateSelector = state => state.roomData?.state;
+export const userPreferencesSelector = state => state.userPreferences;
 
 // Game Data
 // A Word, Please?
@@ -163,11 +165,38 @@ export const currPlayerIsActivePlayerSelector = createSelector(
   currUserIsSpectatorSelector,
   (gameData, currPlayer, isSpectator) => {
     if (isSpectator) { return false; }
-    if (!currPlayer) { return false; }
-    return gameData?.activePlayerId === currPlayer.id;
+    return gameData?.activePlayerId === currPlayer?.id;
   }
 );
 export const spectrumGuessSelector = createSelector(
   gameDataSelector,
   gameData => gameData?.spectrumGuess,
+);
+
+// Deception
+export const murdererSelector = createSelector(
+  playersSelector,
+  players => Object.values(players).find(player => player.role === ROLE_MURDERER),
+);
+export const accompliceSelector = createSelector(
+  playersSelector,
+  players => Object.values(players).find(player => player.role === ROLE_ACCOMPLICE),
+);
+export const scientistSelector = createSelector(
+  playersSelector,
+  players => Object.values(players).find(player => player.role === ROLE_SCIENTIST),
+);
+export const witnessSelector = createSelector(
+  playersSelector,
+  players => Object.values(players).find(player => player.role === ROLE_WITNESS),
+);
+export const currPlayerIsMurdererSelector = createSelector(
+  murdererSelector,
+  currPlayerSelector,
+  (murderer, currPlayer) => murderer.id === currPlayer?.id,
+);
+export const currPlayerIsScientistSelector = createSelector(
+  scientistSelector,
+  currPlayerSelector,
+  (scientist, currPlayer) => scientist.id === currPlayer?.id,
 );

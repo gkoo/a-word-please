@@ -9,7 +9,7 @@ import Col from 'react-bootstrap/Col';
 import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
 import RoleCard from './RoleCard';
 import { currPlayerSelector, playersSelector, socketSelector, unclaimedRolesSelector } from '../../store/selectors';
-import { LABELS } from '../../constants';
+import { WEREWOLF_ROLE_LABELS } from '../../constants';
 
 function SeerView() {
   const [revealedPlayerId, setRevealedPlayerId] = useState(null);
@@ -71,8 +71,8 @@ function SeerView() {
           <Row>
             <Col>
               Two of the roles currently unclaimed are{' '}
-              <u>{LABELS[revealedUnclaimedRoles[0]]}</u> and{' '}
-              <u>{LABELS[revealedUnclaimedRoles[1]]}</u>.
+              <u>{WEREWOLF_ROLE_LABELS[revealedUnclaimedRoles[0]]}</u> and{' '}
+              <u>{WEREWOLF_ROLE_LABELS[revealedUnclaimedRoles[1]]}</u>.
             </Col>
           </Row>
       }
