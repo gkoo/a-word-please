@@ -8,6 +8,7 @@ import {
   currPlayerSelector,
   currUserIsSpectatorSelector,
   gameDataSelector,
+  playersSelector,
   socketSelector,
 } from '../../store/selectors';
 
@@ -44,7 +45,8 @@ function RulesView() {
       <h1>Welcome to Deception: Murder in Hong Kong</h1>
       <h3><u>Murderer</u></h3>
       <p>
-        In Deception, one person will play the role of the murderer. The murderer has committed a
+        In Deception, one person will play the role of the{' '}
+        <span className='text-danger'><strong>murderer</strong></span>. The murderer has committed a
         gruesome murder (gasp!) and it is their job to elude suspicion from the investigators. The
         investigators do not know who the murderer is.
       </p>
@@ -63,8 +65,8 @@ function RulesView() {
       </p>
       <h3><u>Witness</u></h3>
       <p>
-        If you play with a witness, the witness learns the identity of the murderer and the
-        accomplice, but not the means of murder or the key evidence.
+        If you play with a witness, the witness learns the identities of the murderer and the
+        accomplice (if there is one), but not the means of murder or the key evidence.
       </p>
       <p>
         At the end of the game, if the murderer is caught, they have a chance to guess who the
@@ -74,7 +76,7 @@ function RulesView() {
       <h3><u>Investigators</u></h3>
       <p>
         Everyone who isn't one of the special roles above is an investigator. Investigators try to
-        catch the murderer.
+        catch the murderer. Good luck!
       </p>
 
       <div className='text-center my-3'>

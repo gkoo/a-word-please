@@ -1,24 +1,10 @@
 # Deception
 
-show murder means and evidence on replace scene tile
-
-hide "View Board" button
-
 suggestions for min num players for witness/accomplice
 
 prevent starting game w/ less than 4 players
 
-Prevent accusations during Replace Scene
-
-show PlayerGroupView while Murderer is making choices
-
-In ChoosingMeansView, make Key Evidence buttons diff color
-
-Make Scientist info prettier
-
-In WitnessGuessView, why can non-murderer select a toggle button?
-
-Figure out Witness Guessing
+Make Scientist info during tile selection prettier
 
 # AWP
 

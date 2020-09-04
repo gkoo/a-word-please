@@ -5,6 +5,8 @@ import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
+import ClueBadge from './ClueBadge';
+import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
 import PlayerGroupView from './PlayerGroupView';
 import TileCard from './TileCard';
 import {
@@ -51,10 +53,12 @@ function CauseOfDeathView() {
 
   return (
     <>
-      <h1>Hi Scientist</h1>
-      <p>The murderer is: {murdererPlayer.name}</p>
-      <p>The method of murder is: {gameData.murderMethod.label}</p>
-      <p>The key evidence is: {gameData.keyEvidence.label}</p>
+      <h1>You are the Scientist!</h1>
+      <p>The murderer is: <PlayerCheckboxLabel player={murdererPlayer}/></p>
+      <p>The method of murder is: <ClueBadge label={gameData.murderMethod.label} type='method'/></p>
+      <p>
+        The key evidence is: <ClueBadge label={gameData.keyEvidence.label} type='evidence'/>
+      </p>
       <p>Choose a cause of death based on the method of murder and key evidence.</p>
 
       <Row>

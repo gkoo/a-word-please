@@ -81,7 +81,7 @@ function ChooseMeansView() {
           {
             currPlayer?.evidenceCards?.map(evidence =>
               <Button
-                variant='outline-danger'
+                variant='outline-light'
                 className='mx-1'
                 active={selectedEvidence === evidence.id}
                 onClick={() => setSelectedEvidence(evidence.id)}

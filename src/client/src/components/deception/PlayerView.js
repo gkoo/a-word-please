@@ -10,6 +10,7 @@ import ClueBadge from './ClueBadge';
 import {
   DECEPTION_ROLE_LABELS,
   ROLE_SCIENTIST,
+  STATE_DECEPTION_REPLACE_SCENE,
 } from '../../constants';
 import {
   currPlayerSelector,
@@ -25,11 +26,19 @@ function PlayerView({ player, showAccuseButtons, showRoles }) {
   const playerIsCurrPlayer = player.id === currPlayer?.id;
   const currPlayerIsScientist = currPlayer?.role === ROLE_SCIENTIST;
   const alreadyAccused = !!gameData.accuseLog[currPlayer?.id];
+  const { state } = gameData;
 
   const accusePlayer = () => socket.emit('playerAction', {
     action: 'accusePlayer',
     suspectId: player.id,
   });
+
+  const canAccuse = (
+    showAccuseButtons &&
+    !alreadyAccused &&
+    !currPlayerIsScientist &&
+    !playerIsCurrPlayer
+  );
 
   return (
     <Card className='deception-player-card my-1'>
@@ -62,9 +71,13 @@ function PlayerView({ player, showAccuseButtons, showRoles }) {
         }
       </Card.Body>
       {
-        showAccuseButtons && !alreadyAccused && !currPlayerIsScientist && !playerIsCurrPlayer &&
+        canAccuse &&
           <Card.Footer className='text-center'>
-            <Button variant='danger' onClick={accusePlayer}>
+            <Button
+              variant='danger'
+              onClick={accusePlayer}
+              disabled={state === STATE_DECEPTION_REPLACE_SCENE}
+            >
               Accuse
             </Button>
           </Card.Footer>
