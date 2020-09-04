@@ -78,11 +78,13 @@ function LocationView() {
         }
       </CardDeck>
 
-      <div className='text-center mt-3'>
+      <div className='text-center my-3'>
         <Button disabled={!selectedLocationTile && !selectedLocation} onClick={onSubmit}>
-          OK
+          Confirm Location of Crime
         </Button>
       </div>
+
+      <PlayerGroupView showAccuseButtons={false}/>
     </>
   );
 }

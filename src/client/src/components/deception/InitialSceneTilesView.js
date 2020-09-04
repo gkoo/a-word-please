@@ -37,7 +37,7 @@ function InitialTilesView() {
   if (!currPlayerIsScientist) {
     return (
       <>
-        <h1 className='mb-5'>Waiting for the scientist to choose initial tiles...</h1>;
+        <h1 className='mb-5'>Waiting for the scientist to choose initial tiles...</h1>
         <PlayerGroupView showAccuseButtons={false}/>
       </>
     )
@@ -68,14 +68,16 @@ function InitialTilesView() {
         }
       </CardDeck>
 
-      <div className='text-center'>
+      <div className='text-center my-3'>
         <Button
           disabled={Object.values(sceneSelections).length < gameData.sceneTiles.length}
           onClick={onSubmit}
         >
-          OK
+          Confirm Scene Tile Selections
         </Button>
       </div>
+
+      <PlayerGroupView showAccuseButtons={false}/>
     </>
   );
 }

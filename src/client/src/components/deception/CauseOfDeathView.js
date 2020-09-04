@@ -69,11 +69,13 @@ function CauseOfDeathView() {
         </Col>
       </Row>
 
-      <div className='text-center mt-3'>
+      <div className='text-center my-3'>
         <Button disabled={!selectedCauseOfDeath} onClick={onSubmit}>
-          OK
+          Confirm Cause of Death
         </Button>
       </div>
+
+      <PlayerGroupView showAccuseButtons={false}/>
     </>
   );
 }
