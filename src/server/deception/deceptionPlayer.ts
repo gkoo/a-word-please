@@ -1,6 +1,12 @@
+import Clue from './clue';
 import Player from '../player';
+import { Role } from './deceptionGame';
 
 class DeceptionPlayer extends Player {
+  evidenceCards: Array<Clue>;
+  methodCards: Array<Clue>;
+  role: Role
+
   constructor(data) {
     super(data)
     this.evidenceCards = [];

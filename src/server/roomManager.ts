@@ -104,4 +104,4 @@ class RoomManager {
   }
 }
 
-module.exports = RoomManager;
+export default RoomManager;
