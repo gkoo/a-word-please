@@ -1,10 +1,18 @@
-class Tile {
-  static TYPE_CAUSE_OF_DEATH = 0;
-  static TYPE_LOCATION = 1;
-  static TYPE_SCENE = 2;
+export enum TileType {
+  CauseOfDeath,
+  Location,
+  Scene,
+}
+
+export default class Tile {
+  id: number;
+  selectedOption: string;
+  options: Array<string>;
+  label: string;
+  type: TileType;
 
   // Each tile has six options
-  constructor({ id, label, options, type }) {
+  constructor({ id, label, options, type, }) {
     this.id = id;
     this.label = label;
     this.options = options;
@@ -19,5 +27,3 @@ class Tile {
     this.selectedOption = option;
   }
 }
-
-module.exports = Tile;

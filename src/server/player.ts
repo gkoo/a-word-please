@@ -2,13 +2,11 @@ class Player {
   id: string;
   name: string;
   connected: boolean;
-  socketId: string;
 
-  constructor({ id, name, socketId }) {
+  constructor({ id, name }) {
     this.id = id;
     this.name = name;
     this.connected = true;
-    this.socketId = socketId;
   }
 
   serialize() {

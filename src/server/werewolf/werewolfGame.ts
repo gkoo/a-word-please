@@ -1,63 +1,90 @@
-const _ = require('lodash');
-const Game = require('../game');
-const WerewolfPlayer = require('./werewolfPlayer');
+import _ from 'lodash';
+import Game from '../game';
+import WerewolfPlayer from './werewolfPlayer';
+
+export enum Role {
+  Werewolf,
+  Minion,
+  Mason,
+  Seer,
+  Robber,
+  Troublemaker,
+  Drunk,
+  Insomniac,
+  Hunter,
+  Villager,
+  Doppelganger,
+  Tanner,
+}
+
+enum GameState {
+  Pending,
+  TurnEnd,
+  GameEnd,
+  ChoosingRoles,
+  Nighttime,
+  Daytime,
+  Voting,
+  VoteResults,
+}
 
 class WerewolfGame extends Game {
-  static GAME_ID = Game.GAME_WEREWOLF;
-  static STATE_CHOOSING_ROLES = 3;
-  static STATE_NIGHTTIME = 4;
-  static STATE_DAYTIME = 5;
-  static STATE_VOTING = 6;
-  static STATE_VOTE_RESULTS = 7;
+  broadcastToRoom: (eventName: string, data: any) => void;
+  activePlayerId: string;
+  currentWakeUpIdx: number;
+  eliminatedPlayers: Array<WerewolfPlayer>;
+  ensureWerewolf: boolean;
+  numWakeUps: number;
+  players: object;
+  playerClass: any;
+  playerOrder: Array<string>;
+  playersOfCurrentRoleReady: number;
+  revealingRoles: boolean;
+  roleIds: Array<string>;
+  state: GameState;
+  unclaimedRoles: Array<Role>;
+  votes: { [voterId: string]: string };
+  votingTimeoutId: any;
+  wakeUpRole: Role;
+  werewolvesReady: number;
+  winners: Array<Role>;
 
-  static ROLE_WEREWOLF = 0;
-  static ROLE_MINION = 1;
-  static ROLE_MASON = 2;
-  static ROLE_SEER = 3;
-  static ROLE_ROBBER = 4;
-  static ROLE_TROUBLEMAKER = 5;
-  static ROLE_DRUNK = 6;
-  static ROLE_INSOMNIAC = 7;
-  static ROLE_HUNTER = 8;
-  static ROLE_VILLAGER = 9;
-  static ROLE_DOPPELGANGER = 10;
-  static ROLE_TANNER = 11;
+  static GAME_ID = Game.GAME_WEREWOLF;
 
   static MIN_PLAYERS = 3;
   static MAX_PLAYERS = 10;
 
   static WAKE_UP_ORDER = [
-    WerewolfGame.ROLE_DOPPELGANGER,
-    WerewolfGame.ROLE_WEREWOLF,
-    WerewolfGame.ROLE_MINION,
-    WerewolfGame.ROLE_MASON,
-    WerewolfGame.ROLE_SEER,
-    WerewolfGame.ROLE_ROBBER,
-    WerewolfGame.ROLE_TROUBLEMAKER,
-    WerewolfGame.ROLE_DRUNK,
-    WerewolfGame.ROLE_INSOMNIAC,
+    Role.Doppelganger,
+    Role.Werewolf,
+    Role.Minion,
+    Role.Mason,
+    Role.Seer,
+    Role.Robber,
+    Role.Troublemaker,
+    Role.Drunk,
+    Role.Insomniac,
   ];
 
   static ROLE_ID_TO_ENUM = {
-    werewolf: WerewolfGame.ROLE_WEREWOLF,
-    minion: WerewolfGame.ROLE_MINION,
-    mason: WerewolfGame.ROLE_MASON,
-    seer: WerewolfGame.ROLE_SEER,
-    robber: WerewolfGame.ROLE_ROBBER,
-    troublemaker: WerewolfGame.ROLE_TROUBLEMAKER,
-    drunk: WerewolfGame.ROLE_DRUNK,
-    insomniac: WerewolfGame.ROLE_INSOMNIAC,
-    hunter: WerewolfGame.ROLE_HUNTER,
-    villager: WerewolfGame.ROLE_VILLAGER,
-    doppelganger: WerewolfGame.ROLE_DOPPELGANGER,
-    tanner: WerewolfGame.ROLE_TANNER,
+    werewolf: Role.Werewolf,
+    minion: Role.Minion,
+    mason: Role.Mason,
+    seer: Role.Seer,
+    robber: Role.Robber,
+    troublemaker: Role.Troublemaker,
+    drunk: Role.Drunk,
+    insomniac: Role.Insomniac,
+    hunter: Role.Hunter,
+    villager: Role.Villager,
+    doppelganger: Role.Doppelganger,
+    tanner: Role.Tanner,
   };
 
-  constructor(io, roomCode) {
-    super(io, roomCode);
+  constructor(broadcastToRoom) {
+    super(broadcastToRoom);
     this.ensureWerewolf = false;
     this.roleIds = []; // to sync client views
-    this.roles = {}; // for actual game logic
     this.votes = {};
     this.unclaimedRoles = [];
     this.revealingRoles = false;
@@ -69,13 +96,12 @@ class WerewolfGame extends Game {
   }
 
   newGame() {
-    this.eliminatedPlayerIds = null;
+    this.eliminatedPlayers = null;
     this.numWakeUps = 0;
-    this.roles = {};
     this.votes = {}
     this.unclaimedRoles = [];
     this.revealingRoles = false;
-    this.state = WerewolfGame.STATE_CHOOSING_ROLES;
+    this.state = GameState.ChoosingRoles;
     this.winners = [];
     Object.values(this.players).forEach(player => player.setPlaying());
 
@@ -95,7 +121,7 @@ class WerewolfGame extends Game {
         name,
       });
       this.players[id] = newPlayer;
-      if (this.state === WerewolfGame.STATE_CHOOSING_ROLES) {
+      if (this.state === GameState.ChoosingRoles) {
         newPlayer.setPlaying();
       }
       return;
@@ -108,13 +134,6 @@ class WerewolfGame extends Game {
     disconnectedPlayer.connected = true;
     this.players[id] = disconnectedPlayer;
     delete this.players[oldPlayerId];
-  }
-
-  // TODO: handle reconnecting players
-  removePlayer(id) {
-    super.removePlayer(id);
-
-    this.broadcastGameDataToPlayers();
   }
 
   getActivePlayers() {
@@ -133,13 +152,13 @@ class WerewolfGame extends Game {
       case 'beginNighttime':
         return this.beginNighttime();
       case 'troublemakeRoles':
-        if (currPlayer.originalRole === WerewolfGame.ROLE_TROUBLEMAKER) {
+        if (currPlayer.originalRole === Role.Troublemaker) {
           this.switchRoles.apply(this, data.playerIds);
           this.nextTurn();
         }
         return;
       case 'robRole':
-        if (currPlayer.originalRole === WerewolfGame.ROLE_ROBBER) {
+        if (currPlayer.originalRole === Role.Robber) {
           this.robRole(playerId, data.playerId);
         }
         return;
@@ -157,9 +176,9 @@ class WerewolfGame extends Game {
   }
 
   endWerewolfTurn() {
-    const numPlayersToWaitFor = Object.values(this.players).filter(
-      player => player.role === WerewolfGame.ROLE_WEREWOLF
-    );
+    const numPlayersToWaitFor: number = Object.values(this.players).filter(
+      player => player.role === Role.Werewolf
+    ).length;
     if (++this.werewolvesReady >= numPlayersToWaitFor) {
       this.nextTurn();
     }
@@ -196,7 +215,7 @@ class WerewolfGame extends Game {
     // Assign roles
     this.assignRoles();
 
-    this.state = WerewolfGame.STATE_NIGHTTIME;
+    this.state = GameState.Nighttime;
 
     // Let's broadcast now because we don't know if we're going to artificially delay the first
     // turn.
@@ -216,14 +235,14 @@ class WerewolfGame extends Game {
     let shuffledRolesToAssign;
     let shuffledRoles;
 
-    if (this.ensureWerewolf && rolesToUse.includes(WerewolfGame.ROLE_WEREWOLF)) {
+    if (this.ensureWerewolf && rolesToUse.includes(Role.Werewolf)) {
       // Need to guarantee at least one player is a werewolf.
-      const werewolfIdx = rolesToUse.indexOf(WerewolfGame.ROLE_WEREWOLF);
+      const werewolfIdx = rolesToUse.indexOf(Role.Werewolf);
       const rolesToShuffle = rolesToUse.slice(0, werewolfIdx).concat(
         rolesToUse.slice(werewolfIdx + 1)
       );
       shuffledRoles = _.shuffle(rolesToShuffle);
-      shuffledRolesToAssign = _.shuffle(shuffledRoles.slice(3).concat([WerewolfGame.ROLE_WEREWOLF]));
+      shuffledRolesToAssign = _.shuffle(shuffledRoles.slice(3).concat([Role.Werewolf]));
     } else {
       shuffledRoles = _.shuffle(rolesToUse);
       shuffledRolesToAssign = shuffledRoles.slice(3);
@@ -279,7 +298,7 @@ class WerewolfGame extends Game {
 
     this.broadcastGameDataToPlayers();
 
-    if (this.wakeUpRole === WerewolfGame.ROLE_DRUNK) {
+    if (this.wakeUpRole === Role.Drunk) {
       // This role is special in that it doesn't require any action from the player. Let's just
       // perform it for them to speed up the game.
       if (wakeUpPlayers.length !== 1) { throw new Error('Got more than one drunk'); }
@@ -313,7 +332,7 @@ class WerewolfGame extends Game {
   }
 
   beginDaytime() {
-    this.state = WerewolfGame.STATE_DAYTIME;
+    this.state = GameState.Daytime;
     // Automatically switch to voting after 5 minutes
     // start voting after 5 minutes
     this.votingTimeoutId = setTimeout(() => this.enableVoting(), 300000);
@@ -321,7 +340,7 @@ class WerewolfGame extends Game {
   }
 
   enableVoting() {
-    if (this.state !== WerewolfGame.STATE_DAYTIME) {
+    if (this.state !== GameState.Daytime) {
       if (this.votingTimeoutId) {
         clearTimeout(this.votingTimeoutId);
         this.votingTimeoutId = null;
@@ -329,7 +348,7 @@ class WerewolfGame extends Game {
       return;
     }
 
-    this.state = WerewolfGame.STATE_VOTING;
+    this.state = GameState.Voting;
     this.broadcastGameDataToPlayers();
   }
 
@@ -350,20 +369,20 @@ class WerewolfGame extends Game {
   //  'steve': 'gordon'
   // }
   determineWinners() {
-    if (this.state !== WerewolfGame.STATE_VOTING) { return; }
+    if (this.state !== GameState.Voting) { return; }
 
-    this.state = WerewolfGame.STATE_VOTE_RESULTS;
+    this.state = GameState.VoteResults;
 
     // Tally up the votes!
     const voteList = Object.values(this.votes);
     const voteTallies = {};
-    voteList.forEach(votedPlayerId => {
+    voteList.forEach((votedPlayerId: string) => {
       if (!voteTallies[votedPlayerId]) { voteTallies[votedPlayerId] = 0; }
       ++voteTallies[votedPlayerId];
     });
     let playerIdsWithMostVotes = [];
-    let currMaxVoteCount = 0;
-    Object.entries(voteTallies).forEach(([votedPlayerId, count]) => {
+    let currMaxVoteCount: number = 0;
+    Object.entries(voteTallies).forEach(([votedPlayerId, count]: [string, number]) => {
       if (count < currMaxVoteCount) { return; }
       if (count === currMaxVoteCount) {
         playerIdsWithMostVotes.push(votedPlayerId);
@@ -386,11 +405,11 @@ class WerewolfGame extends Game {
     }
 
     const hunterEliminated = !!eliminatedPlayers.find(
-      player => player.role === WerewolfGame.ROLE_HUNTER
+      player => player.role === Role.Hunter
     );
     if (hunterEliminated) {
       // If the hunter is eliminated, the person he voted for also dies
-      const hunter = playerList.find(player => player.role === WerewolfGame.ROLE_HUNTER);
+      const hunter = playerList.find(player => player.role === Role.Hunter);
       const hunterVictimPlayer = this.players[this.votes[hunter.id]];
       if (!eliminatedPlayers.includes(hunterVictimPlayer)) {
         eliminatedPlayers.push(hunterVictimPlayer);
@@ -398,37 +417,37 @@ class WerewolfGame extends Game {
     }
 
     const werewolfEliminated = !!eliminatedPlayers.find(
-      player => player.role === WerewolfGame.ROLE_WEREWOLF
+      player => player.role === Role.Werewolf
     );
     const tannerEliminated = !!eliminatedPlayers.find(
-      player => player.role === WerewolfGame.ROLE_TANNER
+      player => player.role === Role.Tanner
     );
 
     // Figure out who's the winner
     const winners = [];
     let firstWinner; // villager or werewolf
     const atLeastOneWerewolf = !!playerList.find(
-      player => player.role === WerewolfGame.ROLE_WEREWOLF
+      player => player.role === Role.Werewolf
     );
 
     if (eliminatedPlayers.length === 0) {
       if (atLeastOneWerewolf) {
-        firstWinner = WerewolfGame.ROLE_WEREWOLF;
+        firstWinner = Role.Werewolf;
       } else {
-        firstWinner = WerewolfGame.ROLE_VILLAGER;
+        firstWinner = Role.Villager;
       }
     } else {
       // At least one person was eliminated
       if (werewolfEliminated) {
-        firstWinner = WerewolfGame.ROLE_VILLAGER;
+        firstWinner = Role.Villager;
       } else if (!tannerEliminated) {
-        firstWinner = WerewolfGame.ROLE_WEREWOLF;
+        firstWinner = Role.Werewolf;
       }
     }
 
     if (firstWinner !== undefined) { winners.push(firstWinner); }
 
-    if (tannerEliminated) { winners.push(WerewolfGame.ROLE_TANNER); }
+    if (tannerEliminated) { winners.push(Role.Tanner); }
 
     this.winners = winners;
     this.eliminatedPlayers = eliminatedPlayers;
@@ -436,15 +455,9 @@ class WerewolfGame extends Game {
   }
 
   revealRoles() {
-    if (this.state !== WerewolfGame.STATE_VOTE_RESULTS) { return; }
+    if (this.state !== GameState.VoteResults) { return; }
     this.revealingRoles = true;
     this.broadcastGameDataToPlayers();
-  }
-
-  endGame() {
-  }
-
-  setPending() {
   }
 
   serialize() {
@@ -470,4 +483,4 @@ class WerewolfGame extends Game {
   }
 }
 
-module.exports = WerewolfGame;
+export default WerewolfGame;

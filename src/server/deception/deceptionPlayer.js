@@ -1,4 +1,4 @@
-const Player = require('../player');
+import Player from '../player';
 
 class DeceptionPlayer extends Player {
   constructor(data) {
@@ -21,4 +21,4 @@ class DeceptionPlayer extends Player {
   }
 }
 
-module.exports = DeceptionPlayer;
+export default DeceptionPlayer;

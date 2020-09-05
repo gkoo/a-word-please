@@ -1,6 +1,15 @@
-const Player = require('../player');
+import Player from '../player';
+import { Role } from './werewolfGame';
 
 class WerewolfPlayer extends Player {
+  id: string;
+  name: string;
+  connected: boolean;
+  lastKnownRole: Role;
+  originalRole: Role;
+  playing: boolean; // TODO remove
+  role: Role;
+
   constructor({ id, name }) {
     super({ id, name });
     this.playing = false;
@@ -34,4 +43,4 @@ class WerewolfPlayer extends Player {
   }
 }
 
-module.exports = WerewolfPlayer;
+export default WerewolfPlayer;

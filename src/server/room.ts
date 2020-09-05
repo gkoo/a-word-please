@@ -1,9 +1,9 @@
-import AWPGame from './a-word-please/awp-game.js';
-import DeceptionGame from './deception/deceptionGame.js';
-import Game from './game.js';
-import WerewolfGame from './werewolf/werewolfGame.js';
-import WavelengthGame from './wavelength/wavelengthGame.js';
-import User from './user.js';
+import AWPGame from './a-word-please/awp-game';
+import DeceptionGame from './deception/deceptionGame';
+import Game from './game';
+import WerewolfGame from './werewolf/werewolfGame';
+import WavelengthGame from './wavelength/wavelengthGame';
+import User from './user';
 
 const VALID_GAMES: Array<number> = [
   Game.GAME_A_WORD_PLEASE,
@@ -134,16 +134,16 @@ class Room {
 
     switch (this.selectedGame) {
       case Game.GAME_A_WORD_PLEASE:
-        this.game = new AWPGame(this.io, this.roomCode);
+        this.game = new AWPGame(this.broadcastToRoom);
         break;
       case Game.GAME_WEREWOLF:
-        this.game = new WerewolfGame(this.io, this.roomCode);
+        this.game = new WerewolfGame(this.broadcastToRoom);
         break;
       case Game.GAME_WAVELENGTH:
-        this.game = new WavelengthGame(this.io, this.roomCode);
+        this.game = new WavelengthGame(this.broadcastToRoom, this.emitToPlayer);
         break;
       case Game.GAME_DECEPTION:
-        this.game = new DeceptionGame(this.io, this.roomCode);
+        this.game = new DeceptionGame(this.broadcastToRoom);
         break;
       default:
         throw 'Unrecognized game type chosen';
@@ -199,6 +199,10 @@ class Room {
 
     let gameData = this.game ? this.game.serialize() : { state: Game.STATE_PENDING };
     this.io.to(this.roomCode).emit('gameData', gameData)
+  }
+
+  emitToPlayer(playerId: string, eventName: string, data: any) {
+    this.io.to(playerId).emit(eventName, data);
   }
 
   sendGameState(socketId) {

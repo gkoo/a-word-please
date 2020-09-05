@@ -1,4 +1,4 @@
-const _ = require('lodash');
+import _ from 'lodash';
 
 class Deck {
   constructor(cards) {
@@ -17,4 +17,4 @@ class Deck {
   }
 }
 
-module.exports = Deck;
+export default Deck;

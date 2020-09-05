@@ -1,12 +1,31 @@
-const _ = require('lodash');
-const uuid = require('uuid');
+import _ from 'lodash';
+import uuid from 'uuid';
 
-const Deck = require('../deck');
-const Game = require('../game');
-const Player = require('../player.js');
-const wordlist = require('./wordlist.js');
+import Deck from '../deck';
+import Game from '../game';
+import Player from '../player.js';
+import wordlist from './wordlist.js';
+
+interface Clue {
+  clue: string;
+  isDuplicate: boolean;
+}
 
 class AWPGame extends Game {
+  activePlayerId: string;
+  broadcastToRoom: (eventName: string, data: any) => void;
+  clues: { [playerId: string]: Clue };
+  currWord: string;
+  currGuess: string | null;
+  deck: Deck;
+  numPoints: number;
+  players: object;
+  playerClass: any;
+  playerOrder: Array<string>;
+  roundNum: number;
+  skippedTurn: boolean;
+  state: number;
+
   static GAME_ID = Game.GAME_A_WORD_PLEASE;
   static STATE_ENTERING_CLUES = 3;
   static STATE_REVIEWING_CLUES = 4;
@@ -16,11 +35,9 @@ class AWPGame extends Game {
   static MIN_PLAYERS = 2;
   static TOTAL_NUM_ROUNDS = 13;
 
-  constructor(io, roomCode) {
-    super(io, roomCode);
+  constructor(broadcastToRoom) {
+    super(broadcastToRoom);
     this.clues = {};
-    this.lexicon = [];
-    this.lexiconCursor = 0;
     this.numPoints = 0;
     this.skippedTurn = false;
   }
@@ -48,9 +65,7 @@ class AWPGame extends Game {
     return Object.values(this.players).filter(player => player.connected);
   }
 
-  removePlayer(id) {
-    super.removePlayer(id)
-
+  disconnectPlayer(id) {
     const playerOrderIdx = this.playerOrder.indexOf(id);
 
     // For some reason, players get disconnected without being in the game
@@ -65,12 +80,12 @@ class AWPGame extends Game {
       this.nextTurn(false);
     }
 
-    this.broadcastGameDataToPlayers();
-
     if (this.state === AWPGame.STATE_ENTERING_CLUES) {
       // TODO: unmark duplicates
       this.checkIfAllCluesAreIn();
     }
+
+    super.disconnectPlayer(id)
   }
 
   nextTurn(shouldIncrementRound = true) {
@@ -170,17 +185,6 @@ class AWPGame extends Game {
     this.broadcastGameDataToPlayers();
   }
 
-  // Send all players back to the lobby
-  setPending() {
-    this.state = Game.STATE_PENDING;
-    this.players = {};
-    this.broadcastGameDataToPlayers();
-  }
-
-  isRoundOver() {
-    return this.state !== this.STATE_STARTED;
-  }
-
   isGameOver() {
     return this.state === Game.STATE_GAME_END;
   }
@@ -215,4 +219,4 @@ class AWPGame extends Game {
   }
 }
 
-module.exports = AWPGame;
+export default AWPGame;

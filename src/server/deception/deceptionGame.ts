@@ -1,13 +1,13 @@
-const Clue = require('./clue');
-const DeceptionPlayer = require('./deceptionPlayer');
-const Deck = require('../deck');
-const Game = require('../game');
-const Player = require('../player');
-const Tile = require('./tile');
-const evidenceList = require('./evidenceList');
-const methodList = require('./methodList');
-const locationTileList = require('./locationTileList');
-const sceneTileList = require('./sceneTileList');
+import Clue, { ClueType } from './clue';
+import DeceptionPlayer from './deceptionPlayer';
+import Deck from '../deck';
+import Game from '../game';
+import Player from '../player';
+import Tile, { TileType } from './tile';
+import evidenceList from './evidenceList';
+import methodList from './methodList';
+import locationTileList from './locationTileList';
+import sceneTileList from './sceneTileList';
 
 // Each player gets 4 "means of murder" cards and 4 "key evidence" cards
 // Before game starts, murderer chooses one means of murder and one key evidence
@@ -20,27 +20,87 @@ const sceneTileList = require('./sceneTileList');
 // - If wrong about either means of murder or key evidence, Scientist says no and nothing else, investigator loses badge
 // - If correct, murderer can guess witness
 
-class DeceptionGame extends Game {
-  static GAME_ID = Game.GAME_DECEPTION;
-
+enum GameState {
+  Pending,
+  TurnEnd,
+  GameEnd,
   // (optional) Explain the rules to first time players
-  static STATE_EXPLAIN_RULES = 3;
-  static STATE_SHOW_ROLES = 4;
+  ExplainRules = 3,
+  ShowRoles,
   // Murderer chooses means of murder and key evidence. (optional) Accomplice learns murderer
   // identity
-  static STATE_CHOOSE_MEANS_EVIDENCE = 5;
+  ChooseMeansEvidence,
   // (optional) Witness learns murderer and accomplice identity
-  static STATE_WITNESSING = 6; // optional
+  Witnessing, // optional
   // Murderer chooses cause of death
-  static STATE_SCIENTIST_CAUSE_OF_DEATH = 7;
+  ScientistCauseOfDeath,
   // Scientist chooses location
-  static STATE_SCIENTIST_LOCATION = 8;
+  ScientistLocation,
   // Scientist chooses scene markers
-  static STATE_SCIENTIST_INITIAL_SCENE_TILES = 9;
+  ScientistInitialSceneTiles,
   // Players make their cases
-  static STATE_DELIBERATION = 10;
+  Deliberation,
   // Scientist replaces a scene tile
-  static STATE_REPLACE_SCENE = 11;
+  ReplaceScene,
+}
+
+interface GameData {
+  accusationActive?: boolean;
+  accusationResult?: boolean;
+  accusedEvidence?: string;
+  accusedMethod?: string;
+  accuserId?: string;
+  accuseLog: { [playerId: string]: boolean };
+  causeOfDeathTile: Tile;
+  gameId: number;
+  includeAccomplice?: boolean;
+  includeWitness?: boolean;
+  locationTiles?: Array<Tile>;
+  keyEvidence: Clue;
+  murderMethod: Clue;
+  newSceneTile?: Tile;
+  oldSceneTile?: Tile;
+  roundNum: number;
+  sceneTiles: Array<Tile>;
+  selectedLocationTile: Tile;
+  suspectId?: string;
+  totalNumRounds: number;
+  players: { [playerId: string]: DeceptionPlayer },
+  playersReady?: { [playerId: string]: boolean },
+  state: GameState,
+  witnessGuessCorrect?: boolean;
+  witnessSuspectId?: string;
+}
+
+class DeceptionGame extends Game {
+  accusationActive?: boolean;
+  accusationResult: boolean | null;
+  accuserId?: string;
+  accuseLog: { [playerId: string]: boolean };
+  accusedEvidence?: string;
+  accusedMethod?: string;
+  broadcastToRoom: (eventName: string, data: any) => void;
+  causeOfDeathTile: Tile;
+  includeAccomplice?: boolean;
+  includeWitness?: boolean;
+  keyEvidence: Clue;
+  locationTiles?: Array<Tile>;
+  murderMethod: Clue;
+  newSceneTile?: Tile;
+  oldSceneTile?: Tile;
+  players: { [playerId: string]: DeceptionPlayer };
+  playerClass: any;
+  playersReady?: { [playerId: string]: boolean };
+  roundNum: number;
+  sceneTileDeck: Deck;
+  sceneTiles: Array<Tile>;
+  selectedLocationTile: Tile;
+  state: GameState;
+  suspectId?: string;
+  witnessGuessCorrect?: boolean | undefined;
+  witnessSuspectId?: string;
+
+  static GAME_ID = Game.GAME_DECEPTION;
 
   // reserve 0 to make truthy/falsy logic easier
   static ROLE_SCIENTIST = 1;
@@ -55,8 +115,8 @@ class DeceptionGame extends Game {
 
   static NUM_CLUE_CARDS_PER_PLAYER = 4;
 
-  constructor(io, roomCode) {
-    super(io, roomCode);
+  constructor(broadcastToRoom) {
+    super(broadcastToRoom);
     this.playerClass = DeceptionPlayer;
     this.playersReady = {}; // keep track of who has read the rules
     this.murderMethod = null;
@@ -81,11 +141,11 @@ class DeceptionGame extends Game {
     this.accusationResult = undefined;
     this.suspectId = null;
     this.witnessGuessCorrect = undefined;
-    this.witnessSuspect = null;
+    this.witnessSuspectId = null;
 
     this.dealCards();
     this.createTiles();
-    this.state = DeceptionGame.STATE_EXPLAIN_RULES;
+    this.state = GameState.ExplainRules;
     this.broadcastGameDataToPlayers();
   }
 
@@ -106,7 +166,7 @@ class DeceptionGame extends Game {
         'Poisoning',
         'Accident',
       ],
-      type: Tile.TYPE_CAUSE_OF_DEATH,
+      type: TileType.CauseOfDeath,
     });
   }
 
@@ -116,7 +176,7 @@ class DeceptionGame extends Game {
         id: idx,
         label: locationTileData.label,
         options: locationTileData.options,
-        type: Tile.TYPE_LOCATION,
+        type: TileType.Location,
       })
     );
   }
@@ -127,7 +187,7 @@ class DeceptionGame extends Game {
         id: idx,
         label: sceneTileData.label,
         options: sceneTileData.options,
-        type: Tile.TYPE_SCENE,
+        type: TileType.Scene,
       })
     );
     this.sceneTileDeck = new Deck(sceneTiles);
@@ -162,10 +222,10 @@ class DeceptionGame extends Game {
 
   dealCards() {
     const evidenceCards = evidenceList.map(
-      (evidenceLabel, i) => new Clue(evidenceLabel, i, Clue.TYPE_KEY_EVIDENCE)
+      (evidenceLabel, i) => new Clue(evidenceLabel, i, ClueType.KeyEvidence)
     );
     const methodCards = methodList.map(
-      (methodLabel, i) => new Clue(methodLabel, i, Clue.TYPE_MURDER_METHOD)
+      (methodLabel, i) => new Clue(methodLabel, i, ClueType.MurderMethod)
     );
 
     const evidenceDeck = new Deck(evidenceCards);
@@ -197,8 +257,6 @@ class DeceptionGame extends Game {
         return this.playerReady(playerId);
       case 'toggleRole':
         return this.toggleRole(playerId, data);
-      case 'acknowledgeRole':
-        return this.acknowledgeRole(playerId);
       case 'chooseMeansAndEvidence':
         return this.chooseMeansAndEvidence(playerId, data);
       case 'selectCauseOfDeath':
@@ -227,7 +285,7 @@ class DeceptionGame extends Game {
   }
 
   playerReady(playerId) {
-    this.playersReady[playerId] = 1;
+    this.playersReady[playerId] = true;
     this.broadcastGameDataToPlayers();
 
     if (Object.keys(this.playersReady).length < Object.keys(this.players).length) {
@@ -237,12 +295,12 @@ class DeceptionGame extends Game {
     // Everyone is ready!
     this.playersReady = {};
     switch (this.state) {
-      case DeceptionGame.STATE_EXPLAIN_RULES:
+      case GameState.ExplainRules:
         this.assignRoles();
-        this.state = DeceptionGame.STATE_SHOW_ROLES;
+        this.state = GameState.ShowRoles;
         break;
-      case DeceptionGame.STATE_SHOW_ROLES:
-        this.state = DeceptionGame.STATE_CHOOSE_MEANS_EVIDENCE;
+      case GameState.ShowRoles:
+        this.state = GameState.ChooseMeansEvidence;
         break;
       default:
         throw 'Unexpected state change!'
@@ -260,15 +318,6 @@ class DeceptionGame extends Game {
     this.broadcastGameDataToPlayers();
   }
 
-  acknowledgeRole(playerId) {
-    this.acknowledgedRolesMap[playerId] = 1;
-    if (Object.keys(this.acknowledgedRolesMap).length >= Object.keys(this.players).length) {
-      // Everyone has acknowledged their role and we're ready to start the game!
-      this.state = DeceptionGame.STATE_CHOOSE_MEANS_EVIDENCE;
-    }
-    this.broadcastGameDataToPlayers();
-  }
-
   chooseMeansAndEvidence(playerId, { methodId, evidenceId }) {
     const player = this.players[playerId];
 
@@ -279,7 +328,7 @@ class DeceptionGame extends Game {
     this.murderMethod = player.methodCards.find(method => method.id === methodId);
     this.keyEvidence = player.evidenceCards.find(evidence => evidence.id === evidenceId);
 
-    this.state = DeceptionGame.STATE_SCIENTIST_CAUSE_OF_DEATH;
+    this.state = GameState.ScientistCauseOfDeath;
     this.broadcastGameDataToPlayers();
   }
 
@@ -292,7 +341,7 @@ class DeceptionGame extends Game {
 
     this.causeOfDeathTile.selectOption(data.causeOfDeath);
 
-    this.state = DeceptionGame.STATE_SCIENTIST_LOCATION;
+    this.state = GameState.ScientistLocation;
     this.broadcastGameDataToPlayers();
   }
 
@@ -315,7 +364,7 @@ class DeceptionGame extends Game {
     this.selectedLocationTile.selectOption(location);
 
     // Prepare for choosing scene tiles
-    this.state = DeceptionGame.STATE_SCIENTIST_INITIAL_SCENE_TILES;
+    this.state = GameState.ScientistInitialSceneTiles;
     this.sceneTiles = [];
 
     const numSceneTiles = 4;
@@ -344,15 +393,15 @@ class DeceptionGame extends Game {
       }
     });
 
-    this.state = DeceptionGame.STATE_DELIBERATION;
+    this.state = GameState.Deliberation;
     this.broadcastGameDataToPlayers();
   }
 
   endRound() {
     if (this.roundNum >= DeceptionGame.NUM_ROUNDS) {
-      this.state = DeceptionGame.STATE_GAME_END;
+      this.state = GameState.GameEnd;
     } else {
-      this.state = DeceptionGame.STATE_REPLACE_SCENE;
+      this.state = GameState.ReplaceScene;
       this.newSceneTile = this.sceneTileDeck.drawCard();
     }
     this.broadcastGameDataToPlayers();
@@ -370,8 +419,12 @@ class DeceptionGame extends Game {
     const replacedTiles = this.sceneTiles.splice(replacedTileIdx, 1, this.newSceneTile);
     this.oldSceneTile = replacedTiles[0];
 
+    this.nextTurn();
+  }
+
+  nextTurn() {
     ++this.roundNum;
-    this.state = DeceptionGame.STATE_DELIBERATION;
+    this.state = GameState.Deliberation;
     this.broadcastGameDataToPlayers();
   }
 
@@ -391,7 +444,7 @@ class DeceptionGame extends Game {
     this.suspectId = suspectId;
     this.accusedMethod = null;
     this.accusedEvidence = null;
-    this.accuseLog[player.id] = 1;
+    this.accuseLog[player.id] = true;
     this.accusationActive = true;
     this.accusationResult = null;
 
@@ -425,7 +478,7 @@ class DeceptionGame extends Game {
 
     if (isMurdererGuessCorrect && isMethodGuessCorrect && isEvidenceGuessCorrect) {
       // Investigators win!
-      this.state = DeceptionGame.STATE_GAME_END;
+      this.state = GameState.GameEnd;
       this.accusationResult = true;
     } else {
       this.accusationResult = false;
@@ -465,7 +518,7 @@ class DeceptionGame extends Game {
     this.broadcastGameDataToPlayers();
   }
 
-  serialize() {
+  serialize(): GameData {
     const {
       accusationActive,
       accusationResult,
@@ -478,7 +531,7 @@ class DeceptionGame extends Game {
       state,
     } = this;
 
-    let data = {
+    let data: GameData = {
       accuseLog: this.accuseLog,
       causeOfDeathTile: this.causeOfDeathTile,
       gameId: DeceptionGame.GAME_ID,
@@ -493,8 +546,8 @@ class DeceptionGame extends Game {
     };
 
     switch (state) {
-      case DeceptionGame.STATE_EXPLAIN_RULES:
-      case DeceptionGame.STATE_SHOW_ROLES:
+      case GameState.ExplainRules:
+      case GameState.ShowRoles:
         data = {
           ...data,
           includeAccomplice: this.includeAccomplice,
@@ -503,21 +556,21 @@ class DeceptionGame extends Game {
         };
         break;
 
-      case DeceptionGame.STATE_SCIENTIST_LOCATION:
+      case GameState.ScientistLocation:
         data = {
           ...data,
           locationTiles,
         }
         break;
 
-      case DeceptionGame.STATE_REPLACE_SCENE:
+      case GameState.ReplaceScene:
         data = {
           ...data,
           newSceneTile,
         }
         break;
 
-      case DeceptionGame.STATE_DELIBERATION:
+      case GameState.Deliberation:
         data = {
           ...data,
           accuserId: this.accuserId,
@@ -531,7 +584,7 @@ class DeceptionGame extends Game {
         };
         break;
 
-      case DeceptionGame.STATE_GAME_END:
+      case GameState.GameEnd:
         data = {
           ...data,
           accusationResult,
@@ -544,4 +597,4 @@ class DeceptionGame extends Game {
   }
 }
 
-module.exports = DeceptionGame;
+export default DeceptionGame;
