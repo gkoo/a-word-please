@@ -1,3 +1,4 @@
+const Deck = require('../deck');
 const Game = require('../game');
 const Player = require('../player');
 const { easyConcepts, advancedConcepts } = require('./concepts.js');
