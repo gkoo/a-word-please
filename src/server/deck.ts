@@ -1,6 +1,9 @@
 import _ from 'lodash';
 
 class Deck {
+  cards: Array<any>;
+  cursor: number;
+
   constructor(cards) {
     this.cards = cards;
     this.cursor = 0;

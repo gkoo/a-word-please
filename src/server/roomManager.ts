@@ -1,8 +1,11 @@
-const Room = require('./room.js');
+import Room from './room';
 
 const ROOM_CODE_PREFIX = 'room-';
 
 class RoomManager {
+  rooms: { [roomCode: string]: Room };
+  io: SocketIO.Server;
+
   constructor(io) {
     this.rooms = {};
     this.io = io;
@@ -60,13 +63,13 @@ class RoomManager {
     const room = this.getRoom(socket);
     console.log('starting game');
     if (!room) { return; }
-    room.startGame(socket.id);
+    room.startGame();
   }
 
   handleNextTurn(socket) {
     const room = this.getRoom(socket);
     if (!room) { return; }
-    room.nextTurn(socket.id);
+    room.nextTurn();
   }
 
   handleEndGame(socket) {
@@ -94,10 +97,6 @@ class RoomManager {
         delete this.rooms[room.roomCode];
       }
     });
-  }
-
-  onSetPending(socket) {
-    this.getRoom(socket).setPending();
   }
 
   onDebug(socket) {
