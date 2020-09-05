@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
-    "outDir": "./built",
     "allowJs": true,
-    "target": "es2018",
-    "moduleResolution": "node"
+    "outDir": "./built",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "target": "es2018"
   },
   "include": ["./src/server/**/*"]
 }

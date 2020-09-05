@@ -1,8 +1,17 @@
-const _ = require('lodash');
+import _ from 'lodash';
 
-const Player = require('./player.js');
+import User from './user';
+import Player from './player';
 
 class Game {
+  io: SocketIO.Server;
+  roomCode: string;
+  activePlayerId: string;
+  players: object;
+  playerClass: any;
+  playerOrder: Array<string>;
+  state: number;
+
   static GAME_A_WORD_PLEASE = 1;
   static GAME_WEREWOLF = 2;
   static GAME_WAVELENGTH = 3;
@@ -15,7 +24,6 @@ class Game {
   constructor(io, roomCode) {
     this.io = io;
     this.roomCode = roomCode;
-    this.deckCursor = 0;
     this.players = {};
     this.playerClass = Player;
   }
@@ -28,8 +36,8 @@ class Game {
     this.broadcastToRoom('gameData', this.serialize());
   }
 
-  setup(users) {
-    const playerUsers = Object.values(users).filter(user => !user.isSpectator);
+  setup(users: object) {
+    const playerUsers = Object.values(users).filter((user: User) => !user.isSpectator);
     playerUsers.forEach(user => this.addPlayer(user));
   }
 
@@ -94,7 +102,11 @@ class Game {
     this.broadcastGameDataToPlayers();
   }
 
-  handlePlayerAction() {
+  nextTurn() {
+    throw new Error('nextTurn not implemented!');
+  }
+
+  handlePlayerAction(socketId: string, data: object) {
     throw new Error('handlePlayerAction not implemented!');
   }
 
@@ -112,4 +124,4 @@ class Game {
   }
 }
 
-module.exports = Game;
+export default Game;

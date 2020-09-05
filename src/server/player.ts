@@ -1,4 +1,9 @@
 class Player {
+  id: string;
+  name: string;
+  connected: boolean;
+  socketId: string;
+
   constructor({ id, name, socketId }) {
     this.id = id;
     this.name = name;
@@ -10,8 +15,9 @@ class Player {
     return {
       id: this.id,
       name: this.name,
+      connected: this.connected,
     };
   }
 }
 
-module.exports = Player;
+export default Player;
