@@ -43,7 +43,7 @@ io.on('connection', socket => {
   socket.emit('userId', socket.id);
   socket.on('disconnect', () => roomManager.onUserDisconnect(socket));
   socket.on('reconnect-room', (data) => roomManager.handleReconnect(socket, data));
-  socket.on('joinRoom', roomCode => roomManager.joinRoom(socket, roomCode));
+  socket.on('joinRoom', roomCode => roomManager.joinRoom({ socket, roomCode }));
   socket.on('saveName', data => roomManager.handleSetName(socket, data.name, data.isSpectator));
   socket.on('chooseGame', gameId => roomManager.handleChooseGame(socket, gameId));
   socket.on('startGame', () => roomManager.handleStartGame(socket));

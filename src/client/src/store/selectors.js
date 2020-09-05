@@ -63,6 +63,10 @@ export const playersSelector = createSelector(
   gameDataSelector,
   gameData => gameData?.players
 );
+export const connectedPlayersSelector = createSelector(
+  playersSelector,
+  players => players && Object.values(players).filter(player => player.connected),
+);
 export const activePlayerSelector = createSelector(
   gameDataSelector,
   playersSelector,

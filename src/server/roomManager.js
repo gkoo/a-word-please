@@ -17,7 +17,7 @@ class RoomManager {
     return room;
   }
 
-  joinRoom(socket, roomCode) {
+  joinRoom({ socket, roomCode, originalSocketId, name }) {
     // Disconnect the user from any other rooms they may have joined
     Object.values(this.rooms).forEach(room => {
       if (!room.users[socket.id]) { return; }
@@ -27,7 +27,7 @@ class RoomManager {
 
     const room = this.findOrCreateRoom(roomCode);
     socket.join(roomCode);
-    room.addUser(socket);
+    room.addUser({ socket, originalSocketId, name });
   }
 
   // Returns the name of the Socket IO room
@@ -53,8 +53,7 @@ class RoomManager {
   }
 
   handleReconnect(socket, { originalSocketId, name, isSpectator, roomCode }) {
-    this.joinRoom(socket, roomCode);
-    this.findOrCreateRoom(roomCode).maybeReconnect(socket, name, isSpectator, originalSocketId);
+    this.joinRoom({ socket, roomCode, originalSocketId, name });
   }
 
   handleStartGame(socket) {
@@ -83,6 +82,7 @@ class RoomManager {
   }
 
   onUserDisconnect(socket) {
+    console.log(`${socket.id} disconnected`);
     // socket.rooms gets cleared before we can do any cleanup. Just loop through rooms to find if
     // they have the socket and clean it up.
     Object.values(this.rooms).forEach(room => {

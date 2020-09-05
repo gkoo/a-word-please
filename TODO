@@ -6,6 +6,8 @@ prevent starting game w/ less than 4 players
 
 Make Scientist info during tile selection prettier
 
+test for spectators
+
 # AWP
 
 remove point if wrong guess on last turn

@@ -895,8 +895,6 @@ export default function reducer(state = stateToUse, action) {
       const newRoomData = action.payload;
       const { roomData } = state;
 
-      window.localStorage.setItem('socketId', newRoomData.currUserId);
-
       return {
         ...state,
         roomData: {
@@ -906,9 +904,12 @@ export default function reducer(state = stateToUse, action) {
       };
 
     case actions.RECEIVE_USER_ID:
+      const receivedUserId = action.payload;
+      window.localStorage.setItem('socketId', receivedUserId);
+
       return {
         ...state,
-        currUserId: action.payload,
+        currUserId: receivedUserId,
       };
 
     case actions.SAVE_NAME:

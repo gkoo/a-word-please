@@ -64,9 +64,11 @@ class Game {
     }
 
     // There was a player here before. Let's restore her.
-    player.socketId = user.socketId;
+    player.id = user.id;
     player.connected = true;
-    broadcastGameDataToPlayers();
+    this.players[player.id] = player;
+    delete this.players[originalSocketId];
+    this.broadcastGameDataToPlayers();
   }
 
   newGame() {
@@ -87,8 +89,9 @@ class Game {
     });
   }
 
-  removePlayer(id) {
+  disconnectPlayer(id) {
     if (this.players[id]) { this.players[id].connected = false; }
+    this.broadcastGameDataToPlayers();
   }
 
   handlePlayerAction() {

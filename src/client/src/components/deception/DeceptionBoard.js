@@ -31,6 +31,7 @@ import {
   updateUserPreference,
 } from '../../store/actions';
 import {
+  connectedPlayersSelector,
   gameDataSelector,
   gameStateSelector,
   spectatorUsersSelector,
@@ -41,6 +42,7 @@ import {
 function DeceptionBoard() {
   const dispatch = useDispatch();
 
+  const connectedPlayers = useSelector(connectedPlayersSelector);
   const gameData = useSelector(gameDataSelector);
   const gameState = useSelector(gameStateSelector);
   const spectatorUsers = useSelector(spectatorUsersSelector);
@@ -50,7 +52,7 @@ function DeceptionBoard() {
   const hideRulesPreferenceName = 'hideRules';
   const collapseTilesPreferenceName = 'collapseTiles';
 
-  const { playersReady, players } = gameData;
+  const { playersReady } = gameData;
   const showReadyCheckmarks = [
     STATE_DECEPTION_EXPLAIN_RULES,
     STATE_DECEPTION_SHOW_ROLES,
@@ -102,7 +104,7 @@ function DeceptionBoard() {
 
         <h3><u>Players</u></h3>
         {
-          Object.values(players).filter(player => player.connected).map(player =>
+          connectedPlayers.filter(player => player.connected).map(player =>
             <div key={player.id}>
               <PlayerCheckboxLabel
                 checked={showReadyCheckmarks && !!playersReady[player.id]}

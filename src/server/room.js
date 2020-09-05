@@ -27,27 +27,42 @@ function Room({ io, roomCode }) {
 Room.prototype = {
   getUserById: function(id) { return this.users[id]; },
 
-  addUser: function(socket) {
+  addUser: function({ socket, originalSocketId, name }) {
     const { id } = socket;
-    const user = new User({ id });
+    const existingUser = this.users[originalSocketId];
+    let user;
+
+    if (!existingUser) {
+      user = new User({ id, name });
+    } else {
+      // we are reconnecting
+      user = existingUser;
+      user.id = id;
+      delete this.users[originalSocketId];
+
+      if (this.game) {
+        this.game.maybeReconnect(user, originalSocketId);
+      }
+    }
+    user.connected = true;
     this.users[id] = user;
+
     if (this.getUsers().length === 1) {
       this.promoteRandomLeader();
     }
-    this.sendRoomData(socket);
+    this.broadcastRoomData();
     return user;
   },
 
   onUserDisconnect: function(id) {
     const user = this.users[id];
 
-    console.log(`${id} disconnected`);
-    delete this.users[id];
+    this.users[id].connected = false;
     if (user.isLeader) {
       this.promoteRandomLeader();
     }
     if (this.game) {
-      this.game.removePlayer(id);
+      this.game.disconnectPlayer(id);
       // Clean up game if no players left
       const connectedPlayer = Object.values(this.game.players).find(player => player.connected);
       if (!connectedPlayer) { this.game = null; }
@@ -152,39 +167,28 @@ Room.prototype = {
     this.broadcastToRoom('roomData', this.getRoomData());
   },
 
-  maybeReconnect: function(socket, name, isSpectator, originalSocketId) {
-    const user = this.addUser(socket);
-    this.setUserName(socket.id, name, isSpectator);
-
-    if (this.game) {
-      this.game.maybeReconnect(user, originalSocketId);
-    }
-  },
-
-  getRoomData: function({ socketId, includeCurrUserId } = {}) {
+  getRoomData: function() {
     const users = {};
     const { roomCode, state, selectedGame } = this;
     Object.values(this.users).forEach(user => {
-      users[user.id] = user.serialize();
+      if (user) {
+        users[user.id] = user.serialize();
+      }
     });
-    const data = {
+    return {
       roomCode,
       state,
       selectedGame,
       users,
     };
-    if (includeCurrUserId) {
-      data.currUserId = socketId;
-    }
-    return data;
   },
 
-  sendRoomData: function(socket) {
-    const roomData = this.getRoomData({ socketId: socket.id, includeCurrUserId: true });
-    this.io.to(socket.id).emit('roomData', roomData);
+  broadcastRoomData: function() {
+    const roomData = this.getRoomData();
+    this.io.to(this.roomCode).emit('roomData', roomData);
 
     let gameData = this.game ? this.game.serialize() : { state: Game.STATE_PENDING };
-    this.io.to(socket.id).emit('gameData', gameData)
+    this.io.to(this.roomCode).emit('gameData', gameData)
   },
 
   sendGameState: function(socketId) {
