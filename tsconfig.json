@@ -2,10 +2,14 @@
   "compilerOptions": {
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "outDir": "./built",
-    "module": "esnext",
+    "module": "commonjs",
     "moduleResolution": "node",
     "target": "es2018"
   },
-  "include": ["./src/server/**/*"]
+  "include": ["./src/server/**/*"],
+  "exclude": [
+    "node_modules"
+  ]
 }

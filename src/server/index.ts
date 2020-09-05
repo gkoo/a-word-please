@@ -10,11 +10,14 @@ const server = http.createServer(app);
 const io = socketIO(server);
 
 const port = process.env.PORT || 5000;
+const isProduction = process.env.NODE_ENV === 'production';
 app.set('port', port);
 
 const roomManager = new RoomManager(io);
 
-app.use(express.static(path.join(__dirname, '../client/build')));
+const clientDirPath = `../${isProduction ? 'src/' : ''}client`;
+
+app.use(express.static(path.join(__dirname, `${clientDirPath}/build`)));
 
 app.get('/health', (req, res) => res.send('ok'));
 
@@ -27,7 +30,8 @@ app.get('/api/sessions', (req, res) => {
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/build/index.html'));
+  const indexHtmlPath = `${clientDirPath}/build/index.html`;
+  res.sendFile(path.join(__dirname, indexHtmlPath));
 });
 
 // Callbacks to pass to room
