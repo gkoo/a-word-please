@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
-    "outDir": "./src/server/built",
+    "outDir": "./built",
     "allowJs": true,
-    "target": "es5"
+    "target": "es2018",
+    "moduleResolution": "node"
   },
   "include": ["./src/server/**/*"]
 }
