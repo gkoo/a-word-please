@@ -43,7 +43,7 @@ class WavelengthGame extends Game {
     super.addPlayer({ id, name });
 
     if (this.playerOrder) {
-      this.playerOrder.push(user.id);
+      this.playerOrder.push(id);
     }
   }
 
