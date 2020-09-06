@@ -1,22 +1,39 @@
-const Deck = require('../deck');
-const Game = require('../game');
-const Player = require('../player');
-const { easyConcepts, advancedConcepts } = require('./concepts.js');
+import Deck from '../deck';
+import Game from '../game';
+import Player from '../player';
+import { easyConcepts, advancedConcepts } from './concepts';
 
 class WavelengthGame extends Game {
+  activePlayerId: string;
+  broadcastToRoom: (eventName: string, data: any) => void;
+  clue: string | null;
+  concepts: Array<[string, string]>;
+  currConcept: [string, string];
+  deck: Deck;
+  emitToPlayer: (playerId: string, eventName: string, data: any) => void;
+  numPoints: number;
+  players: object;
+  playerClass: any;
+  playerOrder: Array<string>;
+  roundNum: number;
+  spectrumGuess: number;
+  spectrumValue: number;
+  state: number;
+
   static GAME_ID = Game.GAME_WAVELENGTH;
   static STATE_CLUE_PHASE = 3;
   static STATE_GUESS_PHASE = 4;
   static STATE_REVEAL_PHASE = 5;
   static STATE_GAME_END_PHASE = 6;
+
   static SPECTRUM_MAX_VALUE = 200;
   static SPECTRUM_BAND_WIDTH = 12;
   static TOTAL_NUM_ROUNDS = 13;
 
-  constructor(io, roomCode) {
-    super(io, roomCode);
+  constructor(broadcastToRoom, emitToPlayer) {
+    super(broadcastToRoom);
+    this.emitToPlayer = emitToPlayer;
     this.concepts = [];
-    this.conceptCursor = 0;
     this.numPoints = 0;
   }
 
@@ -48,9 +65,7 @@ class WavelengthGame extends Game {
     }
   }
 
-  removePlayer(id) {
-    super.removePlayer(id);
-
+  disconnectPlayer(id: string) {
     // Remove from player order
     const playerOrderIdx = this.playerOrder.indexOf(id);
 
@@ -63,7 +78,7 @@ class WavelengthGame extends Game {
       this.nextTurn(false);
     }
 
-    this.broadcastGameDataToPlayers();
+    super.disconnectPlayer(id);
   }
 
   nextTurn(shouldIncrementRound = true) {
@@ -119,7 +134,7 @@ class WavelengthGame extends Game {
     const otherPlayers = this.getConnectedPlayers().filter(player => player.id !== playerId)
     otherPlayers.forEach(player => {
       // Don't broadcast entire game data because this might be called frequently
-      this.io.to(player.id).emit('spectrumGuessUpdate', guess);
+      this.emitToPlayer(player.id, 'spectrumGuessUpdate', guess);
     });
   }
 
@@ -171,4 +186,4 @@ class WavelengthGame extends Game {
   }
 }
 
-module.exports = WavelengthGame;
+export default WavelengthGame;

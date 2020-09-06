@@ -67,6 +67,7 @@ function Room() {
 
     return () => {
       socket.removeAllListeners('debugInfo');
+      socket.removeAllListeners('disconnect');
       socket.removeAllListeners('endGame');
       socket.removeAllListeners('roomData');
       socket.removeAllListeners('gameData');

@@ -1,36 +1,46 @@
-const AWPGame = require('./a-word-please/awp-game.js');
-const DeceptionGame = require('./deception/deceptionGame.js');
-const Game = require('./game.js');
-const WerewolfGame = require('./werewolf/werewolfGame.js');
-const WavelengthGame = require('./wavelength/wavelengthGame.js');
-const User = require('./user.js');
+import AWPGame from './a-word-please/awp-game';
+import DeceptionGame from './deception/deceptionGame';
+import Game from './game';
+import WerewolfGame from './werewolf/werewolfGame';
+import WavelengthGame from './wavelength/wavelengthGame';
+import User from './user';
 
-const VALID_GAMES = [
+const VALID_GAMES: Array<number> = [
   Game.GAME_A_WORD_PLEASE,
   Game.GAME_WEREWOLF,
   Game.GAME_WAVELENGTH,
   Game.GAME_DECEPTION,
 ];
 
-const STATE_LOBBY = 1;
-const STATE_GAME = 2;
-
-function Room({ io, roomCode }) {
-  this.broadcastToRoom = (eventName, data) => io.to(roomCode).emit(eventName, data);
-  this.io = io;
-  this.roomCode = roomCode;
-  this.selectedGame = null;
-  this.state = STATE_LOBBY;
-  this.users = {};
+enum RoomState {
+  Lobby = 1,
+  Game,
 }
 
-Room.prototype = {
-  getUserById: function(id) { return this.users[id]; },
+class Room {
+  broadcastToRoom: (eventName: string, data: any) => void;
+  io: SocketIO.Server;
+  game: Game;
+  roomCode: string;
+  selectedGame: number;
+  state: RoomState;
+  users: { [id: string]: User };
 
-  addUser: function({ socket, originalSocketId, name }) {
+  constructor({ io, roomCode }) {
+    this.broadcastToRoom = (eventName, data) => io.to(roomCode).emit(eventName, data);
+    this.io = io;
+    this.roomCode = roomCode;
+    this.selectedGame = null;
+    this.state = RoomState.Lobby;
+    this.users = {};
+  }
+
+  getUserById(id) { return this.users[id]; }
+
+  addUser({ socket, originalSocketId, name }) {
     const { id } = socket;
     const existingUser = this.users[originalSocketId];
-    let user;
+    let user: User;
 
     if (!existingUser) {
       user = new User({ id, name });
@@ -52,9 +62,9 @@ Room.prototype = {
     }
     this.broadcastRoomData();
     return user;
-  },
+  }
 
-  onUserDisconnect: function(id) {
+  onUserDisconnect(id) {
     const user = this.users[id];
 
     this.users[id].connected = false;
@@ -68,9 +78,9 @@ Room.prototype = {
       if (!connectedPlayer) { this.game = null; }
     }
     this.broadcastToRoom('userDisconnect', id);
-  },
+  }
 
-  promoteRandomLeader: function() {
+  promoteRandomLeader() {
     const users = this.getUsers();
 
     if (users.length === 0) { return; }
@@ -81,11 +91,11 @@ Room.prototype = {
       users[i].unpromoteFromLeader();
     }
     this.broadcastToRoom('newLeader', newLeader.id);
-  },
+  }
 
-  getLeader: function() { return Object.values(this.users).find(user => user.isLeader); },
+  getLeader() { return Object.values(this.users).find(user => user.isLeader); }
 
-  setUserName: function(id, name, isSpectator) {
+  setUserName(id, name, isSpectator) {
     const user = this.users[id];
     user.setName(name);
     if (isSpectator) {
@@ -97,22 +107,22 @@ Room.prototype = {
     if (!isSpectator) { this.game.addPlayer(user); }
 
     this.broadcastToRoom('gameData', this.game.serialize());
-  },
+  }
 
   // returns an array of users
-  getUsers: function() { return Object.values(this.users); },
+  getUsers() { return Object.values(this.users); }
 
-  chooseGame: function(gameId) {
+  chooseGame(gameId) {
     if (!VALID_GAMES.includes(gameId)) { return; }
     this.selectedGame = gameId;
     this.broadcastToRoom('roomData', this.getRoomData());
-  },
+  }
 
-  startGame: function() {
+  startGame() {
     const { io } = this;
     if (!this.selectedGame) { return; }
 
-    this.state = STATE_GAME;
+    this.state = RoomState.Game;
 
     const roomData = this.getRoomData();
     this.io.to(this.roomCode).emit('roomData', roomData)
@@ -124,50 +134,50 @@ Room.prototype = {
 
     switch (this.selectedGame) {
       case Game.GAME_A_WORD_PLEASE:
-        this.game = new AWPGame(this.io, this.roomCode);
+        this.game = new AWPGame(this.broadcastToRoom);
         break;
       case Game.GAME_WEREWOLF:
-        this.game = new WerewolfGame(this.io, this.roomCode);
+        this.game = new WerewolfGame(this.broadcastToRoom);
         break;
       case Game.GAME_WAVELENGTH:
-        this.game = new WavelengthGame(this.io, this.roomCode);
+        this.game = new WavelengthGame(this.broadcastToRoom, this.emitToPlayer);
         break;
       case Game.GAME_DECEPTION:
-        this.game = new DeceptionGame(this.io, this.roomCode);
+        this.game = new DeceptionGame(this.broadcastToRoom);
         break;
       default:
         throw 'Unrecognized game type chosen';
     }
     this.game.setup(this.users);
-  },
+  }
 
-  nextTurn: function() {
+  nextTurn() {
     console.log('starting next round');
     if (!this.game) { return false; }
     this.game.nextTurn();
-  },
+  }
 
-  handlePlayerAction: function(socket, data) {
+  handlePlayerAction(socket, data) {
     if (!this.game) { return; }
     if (data.action === 'backToLobby') {
       this.backToLobby();
       return;
     }
     this.game.handlePlayerAction(socket.id, data);
-  },
+  }
 
-  endGame: function() {
+  endGame() {
     if (!this.game) { return; }
     this.game.endGame();
-  },
+  }
 
-  backToLobby: function() {
-    this.state = STATE_LOBBY;
+  backToLobby() {
+    this.state = RoomState.Lobby;
     this.game = null;
     this.broadcastToRoom('roomData', this.getRoomData());
-  },
+  }
 
-  getRoomData: function() {
+  getRoomData() {
     const users = {};
     const { roomCode, state, selectedGame } = this;
     Object.values(this.users).forEach(user => {
@@ -181,21 +191,25 @@ Room.prototype = {
       selectedGame,
       users,
     };
-  },
+  }
 
-  broadcastRoomData: function() {
+  broadcastRoomData() {
     const roomData = this.getRoomData();
     this.io.to(this.roomCode).emit('roomData', roomData);
 
     let gameData = this.game ? this.game.serialize() : { state: Game.STATE_PENDING };
     this.io.to(this.roomCode).emit('gameData', gameData)
-  },
+  }
 
-  sendGameState: function(socketId) {
+  emitToPlayer(playerId: string, eventName: string, data: any) {
+    this.io.to(playerId).emit(eventName, data);
+  }
+
+  sendGameState(socketId) {
     if (this.game) {
       this.io.to(socketId).emit('debugInfo', this.game.serialize())
     }
-  },
+  }
 }
 
-module.exports = Room;
+export default Room;

@@ -1,6 +1,6 @@
 const Tile = require('./tile');
 
-module.exports = [
+export default [
   {
     label: 'Social Relationship',
     options: [

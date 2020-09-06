@@ -1,6 +1,9 @@
-const _ = require('lodash');
+import _ from 'lodash';
 
 class Deck {
+  cards: Array<any>;
+  cursor: number;
+
   constructor(cards) {
     this.cards = cards;
     this.cursor = 0;
@@ -17,4 +20,4 @@ class Deck {
   }
 }
 
-module.exports = Deck;
+export default Deck;

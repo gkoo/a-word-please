@@ -1,8 +1,16 @@
-const _ = require('lodash');
+import _ from 'lodash';
 
-const Player = require('./player.js');
+import User from './user';
+import Player from './player';
 
-class Game {
+abstract class Game {
+  broadcastToRoom: (eventName: string, data: any) => void;
+  activePlayerId: string;
+  players: object;
+  playerClass: any;
+  playerOrder: Array<string>;
+  state: number;
+
   static GAME_A_WORD_PLEASE = 1;
   static GAME_WEREWOLF = 2;
   static GAME_WAVELENGTH = 3;
@@ -12,24 +20,18 @@ class Game {
   static STATE_TURN_END = 1;
   static STATE_GAME_END = 2;
 
-  constructor(io, roomCode) {
-    this.io = io;
-    this.roomCode = roomCode;
-    this.deckCursor = 0;
+  constructor(broadcastToRoom) {
+    this.broadcastToRoom = broadcastToRoom;
     this.players = {};
     this.playerClass = Player;
-  }
-
-  broadcastToRoom(eventName, data) {
-    this.io.to(this.roomCode).emit(eventName, data);
   }
 
   broadcastGameDataToPlayers() {
     this.broadcastToRoom('gameData', this.serialize());
   }
 
-  setup(users) {
-    const playerUsers = Object.values(users).filter(user => !user.isSpectator);
+  setup(users: object) {
+    const playerUsers = Object.values(users).filter((user: User) => !user.isSpectator);
     playerUsers.forEach(user => this.addPlayer(user));
   }
 
@@ -50,7 +52,7 @@ class Game {
     }
   }
 
-  maybeReconnect(user, originalSocketId) {
+  maybeReconnect(user: User, originalSocketId: string) {
     // Look for the player based on their socketId.
     const player = Object.values(this.players).find(p => p.socketId === originalSocketId);
 
@@ -71,15 +73,11 @@ class Game {
     this.broadcastGameDataToPlayers();
   }
 
-  newGame() {
-    throw new Error('newGame not implemented!');
-  }
-
   // Players will start off with an id equal to their socket.id. However, this won't necessarily
   // always be the case. If there is a temporary disconnect and the player reconnects, we will
   // attempt to reconnect them to the same ID that they had before, but using their new socket.id
   // value for communication.
-  addPlayer({ id, name }) {
+  addPlayer({ id, name }): void {
     if (!name) { return; }
 
     this.players[id] = new this.playerClass({
@@ -89,27 +87,32 @@ class Game {
     });
   }
 
-  disconnectPlayer(id) {
+  disconnectPlayer(id): void {
     if (this.players[id]) { this.players[id].connected = false; }
     this.broadcastGameDataToPlayers();
   }
 
-  handlePlayerAction() {
-    throw new Error('handlePlayerAction not implemented!');
-  }
+  abstract newGame(): void;
+
+  abstract nextTurn(): void;
+
+  abstract handlePlayerAction(socketId: string, data: { [key: string]: any }): void;
 
   endGame() {
     this.state = Game.STATE_GAME_END;
     this.broadcastGameDataToPlayers();
   }
 
+  // Send all players back to the lobby
   setPending() {
-    throw new Error('setPending not implemented!');
+    this.state = Game.STATE_PENDING;
+    this.players = {};
+    this.broadcastGameDataToPlayers();
   }
 
   serialize() {
-    throw new Error('serialize not implemented!');
-  }
+    throw new Error('need to define serialize!');
+  };
 }
 
-module.exports = Game;
+export default Game;

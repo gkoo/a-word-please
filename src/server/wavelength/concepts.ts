@@ -1,5 +1,4 @@
-// https://youtu.be/4lwGkSiEHeA?t=66
-module.exports.easyConcepts = [
+export const easyConcepts = [
   ['Rare', 'Common'],
   ['Bad movie', 'Good movie'],
   ['Traditionally masculine', 'Traditionally feminine'],
@@ -178,7 +177,7 @@ module.exports.easyConcepts = [
   ['Boring person', 'Fun person'],
 ];
 
-module.exports.advancedConcepts = [
+export const advancedConcepts = [
   ['One hit wonder', 'Pop icon'],
   ['Thrilling', 'Terrifying'],
   ['Nerd', 'Jock'],

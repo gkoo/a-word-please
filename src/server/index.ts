@@ -1,20 +1,23 @@
-const express = require('express');
-const http = require('http');
-const path = require('path');
-const socketIO = require('socket.io');
+import express from 'express';
+import http from 'http';
+import path from 'path';
+import socketIO from 'socket.io';
+
+import RoomManager from './roomManager';
 
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
 
-const RoomManager = require('./roomManager.js');
-
 const port = process.env.PORT || 5000;
+const isProduction = process.env.NODE_ENV === 'production';
 app.set('port', port);
 
 const roomManager = new RoomManager(io);
 
-app.use(express.static(path.join(__dirname, '../client/build')));
+const clientDirPath = `../${isProduction ? 'src/' : ''}client`;
+
+app.use(express.static(path.join(__dirname, `${clientDirPath}/build`)));
 
 app.get('/health', (req, res) => res.send('ok'));
 
@@ -27,7 +30,8 @@ app.get('/api/sessions', (req, res) => {
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/build/index.html'));
+  const indexHtmlPath = `${clientDirPath}/build/index.html`;
+  res.sendFile(path.join(__dirname, indexHtmlPath));
 });
 
 // Callbacks to pass to room
@@ -43,7 +47,7 @@ io.on('connection', socket => {
   socket.emit('userId', socket.id);
   socket.on('disconnect', () => roomManager.onUserDisconnect(socket));
   socket.on('reconnect-room', (data) => roomManager.handleReconnect(socket, data));
-  socket.on('joinRoom', roomCode => roomManager.joinRoom({ socket, roomCode }));
+  socket.on('joinRoom', roomCode => roomManager.joinRoom({ socket, roomCode, originalSocketId: null, name: null }));
   socket.on('saveName', data => roomManager.handleSetName(socket, data.name, data.isSpectator));
   socket.on('chooseGame', gameId => roomManager.handleChooseGame(socket, gameId));
   socket.on('startGame', () => roomManager.handleStartGame(socket));

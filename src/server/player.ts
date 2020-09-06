@@ -1,17 +1,21 @@
 class Player {
-  constructor({ id, name, socketId }) {
+  id: string;
+  name: string;
+  connected: boolean;
+
+  constructor({ id, name }) {
     this.id = id;
     this.name = name;
     this.connected = true;
-    this.socketId = socketId;
   }
 
   serialize() {
     return {
       id: this.id,
       name: this.name,
+      connected: this.connected,
     };
   }
 }
 
-module.exports = Player;
+export default Player;

@@ -1,4 +1,4 @@
-module.exports = [
+export default [
   'Alcohol',
   'Amoeba',
   'Arsenic',
