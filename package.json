@@ -1,7 +1,7 @@
 {
   "name": "a-word-please",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "built/index.js",
   "author": "Gordon Koo <gordon@gordonkoo.com>",
   "license": "MIT",
   "engines": {
@@ -32,8 +32,8 @@
   "scripts": {
     "build": "tsc",
     "dev": "NODE_ENV=development ts-node-dev --respawn src/server/index.ts",
-    "heroku-postbuild": "cd src/client && yarn && yarn run build",
-    "start": "NODE_ENV=production node src/server/index.js",
+    "heroku-postbuild": "yarn build && cd src/client && yarn && yarn run build",
+    "start": "NODE_ENV=production node built/index.js",
     "test": "jest",
     "lint": "eslint src/server/*"
   }
