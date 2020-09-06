@@ -3,7 +3,7 @@ import http from 'http';
 import path from 'path';
 import socketIO from 'socket.io';
 
-import RoomManager from './roomManager.js';
+import RoomManager from './roomManager';
 
 const app = express();
 const server = http.createServer(app);

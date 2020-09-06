@@ -31,7 +31,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "dev": "NODE_ENV=development nodemon src/server/index.js",
+    "dev": "NODE_ENV=development ts-node-dev --respawn src/server/index.ts",
     "heroku-postbuild": "cd src/client && yarn && yarn run build",
     "start": "NODE_ENV=production node src/server/index.js",
     "test": "jest",

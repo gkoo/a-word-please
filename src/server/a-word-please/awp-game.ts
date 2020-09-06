@@ -3,8 +3,8 @@ import uuid from 'uuid';
 
 import Deck from '../deck';
 import Game from '../game';
-import Player from '../player.js';
-import wordlist from './wordlist.js';
+import Player from '../player';
+import wordlist from './wordlist';
 
 interface Clue {
   clue: string;

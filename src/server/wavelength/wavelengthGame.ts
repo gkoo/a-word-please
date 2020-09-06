@@ -1,7 +1,7 @@
 import Deck from '../deck';
 import Game from '../game';
 import Player from '../player';
-import { easyConcepts, advancedConcepts } from './concepts.js';
+import { easyConcepts, advancedConcepts } from './concepts';
 
 class WavelengthGame extends Game {
   activePlayerId: string;
@@ -25,6 +25,7 @@ class WavelengthGame extends Game {
   static STATE_GUESS_PHASE = 4;
   static STATE_REVEAL_PHASE = 5;
   static STATE_GAME_END_PHASE = 6;
+
   static SPECTRUM_MAX_VALUE = 200;
   static SPECTRUM_BAND_WIDTH = 12;
   static TOTAL_NUM_ROUNDS = 13;

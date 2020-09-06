@@ -27,7 +27,7 @@ abstract class Game {
   }
 
   broadcastGameDataToPlayers() {
-    //this.broadcastToRoom('gameData', this.serialize());
+    this.broadcastToRoom('gameData', this.serialize());
   }
 
   setup(users: object) {
