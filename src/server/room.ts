@@ -140,7 +140,12 @@ class Room {
         this.game = new WerewolfGame(this.broadcastToRoom);
         break;
       case Game.GAME_WAVELENGTH:
-        this.game = new WavelengthGame(this.broadcastToRoom, this.emitToPlayer);
+        this.game = new WavelengthGame(
+          this.broadcastToRoom,
+          (playerId: string, eventName: string, data: any) => {
+            this.emitToPlayer(playerId, eventName, data);
+          }
+        );
         break;
       case Game.GAME_DECEPTION:
         this.game = new DeceptionGame(this.broadcastToRoom);
@@ -152,7 +157,6 @@ class Room {
   }
 
   nextTurn() {
-    console.log('starting next round');
     if (!this.game) { return false; }
     this.game.nextTurn();
   }
