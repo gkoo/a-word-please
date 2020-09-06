@@ -93,7 +93,8 @@ class RoomManager {
 
       room.onUserDisconnect(socket.id);
       // If no users left in room, clean up the room.
-      if (Object.keys(room.users).length === 0) {
+      const connectedUser = Object.values(room.users).find(user => user.connected);
+      if (!connectedUser) {
         delete this.rooms[room.roomCode];
       }
     });
