@@ -3,7 +3,9 @@ import { useSelector } from 'react-redux';
 
 import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
+import Modal from 'react-bootstrap/Modal';
 
+import PlayerGroupModal from './PlayerGroupModal';
 import PlayerGroupView from './PlayerGroupView';
 import {
   DECEPTION_ROLE_LABELS,
@@ -19,9 +21,12 @@ import {
 function ChooseMeansView() {
   const [selectedMethod, setSelectedMethod] = useState(null);
   const [selectedEvidence, setSelectedEvidence] = useState(null);
+  const [showPlayerGroup, setShowPlayerGroup] = useState(false);
+
   const currPlayer = useSelector(currPlayerSelector);
-  const currPlayerIsMurderer = currPlayer.role === ROLE_MURDERER;
   const socket = useSelector(socketSelector);
+
+  const currPlayerIsMurderer = currPlayer.role === ROLE_MURDERER;
 
   if (!currPlayerIsMurderer) {
     return (
@@ -94,12 +99,15 @@ function ChooseMeansView() {
       </Card>
 
       <div className='text-center my-3'>
-        <Button onClick={onSubmit} disabled={!selectedMethod || !selectedEvidence}>
+        <Button variant='secondary' className='mx-1' onClick={() => setShowPlayerGroup(true)}>
+          Show Other Players
+        </Button>
+        <Button onClick={onSubmit} className='mx-1' disabled={!selectedMethod || !selectedEvidence}>
           Confirm Means and Evidence
         </Button>
       </div>
 
-      <PlayerGroupView showAccuseButtons={false}/>
+      <PlayerGroupModal show={showPlayerGroup} onHide={() => setShowPlayerGroup(false)} />
     </>
   );
 }

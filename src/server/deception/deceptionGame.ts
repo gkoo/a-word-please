@@ -512,7 +512,6 @@ class DeceptionGame extends Game {
       throw 'Non-murderer tried to guess witness';
     }
 
-
     const witnessSuspect = this.players[this.witnessSuspectId];
 
     this.witnessGuessCorrect = witnessSuspect.role === Role.Witness;

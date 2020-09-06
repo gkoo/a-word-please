@@ -7,6 +7,7 @@ import Col from 'react-bootstrap/Col';
 
 import ClueBadge from './ClueBadge';
 import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
+import PlayerGroupModal from './PlayerGroupModal';
 import PlayerGroupView from './PlayerGroupView';
 import TileCard from './TileCard';
 import {
@@ -19,11 +20,14 @@ import { ROLE_SCIENTIST } from '../../constants';
 
 function CauseOfDeathView() {
   const [selectedCauseOfDeath, setSelectedCauseOfDeath] = useState(null);
+  const [showPlayerGroup, setShowPlayerGroup] = useState(false);
+
   const currPlayer = useSelector(currPlayerSelector);
-  const currPlayerIsScientist = currPlayer.role === ROLE_SCIENTIST;
   const gameData = useSelector(gameDataSelector);
   const murdererPlayer = useSelector(murdererSelector);
   const socket = useSelector(socketSelector);
+
+  const currPlayerIsScientist = currPlayer.role === ROLE_SCIENTIST;
 
   const { causeOfDeathTile } = gameData;
 
@@ -74,12 +78,14 @@ function CauseOfDeathView() {
       </Row>
 
       <div className='text-center my-3'>
-        <Button disabled={!selectedCauseOfDeath} onClick={onSubmit}>
+        <Button variant='secondary' className='mx-1' onClick={() => setShowPlayerGroup(true)}>
+          Show Other Players
+        </Button>
+        <Button disabled={!selectedCauseOfDeath} className='mx-1' onClick={onSubmit}>
           Confirm Cause of Death
         </Button>
       </div>
-
-      <PlayerGroupView showAccuseButtons={false}/>
+      <PlayerGroupModal show={showPlayerGroup} onHide={() => setShowPlayerGroup(false)} />
     </>
   );
 }

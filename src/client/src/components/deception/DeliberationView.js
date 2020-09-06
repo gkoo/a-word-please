@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 
+import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
 
 import AccusePlayerModal from './AccusePlayerModal';
@@ -55,22 +56,31 @@ function DeliberationView() {
     <>
       {
         currPlayerIsScientist && !isLastRound &&
-          <div className='text-center my-2'>
+          <Alert variant='info' className='mb-5'>
+            <Alert.Heading>
+              Forensic Scientist Instructions
+            </Alert.Heading>
             {
               !isLastRound &&
-                <p>Forensic Scientist: When everyone is done making their case, start the next round.</p>
+                <p>
+                  This is the { roundNum === 1 ? '1st' : '2nd' } of {totalNumRounds} rounds. Each
+                  player gets 30 seconds to make their case. Please time them and start the next
+                  round once everyone is done.
+                </p>
             }
             {
               isLastRound &&
                 <p>
-                  Forensic Scientist: This is the last round. When everyone is done making an
+                  This is the last round. When everyone is done making an
                   accusation, please end the round
                 </p>
             }
-            <Button onClick={onEndRound}>
-              { roundNum < totalNumRounds ? 'Start Next Round' : 'End Game' }
-            </Button>
-          </div>
+            <div className='text-center'>
+              <Button onClick={onEndRound}>
+                { roundNum < totalNumRounds ? 'Start Next Round' : 'End Game' }
+              </Button>
+            </div>
+          </Alert>
       }
       <TilesView showHeaders={!hideRules} />
       <hr />

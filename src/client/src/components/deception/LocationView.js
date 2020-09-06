@@ -4,6 +4,9 @@ import { useSelector } from 'react-redux';
 import Button from 'react-bootstrap/Button'
 import CardDeck from 'react-bootstrap/CardDeck';
 
+import ClueBadge from './ClueBadge';
+import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
+import PlayerGroupModal from './PlayerGroupModal';
 import PlayerGroupView from './PlayerGroupView';
 import TileCard from './TileCard';
 import {
@@ -16,6 +19,8 @@ import {
 function LocationView() {
   const [selectedLocationTile, setSelectedLocationTile] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [showPlayerGroup, setShowPlayerGroup] = useState(false);
+
   const currPlayerIsScientist = useSelector(currPlayerIsScientistSelector);
   const gameData = useSelector(gameDataSelector);
   const murdererPlayer = useSelector(murdererSelector);
@@ -41,7 +46,7 @@ function LocationView() {
   if (!currPlayerIsScientist) {
     return (
       <>
-        <h1 className='mb-5'>Waiting for the scientist to choose initial tiles...</h1>;
+        <h1 className='mb-5'>Waiting for the scientist to choose initial tiles...</h1>
         <PlayerGroupView showAccuseButtons={false}/>
       </>
     )
@@ -50,9 +55,11 @@ function LocationView() {
   return (
     <>
       <h1>Hi Scientist</h1>
-      <p>The murderer is: {murdererPlayer.name}</p>
-      <p>The method of murder is: {gameData.murderMethod.label}</p>
-      <p>The key evidence is: {gameData.keyEvidence.label}</p>
+      <p>The murderer is: <PlayerCheckboxLabel player={murdererPlayer}/></p>
+      <p>The method of murder is: <ClueBadge label={gameData.murderMethod.label} type='method'/></p>
+      <p>
+        The key evidence is: <ClueBadge label={gameData.keyEvidence.label} type='evidence'/>
+      </p>
       <p>
         Choose a location based on the method of murder and key evidence. You can only choose one.
       </p>
@@ -79,12 +86,15 @@ function LocationView() {
       </CardDeck>
 
       <div className='text-center my-3'>
-        <Button disabled={!selectedLocationTile && !selectedLocation} onClick={onSubmit}>
+        <Button variant='secondary' className='mx-1' onClick={() => setShowPlayerGroup(true)}>
+          Show Other Players
+        </Button>
+        <Button className='mx-1' disabled={!selectedLocationTile && !selectedLocation} onClick={onSubmit}>
           Confirm Location of Crime
         </Button>
       </div>
 
-      <PlayerGroupView showAccuseButtons={false}/>
+      <PlayerGroupModal show={showPlayerGroup} onHide={() => setShowPlayerGroup(false)} />
     </>
   );
 }

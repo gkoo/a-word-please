@@ -136,11 +136,14 @@ function Lobby({ messages, roomCode, users }) {
                           }
                         </Col>
                       </Row>
-                      <Row>
-                        <Col className='text-center'>
-                          <Button variant='link' onClick={onShowRulesModal}>How to play</Button>
-                        </Col>
-                      </Row>
+                      {
+                        [GAME_WAVELENGTH, GAME_A_WORD_PLEASE].includes(selectedGame) &&
+                          <Row>
+                            <Col className='text-center'>
+                              <Button variant='link' onClick={onShowRulesModal}>How to play</Button>
+                            </Col>
+                          </Row>
+                      }
                       <Row>
                         <Col className='text-center'>
                           <StartGameButton />

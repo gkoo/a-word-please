@@ -2,6 +2,8 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 
 import Button from 'react-bootstrap/Button';
+import Card from 'react-bootstrap/Card';
+import CardGroup from 'react-bootstrap/CardGroup';
 
 import {
   DECEPTION_ROLE_LABELS,
@@ -50,23 +52,57 @@ function ShowRolesView() {
         currUserIsSpectator &&
           <h1>You are a spectator!</h1>
       }
-      {
-        currPlayer?.id !== scientist.id &&
-          <p>{scientist.name} is the {DECEPTION_ROLE_LABELS[ROLE_SCIENTIST]}!</p>
-      }
-      {
-        accomplice && [ROLE_SCIENTIST, ROLE_MURDERER, ROLE_WITNESS].includes(currPlayer?.role) &&
-          <p>{accomplice.name} is the {DECEPTION_ROLE_LABELS[ROLE_ACCOMPLICE]}!</p>
-      }
-      {
-        [ROLE_SCIENTIST, ROLE_ACCOMPLICE, ROLE_WITNESS].includes(currPlayer?.role) &&
-          <p>{murderer.name} is the {DECEPTION_ROLE_LABELS[ROLE_MURDERER]}!</p>
-      }
-      {
-        witness && currPlayer?.role === ROLE_SCIENTIST &&
-          <p>{witness.name} is the {DECEPTION_ROLE_LABELS[ROLE_WITNESS]}!</p>
-      }
-      <div className='text-center'>
+      <CardGroup className='mt-3'>
+        {
+          currPlayer?.id !== scientist.id &&
+            <Card>
+              <Card.Body>
+                <Card.Title>
+                  {DECEPTION_ROLE_LABELS[ROLE_SCIENTIST]}
+                </Card.Title>
+                <Card.Text>{scientist.name}</Card.Text>
+              </Card.Body>
+            </Card>
+        }
+        {
+          accomplice && [ROLE_SCIENTIST, ROLE_MURDERER, ROLE_WITNESS].includes(currPlayer?.role) &&
+            <Card>
+              <Card.Body>
+                <Card.Title>
+                  {DECEPTION_ROLE_LABELS[ROLE_ACCOMPLICE]}
+                </Card.Title>
+                <Card.Text>{accomplice.name}</Card.Text>
+              </Card.Body>
+            </Card>
+        }
+        {
+          [ROLE_SCIENTIST, ROLE_ACCOMPLICE, ROLE_WITNESS].includes(currPlayer?.role) &&
+            <Card>
+              <Card.Body>
+                <Card.Title>
+                  {DECEPTION_ROLE_LABELS[ROLE_MURDERER]}
+                </Card.Title>
+                <Card.Text>
+                  {murderer.name}
+                </Card.Text>
+              </Card.Body>
+            </Card>
+        }
+        {
+          witness && currPlayer?.role === ROLE_SCIENTIST &&
+            <Card>
+              <Card.Body>
+                <Card.Title>
+                  <u>{DECEPTION_ROLE_LABELS[ROLE_WITNESS]}</u>
+                </Card.Title>
+                <Card.Text>
+                  {witness.name}
+                </Card.Text>
+              </Card.Body>
+            </Card>
+        }
+      </CardGroup>
+      <div className='text-center my-5'>
         {
           !currUserIsSpectator && !playersReady[currPlayer?.id] &&
             <Button onClick={acknowledgeRole}>

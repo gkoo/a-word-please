@@ -315,3 +315,9 @@
   min-width: 120px;
   max-width: 200px;
 }
+
+@media (min-width: 768px) {
+  .deception-players-modal .modal-dialog {
+    max-width: 800px;
+  }
+}

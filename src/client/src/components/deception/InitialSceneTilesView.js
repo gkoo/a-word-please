@@ -4,7 +4,10 @@ import { useSelector } from 'react-redux';
 import Button from 'react-bootstrap/Button';
 import CardDeck from 'react-bootstrap/CardDeck';
 
+import ClueBadge from './ClueBadge';
+import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
 import PlayerGroupView from './PlayerGroupView';
+import PlayerGroupModal from './PlayerGroupModal';
 import TileCard from './TileCard';
 import {
   currPlayerIsScientistSelector,
@@ -15,6 +18,8 @@ import {
 
 function InitialTilesView() {
   const [sceneSelections, setSceneSelections] = useState({});
+  const [showPlayerGroup, setShowPlayerGroup] = useState(false);
+
   const gameData = useSelector(gameDataSelector);
   const currPlayerIsScientist = useSelector(currPlayerIsScientistSelector);
   const murdererPlayer = useSelector(murdererSelector);
@@ -46,9 +51,11 @@ function InitialTilesView() {
   return (
     <>
       <h1>Hi Scientist</h1>
-      <p>The murderer is: {murdererPlayer.name}</p>
-      <p>The method of murder is: {gameData.murderMethod.label}</p>
-      <p>The key evidence is: {gameData.keyEvidence.label}</p>
+      <p>The murderer is: <PlayerCheckboxLabel player={murdererPlayer}/></p>
+      <p>The method of murder is: <ClueBadge label={gameData.murderMethod.label} type='method'/></p>
+      <p>
+        The key evidence is: <ClueBadge label={gameData.keyEvidence.label} type='evidence'/>
+      </p>
       <p>
         Choose values for the scene tiles that correspond to the method of murder and key evidence.
         Press OK when you are done.
@@ -69,7 +76,11 @@ function InitialTilesView() {
       </CardDeck>
 
       <div className='text-center my-3'>
+        <Button variant='secondary' className='mx-1' onClick={() => setShowPlayerGroup(true)}>
+          Show Other Players
+        </Button>
         <Button
+          className='mx-1'
           disabled={Object.values(sceneSelections).length < gameData.sceneTiles.length}
           onClick={onSubmit}
         >
@@ -77,7 +88,7 @@ function InitialTilesView() {
         </Button>
       </div>
 
-      <PlayerGroupView showAccuseButtons={false}/>
+      <PlayerGroupModal show={showPlayerGroup} onHide={() => setShowPlayerGroup(false)} />
     </>
   );
 }
