@@ -86,6 +86,10 @@ function Homepage() {
                 <span role='img' aria-label='wavelength' className='mr-2'>📻</span>
                 Wavelength
               </p>
+              <p>
+                <span role='img' aria-label='wavelength' className='mr-2'>🔪</span>
+                Deception
+              </p>
             </Jumbotron>
           </Col>
         </Row>
