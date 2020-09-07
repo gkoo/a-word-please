@@ -140,6 +140,8 @@ class DeceptionGame extends Game {
     this.accusedMethod = null;
     this.accusationActive = false;
     this.accusationResult = undefined;
+    this.newSceneTile = null;
+    this.oldSceneTile = null;
     this.suspectId = null;
     this.witnessGuessCorrect = undefined;
     this.witnessSuspectId = null;
