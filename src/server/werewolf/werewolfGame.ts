@@ -103,7 +103,6 @@ class WerewolfGame extends Game {
     this.revealingRoles = false;
     this.state = GameState.ChoosingRoles;
     this.winners = [];
-    Object.values(this.players).forEach(player => player.setPlaying());
 
     this.broadcastGameDataToPlayers();
   }
@@ -120,9 +119,8 @@ class WerewolfGame extends Game {
         id,
         name,
       });
-      this.players[id] = newPlayer;
       if (this.state === GameState.ChoosingRoles) {
-        newPlayer.setPlaying();
+        this.players[id] = newPlayer;
       }
       return;
     }
