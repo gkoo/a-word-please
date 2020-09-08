@@ -136,6 +136,9 @@ class WavelengthGame extends Game {
       // Don't broadcast entire game data because this might be called frequently
       this.emitToPlayer(player.id, 'spectrumGuessUpdate', guess);
     });
+    Object.values(this.spectators).filter(spectator => spectator.connected).forEach(spectator => {
+      this.emitToPlayer(spectator.id, 'spectrumGuessUpdate', guess);
+    });
   }
 
   submitGuess() {
@@ -167,7 +170,6 @@ class WavelengthGame extends Game {
   }
 
   serialize() {
-    const connectedPlayers = this.getConnectedPlayers();
     const { activePlayerId } = this;
 
     return {
@@ -178,6 +180,7 @@ class WavelengthGame extends Game {
       numPoints: this.numPoints,
       players: this.players,
       roundNum: this.roundNum,
+      spectators: this.spectators,
       spectrumGuess: this.spectrumGuess,
       spectrumValue: this.spectrumValue,
       state: this.state,

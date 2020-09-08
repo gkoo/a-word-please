@@ -25,7 +25,6 @@ function WavelengthBoard() {
   const gameState = useSelector(selectors.gameStateSelector);
   const numPoints = useSelector(selectors.numPointsSelector);
   const numRoundsLeft = useSelector(selectors.numRoundsLeftSelector);
-  const spectatorUsers = useSelector(selectors.spectatorUsersSelector);
   const users = useSelector(selectors.usersSelector);
   let wavelengthGuessers = useSelector(selectors.wavelengthGuessersSelector);
   wavelengthGuessers = wavelengthGuessers.filter(player => player.connected);

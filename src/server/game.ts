@@ -16,6 +16,7 @@ abstract class Game {
   players: object;
   playerClass: any;
   playerOrder: Array<string>;
+  spectators: { [playerId: string]: Player };
   state: number;
 
   static STATE_PENDING = 0;
@@ -25,6 +26,7 @@ abstract class Game {
   constructor(broadcastToRoom) {
     this.broadcastToRoom = broadcastToRoom;
     this.players = {};
+    this.spectators = {};
     this.playerClass = Player;
   }
 
@@ -33,8 +35,12 @@ abstract class Game {
   }
 
   setup(users: object) {
-    const playerUsers = Object.values(users).filter((user: User) => !user.isSpectator);
+    const connectedUsers = Object.values(users).filter(user => user.connected);
+    const playerUsers = connectedUsers.filter((user: User) => !user.isSpectator);
+    const spectatorUsers = connectedUsers.filter((user: User) => user.isSpectator);
+
     playerUsers.forEach(user => this.addPlayer(user));
+    spectatorUsers.forEach(user => this.addSpectator(user));
   }
 
   getConnectedPlayers() {
@@ -56,7 +62,7 @@ abstract class Game {
 
   maybeReconnect(user: User, originalSocketId: string) {
     // Look for the player based on their socketId.
-    const player = Object.values(this.players).find(p => p.socketId === originalSocketId);
+    const player = Object.values(this.players).find(p => p.id === originalSocketId);
 
     // In case a game started while the player was reconnecting
     if (!player) {
@@ -85,12 +91,22 @@ abstract class Game {
     this.players[id] = new this.playerClass({
       id,
       name,
-      socketId: id,
+    });
+  }
+
+  addSpectator({ id, name }): void {
+    if (!name) { return; }
+
+    this.spectators[id] = new Player({
+      id,
+      name,
+      isSpectator: true,
     });
   }
 
   disconnectPlayer(id): void {
     if (this.players[id]) { this.players[id].connected = false; }
+    if (this.spectators[id]) { this.spectators[id].connected = false; }
     this.broadcastGameDataToPlayers();
   }
 

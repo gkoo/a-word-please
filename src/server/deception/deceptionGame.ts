@@ -65,8 +65,9 @@ interface GameData {
   selectedLocationTile: Tile;
   suspectId?: string;
   totalNumRounds: number;
-  players: { [playerId: string]: DeceptionPlayer },
+  players: object,
   playersReady?: { [playerId: string]: boolean },
+  spectators: { [playerId: string]: Player },
   state: GameState,
   witnessGuessCorrect?: boolean;
   witnessSuspectId?: string;
@@ -87,7 +88,6 @@ class DeceptionGame extends Game {
   accuseLog: { [playerId: string]: boolean };
   accusedEvidence?: string;
   accusedMethod?: string;
-  broadcastToRoom: (eventName: string, data: any) => void;
   causeOfDeathTile: Tile;
   includeAccomplice?: boolean;
   includeWitness?: boolean;
@@ -96,14 +96,11 @@ class DeceptionGame extends Game {
   murderMethod: Clue;
   newSceneTile?: Tile;
   oldSceneTile?: Tile;
-  players: { [playerId: string]: DeceptionPlayer };
-  playerClass: any;
   playersReady?: { [playerId: string]: boolean };
   roundNum: number;
   sceneTileDeck: Deck;
   sceneTiles: Array<Tile>;
   selectedLocationTile: Tile;
-  state: GameState;
   suspectId?: string;
   witnessGuessCorrect?: boolean | undefined;
   witnessSuspectId?: string;
@@ -542,6 +539,7 @@ class DeceptionGame extends Game {
       roundNum: this.roundNum,
       sceneTiles: this.sceneTiles,
       selectedLocationTile: this.selectedLocationTile,
+      spectators: this.spectators,
       totalNumRounds: DeceptionGame.NUM_ROUNDS,
       players: this.players,
       state,

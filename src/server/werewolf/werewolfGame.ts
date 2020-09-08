@@ -29,19 +29,13 @@ enum GameState {
 }
 
 class WerewolfGame extends Game {
-  broadcastToRoom: (eventName: string, data: any) => void;
-  activePlayerId: string;
   currentWakeUpIdx: number;
   eliminatedPlayers: Array<WerewolfPlayer>;
   ensureWerewolf: boolean;
   numWakeUps: number;
-  players: object;
-  playerClass: any;
-  playerOrder: Array<string>;
   playersOfCurrentRoleReady: number;
   revealingRoles: boolean;
   roleIds: Array<string>;
-  state: GameState;
   unclaimedRoles: Array<Role>;
   votes: { [voterId: string]: string };
   votingTimeoutId: any;
@@ -88,6 +82,7 @@ class WerewolfGame extends Game {
     this.votes = {};
     this.unclaimedRoles = [];
     this.revealingRoles = false;
+    this.playerClass = WerewolfPlayer;
   }
 
   setup(users) {
@@ -112,30 +107,9 @@ class WerewolfGame extends Game {
 
     if (!name) { return; }
 
-    const disconnectedPlayer = Object.values(this.players).find(player => !player.connected);
-
-    if (!disconnectedPlayer) {
-      const newPlayer = new WerewolfPlayer({
-        id,
-        name,
-      });
-      if (this.state === GameState.ChoosingRoles) {
-        this.players[id] = newPlayer;
-      }
-      return;
+    if (this.state === GameState.ChoosingRoles) {
+      super.addPlayer(user);
     }
-
-    // Reconnect player
-    const oldPlayerId = disconnectedPlayer.id;
-    disconnectedPlayer.name = name;
-    disconnectedPlayer.id = id;
-    disconnectedPlayer.connected = true;
-    this.players[id] = disconnectedPlayer;
-    delete this.players[oldPlayerId];
-  }
-
-  getActivePlayers() {
-    return Object.values(this.players).filter(player => player.connected && player.playing);
   }
 
   handlePlayerAction(playerId, data) {
@@ -248,11 +222,11 @@ class WerewolfGame extends Game {
 
     this.unclaimedRoles = shuffledRoles.slice(0, 3);
 
-    if (shuffledRolesToAssign.length !== this.getActivePlayers().length) {
+    if (shuffledRolesToAssign.length !== this.getConnectedPlayers().length) {
       throw new Error('lengths don\'t match!');
     }
 
-    this.getActivePlayers().forEach((player, idx) => {
+    this.getConnectedPlayers().forEach((player, idx) => {
       const role = shuffledRolesToAssign[idx];
       console.log(`assigning role ${role} to player`);
       player.setRole({ role, isOriginalRole: true });
@@ -272,7 +246,7 @@ class WerewolfGame extends Game {
 
     this.wakeUpRole = WerewolfGame.WAKE_UP_ORDER[this.currentWakeUpIdx];
 
-    const wakeUpPlayers = this.getActivePlayers().filter(
+    const wakeUpPlayers = this.getConnectedPlayers().filter(
       player => player.originalRole === this.wakeUpRole,
     );
 
@@ -354,7 +328,7 @@ class WerewolfGame extends Game {
     this.votes[playerId] = suspectId;
     this.broadcastGameDataToPlayers();
 
-    if (Object.keys(this.votes).length === this.getActivePlayers().length) {
+    if (Object.keys(this.votes).length === this.getConnectedPlayers().length) {
       // All votes are in! Time to reveal votes.
       setTimeout(() => this.determineWinners(), 1000);
     }
@@ -393,7 +367,7 @@ class WerewolfGame extends Game {
     });
 
     // Figure out who's eliminated
-    const playerList = this.getActivePlayers();
+    const playerList = this.getConnectedPlayers();
     let eliminatedPlayers;
     if (playerIdsWithMostVotes.length === playerList.length) {
       // If no one receives more than one vote, no one dies.
@@ -459,7 +433,7 @@ class WerewolfGame extends Game {
   }
 
   serialize() {
-    const activePlayers = this.getActivePlayers();
+    const activePlayers = this.getConnectedPlayers();
     const activePlayersToSend = {};
     activePlayers.forEach(player => {
       activePlayersToSend[player.id] = player;
@@ -472,6 +446,7 @@ class WerewolfGame extends Game {
       players: activePlayersToSend,
       roleIds: this.roleIds,
       revealingRoles: this.revealingRoles,
+      spectators: this.spectators,
       state: this.state,
       unclaimedRoles: this.unclaimedRoles,
       votes: this.votes,

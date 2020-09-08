@@ -21,19 +21,15 @@ enum GameState {
 }
 
 class AWPGame extends Game {
-  activePlayerId: string;
   broadcastToRoom: (eventName: string, data: any) => void;
   clues: { [playerId: string]: Clue };
   currWord: string;
   currGuess: string | null;
   deck: Deck;
   numPoints: number;
-  players: object;
-  playerClass: any;
-  playerOrder: Array<string>;
   roundNum: number;
   skippedTurn: boolean;
-  state: number;
+  spectators: { [playerId: string]: Player };
 
   static GAME_ID = GameEnum.AWordPlease;
 
@@ -65,10 +61,6 @@ class AWPGame extends Game {
     super.addPlayer({ id, name });
 
     if (this.playerOrder) { this.playerOrder.push(id); }
-  }
-
-  getConnectedPlayers() {
-    return Object.values(this.players).filter(player => player.connected);
   }
 
   disconnectPlayer(id) {
@@ -219,6 +211,7 @@ class AWPGame extends Game {
       playerOrder,
       roundNum,
       skippedTurn,
+      spectators: this.spectators,
       state,
       totalNumRounds: AWPGame.TOTAL_NUM_ROUNDS,
     };

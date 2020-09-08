@@ -8,10 +8,6 @@ export const connectedUsersSelector = createSelector(
   usersSelector,
   users => users && Object.values(users).filter(user => user.connected),
 );
-export const spectatorUsersSelector = createSelector(
-  usersSelector,
-  users => users && Object.values(users).filter(user => user.isSpectator),
-)
 export const messagesSelector = state => state.messages;
 export const nameSelector = state => state.name;
 export const socketSelector = state => state.socket;
@@ -71,6 +67,14 @@ export const activePlayerSelector = createSelector(
   gameDataSelector,
   playersSelector,
   (gameData, players) => gameData?.activePlayerId && players[gameData.activePlayerId],
+);
+export const spectatorsSelector = createSelector(
+  gameDataSelector,
+  gameData => gameData?.spectators
+);
+export const connectedSpectatorsSelector = createSelector(
+  spectatorsSelector,
+  spectators => spectators && Object.values(spectators).filter(spectator => spectator.connected),
 );
 export const roundNumSelector = createSelector(
   gameDataSelector,
