@@ -1,5 +1,5 @@
 import Deck from '../deck';
-import Game from '../game';
+import Game, { GameEnum } from '../game';
 import Player from '../player';
 import { easyConcepts, advancedConcepts } from './concepts';
 
@@ -20,7 +20,7 @@ class WavelengthGame extends Game {
   spectrumValue: number;
   state: number;
 
-  static GAME_ID = Game.GAME_WAVELENGTH;
+  static GAME_ID = GameEnum.Wavelength;
   static STATE_CLUE_PHASE = 3;
   static STATE_GUESS_PHASE = 4;
   static STATE_REVEAL_PHASE = 5;

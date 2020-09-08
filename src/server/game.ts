@@ -3,6 +3,13 @@ import _ from 'lodash';
 import User from './user';
 import Player from './player';
 
+export enum GameEnum {
+  AWordPlease = 1,
+  Werewolf,
+  Wavelength,
+  Deception,
+}
+
 abstract class Game {
   broadcastToRoom: (eventName: string, data: any) => void;
   activePlayerId: string;
@@ -10,11 +17,6 @@ abstract class Game {
   playerClass: any;
   playerOrder: Array<string>;
   state: number;
-
-  static GAME_A_WORD_PLEASE = 1;
-  static GAME_WEREWOLF = 2;
-  static GAME_WAVELENGTH = 3;
-  static GAME_DECEPTION = 4;
 
   static STATE_PENDING = 0;
   static STATE_TURN_END = 1;

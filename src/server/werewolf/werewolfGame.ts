@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import Game from '../game';
+import Game, { GameEnum } from '../game';
 import WerewolfPlayer from './werewolfPlayer';
 
 export enum Role {
@@ -49,7 +49,7 @@ class WerewolfGame extends Game {
   werewolvesReady: number;
   winners: Array<Role>;
 
-  static GAME_ID = Game.GAME_WEREWOLF;
+  static GAME_ID = GameEnum.Werewolf;
 
   static MIN_PLAYERS = 3;
   static MAX_PLAYERS = 10;

@@ -1,15 +1,15 @@
 import AWPGame from './a-word-please/awp-game';
 import DeceptionGame from './deception/deceptionGame';
-import Game from './game';
+import Game, { GameEnum } from './game';
 import WerewolfGame from './werewolf/werewolfGame';
 import WavelengthGame from './wavelength/wavelengthGame';
 import User from './user';
 
 const VALID_GAMES: Array<number> = [
-  Game.GAME_A_WORD_PLEASE,
-  Game.GAME_WEREWOLF,
-  Game.GAME_WAVELENGTH,
-  Game.GAME_DECEPTION,
+  GameEnum.AWordPlease,
+  GameEnum.Werewolf,
+  GameEnum.Wavelength,
+  GameEnum.Deception,
 ];
 
 enum RoomState {
@@ -133,13 +133,13 @@ class Room {
     }
 
     switch (this.selectedGame) {
-      case Game.GAME_A_WORD_PLEASE:
+      case GameEnum.AWordPlease:
         this.game = new AWPGame(this.broadcastToRoom);
         break;
-      case Game.GAME_WEREWOLF:
+      case GameEnum.Werewolf:
         this.game = new WerewolfGame(this.broadcastToRoom);
         break;
-      case Game.GAME_WAVELENGTH:
+      case GameEnum.Wavelength:
         this.game = new WavelengthGame(
           this.broadcastToRoom,
           (playerId: string, eventName: string, data: any) => {
@@ -147,7 +147,7 @@ class Room {
           }
         );
         break;
-      case Game.GAME_DECEPTION:
+      case GameEnum.Deception:
         this.game = new DeceptionGame(this.broadcastToRoom);
         break;
       default:

@@ -1,7 +1,7 @@
 import Clue, { ClueType } from './clue';
 import DeceptionPlayer from './deceptionPlayer';
 import Deck from '../deck';
-import Game from '../game';
+import Game, { GameEnum } from '../game';
 import Player from '../player';
 import Tile, { TileType } from './tile';
 import evidenceList from './evidenceList';
@@ -108,7 +108,7 @@ class DeceptionGame extends Game {
   witnessGuessCorrect?: boolean | undefined;
   witnessSuspectId?: string;
 
-  static GAME_ID = Game.GAME_DECEPTION;
+  static GAME_ID = GameEnum.Deception;
 
   static MIN_PLAYERS = 4;
   static MAX_PLAYERS = 12;

@@ -2,13 +2,22 @@ import _ from 'lodash';
 import uuid from 'uuid';
 
 import Deck from '../deck';
-import Game from '../game';
+import Game, { GameEnum } from '../game';
 import Player from '../player';
 import wordlist from './wordlist';
 
 interface Clue {
   clue: string;
   isDuplicate: boolean;
+}
+
+enum GameState {
+  Pending,
+  TurnEnd,
+  GameEnd,
+  EnteringClues,
+  ReviewingClues,
+  EnteringGuess,
 }
 
 class AWPGame extends Game {
@@ -26,10 +35,7 @@ class AWPGame extends Game {
   skippedTurn: boolean;
   state: number;
 
-  static GAME_ID = Game.GAME_A_WORD_PLEASE;
-  static STATE_ENTERING_CLUES = 3;
-  static STATE_REVIEWING_CLUES = 4;
-  static STATE_ENTERING_GUESS = 5;
+  static GAME_ID = GameEnum.AWordPlease;
 
   static MAX_WORD_LENGTH = 20;
   static MIN_PLAYERS = 2;
@@ -80,7 +86,7 @@ class AWPGame extends Game {
       this.nextTurn(false);
     }
 
-    if (this.state === AWPGame.STATE_ENTERING_CLUES) {
+    if (this.state === GameState.EnteringClues) {
       // TODO: unmark duplicates
       this.checkIfAllCluesAreIn();
     }
@@ -107,7 +113,7 @@ class AWPGame extends Game {
     this.advancePlayerTurn();
 
     this.currWord = this.deck.drawCard();
-    this.state = AWPGame.STATE_ENTERING_CLUES;
+    this.state = GameState.EnteringClues;
 
     this.broadcastGameDataToPlayers();
   }
@@ -154,12 +160,12 @@ class AWPGame extends Game {
   }
 
   revealCluesToClueGivers() {
-    this.state = AWPGame.STATE_REVIEWING_CLUES;
+    this.state = GameState.ReviewingClues;
     this.broadcastGameDataToPlayers();
   }
 
   revealCluesToGuesser() {
-    this.state = AWPGame.STATE_ENTERING_GUESS;
+    this.state = GameState.EnteringGuess;
     this.broadcastGameDataToPlayers();
   }
 
@@ -175,18 +181,18 @@ class AWPGame extends Game {
       ++this.roundNum;
     }
 
-    this.state = Game.STATE_TURN_END;
+    this.state = GameState.TurnEnd;
     this.broadcastGameDataToPlayers();
   }
 
   skipTurn() {
     this.skippedTurn = true;
-    this.state = AWPGame.STATE_TURN_END;
+    this.state = GameState.TurnEnd;
     this.broadcastGameDataToPlayers();
   }
 
   isGameOver() {
-    return this.state === Game.STATE_GAME_END;
+    return this.state === GameState.GameEnd;
   }
 
   serialize() {
