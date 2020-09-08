@@ -10,6 +10,7 @@ import GuessPhase from './GuessPhase';
 import LeaderPanel from '../LeaderPanel';
 import PlayerLabel from '../common/PlayerLabel';
 import RevealPhase from './RevealPhase';
+import SpectatorList from '../common/SpectatorList';
 import * as selectors from '../../store/selectors';
 import {
   STATE_WAVELENGTH_CLUE_PHASE,
@@ -73,20 +74,7 @@ function WavelengthBoard() {
               </>
             )
           }
-          {
-            !!spectatorUsers.length &&
-              <>
-                <h3 className='mt-5'><u>Spectators</u></h3>
-                {
-                  spectatorUsers.map(spectatorUser =>
-                    <>
-                      <PlayerLabel player={spectatorUser} />
-                      <br />
-                    </>
-                  )
-                }
-              </>
-          }
+          <SpectatorList />
         </Col>
       </Row>
     </div>

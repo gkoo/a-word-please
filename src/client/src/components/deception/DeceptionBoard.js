@@ -19,6 +19,7 @@ import LeaderPanel from '../LeaderPanel';
 import LocationView from './LocationView';
 import ReplaceSceneView from './ReplaceSceneView';
 import ShowRolesView from './ShowRolesView';
+import SpectatorList from '../common/SpectatorList';
 import {
   GAME_STATE_GAME_END,
   STATE_DECEPTION_EXPLAIN_RULES,
@@ -37,7 +38,6 @@ import {
   connectedPlayersSelector,
   gameDataSelector,
   gameStateSelector,
-  spectatorUsersSelector,
   userPreferencesSelector,
   usersSelector,
 } from '../../store/selectors';
@@ -49,7 +49,6 @@ function DeceptionBoard() {
   const connectedPlayers = useSelector(connectedPlayersSelector);
   const gameData = useSelector(gameDataSelector);
   const gameState = useSelector(gameStateSelector);
-  const spectatorUsers = useSelector(spectatorUsersSelector);
   const users = useSelector(usersSelector);
   const userPreferences = useSelector(userPreferencesSelector);
 
@@ -118,19 +117,7 @@ function DeceptionBoard() {
               </div>
             )
           }
-          {
-            !!spectatorUsers.length &&
-              <>
-                <h3 className='mt-5'><u>Spectators</u></h3>
-                {
-                  spectatorUsers.map(spectatorUser =>
-                    <div key={spectatorUser.id}>
-                      <PlayerCheckboxLabel player={spectatorUser}/>
-                    </div>
-                  )
-                }
-              </>
-          }
+          <SpectatorList />
 
           <h3 className='mt-5'><u>Options</u></h3>
           <Form className='mt-3 mb-2'>

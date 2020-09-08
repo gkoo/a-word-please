@@ -5,11 +5,11 @@ import CardDeck from 'react-bootstrap/CardDeck';
 
 import PlayerView from './PlayerView';
 import { ROLE_SCIENTIST } from '../../constants';
-import { playersSelector } from '../../store/selectors';
+import { connectedPlayersSelector } from '../../store/selectors';
 
 function PlayerGroupView(props) {
-  const players = useSelector(playersSelector);
-  const nonScientistPlayers = Object.values(players).filter(player => player.role !== ROLE_SCIENTIST);
+  const connectedPlayers = useSelector(connectedPlayersSelector);
+  const nonScientistPlayers = Object.values(connectedPlayers).filter(player => player.role !== ROLE_SCIENTIST);
 
   return (
     <CardDeck>

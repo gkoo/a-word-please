@@ -18,6 +18,7 @@ import GameEndView from './GameEndView';
 import LeaderPanel from '../LeaderPanel';
 import TurnEndView from './TurnEndView';
 import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
+import SpectatorList from '../common/SpectatorList';
 import * as selectors from '../../store/selectors';
 
 function AWordPleaseBoard() {
@@ -31,7 +32,6 @@ function AWordPleaseBoard() {
   const numRoundsLeft = useSelector(selectors.numRoundsLeftSelector);
   const players = useSelector(selectors.playersSelector);
   const users = useSelector(selectors.usersSelector);
-  const spectatorUsers = useSelector(selectors.spectatorUsersSelector);
 
   let clueGivers;
   if (activePlayer) {
@@ -111,22 +111,7 @@ function AWordPleaseBoard() {
               </>
             )
           }
-          {
-            !!spectatorUsers.length &&
-              <>
-                <h3 className='mt-5'><u>Spectators</u></h3>
-                {
-                  spectatorUsers.map(spectatorUser =>
-                    <>
-                      <PlayerCheckboxLabel
-                        player={spectatorUser}
-                      />
-                      <br />
-                    </>
-                  )
-                }
-              </>
-          }
+          <SpectatorList />
         </Col>
       </Row>
       <DuplicatesModal show={gameState === STATE_AWP_REVIEWING_CLUES}/>
