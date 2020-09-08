@@ -36,3 +36,5 @@ voting
 investigate bug w/ "Clean up room after everyone has left"
 
 fix "undefined has connected" -- usually when user w/out name has reconnected
+
+remove spectator who has disconnected

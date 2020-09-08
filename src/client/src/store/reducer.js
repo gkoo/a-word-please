@@ -2,7 +2,12 @@ import io from 'socket.io-client';
 
 import * as actions from './actions';
 import * as constants from '../constants';
+import testAwpGameData from './testWavelengthGameData';
 import testDeceptionGameData from './testDeceptionGameData';
+import testPlayersData from './testPlayersData';
+import testWavelengthGameData from './testWavelengthGameData';
+import testWerewolfGameData from './testWerewolfGameData';
+
 
 // Change to 1 to develop UI
 const useTestState = 0;
@@ -29,161 +34,6 @@ const initialState = {
   showRulesModal: false,
   socket: null,
   userPreferences: {},
-};
-
-const testPlayersData = {
-  gordon: {
-    id: 'gordon',
-    name: 'Gordon',
-    isLeader: true,
-    color: 'red',
-    connected: true,
-  },
-  yuriko: {
-    id: 'yuriko',
-    name: 'Yuriko',
-    color: 'purple',
-    connected: true,
-  },
-  aj: {
-    id: 'aj',
-    name: 'AJ',
-    color: 'pink',
-    connected: true,
-  },
-  willy: {
-    id: 'willy',
-    name: 'Willy',
-    color: 'red',
-    connected: true,
-  },
-  rishi: {
-    id: 'rishi',
-    name: 'Rishi',
-    color: 'orange',
-    connected: true,
-  },
-};
-
-const testAwpGameData = {
-  //clues: {},
-  activePlayerId: 'willy',
-  //activePlayerId: 'gordon',
-  clues: {
-    'gordon': {
-      clue: 'fire',
-      isDuplicate: false,
-    },
-  },
-  currGuess: 'hydrant',
-  currWord: 'water',
-  gameId: constants.GAME_A_WORD_PLEASE,
-  numPoints: 7,
-  players: testPlayersData,
-  roundNum: 0,
-  skippedTurn: false,
-  //state: constants.GAME_STATE_PENDING,
-  state: constants.STATE_AWP_ENTERING_CLUES,
-  //state: constants.STATE_AWP_REVIEWING_CLUES,
-  //state: constants.STATE_AWP_ENTERING_GUESS,
-  //state: constants.STATE_AWP_TURN_END,
-  //state: constants.STATE_AWP_GAME_END,
-  totalNumRounds: 13,
-};
-
-const roleToTest = constants.ROLE_MINION;
-
-const testWerewolfGameData = {
-  eliminatedPlayerIds: ['gordon'],
-  wakeUpRole: constants.ROLE_ROBBER,
-  gameId: constants.GAME_WEREWOLF,
-  players: {
-    gordon: {
-      id: 'gordon',
-      name: 'Gordon',
-      isLeader: true,
-      color: 'indigo',
-      originalRole: roleToTest,
-      lastKnownRole: roleToTest,
-      role: roleToTest,
-    },
-    yuriko: {
-      id: 'yuriko',
-      name: 'Yuriko',
-      color: 'indigo',
-      originalRole: constants.ROLE_MASON,
-      lastKnownRole: constants.ROLE_MASON,
-      role: constants.ROLE_MASON,
-    },
-    aj: {
-      id: 'aj',
-      name: 'AJ',
-      color: 'indigo',
-      originalRole: constants.ROLE_SEER,
-      lastKnownRole: constants.ROLE_SEER,
-      role: constants.ROLE_SEER,
-    },
-    willy: {
-      id: 'willy',
-      name: 'Willy',
-      color: 'indigo',
-      originalRole: constants.ROLE_ROBBER,
-      lastKnownRole: constants.ROLE_ROBBER,
-      role: constants.ROLE_ROBBER,
-    },
-    rishi: {
-      id: 'rishi',
-      name: 'Rishi',
-      color: 'indigo',
-      originalRole: constants.ROLE_VILLAGER,
-      lastKnownRole: constants.ROLE_VILLAGER,
-      role: constants.ROLE_VILLAGER,
-    },
-  },
-  revealingRoles: true,
-  roleIds: [
-    'werewolf1',
-    'werewolf2',
-    'villager2',
-    'villager1',
-    'hunter',
-    'seer',
-    'doppelganger',
-    'robber',
-    'tanner',
-  ],
-  //state: constants.STATE_WW_CHOOSING_ROLES,
-  //state: constants.STATE_WW_NIGHTTIME,
-  //state: constants.STATE_WW_DAYTIME,
-  //state: constants.STATE_WW_VOTING,
-  state: constants.STATE_WW_VOTE_RESULTS,
-  unclaimedRoles: [constants.ROLE_WEREWOLF, constants.ROLE_DRUNK, constants.ROLE_DOPPELGANGER],
-  votes: {
-    'gordon': 'willy',
-    'yuriko': 'yuriko',
-    'aj': 'yuriko',
-    'willy': 'gordon',
-    'rishi': 'willy',
-  },
-  winners: [constants.ROLE_WEREWOLF],
-};
-
-const testWavelengthGameData = {
-  activePlayerId: 'gordon',
-  //activePlayerId: 'willy',
-  clue: 'The quick brown fox jumped over the lazy dog',
-  currConcept: ['Bad', 'Good'],
-  gameId: constants.GAME_WAVELENGTH,
-  numPoints: 0,
-  players: testPlayersData,
-  roundNum: 13,
-  //state: constants.STATE_WAVELENGTH_CLUE_PHASE,
-  state: constants.STATE_WAVELENGTH_GUESS_PHASE,
-  //state: constants.STATE_WAVELENGTH_REVEAL_PHASE,
-  //state: constants.STATE_WAVELENGTH_GAME_END_PHASE,
-  spectrumGuess: 140,
-  spectrumValue: 80,
-  totalNumRounds: 13,
 };
 
 //const testGameDataToUse = testAwpGameData;

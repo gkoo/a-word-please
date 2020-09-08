@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 
 import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
-import Modal from 'react-bootstrap/Modal';
 
 import PlayerGroupModal from './PlayerGroupModal';
 import PlayerGroupView from './PlayerGroupView';
@@ -26,7 +25,7 @@ function ChooseMeansView() {
   const currPlayer = useSelector(currPlayerSelector);
   const socket = useSelector(socketSelector);
 
-  const currPlayerIsMurderer = currPlayer.role === ROLE_MURDERER;
+  const currPlayerIsMurderer = currPlayer?.role === ROLE_MURDERER;
 
   if (!currPlayerIsMurderer) {
     return (
