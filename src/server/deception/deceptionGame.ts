@@ -208,7 +208,7 @@ class DeceptionGame extends Game {
     if (this.includeWitness) {
       rolesToUse.push(Role.Witness);
     }
-    const numPlayers = Object.values(this.players).length;
+    const numPlayers = Object.values(this.getConnectedPlayers()).length;
     const numInvestigators = numPlayers - rolesToUse.length;
     let i;
     for (i = 0; i < numInvestigators; ++i) {
@@ -217,7 +217,7 @@ class DeceptionGame extends Game {
     const roleDeck = new Deck(rolesToUse);
     roleDeck.shuffle();
 
-    const playerList = Object.values(this.players).forEach((player) => {
+    const playerList = Object.values(this.getConnectedPlayers()).forEach((player) => {
       const role = roleDeck.drawCard();
       player.setRole(role);
     });
@@ -237,7 +237,7 @@ class DeceptionGame extends Game {
     evidenceDeck.shuffle();
     methodDeck.shuffle();
 
-    Object.values(this.players).forEach(player => {
+    this.getConnectedPlayers().forEach(player => {
       if (player.role === Role.Scientist) {
         return;
       }
@@ -291,7 +291,7 @@ class DeceptionGame extends Game {
     this.playersReady[playerId] = true;
     this.broadcastGameDataToPlayers();
 
-    if (Object.keys(this.playersReady).length < Object.keys(this.players).length) {
+    if (Object.keys(this.playersReady).length < this.getConnectedPlayers().length) {
       return;
     }
 
