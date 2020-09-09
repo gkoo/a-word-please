@@ -2,6 +2,7 @@ export enum TileType {
   CauseOfDeath,
   Location,
   Scene,
+  Event,
 }
 
 export default class Tile {

@@ -1,5 +1,3 @@
-const Tile = require('./tile');
-
 export default [
   {
     label: 'Social Relationship',
@@ -11,7 +9,6 @@ export default [
       'Lovers',
       'Strangers',
     ],
-    type: Tile.TYPE_SCENE,
   },
   {
     label: 'Victim\'s Build',
@@ -23,7 +20,6 @@ export default [
       'Disfigured',
       'Fit',
     ],
-    type: Tile.TYPE_SCENE,
   },
   {
     label: 'Sudden Incident',
@@ -35,7 +31,6 @@ export default [
       'Scream',
       'Nothing',
     ],
-    type: Tile.TYPE_SCENE,
   },
   {
     label: 'Victim\'s Identity',
@@ -47,7 +42,6 @@ export default [
       'Male',
       'Female',
     ],
-    type: Tile.TYPE_SCENE,
   },
   {
     label: 'Personality',
@@ -59,7 +53,6 @@ export default [
       'Forceful',
       'Perverted',
     ],
-    type: Tile.TYPE_SCENE,
   },
   {
     label: 'Trace at the Scene',
@@ -71,7 +64,6 @@ export default [
       'Bodily Fluid',
       'Scar',
     ],
-    type: Tile.TYPE_SCENE,
   },
   {
     label: 'Hint on Corpse',
@@ -83,7 +75,6 @@ export default [
       'Partial',
       'All-over',
     ],
-    type: Tile.TYPE_SCENE,
   },
   {
     label: 'Victim\'s Expression',
@@ -95,7 +86,6 @@ export default [
       'Blank',
       'Angry',
     ],
-    type: Tile.TYPE_SCENE,
   },
   {
     label: 'Victim\'s Clothes',
@@ -107,7 +97,6 @@ export default [
       'Bizarre',
       'Naked',
     ],
-    type: Tile.TYPE_SCENE,
   },
   {
     label: 'In Progress',
@@ -119,7 +108,6 @@ export default [
       'Visit',
       'Dining',
     ],
-    type: Tile.TYPE_SCENE,
   },
   {
     label: 'State of the Scene',
@@ -131,7 +119,6 @@ export default [
       'Disorderly',
       'Tidy',
     ],
-    type: Tile.TYPE_SCENE,
   },
   {
     label: 'Duration of Crime',
@@ -143,7 +130,6 @@ export default [
       'Few Days',
       'Unclear',
     ],
-    type: Tile.TYPE_SCENE,
   },
   {
     label: 'Evidence Left Behind',
@@ -155,7 +141,6 @@ export default [
       'Personal',
       'Unrelated',
     ],
-    type: Tile.TYPE_SCENE,
   },
   {
     label: 'Weather',
@@ -167,7 +152,6 @@ export default [
       'Cold',
       'Hot',
     ],
-    type: Tile.TYPE_SCENE,
   },
   {
     label: 'Time of Death',
@@ -179,7 +163,6 @@ export default [
       'Evening',
       'Night',
     ],
-    type: Tile.TYPE_SCENE,
   },
   {
     label: 'Corpse Condition',
@@ -191,7 +174,6 @@ export default [
       'Intact',
       'Twisted',
     ],
-    type: Tile.TYPE_SCENE,
   },
   {
     label: 'Noticed by Bystander',
@@ -203,7 +185,6 @@ export default [
       'Action',
       'Nothing',
     ],
-    type: Tile.TYPE_SCENE,
   },
   {
     label: 'General Impression',
@@ -215,6 +196,5 @@ export default [
       'Horrible',
       'Suspenseful',
     ],
-    type: Tile.TYPE_SCENE,
   },
 ];

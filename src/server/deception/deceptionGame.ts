@@ -5,6 +5,7 @@ import Game, { GameEnum } from '../game';
 import Player from '../player';
 import Tile, { TileType } from './tile';
 import evidenceList from './evidenceList';
+import eventTileList from './eventTileList';
 import methodList from './methodList';
 import locationTileList from './locationTileList';
 import sceneTileList from './sceneTileList';
@@ -207,7 +208,7 @@ class DeceptionGame extends Game {
         type: TileType.Scene,
       })
     );
-    this.sceneTileDeck = new Deck(sceneTiles);
+    this.sceneTileDeck = new Deck(sceneTiles.concat(eventTileList));
     this.sceneTileDeck.shuffle();
   }
 
