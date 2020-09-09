@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Modal from 'react-bootstrap/Modal';
@@ -15,7 +15,6 @@ const getKey = gameId => {
 function RulesModal({ onClose, show }) {
   const dispatch = useDispatch();
   const selectedGame = useSelector(selectedGameSelector);
-  const [cachedSelectedGame, setCachedSelectedGame] = useState(selectedGame);
   const initialActiveKey = getKey(selectedGame);
   const [activeKey, setActiveKey] = useState(initialActiveKey);
   const onTabSelect = key => setActiveKey(key);

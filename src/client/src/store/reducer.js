@@ -2,11 +2,11 @@ import io from 'socket.io-client';
 
 import * as actions from './actions';
 import * as constants from '../constants';
-import testAwpGameData from './testWavelengthGameData';
+//import testAwpGameData from './testWavelengthGameData';
 import testDeceptionGameData from './testDeceptionGameData';
-import testPlayersData from './testPlayersData';
-import testWavelengthGameData from './testWavelengthGameData';
-import testWerewolfGameData from './testWerewolfGameData';
+//import testPlayersData from './testPlayersData';
+//import testWavelengthGameData from './testWavelengthGameData';
+//import testWerewolfGameData from './testWerewolfGameData';
 
 
 // Change to 1 to develop UI

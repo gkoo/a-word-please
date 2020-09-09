@@ -68,7 +68,14 @@ function AboutModal({ show }) {
         <div>
           <h3>The Developer</h3>
           <p>
-            You can find me on <a href="https://twitter.com/gordon_koo" target="_blank">Twitter</a>.
+            You can find me on{' '}
+            <a
+              href="https://twitter.com/gordon_koo"
+              target="_blank"
+              rel='noopener noreferrer'
+            >
+              Twitter
+            </a>.
           </p>
         </div>
         <hr />
@@ -80,7 +87,14 @@ function AboutModal({ show }) {
             communication.
           </p>
           <p>
-            The code for these games is on <a href="https://github.com/gkoo/a-word-please" target="_blank">Github</a>!
+            The code for these games is on{' '}
+            <a
+              href="https://github.com/gkoo/a-word-please"
+              target="_blank"
+              rel='noopener noreferrer'
+            >
+              Github
+            </a>!
           </p>
         </div>
 
@@ -93,7 +107,7 @@ function AboutModal({ show }) {
             target='_blank'
             rel='noopener noreferrer'
           >
-            Buy the developer a coffee!
+            Buy me a coffee!
           </a>
         </p>
       </Modal.Body>
