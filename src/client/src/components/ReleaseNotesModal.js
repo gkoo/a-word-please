@@ -14,6 +14,13 @@ function ReleaseNotesModal({ show }) {
         <Modal.Title>Release Notes</Modal.Title>
       </Modal.Header>
       <Modal.Body>
+        <h3>Sep 3, 2020</h3>
+        <ul>
+          <li>
+            Added Deception game
+          </li>
+        </ul>
+
         <h3>Aug 29, 2020</h3>
         <ul>
           <li>
