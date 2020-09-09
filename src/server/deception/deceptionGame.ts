@@ -472,11 +472,11 @@ class DeceptionGame extends Game {
     }
 
     // All three of these must be correct for investigators to win.
-    const isMurdererGuessCorrect = this.players[this.suspectId].role === Role.Murderer;
-    const isMethodGuessCorrect = this.accusedMethod === this.murderMethod.label;
-    const isEvidenceGuessCorrect = this.accusedEvidence === this.keyEvidence.label;
+    const isMurdererCorrect = this.players[this.suspectId].role === Role.Murderer;
+    const isMethodCorrect = this.accusedMethod === this.murderMethod.label;
+    const isEvidenceCorrect = this.accusedEvidence === this.keyEvidence.label;
 
-    if (isMurdererGuessCorrect && isMethodGuessCorrect && isEvidenceGuessCorrect) {
+    if (isMurdererCorrect && isMethodCorrect && isEvidenceCorrect) {
       // Investigators win!
       this.state = GameState.GameEnd;
       this.accusationResult = true;
@@ -490,6 +490,19 @@ class DeceptionGame extends Game {
     this.accuserId = null;
     this.suspectId = null;
     this.accusationActive = false;
+
+    // if all investigators have accused unsuccessfully, end game
+    const investigators = this.getConnectedPlayers().filter(
+      player => [Role.Investigator, Role.Witness].includes(player.role)
+    );
+    const allInvestigatorsHaveAccused = investigators.every(
+      investigator => this.accuseLog[investigator.id]
+    );
+
+    if (!this.accusationResult && allInvestigatorsHaveAccused) {
+      this.state = GameState.GameEnd;
+    }
+
     this.broadcastGameDataToPlayers();
   }
 

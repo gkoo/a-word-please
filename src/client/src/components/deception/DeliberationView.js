@@ -71,8 +71,8 @@ function DeliberationView() {
             {
               isLastRound &&
                 <p>
-                  This is the last round. When everyone is done making an
-                  accusation, please end the round
+                  This is the last round. When everyone is done making an accusation, please end the
+                  game.
                 </p>
             }
             <div className='text-center'>
