@@ -68,7 +68,19 @@ function AboutModal({ show }) {
         <div>
           <h3>The Developer</h3>
           <p>
-            You can find me on <a href="https://twitter.com/gordon_koo">Twitter</a>.
+            You can find me on <a href="https://twitter.com/gordon_koo" target="_blank">Twitter</a>.
+          </p>
+        </div>
+        <hr />
+
+        <div>
+          <h3>The Code</h3>
+          <p>
+            The site is built with React, Typescript and Node, and it uses Socket.IO for real-time
+            communication.
+          </p>
+          <p>
+            The code for these games is on <a href="https://github.com/gkoo/a-word-please" target="_blank">Github</a>!
           </p>
         </div>
 
