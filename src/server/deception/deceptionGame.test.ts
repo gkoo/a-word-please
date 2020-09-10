@@ -1,18 +1,16 @@
-const http = require('http');
+import http from 'http';
 
-const socketIO = require('socket.io');
-const MockExpress = require('mock-express');
+import socketIO from 'socket.io';
+import MockExpress from 'mock-express';
 
-const mockApp = MockExpress();
-const mockServer = http.createServer(mockApp);
-const mockIo = socketIO(mockServer);
-
-const User = require('../user.js');
-const DeceptionGame = require('./deceptionGame.js');
+import User from '../user';
+import DeceptionGame, { Role } from './deceptionGame';
+import DeceptionPlayer from './deceptionPlayer';
 
 let game;
 
 beforeEach(() => {
+  const broadcastToRoom = jest.fn((eventName: string, data: any) => {});
   const users = {
     '1': new User({ id: '1', name: 'Gordon' }),
     '2': new User({ id: '2', name: 'Fordon' }),
@@ -20,17 +18,18 @@ beforeEach(() => {
     '4': new User({ id: '4', name: 'Mordon' }),
   };
 
-  game = new DeceptionGame(mockIo, users);
+  game = new DeceptionGame(broadcastToRoom);
   game.setup(users);
 });
 
 describe('assignRoles', () => {
   // called as part of setup()
   it('assigns exactly one scientist and one murderer', () => {
+    game.assignRoles();
     const players = Object.values(game.players);
-    const scientists = players.filter(player => player.role === DeceptionGame.ROLE_SCIENTIST);
-    const murderers = players.filter(player => player.role === DeceptionGame.ROLE_MURDERER);
-    const investigators = players.filter(player => player.role === DeceptionGame.ROLE_INVESTIGATOR);
+    const scientists = players.filter((player: DeceptionPlayer) => player.role === Role.Scientist);
+    const murderers = players.filter((player: DeceptionPlayer) => player.role === Role.Murderer);
+    const investigators = players.filter((player: DeceptionPlayer) => player.role === Role.Investigator);
     expect(scientists).toHaveLength(1);
     expect(murderers).toHaveLength(1);
     expect(investigators).toHaveLength(2);
@@ -40,8 +39,8 @@ describe('assignRoles', () => {
 describe('dealCards', () => {
   // called as part of setup()
   it('deals cards for each player, except for the scientist', () => {
-    Object.values(game.players).forEach(player => {
-      if (player.role === DeceptionGame.ROLE_SCIENTIST) {
+    Object.values(game.players).forEach((player: DeceptionPlayer) => {
+      if (player.role === Role.Scientist) {
         expect(player.evidenceCards).toHaveLength(0);
         expect(player.methodCards).toHaveLength(0);
       } else {

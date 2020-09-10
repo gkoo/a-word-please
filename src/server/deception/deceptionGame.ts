@@ -65,7 +65,7 @@ interface GameData {
   selectedLocationTile: Tile;
   suspectId?: string;
   totalNumRounds: number;
-  players: object;
+  players: { [id: string]: DeceptionPlayer };
   playersReady?: { [playerId: string]: boolean };
   presentationSecondsLeft?: number | undefined;
   spectators: { [playerId: string]: Player },
@@ -97,6 +97,7 @@ class DeceptionGame extends Game {
   murderMethod: Clue;
   newSceneTile?: Tile;
   oldSceneTile?: Tile;
+  players: { [id: string]: DeceptionPlayer };
   playersReady?: { [playerId: string]: boolean };
   presentationSecondsLeft: number | undefined;
   roundNum: number;
