@@ -200,7 +200,7 @@ class DeceptionGame extends Game {
   }
 
   createSceneTileDeck() {
-    const sceneTiles = sceneTileList.map((sceneTileData, idx) =>
+    const sceneTiles: Array<Tile> = sceneTileList.map((sceneTileData, idx) =>
       new Tile({
         id: idx,
         label: sceneTileData.label,
@@ -208,7 +208,15 @@ class DeceptionGame extends Game {
         type: TileType.Scene,
       })
     );
-    this.sceneTileDeck = new Deck(sceneTiles.concat(eventTileList));
+    const eventTiles: Array<Tile> = eventTileList.map(({ title, description }, idx) =>
+      new Tile({
+        id: idx,
+        label: title,
+        options: null,
+        type: TileType.Event,
+      })
+    );
+    this.sceneTileDeck = new Deck(sceneTiles.concat(eventTiles));
     this.sceneTileDeck.shuffle();
   }
 

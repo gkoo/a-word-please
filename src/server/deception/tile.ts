@@ -12,7 +12,6 @@ export default class Tile {
   label: string;
   type: TileType;
 
-  // Each tile has six options
   constructor({ id, label, options, type, }) {
     this.id = id;
     this.label = label;
