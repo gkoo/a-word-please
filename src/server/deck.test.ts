@@ -1,4 +1,4 @@
-const Deck = require('./deck');
+import Deck from './deck';
 
 describe('Deck', () => {
   const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
