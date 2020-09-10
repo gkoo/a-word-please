@@ -26,9 +26,11 @@ function Lobby({ messages, roomCode, users }) {
   const socket = useSelector(socketSelector);
   const selectedGame = useSelector(selectedGameSelector);
 
-  const onChooseGame = (gameId) => {
-    socket.emit('chooseGame', gameId);
-  };
+  const onChooseGame = (gameId) => socket.emit('chooseGame', gameId);
+
+  const startButtonDisabled = selectedGame === GAME_DECEPTION && users.length < 4;
+
+  const startButtonHelpText = 'Requires at least 4 players';
 
   return (
     <>
@@ -146,7 +148,10 @@ function Lobby({ messages, roomCode, users }) {
                       }
                       <Row>
                         <Col className='text-center'>
-                          <StartGameButton />
+                          {
+                            startButtonDisabled && <p>{startButtonHelpText}</p>
+                          }
+                          <StartGameButton disabled={startButtonDisabled}/>
                         </Col>
                       </Row>
                     </div>

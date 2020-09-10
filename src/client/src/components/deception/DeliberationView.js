@@ -26,8 +26,9 @@ function DeliberationView() {
 
   const {
     accusationActive,
-    oldSceneTile,
     newSceneTile,
+    oldSceneTile,
+    presentationSecondsLeft,
     roundNum,
     totalNumRounds,
   } = gameData;
@@ -35,6 +36,8 @@ function DeliberationView() {
   const onEndRound = () => socket.emit('playerAction', { action: 'endRound' });
 
   const onEndAccusation = () => socket.emit('playerAction', { action: 'endAccusation' });
+
+  const onStartTimer = () => socket.emit('playerAction', { action: 'startTimer' });
 
   const onAccusedDetailsChange = (type, value) => socket.emit(
     'playerAction',
@@ -55,7 +58,7 @@ function DeliberationView() {
   return (
     <>
       {
-        currPlayerIsScientist && !isLastRound &&
+        currPlayerIsScientist &&
           <Alert variant='info' className='mb-5'>
             <Alert.Heading>
               Forensic Scientist Instructions
@@ -76,11 +79,24 @@ function DeliberationView() {
                 </p>
             }
             <div className='text-center'>
-              <Button onClick={onEndRound}>
+              {
+                !presentationSecondsLeft &&
+                  <Button onClick={onStartTimer} className='mx-1'>
+                    Start Timer
+                  </Button>
+              }
+              <Button onClick={onEndRound} className='mx-1'>
                 { roundNum < totalNumRounds ? 'Start Next Round' : 'End Game' }
               </Button>
             </div>
           </Alert>
+      }
+      {
+        presentationSecondsLeft !== undefined &&
+          <div className='text-center mb-5'>
+            <p>Current Presentation Time Left:</p>
+            <h1>{presentationSecondsLeft || 'Time\'s up!'}</h1>
+          </div>
       }
       <TilesView showHeaders={!hideRules} />
       <hr />

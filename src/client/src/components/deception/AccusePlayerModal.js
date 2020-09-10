@@ -78,6 +78,7 @@ function AccusePlayerModal({ show, onDetailsChange, onConfirmAccusation, endAccu
 
                   return (
                     <Button
+                      key={methodCard.label}
                       variant='outline-danger'
                       size='sm'
                       active={isActiveMethod}
@@ -106,6 +107,7 @@ function AccusePlayerModal({ show, onDetailsChange, onConfirmAccusation, endAccu
 
                   return (
                     <Button
+                      key={evidenceCard.label}
                       variant='outline-info'
                       size='sm'
                       active={isActiveEvidence}
