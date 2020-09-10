@@ -17,7 +17,7 @@ function DoppelgangerView() {
   const currPlayer = useSelector(currPlayerSelector);
   const players = useSelector(playersSelector);
   const socket = useSelector(socketSelector);
-  const otherPlayers = Object.values(players).filter(player => player.id !== currPlayer.id);
+  const otherPlayers = Object.values(players).filter(player => player.id !== currPlayer?.id);
   const copyPlayer = copyPlayerId ? players[copyPlayerId] : null;
 
   const rolesWithFollowUpActions = [ROLE_SEER, ROLE_TROUBLEMAKER, ROLE_ROBBER];

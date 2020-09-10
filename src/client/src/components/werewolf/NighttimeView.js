@@ -32,7 +32,7 @@ import { currPlayerSelector, wakeUpRoleSelector } from '../../store/selectors';
 function NighttimeView() {
   const currPlayer = useSelector(currPlayerSelector);
   const wakeUpRole = useSelector(wakeUpRoleSelector);
-  const isAwake = !!currPlayer && currPlayer.originalRole === wakeUpRole;
+  const isAwake = currPlayer?.originalRole === wakeUpRole;
 
   const renderWakeUp = () => {
     switch (currPlayer?.originalRole) {

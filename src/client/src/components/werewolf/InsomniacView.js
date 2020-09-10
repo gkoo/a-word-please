@@ -13,7 +13,7 @@ function InsomniacView() {
   const currPlayer = useSelector(currPlayerSelector);
   const socket = useSelector(socketSelector);
   const wakeUpRole = useSelector(wakeUpRoleSelector);
-  const isAwake = currPlayer.originalRole === wakeUpRole;
+  const isAwake = currPlayer?.originalRole === wakeUpRole;
 
   const endTurn = () => {
     socket.emit('playerAction', { action: 'endTurn' });
@@ -26,7 +26,7 @@ function InsomniacView() {
         <Row className='my-3'>
           <Col>
             <p>Your role:</p>
-            <RoleCard role={currPlayer.role}/>
+            <RoleCard role={currPlayer?.role}/>
             <p>Was it what you expected?</p>
           </Col>
         </Row>

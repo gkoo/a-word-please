@@ -13,7 +13,7 @@ function MasonView() {
   const players = useSelector(playersSelector);
   const socket = useSelector(socketSelector);
   const otherMason = Object.values(players).find(
-    player => player.id !== currPlayer.id && player.originalRole === ROLE_MASON
+    player => player.id !== currPlayer?.id && player.originalRole === ROLE_MASON
   );
 
   const endTurn = () => {

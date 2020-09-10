@@ -14,7 +14,7 @@ function TroublemakerView() {
   const currPlayer = useSelector(currPlayerSelector);
   const players = useSelector(playersSelector);
   const socket = useSelector(socketSelector);
-  const otherPlayers = Object.values(players).filter(player => player.id !== currPlayer.id);
+  const otherPlayers = Object.values(players).filter(player => player.id !== currPlayer?.id);
 
   const switchRoles = () => socket.emit('playerAction', {
     action: 'troublemakeRoles',

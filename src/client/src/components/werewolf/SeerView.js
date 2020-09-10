@@ -18,7 +18,7 @@ function SeerView() {
   const currPlayer = useSelector(currPlayerSelector);
   const players = useSelector(playersSelector);
   const socket = useSelector(socketSelector);
-  const otherPlayers = Object.values(players).filter(player => player.id !== currPlayer.id);
+  const otherPlayers = Object.values(players).filter(player => player.id !== currPlayer?.id);
   const revealedPlayer = revealedPlayerId ? players[revealedPlayerId] : null;
 
   const choosePlayerToReveal = player => {

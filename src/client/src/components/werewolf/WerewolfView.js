@@ -13,7 +13,7 @@ function WerewolfView() {
   const players = useSelector(playersSelector);
   const socket = useSelector(socketSelector);
   const otherWerewolves = Object.values(players).filter(
-    player => player.id !== currPlayer.id && player.originalRole === ROLE_WEREWOLF
+    player => player.id !== currPlayer?.id && player.originalRole === ROLE_WEREWOLF
   );
 
   const endTurn = () => {

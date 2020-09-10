@@ -15,7 +15,7 @@ function RobberView() {
   const players = useSelector(playersSelector);
   const currPlayer = useSelector(currPlayerSelector);
   const socket = useSelector(socketSelector);
-  const otherPlayers = Object.values(players).filter(player => player.id !== currPlayer.id);
+  const otherPlayers = Object.values(players).filter(player => player.id !== currPlayer?.id);
   const playerToRob = playerToRobId ? players[playerToRobId] : null;
 
   const robRole = () => {
