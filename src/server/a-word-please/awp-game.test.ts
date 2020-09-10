@@ -1,25 +1,22 @@
-const http = require('http');
+import http from 'http';
 
-const _ = require('lodash');
-const socketIO = require('socket.io');
-const MockExpress = require('mock-express');
+import _ from 'lodash';
+import socketIO from 'socket.io';
+import MockExpress from 'mock-express';
 
-const AWPGame = require('./awp-game.js');
-const User = require('../user.js');
+import AWPGame, { GameState } from './awp-game';
+import User from '../user';
 
 let game;
 
-const mockApp = MockExpress();
-const mockServer = http.createServer(mockApp);
-const mockIo = socketIO(mockServer);
-
 beforeEach(() => {
+  const broadcastToRoom = jest.fn((eventName: string, data: any) => {});
   const users = {
     '1': new User({ id: '1', name: 'Gordon' }),
     '2': new User({ id: '2', name: 'Fordon' }),
     '3': new User({ id: '3', name: 'Bordon' }),
   };
-  game = new AWPGame(mockIo, users);
+  game = new AWPGame(broadcastToRoom);
   game.setup(users);
 });
 
@@ -59,9 +56,9 @@ describe('getConnectedPlayers', () => {
   });
 });
 
-describe('removePlayer', () => {
+describe('disconnectPlayer', () => {
   const playerToRemoveId = '1'
-  const subject = () => game.removePlayer(playerToRemoveId);
+  const subject = () => game.disconnectPlayer(playerToRemoveId);
 
   it('sets the player\'s connected status to false', () => {
     subject();
@@ -135,7 +132,7 @@ describe('removePlayer', () => {
           isDuplicate: false,
         },
       };
-      game.state = AWPGame.STATE_ENTERING_GUESS;
+      game.state = GameState.EnteringGuess;
     });
 
     it('doesn\'t change game state', () => {
@@ -150,7 +147,7 @@ describe('removePlayer', () => {
       game.activePlayerId = '2';
       game.playerOrder = ['1', '2', '3'];
       game.playerOrderCursor = 2;
-      game.state = AWPGame.STATE_ENTERING_CLUES;
+      game.state = GameState.EnteringClues;
     });
 
     describe('and all clues are in', () => {
@@ -163,11 +160,11 @@ describe('removePlayer', () => {
         };
       });
 
-      it('changes the game state', () => {
+      it.only('changes the game state', () => {
         const { state } = game;
         subject();
         expect(game.state).not.toEqual(state);
-        expect(game.state).toEqual(AWPGame.STATE_REVIEWING_CLUES);
+        expect(game.state).toEqual(GameState.ReviewingClues);
       });
     });
 

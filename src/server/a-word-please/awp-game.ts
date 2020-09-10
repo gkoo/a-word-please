@@ -11,7 +11,7 @@ interface Clue {
   isDuplicate: boolean;
 }
 
-enum GameState {
+export enum GameState {
   Pending,
   TurnEnd,
   GameEnd,
@@ -78,12 +78,12 @@ class AWPGame extends Game {
       this.nextTurn(false);
     }
 
+    super.disconnectPlayer(id)
+
     if (this.state === GameState.EnteringClues) {
       // TODO: unmark duplicates
       this.checkIfAllCluesAreIn();
     }
-
-    super.disconnectPlayer(id)
   }
 
   nextTurn(shouldIncrementRound = true) {
