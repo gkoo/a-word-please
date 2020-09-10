@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 
 import { socketSelector, } from '../../store/selectors';
 
-function StartGameButton() {
+function StartGameButton({ disabled }) {
   const socket = useSelector(socketSelector);
   const startGame = e => {
     e.preventDefault();
@@ -13,7 +13,7 @@ function StartGameButton() {
   };
 
   return (
-    <Button onClick={startGame}>Start Game</Button>
+    <Button onClick={startGame} disabled={disabled}>Start Game</Button>
   );
 }
 

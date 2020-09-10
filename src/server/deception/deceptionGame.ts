@@ -65,8 +65,9 @@ interface GameData {
   selectedLocationTile: Tile;
   suspectId?: string;
   totalNumRounds: number;
-  players: object,
-  playersReady?: { [playerId: string]: boolean },
+  players: object;
+  playersReady?: { [playerId: string]: boolean };
+  presentationSecondsLeft?: number | undefined;
   spectators: { [playerId: string]: Player },
   state: GameState,
   witnessGuessCorrect?: boolean;
@@ -97,11 +98,13 @@ class DeceptionGame extends Game {
   newSceneTile?: Tile;
   oldSceneTile?: Tile;
   playersReady?: { [playerId: string]: boolean };
+  presentationSecondsLeft: number | undefined;
   roundNum: number;
   sceneTileDeck: Deck;
   sceneTiles: Array<Tile>;
   selectedLocationTile: Tile;
   suspectId?: string;
+  timerInterval: ReturnType<typeof setInterval>;
   witnessGuessCorrect?: boolean | undefined;
   witnessSuspectId?: string;
 
@@ -110,6 +113,7 @@ class DeceptionGame extends Game {
   static MIN_PLAYERS = 4;
   static MAX_PLAYERS = 12;
   static NUM_ROUNDS = 3;
+  static NUM_PRESENTATION_SECONDS = 30;
 
   static NUM_CLUE_CARDS_PER_PLAYER = 4;
 
@@ -265,6 +269,8 @@ class DeceptionGame extends Game {
         return this.selectLocation(playerId, data);
       case 'selectInitialSceneTiles':
         return this.selectInitialSceneTiles(playerId, data);
+      case 'startTimer':
+        return this.startTimer(playerId);
       case 'endRound':
         return this.endRound();
       case 'replaceSceneTile':
@@ -398,6 +404,7 @@ class DeceptionGame extends Game {
   }
 
   endRound() {
+    this.presentationSecondsLeft = undefined;
     if (this.roundNum >= DeceptionGame.NUM_ROUNDS) {
       this.state = GameState.GameEnd;
     } else {
@@ -439,6 +446,8 @@ class DeceptionGame extends Game {
       // Someone is already accusing. This could happen due to a race condition.
       return;
     }
+
+    if (this.timerInterval) { clearInterval(this.timerInterval); }
 
     this.accuserId = player.id;
     this.suspectId = suspectId;
@@ -501,9 +510,38 @@ class DeceptionGame extends Game {
 
     if (!this.accusationResult && allInvestigatorsHaveAccused) {
       this.state = GameState.GameEnd;
+    } else if (this.presentationSecondsLeft) {
+      this.resumeTimer();
     }
 
     this.broadcastGameDataToPlayers();
+  }
+
+  startTimer(playerId) {
+    const player = this.players[playerId];
+
+    if (player.role !== Role.Scientist) {
+      throw 'Non-scientist tried to set witness guess';
+    }
+    this.presentationSecondsLeft = DeceptionGame.NUM_PRESENTATION_SECONDS;
+    this.timerInterval = setInterval(() => this.decrementSecondsLeft(), 1000);
+  }
+
+  resumeTimer() {
+    this.timerInterval = setInterval(() => this.decrementSecondsLeft(), 1000);
+  }
+
+  decrementSecondsLeft() {
+    this.presentationSecondsLeft = Math.max(this.presentationSecondsLeft - 1, 0);
+    if (!this.presentationSecondsLeft) {
+      clearInterval(this.timerInterval);
+      this.presentationSecondsLeft = undefined;
+    }
+    this.broadcastGameDataToPlayers();
+  }
+
+  pauseTimer() {
+    clearInterval(this.timerInterval);
   }
 
   setWitnessGuess(playerId, data) {
@@ -593,6 +631,7 @@ class DeceptionGame extends Game {
           accusedMethod,
           newSceneTile,
           oldSceneTile,
+          presentationSecondsLeft: this.presentationSecondsLeft,
           suspectId: this.suspectId,
         };
         break;
