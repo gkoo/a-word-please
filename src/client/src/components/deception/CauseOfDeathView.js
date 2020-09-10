@@ -27,7 +27,7 @@ function CauseOfDeathView() {
   const murdererPlayer = useSelector(murdererSelector);
   const socket = useSelector(socketSelector);
 
-  const currPlayerIsScientist = currPlayer.role === Role.Scientist;
+  const currPlayerIsScientist = currPlayer?.role === Role.Scientist;
 
   const { causeOfDeathTile } = gameData;
 
