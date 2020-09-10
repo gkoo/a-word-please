@@ -40,6 +40,7 @@ function PlayerView({
   });
 
   const canAccuse = (
+    currPlayer &&
     showAccuseButtons &&
     !alreadyAccused &&
     !currPlayerIsScientist &&
