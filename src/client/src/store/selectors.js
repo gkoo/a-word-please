@@ -1,5 +1,7 @@
 import { createSelector } from 'reselect';
-import { ROLE_SCIENTIST, ROLE_MURDERER, ROLE_ACCOMPLICE, ROLE_WITNESS } from '../constants';
+import * as deceptionConstants from '../constants/deception';
+
+const { Scientist, Murderer, Accomplice, Witness } = deceptionConstants.Role;
 
 export const alertMessageSelector = state => state.alertMessage;
 export const debugEnabledSelector = state => state.debugEnabled;
@@ -184,19 +186,19 @@ export const spectrumGuessSelector = createSelector(
 // Deception
 export const murdererSelector = createSelector(
   playersSelector,
-  players => Object.values(players).find(player => player.role === ROLE_MURDERER),
+  players => Object.values(players).find(player => player.role === Murderer),
 );
 export const accompliceSelector = createSelector(
   playersSelector,
-  players => Object.values(players).find(player => player.role === ROLE_ACCOMPLICE),
+  players => Object.values(players).find(player => player.role === Accomplice),
 );
 export const scientistSelector = createSelector(
   playersSelector,
-  players => Object.values(players).find(player => player.role === ROLE_SCIENTIST),
+  players => Object.values(players).find(player => player.role === Scientist),
 );
 export const witnessSelector = createSelector(
   playersSelector,
-  players => Object.values(players).find(player => player.role === ROLE_WITNESS),
+  players => Object.values(players).find(player => player.role === Witness),
 );
 export const currPlayerIsMurdererSelector = createSelector(
   murdererSelector,

@@ -7,7 +7,10 @@ import Table from 'react-bootstrap/Table';
 
 import GuessWitnessView from './GuessWitnessView';
 import PlayerGroupView from './PlayerGroupView';
-import { DECEPTION_ROLE_LABELS, ROLE_MURDERER } from '../../constants';
+import {
+  Role,
+  RoleLabels,
+} from '../../constants/deception';
 import {
   gameDataSelector,
   playersSelector,
@@ -42,12 +45,12 @@ function GameEndView() {
         <tbody>
           {
             Object.values(players).map(player =>
-              <tr className={cx({ 'table-danger': player.role === ROLE_MURDERER})}>
+              <tr className={cx({ 'table-danger': player.role === Role.Murderer})}>
                 <td>
                   {player.name}
                 </td>
                 <td>
-                  {DECEPTION_ROLE_LABELS[player.role]}
+                  {RoleLabels[player.role]}
                 </td>
               </tr>
             )

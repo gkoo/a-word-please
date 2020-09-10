@@ -16,7 +16,7 @@ import {
   murdererSelector,
   socketSelector,
 } from '../../store/selectors';
-import { ROLE_SCIENTIST } from '../../constants';
+import { Role } from '../../constants/deception';
 
 function CauseOfDeathView() {
   const [selectedCauseOfDeath, setSelectedCauseOfDeath] = useState(null);
@@ -27,7 +27,7 @@ function CauseOfDeathView() {
   const murdererPlayer = useSelector(murdererSelector);
   const socket = useSelector(socketSelector);
 
-  const currPlayerIsScientist = currPlayer.role === ROLE_SCIENTIST;
+  const currPlayerIsScientist = currPlayer.role === Role.Scientist;
 
   const { causeOfDeathTile } = gameData;
 

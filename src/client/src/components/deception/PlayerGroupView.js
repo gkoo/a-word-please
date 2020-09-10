@@ -4,12 +4,12 @@ import { useSelector } from 'react-redux';
 import CardDeck from 'react-bootstrap/CardDeck';
 
 import PlayerView from './PlayerView';
-import { ROLE_SCIENTIST } from '../../constants';
+import { Role } from '../../constants/deception';
 import { connectedPlayersSelector } from '../../store/selectors';
 
 function PlayerGroupView(props) {
   const connectedPlayers = useSelector(connectedPlayersSelector);
-  const nonScientistPlayers = Object.values(connectedPlayers).filter(player => player.role !== ROLE_SCIENTIST);
+  const nonScientistPlayers = Object.values(connectedPlayers).filter(player => player.role !== Role.Scientist);
 
   return (
     <CardDeck>

@@ -7,7 +7,7 @@ import {
   TILE_DECEPTION_CAUSE_OF_DEATH,
   TILE_DECEPTION_LOCATION,
   TILE_DECEPTION_SCENE,
-} from '../../constants';
+} from '../../constants/deception';
 
 function TileCard({
   collapse,

@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import Button from 'react-bootstrap/Button';
 
 import RoleExplanations from './RoleExplanations';
-import { ROLE_ACCOMPLICE, ROLE_WITNESS } from '../../constants';
+import { Role } from '../../constants/deception';
 import {
   currPlayerSelector,
   currUserIsSpectatorSelector,
@@ -27,7 +27,7 @@ function RulesView() {
   const togglePlayWithWitness = () => {
     socket.emit('playerAction', {
       action: 'toggleRole',
-      role: ROLE_WITNESS,
+      role: Role.Witness,
       shouldInclude: !includeWitness,
     });
   };
@@ -35,7 +35,7 @@ function RulesView() {
   const togglePlayWithAccomplice = () => {
     socket.emit('playerAction', {
       action: 'toggleRole',
-      role: ROLE_ACCOMPLICE,
+      role: Role.Accomplice,
       shouldInclude: !includeAccomplice,
     });
   };

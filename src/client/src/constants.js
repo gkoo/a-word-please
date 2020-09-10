@@ -30,35 +30,6 @@ export const STATE_WAVELENGTH_GAME_END_PHASE = 6;
 export const SPECTRUM_MAX_VALUE = 200;
 export const SPECTRUM_BAND_WIDTH = 12;
 
-// Deception
-export const STATE_DECEPTION_EXPLAIN_RULES = 3;
-export const STATE_DECEPTION_SHOW_ROLES = 4;
-export const STATE_DECEPTION_CHOOSE_MEANS_EVIDENCE = 5;
-export const STATE_DECEPTION_WITNESSING = 6;
-export const STATE_DECEPTION_SCIENTIST_CAUSE_OF_DEATH = 7;
-export const STATE_DECEPTION_SCIENTIST_LOCATION = 8;
-export const STATE_DECEPTION_SCIENTIST_SCENE_TILES = 9;
-export const STATE_DECEPTION_DELIBERATION = 10;
-export const STATE_DECEPTION_REPLACE_SCENE = 11;
-
-export const ROLE_SCIENTIST = 1;
-export const ROLE_MURDERER = 2;
-export const ROLE_INVESTIGATOR = 3;
-export const ROLE_ACCOMPLICE = 4;
-export const ROLE_WITNESS = 5;
-
-export const TILE_DECEPTION_CAUSE_OF_DEATH = 0;
-export const TILE_DECEPTION_LOCATION = 1;
-export const TILE_DECEPTION_SCENE = 2;
-
-export const DECEPTION_ROLE_LABELS = {
-  [ROLE_SCIENTIST]: 'Forensic Scientist',
-  [ROLE_MURDERER]: 'Murderer',
-  [ROLE_INVESTIGATOR]: 'Investigator',
-  [ROLE_WITNESS]: 'Witness',
-  [ROLE_ACCOMPLICE]: 'Accomplice',
-};
-
 // Werewolf
 export const STATE_WW_CHOOSING_ROLES = 3;
 export const STATE_WW_NIGHTTIME = 4;

@@ -7,11 +7,9 @@ import Card from 'react-bootstrap/Card'
 import PlayerGroupModal from './PlayerGroupModal';
 import PlayerGroupView from './PlayerGroupView';
 import {
-  DECEPTION_ROLE_LABELS,
-  ROLE_INVESTIGATOR,
-  ROLE_MURDERER,
-  ROLE_SCIENTIST,
-} from '../../constants';
+  Role,
+  RoleLabels,
+} from '../../constants/deception';
 import {
   currPlayerSelector,
   socketSelector,
@@ -22,10 +20,12 @@ function ChooseMeansView() {
   const [selectedEvidence, setSelectedEvidence] = useState(null);
   const [showPlayerGroup, setShowPlayerGroup] = useState(false);
 
+  const { Investigator, Murderer, Scientist } = Role;
+
   const currPlayer = useSelector(currPlayerSelector);
   const socket = useSelector(socketSelector);
 
-  const currPlayerIsMurderer = currPlayer?.role === ROLE_MURDERER;
+  const currPlayerIsMurderer = currPlayer?.role === Murderer;
 
   if (!currPlayerIsMurderer) {
     return (
@@ -48,11 +48,11 @@ function ChooseMeansView() {
 
   return (
     <>
-      <h1>You are the {DECEPTION_ROLE_LABELS[ROLE_MURDERER]}!</h1>
+      <h1>You are the {RoleLabels[Murderer]}!</h1>
 
       <p>
-        Choose the details of your grisly murder. The {DECEPTION_ROLE_LABELS[ROLE_SCIENTIST]} will
-        use these details to provide clues to the {DECEPTION_ROLE_LABELS[ROLE_INVESTIGATOR]}s.
+        Choose the details of your grisly murder. The {RoleLabels[Scientist]} will
+        use these details to provide clues to the {RoleLabels[Investigator]}s.
       </p>
 
       <Card className='my-2'>

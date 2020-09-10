@@ -5,7 +5,7 @@ import cx from 'classnames';
 import Button from 'react-bootstrap/Button';
 
 import PlayerGroupView from './PlayerGroupView';
-import { DECEPTION_ROLE_LABELS, ROLE_ACCOMPLICE, ROLE_INVESTIGATOR, ROLE_MURDERER, ROLE_SCIENTIST, ROLE_WITNESS } from '../../constants';
+import { Role, RoleLabels } from '../../constants/deception';
 import {
   accompliceSelector,
   currPlayerIsMurdererSelector,
@@ -24,6 +24,14 @@ function GuessWitnessView() {
   const players = useSelector(playersSelector);
   const socket = useSelector(socketSelector);
 
+  const {
+    Accomplice,
+    Investigator,
+    Murderer,
+    Scientist,
+    Witness,
+  } = Role;
+
   const { witnessGuessCorrect } = gameData;
   const witnessSuspect = players[witnessSuspectId];
 
@@ -34,7 +42,7 @@ function GuessWitnessView() {
   }, [gameData.witnessSuspectId]);
 
   const candidatePlayers = Object.values(players).filter(player =>
-    ![ROLE_ACCOMPLICE, ROLE_MURDERER, ROLE_SCIENTIST].includes(player.role)
+    ![Accomplice, Murderer, Scientist].includes(player.role)
   );
 
   const onConfirmGuess = () => socket.emit('playerAction', { action: 'guessWitness' });
@@ -51,18 +59,18 @@ function GuessWitnessView() {
       <div className='text-center'>
         <h1>CAUGHT!</h1>
         <p>
-          {murderer.name} was the {DECEPTION_ROLE_LABELS[ROLE_MURDERER]}! Now {murderer.name} has the chance to
-          guess who the {DECEPTION_ROLE_LABELS[ROLE_WITNESS]} is and go free!
+          {murderer.name} was the {RoleLabels[Murderer]}! Now {murderer.name} has the chance to
+          guess who the {RoleLabels[Witness]} is and go free!
         </p>
         {
           accomplice &&
-            <p>Feel free to discuss with your {DECEPTION_ROLE_LABELS[ROLE_ACCOMPLICE]}, {accomplice.name}.</p>
+            <p>Feel free to discuss with your {RoleLabels[Accomplice]}, {accomplice.name}.</p>
         }
         {
           /* has not guessed yet */
           witnessGuessCorrect === undefined &&
             <>
-              <h3>{murderer.name}, who is the {DECEPTION_ROLE_LABELS[ROLE_WITNESS]}?</h3>
+              <h3>{murderer.name}, who is the {RoleLabels[Witness]}?</h3>
               {
                 candidatePlayers.map(player =>
                   <Button
@@ -92,7 +100,7 @@ function GuessWitnessView() {
             <div className='mt-5'>
               <p>
                 {murderer.name} guessed {witnessSuspect.name} is the
-                {` ${DECEPTION_ROLE_LABELS[ROLE_WITNESS]}`} and was
+                {` ${RoleLabels[Witness]}`} and was
                 <span
                   className={cx({
                     'text-success': witnessGuessCorrect,
@@ -105,13 +113,13 @@ function GuessWitnessView() {
               {
                 !witnessGuessCorrect &&
                   <h1>
-                    {DECEPTION_ROLE_LABELS[ROLE_INVESTIGATOR]}s win!
+                    {RoleLabels[Investigator]}s win!
                   </h1>
               }
               {
                 witnessGuessCorrect &&
                   <h1>
-                    {DECEPTION_ROLE_LABELS[ROLE_MURDERER]} wins!
+                    {RoleLabels[Murderer]} wins!
                   </h1>
               }
               <div className='text-center my-5'>

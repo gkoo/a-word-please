@@ -20,17 +20,7 @@ import LocationView from './LocationView';
 import ReplaceSceneView from './ReplaceSceneView';
 import ShowRolesView from './ShowRolesView';
 import SpectatorList from '../common/SpectatorList';
-import {
-  GAME_STATE_GAME_END,
-  STATE_DECEPTION_EXPLAIN_RULES,
-  STATE_DECEPTION_SHOW_ROLES,
-  STATE_DECEPTION_CHOOSE_MEANS_EVIDENCE,
-  STATE_DECEPTION_SCIENTIST_CAUSE_OF_DEATH,
-  STATE_DECEPTION_SCIENTIST_LOCATION,
-  STATE_DECEPTION_SCIENTIST_SCENE_TILES,
-  STATE_DECEPTION_DELIBERATION,
-  STATE_DECEPTION_REPLACE_SCENE,
-} from '../../constants';
+import { GameState } from '../../constants/deception';
 import {
   updateUserPreference,
 } from '../../store/actions';
@@ -46,6 +36,17 @@ function DeceptionBoard() {
   const dispatch = useDispatch();
   const [showRolesModal, setShowRolesModal] = useState(false);
 
+  const {
+    ExplainRules,
+    ShowRoles,
+    ChooseMeansEvidence,
+    ScientistCauseOfDeath,
+    ScientistLocation,
+    ScientistSceneTiles,
+    Deliberation,
+    ReplaceScene,
+    GameEnd,
+  } = GameState;
   const connectedPlayers = useSelector(connectedPlayersSelector);
   const gameData = useSelector(gameDataSelector);
   const gameState = useSelector(gameStateSelector);
@@ -57,8 +58,8 @@ function DeceptionBoard() {
 
   const { playersReady } = gameData;
   const showReadyCheckmarks = [
-    STATE_DECEPTION_EXPLAIN_RULES,
-    STATE_DECEPTION_SHOW_ROLES,
+    ExplainRules,
+    ShowRoles,
   ].includes(gameState);
 
   const changeHideRules = (evt) => {
@@ -74,31 +75,31 @@ function DeceptionBoard() {
       <Row>
         <Col sm={8} md={9} className='main-panel py-5'>
           {
-            gameState === STATE_DECEPTION_EXPLAIN_RULES && <RulesView />
+            gameState === ExplainRules && <RulesView />
           }
           {
-            gameState === STATE_DECEPTION_SHOW_ROLES && <ShowRolesView />
+            gameState === ShowRoles && <ShowRolesView />
           }
           {
-            gameState === STATE_DECEPTION_CHOOSE_MEANS_EVIDENCE && <ChooseMeansView />
+            gameState === ChooseMeansEvidence && <ChooseMeansView />
           }
           {
-            gameState === STATE_DECEPTION_SCIENTIST_CAUSE_OF_DEATH && <CauseOfDeathView />
+            gameState === ScientistCauseOfDeath && <CauseOfDeathView />
           }
           {
-            gameState === STATE_DECEPTION_SCIENTIST_LOCATION && <LocationView />
+            gameState === ScientistLocation && <LocationView />
           }
           {
-            gameState === STATE_DECEPTION_SCIENTIST_SCENE_TILES && <InitialSceneTilesView />
+            gameState === ScientistSceneTiles && <InitialSceneTilesView />
           }
           {
-            gameState === STATE_DECEPTION_DELIBERATION && <DeliberationView />
+            gameState === Deliberation && <DeliberationView />
           }
           {
-            gameState === STATE_DECEPTION_REPLACE_SCENE && <ReplaceSceneView />
+            gameState === ReplaceScene && <ReplaceSceneView />
           }
           {
-            gameState === GAME_STATE_GAME_END && <GameEndView />
+            gameState === GameEnd && <GameEndView />
           }
         </Col>
         <Col sm={4} md={3} className='main-panel text-center py-5'>

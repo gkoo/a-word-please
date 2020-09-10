@@ -1,6 +1,9 @@
-import * as constants from '../constants';
+import * as constants from '../constants/deception';
+import { GAME_DECEPTION } from '../constants';
 
 const isScientist = 1;
+const { Role } = constants;
+const { Scientist, Murderer, Accomplice, Witness, Investigator } = Role;
 
 export default {
   accuseLog: {},
@@ -21,7 +24,7 @@ export default {
     type: constants.TILE_DECEPTION_CAUSE_OF_DEATH,
     selectedOption: 'Poisoning',
   },
-  gameId: constants.GAME_DECEPTION,
+  gameId: GAME_DECEPTION,
   locationTiles: [
     {
       id: 1,
@@ -117,7 +120,7 @@ export default {
       id: 'gordon',
       name: 'Gordon',
       color: 'red',
-      role: isScientist ? constants.ROLE_SCIENTIST : constants.ROLE_MURDERER,
+      role: isScientist ? Scientist : Murderer,
       methodCards: [
         {
           id: 1,
@@ -168,7 +171,7 @@ export default {
       name: 'Yuriko',
       color: 'purple',
       connected: true,
-      role: constants.ROLE_ACCOMPLICE,
+      role: Accomplice,
       methodCards: [
         {
           id: 5,
@@ -219,7 +222,7 @@ export default {
       name: 'AJ',
       color: 'pink',
       connected: true,
-      role: constants.ROLE_WITNESS,
+      role: Witness,
       methodCards: [
         {
           id: 9,
@@ -270,7 +273,7 @@ export default {
       name: 'Willy',
       color: 'red',
       connected: true,
-      role: isScientist ? constants.ROLE_MURDERER : constants.ROLE_SCIENTIST,
+      role: isScientist ? Murderer : Scientist,
       methodCards: [
         {
           id: 13,
@@ -321,7 +324,7 @@ export default {
       name: 'Rishi',
       color: 'orange',
       connected: true,
-      role: constants.ROLE_INVESTIGATOR,
+      role: Investigator,
       methodCards: [
         {
           id: 9,
@@ -443,16 +446,16 @@ export default {
     type: constants.TILE_DECEPTION_LOCATION,
   },
   spectators: [],
-  //state: constants.STATE_DECEPTION_EXPLAIN_RULES,
-  //state: constants.STATE_DECEPTION_SHOW_ROLES,
-  //state: constants.STATE_DECEPTION_CHOOSE_MEANS_EVIDENCE,
-  //state: constants.STATE_DECEPTION_WITNESSING,
-  //state: constants.STATE_DECEPTION_SCIENTIST_CAUSE_OF_DEATH,
-  //state: constants.STATE_DECEPTION_SCIENTIST_LOCATION,
-  //state: constants.STATE_DECEPTION_SCIENTIST_SCENE_TILES,
-  state: constants.STATE_DECEPTION_DELIBERATION,
-  //state: constants.STATE_DECEPTION_REPLACE_SCENE,
-  //state: constants.GAME_STATE_GAME_END,
+  //state: constants.GameState.ExplainRules,
+  //state: constants.GameState.ShowRoles,
+  //state: constants.GameState.ChooseMeansEvidence,
+  //state: constants.GameState.Witnessing,
+  //state: constants.GameState.ScientistCauseOfDeath,
+  //state: constants.GameState.ScientistLocation,
+  //state: constants.GameState.ScientistSceneTiles,
+  state: constants.GameState.Deliberation,
+  //state: constants.GameState.ReplaceScene,
+  //state: constants.GameState.GameEnd,
   totalNumRounds: 3,
   //witnessSuspectId: 'aj',
   //witnessGuessCorrect: false,

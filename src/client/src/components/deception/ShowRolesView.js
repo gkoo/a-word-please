@@ -6,13 +6,9 @@ import Card from 'react-bootstrap/Card';
 import CardGroup from 'react-bootstrap/CardGroup';
 
 import {
-  DECEPTION_ROLE_LABELS,
-  ROLE_ACCOMPLICE,
-  ROLE_INVESTIGATOR,
-  ROLE_MURDERER,
-  ROLE_SCIENTIST,
-  ROLE_WITNESS,
-} from '../../constants';
+  Role,
+  RoleLabels,
+} from '../../constants/deception';
 import {
   accompliceSelector,
   currPlayerSelector,
@@ -34,7 +30,9 @@ function ShowRolesView() {
   const witness = useSelector(witnessSelector);
   const socket = useSelector(socketSelector);
 
-  const article = currPlayer?.role === ROLE_INVESTIGATOR ? 'an' : 'the';
+  const { Scientist, Murderer, Investigator, Accomplice, Witness } = Role;
+
+  const article = currPlayer?.role === Investigator ? 'an' : 'the';
   const { playersReady } = gameData;
 
   const acknowledgeRole = (evt) => {
@@ -46,7 +44,7 @@ function ShowRolesView() {
     <>
       {
         !currUserIsSpectator &&
-          <h1>You are {article} {DECEPTION_ROLE_LABELS[currPlayer?.role]}!</h1>
+          <h1>You are {article} {RoleLabels[currPlayer?.role]}!</h1>
       }
       {
         currUserIsSpectator &&
@@ -58,29 +56,29 @@ function ShowRolesView() {
             <Card>
               <Card.Body>
                 <Card.Title>
-                  {DECEPTION_ROLE_LABELS[ROLE_SCIENTIST]}
+                  {RoleLabels[Scientist]}
                 </Card.Title>
                 <Card.Text>{scientist.name}</Card.Text>
               </Card.Body>
             </Card>
         }
         {
-          accomplice && [ROLE_SCIENTIST, ROLE_MURDERER, ROLE_WITNESS].includes(currPlayer?.role) &&
+          accomplice && [Scientist, Murderer, Witness].includes(currPlayer?.role) &&
             <Card>
               <Card.Body>
                 <Card.Title>
-                  {DECEPTION_ROLE_LABELS[ROLE_ACCOMPLICE]}
+                  {RoleLabels[Accomplice]}
                 </Card.Title>
                 <Card.Text>{accomplice.name}</Card.Text>
               </Card.Body>
             </Card>
         }
         {
-          [ROLE_SCIENTIST, ROLE_ACCOMPLICE, ROLE_WITNESS].includes(currPlayer?.role) &&
+          [Scientist, Accomplice, Witness].includes(currPlayer?.role) &&
             <Card>
               <Card.Body>
                 <Card.Title>
-                  {DECEPTION_ROLE_LABELS[ROLE_MURDERER]}
+                  {RoleLabels[Murderer]}
                 </Card.Title>
                 <Card.Text>
                   {murderer.name}
@@ -89,11 +87,11 @@ function ShowRolesView() {
             </Card>
         }
         {
-          witness && currPlayer?.role === ROLE_SCIENTIST &&
+          witness && currPlayer?.role === Scientist &&
             <Card>
               <Card.Body>
                 <Card.Title>
-                  <u>{DECEPTION_ROLE_LABELS[ROLE_WITNESS]}</u>
+                  <u>{RoleLabels[Witness]}</u>
                 </Card.Title>
                 <Card.Text>
                   {witness.name}

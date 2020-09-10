@@ -8,13 +8,10 @@ import Card from 'react-bootstrap/Card';
 import ClueBadge from './ClueBadge';
 
 import {
-  DECEPTION_ROLE_LABELS,
-  ROLE_ACCOMPLICE,
-  ROLE_MURDERER,
-  ROLE_SCIENTIST,
-  ROLE_WITNESS,
-  STATE_DECEPTION_REPLACE_SCENE,
-} from '../../constants';
+  Role,
+  RoleLabels,
+  GameState,
+} from '../../constants/deception';
 import {
   currPlayerSelector,
   gameDataSelector,
@@ -30,8 +27,10 @@ function PlayerView({
   const currPlayer = useSelector(currPlayerSelector);
   const socket = useSelector(socketSelector);
 
+  const { ReplaceScene } = GameState;
+  const { Accomplice, Murderer, Scientist, Witness } = Role;
   const playerIsCurrPlayer = player.id === currPlayer?.id;
-  const currPlayerIsScientist = currPlayer?.role === ROLE_SCIENTIST;
+  const currPlayerIsScientist = currPlayer?.role === Scientist;
   const alreadyAccused = !!gameData.accuseLog[currPlayer?.id];
   const { state } = gameData;
 
@@ -48,18 +47,18 @@ function PlayerView({
   );
 
   const showAccomplice = [
-    ROLE_SCIENTIST,
-    ROLE_ACCOMPLICE,
-    ROLE_MURDERER,
-    ROLE_WITNESS,
+    Scientist,
+    Accomplice,
+    Murderer,
+    Witness,
   ].includes(currPlayer?.role);
   const showMurderer = showAccomplice;
-  const showWitness = [ROLE_SCIENTIST, ROLE_WITNESS].includes(currPlayer?.role);
+  const showWitness = [Scientist, Witness].includes(currPlayer?.role);
 
   let showRole = showRoles;
-  showRole = showRole || (player.role === ROLE_ACCOMPLICE && showAccomplice);
-  showRole = showRole || (player.role === ROLE_MURDERER && showMurderer);
-  showRole = showRole || (player.role === ROLE_WITNESS && showWitness);
+  showRole = showRole || (player.role === Accomplice && showAccomplice);
+  showRole = showRole || (player.role === Murderer && showMurderer);
+  showRole = showRole || (player.role === Witness && showWitness);
 
   return (
     <Card className='deception-player-card my-1'>
@@ -70,7 +69,7 @@ function PlayerView({
             showRole &&
               <>
                 <br />
-                <Badge variant='warning'>{DECEPTION_ROLE_LABELS[player.role]}</Badge>
+                <Badge variant='warning'>{RoleLabels[player.role]}</Badge>
               </>
           }
         </Card.Title>
@@ -97,7 +96,7 @@ function PlayerView({
             <Button
               variant='danger'
               onClick={accusePlayer}
-              disabled={state === STATE_DECEPTION_REPLACE_SCENE}
+              disabled={state === ReplaceScene}
             >
               Accuse
             </Button>
