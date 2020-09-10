@@ -1,24 +1,21 @@
-const http = require('http');
+import http from 'http';
 
-const MockExpress = require('mock-express');
-const socketIO = require('socket.io');
+import MockExpress from 'mock-express';
+import socketIO from 'socket.io';
 
-const WerewolfGame = require('./werewolfGame');
-const User = require('../user.js');
+import WerewolfGame, { GameState, Role } from './werewolfGame';
+import User from '../user';
 
-const mockApp = MockExpress();
-const mockServer = http.createServer(mockApp);
-const mockIo = socketIO(mockServer);
-
-let game;
+let game: WerewolfGame;
 
 beforeEach(() => {
+  const broadcastToRoom = jest.fn((eventName: string, data: any) => {});
   const users = {
     '1': new User({ id: 'user1', name: 'Gordon' }),
     '2': new User({ id: 'user2', name: 'Fordon' }),
     '3': new User({ id: 'user3', name: 'Bordon' }),
   };
-  game = new WerewolfGame(mockIo, users);
+  game = new WerewolfGame(broadcastToRoom);
   game.setup(users);
 });
 
@@ -47,9 +44,9 @@ describe('beginNighttime', () => {
     ];
   });
 
-  it('sets the game state to NIGHTTIME', () => {
+  it('sets the game state to Nighttime', () => {
     subject();
-    expect(game.state).toBe(WerewolfGame.STATE_NIGHTTIME);
+    expect(game.state).toBe(GameState.Nighttime);
   });
 });
 
@@ -72,12 +69,12 @@ describe('assignRoles', () => {
     expect(game.unclaimedRoles).toHaveLength(3);
     const playerRoles = Object.values(game.players).map(player => player.originalRole);
     const allRoles = playerRoles.concat(game.unclaimedRoles);
-    expect(allRoles.includes(WerewolfGame.ROLE_WEREWOLF)).toBe(true);
-    expect(allRoles.includes(WerewolfGame.ROLE_SEER)).toBe(true);
-    expect(allRoles.includes(WerewolfGame.ROLE_TROUBLEMAKER)).toBe(true);
-    expect(allRoles.includes(WerewolfGame.ROLE_ROBBER)).toBe(true);
-    expect(allRoles.includes(WerewolfGame.ROLE_DRUNK)).toBe(true);
-    expect(allRoles.includes(WerewolfGame.ROLE_INSOMNIAC)).toBe(true);
+    expect(allRoles.includes(Role.Werewolf)).toBe(true);
+    expect(allRoles.includes(Role.Seer)).toBe(true);
+    expect(allRoles.includes(Role.Troublemaker)).toBe(true);
+    expect(allRoles.includes(Role.Robber)).toBe(true);
+    expect(allRoles.includes(Role.Drunk)).toBe(true);
+    expect(allRoles.includes(Role.Insomniac)).toBe(true);
   });
 
   describe('when ensuring there is a werewolf', () => {
@@ -88,7 +85,7 @@ describe('assignRoles', () => {
     it('assigns a werewolf to one of the players', () => {
       subject();
       const playerList = Object.values(game.players);
-      expect(!!playerList.find(player => player.role === WerewolfGame.ROLE_WEREWOLF)).toBe(true);
+      expect(!!playerList.find(player => player.role === Role.Werewolf)).toBe(true);
     });
   });
 
@@ -110,7 +107,7 @@ describe('performWakeUpActions', () => {
   const subject = () => game.performWakeUpActions();
 
   beforeEach(() => {
-    game.players['user1'].originalRole = WerewolfGame.ROLE_SEER;
+    game.players['user1'].originalRole = Role.Seer;
   });
 
   describe('when we\'ve traversed through the entire list of wake up roles', () => {
@@ -121,7 +118,7 @@ describe('performWakeUpActions', () => {
 
     it('moves the game to DAYTIME', () => {
       subject();
-      expect(game.state).toBe(WerewolfGame.STATE_DAYTIME);
+      expect(game.state).toBe(GameState.Daytime);
     });
   });
 
@@ -132,7 +129,7 @@ describe('performWakeUpActions', () => {
 
     it('sets the wake up role', () => {
       subject();
-      expect(game.wakeUpRole).toBe(WerewolfGame.ROLE_SEER);
+      expect(game.wakeUpRole).toBe(Role.Seer);
     });
   });
 
@@ -143,7 +140,7 @@ describe('performWakeUpActions', () => {
 
     it('does not set the game\'s wake up role to that role', () => {
       subject();
-      expect(game.wakeUpRole).not.toBe(WerewolfGame.ROLE_DOPPELGANGER);
+      expect(game.wakeUpRole).not.toBe(Role.Doppelganger);
     });
   });
 
@@ -151,27 +148,27 @@ describe('performWakeUpActions', () => {
     beforeEach(() => {
       game.currentWakeUpIdx = 7;
       game.unclaimedRoles = [
-        WerewolfGame.ROLE_WEREWOLF,
-        WerewolfGame.ROLE_WEREWOLF,
-        WerewolfGame.ROLE_WEREWOLF,
+        Role.Werewolf,
+        Role.Werewolf,
+        Role.Werewolf,
       ];
-      game.players['user2'].originalRole = WerewolfGame.ROLE_DRUNK;
-      game.players['user2'].role = WerewolfGame.ROLE_DRUNK;
+      game.players['user2'].originalRole = Role.Drunk;
+      game.players['user2'].role = Role.Drunk;
     });
 
     it('swaps roles with an unclaimed role', () => {
       subject();
-      expect(game.players['user2'].role).toBe(WerewolfGame.ROLE_WEREWOLF);
-      expect(game.unclaimedRoles).toContain(WerewolfGame.ROLE_DRUNK);
+      expect(game.players['user2'].role).toBe(Role.Werewolf);
+      expect(game.unclaimedRoles).toContain(Role.Drunk);
     });
   });
 });
 
 describe('handlePlayerAction', () => {
   beforeEach(() => {
-    game.players['user1'].role = WerewolfGame.ROLE_WEREWOLF;
-    game.players['user2'].role = WerewolfGame.ROLE_HUNTER;
-    game.players['user3'].originalRole = WerewolfGame.ROLE_TROUBLEMAKER;
+    game.players['user1'].role = Role.Werewolf;
+    game.players['user2'].role = Role.Hunter;
+    game.players['user3'].originalRole = Role.Troublemaker;
   });
 
   describe('for troublemaker', () => {
@@ -180,29 +177,29 @@ describe('handlePlayerAction', () => {
         action: 'troublemakeRoles',
         playerIds: ['user1', 'user2'],
       });
-      expect(game.players['user1'].role).toBe(WerewolfGame.ROLE_HUNTER);
-      expect(game.players['user2'].role).toBe(WerewolfGame.ROLE_WEREWOLF);
+      expect(game.players['user1'].role).toBe(Role.Hunter);
+      expect(game.players['user2'].role).toBe(Role.Werewolf);
     });
   });
 });
 
 describe('robRole', () => {
   beforeEach(() => {
-    game.players['user1'].role = WerewolfGame.ROLE_WEREWOLF;
-    game.players['user2'].role = WerewolfGame.ROLE_HUNTER;
+    game.players['user1'].role = Role.Werewolf;
+    game.players['user2'].role = Role.Hunter;
   });
 
   const subject = () => game.robRole('user1', 'user2');
 
   it('exchanges the roles', () => {
     subject();
-    expect(game.players['user1'].role).toBe(WerewolfGame.ROLE_HUNTER);
-    expect(game.players['user2'].role).toBe(WerewolfGame.ROLE_WEREWOLF);
+    expect(game.players['user1'].role).toBe(Role.Hunter);
+    expect(game.players['user2'].role).toBe(Role.Werewolf);
   });
 
   it('changes the last known role for the robber', () => {
     subject();
-    expect(game.players['user1'].lastKnownRole).toBe(WerewolfGame.ROLE_HUNTER);
+    expect(game.players['user1'].lastKnownRole).toBe(Role.Hunter);
   });
 
   it('does not change the last known role for the victim', () => {
@@ -215,33 +212,33 @@ describe('robRole', () => {
 
 describe('switchRoles', () => {
   beforeEach(() => {
-    game.players['user1'].role = WerewolfGame.ROLE_WEREWOLF;
-    game.players['user2'].role = WerewolfGame.ROLE_HUNTER;
+    game.players['user1'].role = Role.Werewolf;
+    game.players['user2'].role = Role.Hunter;
   });
 
   const subject = () => game.switchRoles('user1', 'user2');
 
   it('exchanges the roles', () => {
     subject();
-    expect(game.players['user1'].role).toBe(WerewolfGame.ROLE_HUNTER);
-    expect(game.players['user2'].role).toBe(WerewolfGame.ROLE_WEREWOLF);
+    expect(game.players['user1'].role).toBe(Role.Hunter);
+    expect(game.players['user2'].role).toBe(Role.Werewolf);
   });
 });
 
 describe('swapRoleWithUnclaimed', () => {
   beforeEach(() => {
     game.unclaimedRoles = [
-      WerewolfGame.ROLE_WEREWOLF,
-      WerewolfGame.ROLE_WEREWOLF,
-      WerewolfGame.ROLE_WEREWOLF,
+      Role.Werewolf,
+      Role.Werewolf,
+      Role.Werewolf,
     ];
-    game.players['user1'].role = WerewolfGame.ROLE_DRUNK;
+    game.players['user1'].role = Role.Drunk;
   });
 
   it('swaps the player\'s role with a random unclaimed role', () => {
     game.swapRoleWithUnclaimed('user1');
-    expect(game.unclaimedRoles).toContain(WerewolfGame.ROLE_DRUNK);
-    expect(game.players['user1'].role).toBe(WerewolfGame.ROLE_WEREWOLF);
+    expect(game.unclaimedRoles).toContain(Role.Drunk);
+    expect(game.players['user1'].role).toBe(Role.Werewolf);
   });
 });
 
@@ -267,15 +264,15 @@ describe('determineWinners', () => {
   };
 
   beforeEach(() => {
-    game.state = WerewolfGame.STATE_VOTING;
-    game.players['user1'].role = WerewolfGame.ROLE_WEREWOLF;
-    game.players['user2'].role = WerewolfGame.ROLE_TANNER;
-    game.players['user3'].role = WerewolfGame.ROLE_VILLAGER;
+    game.state = GameState.Voting;
+    game.players['user1'].role = Role.Werewolf;
+    game.players['user2'].role = Role.Tanner;
+    game.players['user3'].role = Role.Villager;
   });
 
   describe('when state doesn\'t match', () => {
     beforeEach(() => {
-      game.state = WerewolfGame.STATE_NIGHTTIME;
+      game.state = GameState.Nighttime;
     });
 
     it('does nothing', () => {
@@ -296,7 +293,7 @@ describe('determineWinners', () => {
     it('declares the villagers the winners', () => {
       subject();
       expect(game.winners).toHaveLength(1);
-      expect(game.winners[0]).toBe(WerewolfGame.ROLE_VILLAGER);
+      expect(game.winners[0]).toBe(Role.Villager);
     });
   });
 
@@ -312,7 +309,7 @@ describe('determineWinners', () => {
     it('declares the werewolves the winners', () => {
       subject();
       expect(game.winners).toHaveLength(1);
-      expect(game.winners[0]).toBe(WerewolfGame.ROLE_WEREWOLF);
+      expect(game.winners[0]).toBe(Role.Werewolf);
     });
   });
 
@@ -328,7 +325,7 @@ describe('determineWinners', () => {
     it('declares the tanner the winner', () => {
       subject();
       expect(game.winners).toHaveLength(1);
-      expect(game.winners[0]).toBe(WerewolfGame.ROLE_TANNER);
+      expect(game.winners[0]).toBe(Role.Tanner);
     });
   });
 
@@ -345,26 +342,26 @@ describe('determineWinners', () => {
       it('declares the werewolves the winners', () => {
         subject();
         expect(game.winners).toHaveLength(1);
-        expect(game.winners[0]).toBe(WerewolfGame.ROLE_WEREWOLF);
+        expect(game.winners[0]).toBe(Role.Werewolf);
       });
     });
 
     describe('and there are no werewolves', () => {
       beforeEach(() => {
-        game.players['user1'].role = WerewolfGame.ROLE_VILLAGER;
+        game.players['user1'].role = Role.Villager;
       });
 
       it('declares the villagers the winners', () => {
         subject();
         expect(game.winners).toHaveLength(1);
-        expect(game.winners[0]).toBe(WerewolfGame.ROLE_VILLAGER);
+        expect(game.winners[0]).toBe(Role.Villager);
       });
     });
   });
 
   describe('when the hunter dies', () => {
     beforeEach(() => {
-      game.players['user2'].role = WerewolfGame.ROLE_HUNTER;
+      game.players['user2'].role = Role.Hunter;
     });
 
     describe('and the hunter voted to eliminate a werewolf', () => {
@@ -379,7 +376,7 @@ describe('determineWinners', () => {
       it('declares the villagers the winners', () => {
         subject();
         expect(game.winners).toHaveLength(1);
-        expect(game.winners[0]).toBe(WerewolfGame.ROLE_VILLAGER);
+        expect(game.winners[0]).toBe(Role.Villager);
       });
     });
 
@@ -395,7 +392,7 @@ describe('determineWinners', () => {
       it('declares the werewolves the winners', () => {
         subject();
         expect(game.winners).toHaveLength(1);
-        expect(game.winners[0]).toBe(WerewolfGame.ROLE_WEREWOLF);
+        expect(game.winners[0]).toBe(Role.Werewolf);
       });
     });
   });

@@ -17,7 +17,7 @@ export enum Role {
   Tanner,
 }
 
-enum GameState {
+export enum GameState {
   Pending,
   TurnEnd,
   GameEnd,
@@ -77,6 +77,7 @@ class WerewolfGame extends Game {
 
   constructor(broadcastToRoom) {
     super(broadcastToRoom);
+    this.state = GameState.Pending;
     this.ensureWerewolf = false;
     this.roleIds = []; // to sync client views
     this.votes = {};
@@ -107,7 +108,7 @@ class WerewolfGame extends Game {
 
     if (!name) { return; }
 
-    if (this.state === GameState.ChoosingRoles) {
+    if ([GameState.Pending, GameState.ChoosingRoles].includes(this.state)) {
       super.addPlayer(user);
     }
   }
@@ -166,7 +167,6 @@ class WerewolfGame extends Game {
       // We need to wait for everyone to be ready
       return;
     }
-    console.log('next turn');
     this.playersOfCurrentRoleReady = 0;
     ++this.currentWakeUpIdx;
     this.performWakeUpActions();
@@ -228,7 +228,6 @@ class WerewolfGame extends Game {
 
     this.getConnectedPlayers().forEach((player, idx) => {
       const role = shuffledRolesToAssign[idx];
-      console.log(`assigning role ${role} to player`);
       player.setRole({ role, isOriginalRole: true });
     });
   }
