@@ -81,7 +81,7 @@ class Room {
   }
 
   promoteRandomLeader() {
-    const users = this.getUsers();
+    const users = this.getUsers().filter(user => user.connected);
 
     if (users.length === 0) { return; }
 
