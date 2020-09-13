@@ -3,8 +3,10 @@ import { useSelector } from 'react-redux';
 import cx from 'classnames';
 
 import Button from 'react-bootstrap/Button';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Table from 'react-bootstrap/Table';
 
+import BackToLobbyButton from '../common/BackToLobbyButton';
 import GuessWitnessView from './GuessWitnessView';
 import PlayerGroupView from './PlayerGroupView';
 import {
@@ -59,9 +61,12 @@ function GameEndView() {
       </Table>
 
       <div className='text-center my-5'>
-        <Button onClick={onNewGame}>
-          New Game
-        </Button>
+        <ButtonGroup>
+          <Button onClick={onNewGame}>
+            New Game
+          </Button>
+          <BackToLobbyButton/>
+        </ButtonGroup>
       </div>
 
       <PlayerGroupView showRoles={true} showAccuseButtons={false} />
