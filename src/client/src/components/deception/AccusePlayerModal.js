@@ -124,13 +124,13 @@ function AccusePlayerModal({ show, onDetailsChange, onConfirmAccusation, endAccu
         </CardDeck>
       </Modal.Body>
       {
-        !showingResults && selectedMurderMethod && selectedKeyEvidence &&
+        !showingResults && currPlayerIsAccuser && selectedMurderMethod && selectedKeyEvidence &&
           <Button onClick={onConfirmAccusation}>
             Confirm Accusation
           </Button>
       }
       {
-        showingResults &&
+        showingResults && currPlayerIsAccuser &&
           <Button onClick={endAccusation}>
             Close
           </Button>
