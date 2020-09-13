@@ -275,8 +275,12 @@ class DeceptionGame extends Game {
         return this.playerReady(playerId);
       case 'toggleRole':
         return this.toggleRole(playerId, data);
-      case 'chooseMeansAndEvidence':
-        return this.chooseMeansAndEvidence(playerId, data);
+      case 'setMethod':
+        return this.setMethod(playerId, data);
+      case 'setEvidence':
+        return this.setEvidence(playerId, data);
+      case 'confirmMeansAndEvidence':
+        return this.confirmMeansAndEvidence(playerId);
       case 'selectCauseOfDeath':
         return this.selectCauseOfDeath(playerId, data);
       case 'selectLocation':
@@ -338,15 +342,33 @@ class DeceptionGame extends Game {
     this.broadcastGameDataToPlayers();
   }
 
-  chooseMeansAndEvidence(playerId, { methodId, evidenceId }) {
+  setMethod(playerId, { methodId }) {
+    const player = this.players[playerId];
+
+    if (player.role !== Role.Murderer) {
+      throw 'Non-murderer tried to choose means!';
+    }
+
+    this.murderMethod = player.methodCards.find(method => method.id === methodId);
+    this.broadcastGameDataToPlayers();
+  }
+
+  setEvidence(playerId, { evidenceId }) {
     const player = this.players[playerId];
 
     if (player.role !== Role.Murderer) {
       throw 'Non-murderer tried to choose means and evidence!';
     }
-
-    this.murderMethod = player.methodCards.find(method => method.id === methodId);
     this.keyEvidence = player.evidenceCards.find(evidence => evidence.id === evidenceId);
+    this.broadcastGameDataToPlayers();
+  }
+
+  confirmMeansAndEvidence(playerId) {
+    const player = this.players[playerId];
+
+    if (player.role !== Role.Murderer) {
+      throw 'Non-murderer tried to choose means and evidence!';
+    }
 
     this.state = GameState.ScientistCauseOfDeath;
     this.broadcastGameDataToPlayers();
