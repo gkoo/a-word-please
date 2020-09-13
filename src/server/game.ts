@@ -62,7 +62,13 @@ abstract class Game {
 
   maybeReconnect(user: User, originalSocketId: string) {
     // Look for the player based on their socketId.
-    const player = Object.values(this.players).find(p => p.id === originalSocketId);
+    let player = Object.values(this.players).find(p => p.id === originalSocketId);
+
+    if (!player && user.name) {
+      // For some reason, some clients don't reconnect correctly. Let's just place them in the
+      // player slot of any disconnected player.
+      player = Object.values(this.players).find(p => !p.connected);
+    }
 
     // In case a game started while the player was reconnecting
     if (!player) {
@@ -73,9 +79,14 @@ abstract class Game {
       return;
     }
 
-    // There was a player here before. Let's restore her.
+    // RECONNECTING: There was a player here before. Let's restore her.
     player.id = user.id;
     player.connected = true;
+
+    if (user.name) {
+      player.name = user.name;
+    }
+
     this.players[player.id] = player;
     delete this.players[originalSocketId];
     this.broadcastGameDataToPlayers();

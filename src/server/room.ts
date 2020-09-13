@@ -49,11 +49,12 @@ class Room {
       user = existingUser;
       user.id = id;
       delete this.users[originalSocketId];
-
-      if (this.game) {
-        this.game.maybeReconnect(user, originalSocketId);
-      }
     }
+
+    if (this.game) {
+      this.game.maybeReconnect(user, originalSocketId);
+    }
+
     user.connected = true;
     this.users[id] = user;
 
