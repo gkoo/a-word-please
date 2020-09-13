@@ -50,7 +50,7 @@ function InitialTilesView() {
 
   return (
     <>
-      <h1>Hi Scientist</h1>
+      <h1>You are the Scientist!</h1>
       <p>The murderer is: <PlayerCheckboxLabel player={murdererPlayer}/></p>
       <p>The method of murder is: <ClueBadge label={gameData.murderMethod.label} type='method'/></p>
       <p>

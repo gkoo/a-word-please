@@ -43,8 +43,7 @@ function ReplaceSceneView() {
 
   return (
     <>
-      <h1>Welcome to the Replace Scene View!</h1>
-      <div className='text-center my-2'>
+      <div className='text-center mb-2'>
         {
           currPlayerIsScientist &&
             <>
