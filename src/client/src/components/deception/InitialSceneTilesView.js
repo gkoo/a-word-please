@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import Button from 'react-bootstrap/Button';
+import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import CardDeck from 'react-bootstrap/CardDeck';
 
 import ClueBadge from './ClueBadge';
@@ -31,6 +32,8 @@ function InitialTilesView() {
       [tileId]: selection,
     });
   };
+
+  const onGoBack = () => socket.emit('playerAction', { action: 'goBack' });
 
   const onSubmit = () => {
     socket.emit('playerAction', {
@@ -76,16 +79,21 @@ function InitialTilesView() {
       </CardDeck>
 
       <div className='text-center my-3'>
-        <Button variant='secondary' className='mx-1' onClick={() => setShowPlayerGroup(true)}>
-          Show Other Players
-        </Button>
-        <Button
-          className='mx-1'
-          disabled={Object.values(sceneSelections).length < gameData.sceneTiles.length}
-          onClick={onSubmit}
-        >
-          Confirm Scene Tile Selections
-        </Button>
+        <ButtonGroup>
+          <Button variant='secondary' className='mx-1' onClick={() => onGoBack()}>
+            Back
+          </Button>
+          <Button variant='secondary' className='mx-1' onClick={() => setShowPlayerGroup(true)}>
+            Show Other Players
+          </Button>
+          <Button
+            className='mx-1'
+            disabled={Object.values(sceneSelections).length < gameData.sceneTiles.length}
+            onClick={onSubmit}
+          >
+            Confirm Scene Tile Selections
+          </Button>
+        </ButtonGroup>
       </div>
 
       <PlayerGroupModal show={showPlayerGroup} onHide={() => setShowPlayerGroup(false)} />

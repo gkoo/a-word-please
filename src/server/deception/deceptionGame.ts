@@ -279,6 +279,8 @@ class DeceptionGame extends Game {
         return this.setMethod(playerId, data);
       case 'setEvidence':
         return this.setEvidence(playerId, data);
+      case 'goBack':
+        return this.goBack(playerId);
       case 'confirmMeansAndEvidence':
         return this.confirmMeansAndEvidence(playerId);
       case 'selectCauseOfDeath':
@@ -371,6 +373,26 @@ class DeceptionGame extends Game {
     }
 
     this.state = GameState.ScientistCauseOfDeath;
+    this.broadcastGameDataToPlayers();
+  }
+
+  // In case the Scientist wants to change his/her mind about one of the tile selections
+  goBack(playerId) {
+    if (this.players[playerId].role !== Role.Scientist) {
+      throw 'Non-scientist tried go back!';
+    }
+
+    switch (this.state) {
+      case GameState.ScientistLocation:
+        this.state = GameState.ScientistCauseOfDeath;
+        break;
+      case GameState.ScientistInitialSceneTiles:
+        this.state = GameState.ScientistLocation;
+        break;
+      default:
+        throw new Error(`Scientist tried to go back but the state was: ${this.state}`);
+    }
+
     this.broadcastGameDataToPlayers();
   }
 

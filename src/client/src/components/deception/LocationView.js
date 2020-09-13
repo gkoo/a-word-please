@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import Button from 'react-bootstrap/Button'
+import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import CardDeck from 'react-bootstrap/CardDeck';
 
 import ClueBadge from './ClueBadge';
@@ -42,6 +43,8 @@ function LocationView() {
       location: selectedLocation,
     });
   };
+
+  const onGoBack = () => socket.emit('playerAction', { action: 'goBack' });
 
   if (!currPlayerIsScientist) {
     return (
@@ -86,12 +89,17 @@ function LocationView() {
       </CardDeck>
 
       <div className='text-center my-3'>
-        <Button variant='secondary' className='mx-1' onClick={() => setShowPlayerGroup(true)}>
-          Show Other Players
-        </Button>
-        <Button className='mx-1' disabled={!selectedLocationTile && !selectedLocation} onClick={onSubmit}>
-          Confirm Location of Crime
-        </Button>
+        <ButtonGroup>
+          <Button variant='secondary' className='mx-1' onClick={() => onGoBack()}>
+            Back
+          </Button>
+          <Button variant='secondary' className='mx-1' onClick={() => setShowPlayerGroup(true)}>
+            Show Other Players
+          </Button>
+          <Button className='mx-1' disabled={!selectedLocationTile && !selectedLocation} onClick={onSubmit}>
+            Confirm Location of Crime
+          </Button>
+        </ButtonGroup>
       </div>
 
       <PlayerGroupModal show={showPlayerGroup} onHide={() => setShowPlayerGroup(false)} />
