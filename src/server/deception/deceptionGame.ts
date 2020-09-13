@@ -20,12 +20,12 @@ import sceneTileList from './sceneTileList';
 // - If wrong about either means of murder or key evidence, Scientist says no and nothing else, investigator loses badge
 // - If correct, murderer can guess witness
 
-enum GameState {
+export enum GameState {
   Pending,
   TurnEnd,
   GameEnd,
   // (optional) Explain the rules to first time players
-  ExplainRules = 3,
+  ExplainRules,
   ShowRoles,
   // Murderer chooses means of murder and key evidence. (optional) Accomplice learns murderer
   // identity
@@ -124,6 +124,7 @@ class DeceptionGame extends Game {
     this.playersReady = {}; // keep track of who has read the rules
     this.murderMethod = null;
     this.keyEvidence = null;
+    this.state = GameState.Pending;
   }
 
   setup(users) {
@@ -152,6 +153,18 @@ class DeceptionGame extends Game {
     this.createTiles();
     this.state = GameState.ExplainRules;
     this.broadcastGameDataToPlayers();
+  }
+
+  addPlayer(user) {
+    const { id, name } = user;
+
+    if (!name) { return; }
+
+    if ([GameState.Pending, GameState.ExplainRules].includes(this.state)) {
+      super.addPlayer(user);
+    } else {
+      super.addSpectator(user);
+    }
   }
 
   createTiles() {

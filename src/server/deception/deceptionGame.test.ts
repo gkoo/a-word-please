@@ -4,7 +4,7 @@ import socketIO from 'socket.io';
 import MockExpress from 'mock-express';
 
 import User from '../user';
-import DeceptionGame, { Role } from './deceptionGame';
+import DeceptionGame, { GameState, Role } from './deceptionGame';
 import DeceptionPlayer from './deceptionPlayer';
 
 let game;
@@ -20,6 +20,51 @@ beforeEach(() => {
 
   game = new DeceptionGame(broadcastToRoom);
   game.setup(users);
+});
+
+describe('addPlayer', () => {
+  let newUser: User = new User({ id: '5', name: 'Lordon' });
+
+  const subject = () => game.addPlayer(newUser);
+
+  describe('when the game is in ExplainRules state', () => {
+    beforeEach(() => {
+      game.state = GameState.ExplainRules;
+    });
+
+    it('adds the user as a player', () => {
+      const originalNumSpectators = Object.keys(game.spectators).length;
+      const originalNumPlayers = Object.keys(game.players).length;
+      expect(originalNumPlayers).toEqual(4);
+
+      subject();
+
+      const newNumSpectators = Object.keys(game.spectators).length;
+      const newNumPlayers = Object.keys(game.players).length;
+
+      expect(newNumSpectators).toEqual(originalNumSpectators);
+      expect(newNumPlayers).toEqual(originalNumPlayers + 1);
+    });
+  });
+
+  describe('when the game is in Deliberation state', () => {
+    beforeEach(() => {
+      game.state = GameState.Deliberation;
+    });
+
+    it('adds the user as a spectator', () => {
+      const originalNumSpectators = Object.keys(game.spectators).length;
+      const originalNumPlayers = Object.keys(game.players).length;
+
+      subject();
+
+      const newNumSpectators = Object.keys(game.spectators).length;
+      const newNumPlayers = Object.keys(game.players).length;
+
+      expect(newNumSpectators).toEqual(originalNumSpectators + 1);
+      expect(newNumPlayers).toEqual(originalNumPlayers);
+    });
+  });
 });
 
 describe('assignRoles', () => {
