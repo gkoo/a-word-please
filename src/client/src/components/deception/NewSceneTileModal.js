@@ -48,7 +48,7 @@ function NewSceneTileModal({ show, onClose }) {
         </Modal.Body>
         <Modal.Footer>
           <Button variant='secondary' className='mx-1' onClick={() => setShowPlayerGroup(true)}>
-            Show Other Players
+            Show Players
           </Button>
           <Button disabled={!sceneSelection} onClick={onSubmit}>
             Confirm Scene Tile Selection

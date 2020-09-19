@@ -69,7 +69,7 @@ function GameEndView() {
         </ButtonGroup>
       </div>
 
-      <PlayerGroupView showRoles={true} showAccuseButtons={false} />
+      <PlayerGroupView showRoles={true} showAccuseButtons={false} showMethodAndEvidence={true} />
     </>
   );
 }

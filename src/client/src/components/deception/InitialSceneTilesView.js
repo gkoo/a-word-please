@@ -84,7 +84,7 @@ function InitialTilesView() {
             Back
           </Button>
           <Button variant='secondary' className='mx-1' onClick={() => setShowPlayerGroup(true)}>
-            Show Other Players
+            Show Players
           </Button>
           <Button
             className='mx-1'

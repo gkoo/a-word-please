@@ -79,7 +79,7 @@ function CauseOfDeathView() {
 
       <div className='text-center my-3'>
         <Button variant='secondary' className='mx-1' onClick={() => setShowPlayerGroup(true)}>
-          Show Other Players
+          Show Players
         </Button>
         <Button disabled={!selectedCauseOfDeath} className='mx-1' onClick={onSubmit}>
           Confirm Cause of Death

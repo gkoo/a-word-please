@@ -94,7 +94,7 @@ function LocationView() {
             Back
           </Button>
           <Button variant='secondary' className='mx-1' onClick={() => setShowPlayerGroup(true)}>
-            Show Other Players
+            Show Players
           </Button>
           <Button className='mx-1' disabled={!selectedLocationTile && !selectedLocation} onClick={onSubmit}>
             Confirm Location of Crime

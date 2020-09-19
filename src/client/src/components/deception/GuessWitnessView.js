@@ -3,7 +3,9 @@ import { useSelector } from 'react-redux';
 import cx from 'classnames';
 
 import Button from 'react-bootstrap/Button';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
 
+import BackToLobbyButton from '../common/BackToLobbyButton';
 import PlayerGroupView from './PlayerGroupView';
 import { Role, RoleLabels } from '../../constants/deception';
 import {
@@ -123,12 +125,19 @@ function GuessWitnessView() {
                   </h1>
               }
               <div className='text-center my-5'>
-                <Button onClick={onNewGame}>
-                  New Game
-                </Button>
+                <ButtonGroup>
+                  <Button onClick={onNewGame}>
+                    New Game
+                  </Button>
+                  <BackToLobbyButton/>
+                </ButtonGroup>
               </div>
 
-              <PlayerGroupView showRoles={true} showAccuseButtons={false} />
+              <PlayerGroupView
+                showRoles={true}
+                showAccuseButtons={false}
+                showMethodAndEvidence={true}
+              />
             </div>
         }
       </div>

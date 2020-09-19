@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
+import cx from 'classnames';
 
 import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
@@ -22,6 +23,7 @@ function PlayerView({
   player,
   showAccuseButtons,
   showRoles,
+  showMethodAndEvidence,
 }) {
   const gameData = useSelector(gameDataSelector);
   const currPlayer = useSelector(currPlayerSelector);
@@ -32,7 +34,7 @@ function PlayerView({
   const playerIsCurrPlayer = player.id === currPlayer?.id;
   const currPlayerIsScientist = currPlayer?.role === Scientist;
   const alreadyAccused = !!gameData.accuseLog[currPlayer?.id];
-  const { state } = gameData;
+  const { keyEvidence, murderMethod, state } = gameData;
 
   const accusePlayer = () => socket.emit('playerAction', {
     action: 'accusePlayer',
@@ -78,7 +80,11 @@ function PlayerView({
         {
           player.methodCards.map(card =>
             <h5 key={card.label}>
-              <ClueBadge type='method' label={card.label} />
+              <ClueBadge
+                type='method'
+                label={card.label}
+                selected={showMethodAndEvidence && card.label === murderMethod.label}
+              />
             </h5>
           )
         }
@@ -86,7 +92,11 @@ function PlayerView({
         {
           player.evidenceCards.map(card =>
             <h5 key={card.label}>
-              <ClueBadge type='evidence' label={card.label} />
+              <ClueBadge
+                type='evidence'
+                label={card.label}
+                selected={showMethodAndEvidence && card.label === keyEvidence.label}
+              />
             </h5>
           )
         }

@@ -167,7 +167,7 @@ function ChooseMeansView() {
 
       <div className='text-center my-3'>
         <Button variant='secondary' className='mx-1' onClick={() => setShowPlayerGroup(true)}>
-          Show Other Players
+          Show Players
         </Button>
         {
           currPlayerIsMurderer &&
