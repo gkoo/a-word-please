@@ -18,7 +18,7 @@ export default [
   'Bullet',
   'Button',
   'Cake',
-  'Calender',
+  'Calendar',
   'Candy',
   'Carton',
   'Cassette Tape',

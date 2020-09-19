@@ -44,24 +44,19 @@ function ReplaceSceneView() {
   return (
     <>
       <div className='text-center mb-2'>
-        {
-          currPlayerIsScientist &&
-            <>
-              <p>
-                Forensic Scientist: Choose a scene tile to replace. If a scene tile isn't
-                particularly helpful, or perhaps it was leading the investigators astray, remove it
-                and replace it with a new randomly drawn scene tile.
-              </p>
-              <p>
-                The method of murder is:{' '}
-                <ClueBadge label={gameData.murderMethod.label} type='method'/>
-              </p>
-              <p>
-                The key evidence is:{' '}
-                <ClueBadge label={gameData.keyEvidence.label} type='evidence'/>
-              </p>
-            </>
-        }
+        <p>
+          Forensic Scientist: Choose a scene tile to replace. If a scene tile isn't
+          particularly helpful, or perhaps it was leading the investigators astray, remove it
+          and replace it with a new randomly drawn scene tile.
+        </p>
+        <p>
+          The method of murder is:{' '}
+          <ClueBadge label={gameData.murderMethod.label} type='method'/>
+        </p>
+        <p>
+          The key evidence is:{' '}
+          <ClueBadge label={gameData.keyEvidence.label} type='evidence'/>
+        </p>
 
         <CardDeck>
           {
