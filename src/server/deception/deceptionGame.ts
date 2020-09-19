@@ -149,7 +149,6 @@ class DeceptionGame extends Game {
     this.witnessGuessCorrect = undefined;
     this.witnessSuspectId = null;
 
-    this.dealCards();
     this.createTiles();
     this.state = GameState.ExplainRules;
     this.broadcastGameDataToPlayers();
@@ -322,6 +321,7 @@ class DeceptionGame extends Game {
     this.playersReady = {};
     switch (this.state) {
       case GameState.ExplainRules:
+        this.dealCards();
         this.assignRoles();
         this.state = GameState.ShowRoles;
         break;
