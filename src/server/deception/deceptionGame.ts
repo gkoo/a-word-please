@@ -290,6 +290,8 @@ class DeceptionGame extends Game {
         return this.selectInitialSceneTiles(playerId, data);
       case 'startTimer':
         return this.startTimer(playerId);
+      case 'endTimer':
+        return this.endTimer(playerId);
       case 'endRound':
         return this.endRound();
       case 'replaceSceneTile':
@@ -347,9 +349,7 @@ class DeceptionGame extends Game {
   setMethod(playerId, { methodId }) {
     const player = this.players[playerId];
 
-    if (player.role !== Role.Murderer) {
-      throw 'Non-murderer tried to choose means!';
-    }
+    this.ensureRole(playerId, Role.Murderer);
 
     this.murderMethod = player.methodCards.find(method => method.id === methodId);
     this.broadcastGameDataToPlayers();
@@ -358,19 +358,14 @@ class DeceptionGame extends Game {
   setEvidence(playerId, { evidenceId }) {
     const player = this.players[playerId];
 
-    if (player.role !== Role.Murderer) {
-      throw 'Non-murderer tried to choose means and evidence!';
-    }
+    this.ensureRole(playerId, Role.Murderer);
+
     this.keyEvidence = player.evidenceCards.find(evidence => evidence.id === evidenceId);
     this.broadcastGameDataToPlayers();
   }
 
   confirmMeansAndEvidence(playerId) {
-    const player = this.players[playerId];
-
-    if (player.role !== Role.Murderer) {
-      throw 'Non-murderer tried to choose means and evidence!';
-    }
+    this.ensureRole(playerId, Role.Murderer);
 
     this.state = GameState.ScientistCauseOfDeath;
     this.broadcastGameDataToPlayers();
@@ -378,9 +373,7 @@ class DeceptionGame extends Game {
 
   // In case the Scientist wants to change his/her mind about one of the tile selections
   goBack(playerId) {
-    if (this.players[playerId].role !== Role.Scientist) {
-      throw 'Non-scientist tried go back!';
-    }
+    this.ensureRole(playerId, Role.Scientist);
 
     switch (this.state) {
       case GameState.ScientistLocation:
@@ -576,13 +569,18 @@ class DeceptionGame extends Game {
   }
 
   startTimer(playerId) {
-    const player = this.players[playerId];
-
-    if (player.role !== Role.Scientist) {
-      throw 'Non-scientist tried to set witness guess';
-    }
+    this.ensureRole(playerId, Role.Scientist);
     this.presentationSecondsLeft = DeceptionGame.NUM_PRESENTATION_SECONDS;
     this.timerInterval = setInterval(() => this.decrementSecondsLeft(), 1000);
+  }
+
+  endTimer(playerId) {
+    this.ensureRole(playerId, Role.Scientist);
+
+    this.presentationSecondsLeft = null;
+    clearInterval(this.timerInterval);
+
+    this.broadcastGameDataToPlayers();
   }
 
   resumeTimer() {
@@ -593,7 +591,7 @@ class DeceptionGame extends Game {
     this.presentationSecondsLeft = Math.max(this.presentationSecondsLeft - 1, 0);
     if (!this.presentationSecondsLeft) {
       clearInterval(this.timerInterval);
-      this.presentationSecondsLeft = undefined;
+      this.presentationSecondsLeft = null;
     }
     this.broadcastGameDataToPlayers();
   }
@@ -602,28 +600,28 @@ class DeceptionGame extends Game {
     clearInterval(this.timerInterval);
   }
 
-  setWitnessGuess(playerId, data) {
-    const player = this.players[playerId];
-
-    if (player.role !== Role.Murderer) {
-      throw 'Non-murderer tried to set witness guess';
-    }
+  setWitnessGuess(playerId: string, data) {
+    this.ensureRole(playerId, Role.Murderer);
 
     this.witnessSuspectId = data.playerId;
     this.broadcastGameDataToPlayers();
   }
 
-  guessWitness(playerId, data) {
-    const player = this.players[playerId];
-
-    if (player.role !== Role.Murderer) {
-      throw 'Non-murderer tried to guess witness';
-    }
+  guessWitness(playerId: string, data) {
+    this.ensureRole(playerId, Role.Murderer);
 
     const witnessSuspect = this.players[this.witnessSuspectId];
 
     this.witnessGuessCorrect = witnessSuspect.role === Role.Witness;
     this.broadcastGameDataToPlayers();
+  }
+
+  ensureRole(playerId: string, role: Role) {
+    const player = this.players[playerId];
+
+    if (player.role !== role) {
+      throw new Error(`Expected player to have role ${role} but had role ${player.role}!`);
+    }
   }
 
   serialize(): GameData {

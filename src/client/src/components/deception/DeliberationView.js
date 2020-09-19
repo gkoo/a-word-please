@@ -7,6 +7,7 @@ import Button from 'react-bootstrap/Button';
 import AccusePlayerModal from './AccusePlayerModal';
 import PlayerGroupView from './PlayerGroupView';
 import SceneTileReplacedModal from './SceneTileReplacedModal';
+import ScientistInstructions from './ScientistInstructions';
 import TilesView from './TilesView';
 import {
   currPlayerIsScientistSelector,
@@ -29,15 +30,12 @@ function DeliberationView() {
     newSceneTile,
     oldSceneTile,
     presentationSecondsLeft,
-    roundNum,
-    totalNumRounds,
   } = gameData;
 
   const onEndRound = () => socket.emit('playerAction', { action: 'endRound' });
 
   const onEndAccusation = () => socket.emit('playerAction', { action: 'endAccusation' });
 
-  const onStartTimer = () => socket.emit('playerAction', { action: 'startTimer' });
 
   const onAccusedDetailsChange = (type, value) => socket.emit(
     'playerAction',
@@ -53,44 +51,9 @@ function DeliberationView() {
     { action: 'confirmAccusation' }
   );
 
-  const isLastRound = roundNum >= totalNumRounds;
-
   return (
     <>
-      {
-        currPlayerIsScientist &&
-          <Alert variant='info' className='mb-5'>
-            <Alert.Heading>
-              Forensic Scientist Instructions
-            </Alert.Heading>
-            {
-              !isLastRound &&
-                <p>
-                  This is the { roundNum === 1 ? '1st' : '2nd' } of {totalNumRounds} rounds. Each
-                  player gets 30 seconds to make their case. Please time them and start the next
-                  round once everyone is done.
-                </p>
-            }
-            {
-              isLastRound &&
-                <p>
-                  This is the last round. When everyone is done making an accusation, please end the
-                  game.
-                </p>
-            }
-            <div className='text-center'>
-              {
-                !presentationSecondsLeft &&
-                  <Button onClick={onStartTimer} className='mx-1'>
-                    Start Timer
-                  </Button>
-              }
-              <Button onClick={onEndRound} className='mx-1'>
-                { roundNum < totalNumRounds ? 'Start Next Round' : 'End Game' }
-              </Button>
-            </div>
-          </Alert>
-      }
+      {currPlayerIsScientist && <ScientistInstructions />}
       {
         presentationSecondsLeft !== undefined &&
           <div className='text-center mb-5'>

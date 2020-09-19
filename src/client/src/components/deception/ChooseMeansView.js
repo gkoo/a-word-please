@@ -132,6 +132,7 @@ function ChooseMeansView() {
           {
             murderer.methodCards?.map(method =>
               <Button
+                key={method.id}
                 variant='outline-danger'
                 className='mx-1'
                 active={selectedMethod === method.id}
@@ -153,6 +154,7 @@ function ChooseMeansView() {
           {
             murderer.evidenceCards?.map(evidence =>
               <Button
+                key={evidence.id}
                 variant='outline-light'
                 className='mx-1'
                 active={selectedEvidence === evidence.id}
