@@ -1,6 +1,5 @@
 import http from 'http';
 
-import _ from 'lodash';
 import socketIO from 'socket.io';
 import MockExpress from 'mock-express';
 

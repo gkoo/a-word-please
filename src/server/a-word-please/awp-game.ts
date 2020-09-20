@@ -1,6 +1,3 @@
-import _ from 'lodash';
-import uuid from 'uuid';
-
 import Deck from '../deck';
 import Game, { GameEnum } from '../game';
 import Player from '../player';

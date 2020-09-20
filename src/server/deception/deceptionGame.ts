@@ -43,6 +43,14 @@ export enum GameState {
   Deliberation,
   // Scientist replaces a scene tile
   ReplaceScene,
+  // Scientist drew an event tile
+  ScientistEvent,
+}
+
+interface EventTileData {
+  countdownSceneTiles?: Array<Tile>;
+  newSceneTile?: Tile;
+  sceneTiles?: Array<Tile>;
 }
 
 interface GameData {
@@ -53,6 +61,7 @@ interface GameData {
   accuserId?: string;
   accuseLog: { [playerId: string]: boolean };
   causeOfDeathTile: Tile;
+  eventTileData?: { [key: string]: any };
   gameId: number;
   includeAccomplice?: boolean;
   includeWitness?: boolean;
@@ -91,6 +100,7 @@ class DeceptionGame extends Game {
   accusedEvidence?: string;
   accusedMethod?: string;
   causeOfDeathTile: Tile;
+  eventTileData: { [key: string]: any };
   includeAccomplice?: boolean;
   includeWitness?: boolean;
   keyEvidence: Clue;
@@ -468,10 +478,51 @@ class DeceptionGame extends Game {
     if (this.roundNum >= DeceptionGame.NUM_ROUNDS) {
       this.state = GameState.GameEnd;
     } else {
-      this.state = GameState.ReplaceScene;
       this.newSceneTile = this.sceneTileDeck.drawCard();
+      if (this.newSceneTile.type === TileType.Event) {
+        this.state = GameState.ScientistEvent;
+        this.handleEventTile();
+      } else {
+        this.state = GameState.ReplaceScene;
+      }
     }
     this.broadcastGameDataToPlayers();
+  }
+
+  handleEventTile() {
+    const eventTileData: EventTileData = {};
+    const eventTile = this.newSceneTile;
+    const numSceneTilesDrawn = 0;
+
+    switch (eventTile.label) {
+      case 'A Useful Clue':
+        const usefulClueSceneTiles = [];
+        while (numSceneTilesDrawn < 5) {
+          const tile = this.sceneTileDeck.drawCard();
+          if (tile.type === TileType.Scene) {
+            usefulClueSceneTiles.push(tile);
+          }
+        }
+        eventTileData.sceneTiles = usefulClueSceneTiles;
+        break;
+      case 'Secret Testimony':
+        let newSceneTile;
+        while (newSceneTile?.type !== TileType.Scene) {
+          newSceneTile = this.sceneTileDeck.drawCard();
+        }
+        eventTileData.newSceneTile = newSceneTile;
+      case 'Countdown':
+        const countdownSceneTiles = [];
+        while (numSceneTilesDrawn < 2) {
+          const tile = this.sceneTileDeck.drawCard();
+          if (tile.type === TileType.Scene) {
+            countdownSceneTiles.push(tile);
+          }
+        }
+        eventTileData.sceneTiles = countdownSceneTiles;
+      default:
+        throw new Error(`Unexpected event tile: ${eventTile.label}`);
+    }
   }
 
   replaceSceneTile(playerId, { tileIdToReplace, newSceneSelection }) {
@@ -700,6 +751,12 @@ class DeceptionGame extends Game {
           suspectId: this.suspectId,
         };
         break;
+
+      case GameState.ScientistEvent:
+        data = {
+          ...data,
+          eventTileData: this.eventTileData,
+        };
 
       case GameState.GameEnd:
         data = {
