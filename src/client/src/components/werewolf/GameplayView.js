@@ -36,8 +36,6 @@ function GameplayView() {
   const wakeUpRole = useSelector(wakeUpRoleSelector);
   const dispatch = useDispatch();
 
-  const newGame = () => socket.emit('startGame');
-
   const onShowRolesModal = () => dispatch(toggleRolesModal({ show: true }));
 
   const isAwake = (gameState !== STATE_WW_NIGHTTIME) || (
@@ -61,10 +59,6 @@ function GameplayView() {
         }
       </Col>
       <Col sm={4} className='main-panel py-5 text-center'>
-        {
-          gameState === STATE_WW_VOTE_RESULTS && revealingRoles &&
-            <Button onClick={newGame}>New Game</Button>
-        }
         <h1 className='my-3'>
           <span>
             {isAwake ? '😳' : '😴'}
