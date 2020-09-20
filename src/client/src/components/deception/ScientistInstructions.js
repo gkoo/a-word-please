@@ -53,7 +53,7 @@ function ScientistInstructions() {
             </Button>
         }
         {
-          presentationSecondsLeft &&
+          !!presentationSecondsLeft &&
             <Button onClick={onEndTimer} className='mx-1'>
               End Timer
             </Button>

@@ -20,7 +20,9 @@ import LocationView from './LocationView';
 import ReplaceSceneView from './ReplaceSceneView';
 import ShowRolesView from './ShowRolesView';
 import SpectatorList from '../common/SpectatorList';
+import Timer from './Timer';
 import { GameState } from '../../constants/deception';
+
 import {
   updateUserPreference,
 } from '../../store/actions';
@@ -142,6 +144,7 @@ function DeceptionBoard() {
           </Button>
         </Col>
       </Row>
+      <Timer/>
       <Modal show={showRolesModal} onHide={() => setShowRolesModal(false)}>
         <Modal.Header closeButton>
         </Modal.Header>

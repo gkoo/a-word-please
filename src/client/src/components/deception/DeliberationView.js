@@ -29,7 +29,6 @@ function DeliberationView() {
     accusationActive,
     newSceneTile,
     oldSceneTile,
-    presentationSecondsLeft,
   } = gameData;
 
   const onEndRound = () => socket.emit('playerAction', { action: 'endRound' });
@@ -54,13 +53,6 @@ function DeliberationView() {
   return (
     <>
       {currPlayerIsScientist && <ScientistInstructions />}
-      {
-        presentationSecondsLeft !== undefined &&
-          <div className='text-center mb-5'>
-            <p>Current Presentation Time Left:</p>
-            <h1>{presentationSecondsLeft || 'Time\'s up!'}</h1>
-          </div>
-      }
       <TilesView showHeaders={!hideRules} />
       <hr />
       {

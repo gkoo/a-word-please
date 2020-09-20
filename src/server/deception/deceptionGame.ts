@@ -591,7 +591,7 @@ class DeceptionGame extends Game {
     this.presentationSecondsLeft = Math.max(this.presentationSecondsLeft - 1, 0);
     if (!this.presentationSecondsLeft) {
       clearInterval(this.timerInterval);
-      this.presentationSecondsLeft = null;
+      this.presentationSecondsLeft = 0;
     }
     this.broadcastGameDataToPlayers();
   }
