@@ -325,6 +325,9 @@
 
 @media (min-width: 768px) {
   .deception-players-modal .modal-dialog {
-    max-width: 800px;
+    max-width: 840px;
+  }
+  .deception-event-modal .modal-dialog {
+    max-width: 840px;
   }
 }

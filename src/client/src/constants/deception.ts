@@ -11,6 +11,7 @@ export enum GameState {
   ScientistSceneTiles,
   Deliberation,
   ReplaceScene,
+  ScientistEvent,
 };
 
 export enum Role {

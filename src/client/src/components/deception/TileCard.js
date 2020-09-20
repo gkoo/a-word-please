@@ -10,12 +10,15 @@ import {
 } from '../../constants/deception';
 
 function TileCard({
+  border,
   collapse,
   disabled,
   label,
+  onChoose,
   onClose,
   onSelect,
   options,
+  showChooseButton,
   showClose,
   tileId,
   tileType,
@@ -23,6 +26,9 @@ function TileCard({
 }) {
   if (showClose && !onClose) {
     throw new Error('showClose is true but no onClose callback was provided!');
+  }
+  if (showChooseButton && !onChoose) {
+    throw new Error('showChooseButton is true but no onChoose callback was provided!');
   }
 
   const [selectedOption, setSelectedOption] = useState(value);
@@ -64,7 +70,7 @@ function TileCard({
   }
 
   return (
-    <Card className='deception-tile-card my-2'>
+    <Card className='deception-tile-card my-2' border={border}>
       <Card.Body>
         {
           showClose &&
@@ -96,6 +102,12 @@ function TileCard({
           )
         }
       </Card.Body>
+      {
+        showChooseButton &&
+          <Card.Footer className='text-center'>
+            <Button onClick={onChoose}>Choose</Button>
+          </Card.Footer>
+      }
     </Card>
   );
 }

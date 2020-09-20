@@ -7,23 +7,23 @@ export default [
   {
     title: 'A Good Twist',
     description: 'The player who correctly solved the crime last game immediately receives a ' +
-      'chance to do so. This does not count toward their 1 chance this game. If no player is ' +
+      'chance to do so. This does not count toward their one chance this game. If no player is ' +
       'entitled to this advantage, the Forensic Scientist discards this tile and draws another.'
   },
   {
     title: 'A Useful Clue',
-    description: 'The Forensic Scientist draws 5 Scene tiles, from which they choose 1 to ' +
-      'replace any existing tile in the display. The selected tile cannot be another event.'
+    description: 'The Forensic Scientist draws five Scene tiles, from which they choose one to ' +
+      'replace any existing tile in the display.'
   },
   {
     title: 'Ruled Out',
-    description: 'Each player must flip over 1 of their own Clue Cards, removing it from ' +
+    description: 'Each player must flip over one of their own Clue Cards, removing it from ' +
       'consideration. This must be done without discussion. The murderer may not flip over the ' +
       'Key Evidence.'
   },
   {
     title: 'Erroneous Information',
-    description: 'The Forensic Scientist chooses 1 of the scene tiles on display, and moves its ' +
+    description: 'The Forensic Scientist chooses one of the scene tiles on display, and moves its ' +
       'marker to a new item on the same tile.'
   },
   {

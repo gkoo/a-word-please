@@ -13,6 +13,7 @@ import RulesView from './RulesView';
 import CauseOfDeathView from './CauseOfDeathView';
 import ChooseMeansView from './ChooseMeansView';
 import DeliberationView from './DeliberationView';
+import EventModal from './EventModal';
 import GameEndView from './GameEndView';
 import InitialSceneTilesView from './InitialSceneTilesView';
 import LeaderPanel from '../LeaderPanel';
@@ -48,6 +49,7 @@ function DeceptionBoard() {
     Deliberation,
     ReplaceScene,
     GameEnd,
+    ScientistEvent,
   } = GameState;
   const connectedPlayers = useSelector(connectedPlayersSelector);
   const gameData = useSelector(gameDataSelector);
@@ -95,7 +97,7 @@ function DeceptionBoard() {
             gameState === ScientistSceneTiles && <InitialSceneTilesView />
           }
           {
-            gameState === Deliberation && <DeliberationView />
+            [Deliberation, ScientistEvent].includes(gameState) && <DeliberationView />
           }
           {
             gameState === ReplaceScene && <ReplaceSceneView />
@@ -152,6 +154,7 @@ function DeceptionBoard() {
           <RoleExplanations />
         </Modal.Body>
       </Modal>
+      <EventModal/>
     </>
   );
 }

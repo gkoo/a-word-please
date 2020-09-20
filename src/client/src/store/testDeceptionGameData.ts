@@ -24,6 +24,62 @@ export default {
     type: constants.TILE_DECEPTION_CAUSE_OF_DEATH,
     selectedOption: 'Poisoning',
   },
+  eventTileData: {
+    sceneTiles: [
+      {
+        id: 0,
+        label: 'Time of Death',
+        options: [
+          'Dawn',
+          'Morning',
+          'Noon',
+          'Afternoon',
+          'Evening',
+          'Night',
+        ],
+        type: constants.TILE_DECEPTION_SCENE,
+      },
+      {
+        id: 2,
+        label: 'Corpse Condition',
+        options: [
+          'Still Warm',
+          'Stiff',
+          'Decayed',
+          'Incomplete',
+          'Intact',
+          'Twisted',
+        ],
+        type: constants.TILE_DECEPTION_SCENE,
+      },
+      {
+        id: 1,
+        label: 'Noticed by Bystander',
+        options: [
+          'Sudden sound',
+          'Prolonged sound',
+          'Smell',
+          'Visual',
+          'Action',
+          'Nothing',
+        ],
+        type: constants.TILE_DECEPTION_SCENE,
+      },
+      {
+        id: 3,
+        label: 'General Impression',
+        options: [
+          'Common',
+          'Creative',
+          'Fishy',
+          'Cruel',
+          'Horrible',
+          'Suspenseful',
+        ],
+        type: constants.TILE_DECEPTION_SCENE,
+      },
+    ],
+  },
   gameId: GAME_DECEPTION,
   locationTiles: [
     {
@@ -83,18 +139,24 @@ export default {
     label: 'Notebook',
   },
   newSceneTile: {
-    label: 'Hint on Corpse',
-    options: [
-      'Head',
-      'Chest',
-      'Hand',
-      'Leg',
-      'Partial',
-      'All-over',
-    ],
-    selectedOption: 'Leg',
-    type: constants.TILE_DECEPTION_SCENE,
+    id: 0,
+    label: 'A Useful Clue',
+    description: 'The Forensic Scientist draws five Scene tiles, from which they choose one to ' +
+      'replace any existing tile in the display.'
   },
+  //newSceneTile: {
+    //label: 'Hint on Corpse',
+    //options: [
+      //'Head',
+      //'Chest',
+      //'Hand',
+      //'Leg',
+      //'Partial',
+      //'All-over',
+    //],
+    //selectedOption: 'Leg',
+    //type: constants.TILE_DECEPTION_SCENE,
+  //},
   murderMethod: {
     label: 'Brick'
   },
@@ -453,8 +515,9 @@ export default {
   //state: constants.GameState.ScientistCauseOfDeath,
   //state: constants.GameState.ScientistLocation,
   //state: constants.GameState.ScientistSceneTiles,
-  state: constants.GameState.Deliberation,
+  //state: constants.GameState.Deliberation,
   //state: constants.GameState.ReplaceScene,
+  state: constants.GameState.ScientistEvent,
   //state: constants.GameState.GameEnd,
   totalNumRounds: 3,
   //witnessSuspectId: 'aj',
