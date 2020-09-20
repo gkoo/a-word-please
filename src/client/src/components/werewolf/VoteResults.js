@@ -2,9 +2,14 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import cx from 'classnames';
 
+import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
-import Table from 'react-bootstrap/Table'
+import Col from 'react-bootstrap/Col';
+import ListGroup from 'react-bootstrap/ListGroup';
+import Row from 'react-bootstrap/Row';
+import Table from 'react-bootstrap/Table';
 
+import EndGameButtons from '../common/EndGameButtons';
 import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
 import * as selectors from '../../store/selectors';
 import {
@@ -25,7 +30,16 @@ const getTeam = role => {
   return ROLE_VILLAGER;
 };
 
-const renderPlayerRow = (player, players, votes, eliminatedPlayers) => {
+const renderVotedPlayerRow = (suspectPlayer, voterPlayers, isEliminated) => {
+  return (
+    <ListGroup.Item variant={isEliminated ? 'danger' : ''}>
+      <h3>{isEliminated && '💀 '}{suspectPlayer.name}{isEliminated && ' 💀'}</h3>
+      {voterPlayers.map(voter => <Badge>{voter.name}</Badge>)}
+    </ListGroup.Item>
+  );
+};
+
+const renderPlayerRow = (player, eliminatedPlayers) => {
   const team = getTeam(player.role);
   const roleLabelClass = cx({
     werewolf: team === ROLE_WEREWOLF,
@@ -40,21 +54,16 @@ const renderPlayerRow = (player, players, votes, eliminatedPlayers) => {
         <span role='img' aria-label='Eliminated player' className='mr-2'>
           { voterIsEliminated && '💀' }
         </span>
-        {player.name}
-      </td>
-      <td>
-        {players[votes[player.id]].name}
+        {player?.name}
+        <span role='img' aria-label='Eliminated player' className='ml-2'>
+          { voterIsEliminated && '💀' }
+        </span>
       </td>
       <td>
         <span className={`team-label ${roleLabelClass}`}>
           {WEREWOLF_ROLE_LABELS[player.role]}
         </span>
       </td>
-      {/*
-      <td>
-        {WEREWOLF_ROLE_LABELS[player.originalRole]}
-      </td>
-      */}
     </tr>
   );
 };
@@ -93,38 +102,69 @@ function VoteResults() {
 
   return (
     <div className='text-center'>
-      <div className='mb-2'>
+      <div className='mb-5'>
         <h1>Vote Results</h1>
-        <div className='mb-3'>
-          <strong>Eliminated</strong>:
-          {eliminatedPlayers.map(player => <PlayerCheckboxLabel player={player} />)}
-        </div>
-        {/* sort by num votes */}
-        <div className={cx({ invisible: revealingRoles })}>
-          <Button onClick={revealRoles}>Reveal Roles</Button>
-        </div>
-        <div className={cx({ invisible: !revealingRoles })}>
-          <strong>Winners</strong>:
-          {winnerPlayers.map(player => <PlayerCheckboxLabel player={player} />)}
-        </div>
       </div>
-      <Table>
-        <thead>
-          <tr>
-            <th>Player</th>
-            <th>Voted For</th>
-            <th>Role</th>
-            {/*<th>Starting Role</th>*/}
-          </tr>
-        </thead>
-        <tbody>
-          {
-            playersToDisplay.map(
-              player => renderPlayerRow(player, players, votes, eliminatedPlayers)
-            )
-          }
-        </tbody>
-      </Table>
+      <ListGroup className='text-left'>
+        {
+          playerIdsSortedByMostVotes.map(suspectId => {
+            const isEliminated = eliminatedPlayers.find(player => player.id === suspectId);
+            const voterIds = [];
+            Object.keys(votes).forEach(voterId => {
+              if (votes[voterId] === suspectId) {
+                voterIds.push(voterId);
+              }
+            });
+            const voters = voterIds.map(voterId => players[voterId]);
+            return renderVotedPlayerRow(players[suspectId], voters, isEliminated);
+          })
+        }
+      </ListGroup>
+      {/* sort by num votes */}
+      {
+        !revealingRoles &&
+          <div className='my-3'>
+            <Button onClick={revealRoles}>Reveal Roles</Button>
+          </div>
+      }
+      {
+        revealingRoles &&
+          <>
+            <h2 className='my-5'>
+              {winners.map(role => `Team ${WEREWOLF_ROLE_LABELS[role]}`).join(' and ')} win
+              {winners.length === 1 && 's'}
+              !
+            </h2>
+            <div className='my-3'>
+              <strong>Winners</strong>:
+              {winnerPlayers.map(player => <PlayerCheckboxLabel player={player} />)}
+            </div>
+            <Row>
+              <Col
+                md={{ offset: 1, span: 10 }}
+                lg={{ offset: 2, span: 8 }}
+                xl={{ offset: 3, span: 6 }}
+              >
+                <Table>
+                  <thead>
+                    <tr>
+                      <th>Player</th>
+                      <th>Role</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {
+                      playersToDisplay.map(
+                        player => renderPlayerRow(player, eliminatedPlayers)
+                      )
+                    }
+                  </tbody>
+                </Table>
+              </Col>
+            </Row>
+            <EndGameButtons/>
+          </>
+      }
     </div>
   );
 }

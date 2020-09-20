@@ -5,7 +5,7 @@ import cx from 'classnames';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 
-import BackToLobbyButton from '../common/BackToLobbyButton';
+import EndGameButtons from '../common/EndGameButtons';
 import PlayerGroupView from './PlayerGroupView';
 import { Role, RoleLabels } from '../../constants/deception';
 import {
@@ -36,8 +36,6 @@ function GuessWitnessView() {
 
   const { witnessGuessCorrect } = gameData;
   const witnessSuspect = players[witnessSuspectId];
-
-  const onNewGame = () => socket.emit('startGame');
 
   useEffect(() => {
     setWitnessSuspectId(gameData.witnessSuspectId);
@@ -124,14 +122,7 @@ function GuessWitnessView() {
                     {RoleLabels[Murderer]} wins!
                   </h1>
               }
-              <div className='text-center my-5'>
-                <ButtonGroup>
-                  <Button onClick={onNewGame}>
-                    New Game
-                  </Button>
-                  <BackToLobbyButton/>
-                </ButtonGroup>
-              </div>
+              <EndGameButtons/>
 
               <PlayerGroupView
                 showRoles={true}

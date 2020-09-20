@@ -5,8 +5,11 @@ import Button from 'react-bootstrap/Button';
 
 import { socketSelector, } from '../../store/selectors';
 
-function BackToLobbyButton() {
+function EndGameButtons() {
   const socket = useSelector(socketSelector);
+
+  const newGame = () => socket.emit('startGame');
+
   const backToLobby = e => {
     e.preventDefault();
     const confirmed = window.confirm('The game will end for everyone and you will be sent back to the lobby. Are you sure?');
@@ -16,8 +19,11 @@ function BackToLobbyButton() {
   };
 
   return (
-    <Button onClick={backToLobby}>Back To Lobby</Button>
+    <div className='text-center my-5'>
+      <Button onClick={newGame} className='mr-1'>New Game</Button>
+      <Button onClick={backToLobby} className='ml-1'>Back To Lobby</Button>
+    </div>
   );
 }
 
-export default BackToLobbyButton;
+export default EndGameButtons;

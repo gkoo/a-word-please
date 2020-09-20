@@ -6,7 +6,7 @@ import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Table from 'react-bootstrap/Table';
 
-import BackToLobbyButton from '../common/BackToLobbyButton';
+import EndGameButtons from '../common/EndGameButtons';
 import GuessWitnessView from './GuessWitnessView';
 import PlayerGroupView from './PlayerGroupView';
 import {
@@ -25,8 +25,6 @@ function GameEndView() {
   const players = useSelector(playersSelector);
   const socket = useSelector(socketSelector);
   const witness = useSelector(witnessSelector);
-
-  const onNewGame = () => socket.emit('startGame');
 
   if (witness && gameData.accusationResult) {
     // Time for murderer to guess who the witness is
@@ -60,14 +58,7 @@ function GameEndView() {
         </tbody>
       </Table>
 
-      <div className='text-center my-5'>
-        <ButtonGroup>
-          <Button onClick={onNewGame}>
-            New Game
-          </Button>
-          <BackToLobbyButton/>
-        </ButtonGroup>
-      </div>
+      <EndGameButtons/>
 
       <PlayerGroupView showRoles={true} showAccuseButtons={false} showMethodAndEvidence={true} />
     </>
