@@ -5,6 +5,7 @@ import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 
 import EndGameButtons from '../common/EndGameButtons';
+import PointsTable from './PointsTable';
 import { numPointsSelector, socketSelector } from '../../store/selectors';
 
 function GameEndPhase() {
@@ -18,8 +19,8 @@ function GameEndPhase() {
 
   return (
     <div className='text-center'>
-      <h1>Game over!</h1>
-      <p>You got {numPoints} points. You are amazing!</p>
+      <h1 className='mb-5'>Game over!</h1>
+      <PointsTable/>
       <EndGameButtons/>
     </div>
   );

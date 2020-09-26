@@ -11,7 +11,7 @@ class WavelengthGame extends Game {
   currConcept: [string, string];
   deck: Deck;
   emitToPlayer: (playerId: string, eventName: string, data: any) => void;
-  numPoints: number;
+  pointsForPlayer: object;
   players: object;
   playerClass: any;
   playerOrder: Array<string>;
@@ -34,7 +34,6 @@ class WavelengthGame extends Game {
     super(broadcastToRoom);
     this.emitToPlayer = emitToPlayer;
     this.concepts = [];
-    this.numPoints = 0;
   }
 
   setup(users) {
@@ -52,7 +51,7 @@ class WavelengthGame extends Game {
 
   newGame() {
     this.roundNum = 0;
-    this.numPoints = 0;
+    this.pointsForPlayer = {};
     this.determinePlayerOrder();
     this.nextTurn();
   }
@@ -152,13 +151,17 @@ class WavelengthGame extends Game {
     const band5LeftBound = spectrumValue + WavelengthGame.SPECTRUM_BAND_WIDTH * 3/2;
     const band5RightBound = spectrumValue + WavelengthGame.SPECTRUM_BAND_WIDTH * 5/2;
 
+    if (this.pointsForPlayer[this.activePlayerId] === undefined) {
+      this.pointsForPlayer[this.activePlayerId] = 0;
+    }
+
     if (spectrumGuess >= band3LeftBound && spectrumGuess < band4LeftBound) {
       // within first band
-      this.numPoints += 4;
+      this.pointsForPlayer[this.activePlayerId] += 4;
     } else if (spectrumGuess >= band2LeftBound && spectrumGuess < band5LeftBound) {
-      this.numPoints += 3;
+      this.pointsForPlayer[this.activePlayerId] += 3;
     } else if (spectrumGuess >= band1LeftBound && spectrumGuess < band5RightBound) {
-      this.numPoints += 2;
+      this.pointsForPlayer[this.activePlayerId] += 2;
     }
 
     this.broadcastGameDataToPlayers();
@@ -177,8 +180,8 @@ class WavelengthGame extends Game {
       clue: this.clue,
       currConcept: this.currConcept,
       gameId: WavelengthGame.GAME_ID,
-      numPoints: this.numPoints,
       players: this.players,
+      pointsForPlayer: this.pointsForPlayer,
       roundNum: this.roundNum,
       spectators: this.spectators,
       spectrumGuess: this.spectrumGuess,

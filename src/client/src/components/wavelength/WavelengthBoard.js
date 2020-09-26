@@ -23,7 +23,6 @@ function WavelengthBoard() {
   const activePlayer = useSelector(selectors.activePlayerSelector);
   const currUserIsSpectator = useSelector(selectors.currUserIsSpectatorSelector);
   const gameState = useSelector(selectors.gameStateSelector);
-  const numPoints = useSelector(selectors.numPointsSelector);
   const numRoundsLeft = useSelector(selectors.numRoundsLeftSelector);
   const users = useSelector(selectors.usersSelector);
   let wavelengthGuessers = useSelector(selectors.wavelengthGuessersSelector);
@@ -43,18 +42,11 @@ function WavelengthBoard() {
             !currUserIsSpectator &&
               <LeaderPanel numUsers={Object.keys(users).length}/>
           }
-          <Row className='pb-4'>
-            <Col sm={6}>
-              <u>Points</u>
-              <br />
-              {numPoints}
-            </Col>
-            <Col sm={6}>
-              <u>Turns Left</u>
-              <br />
-              {numRoundsLeft}
-            </Col>
-          </Row>
+          <div className='text-center my-4'>
+            <u>Turns Left</u>
+            <br />
+            {numRoundsLeft}
+          </div>
           {
             activePlayer &&
               <>

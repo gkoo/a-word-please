@@ -3,22 +3,26 @@ import { useSelector } from 'react-redux';
 
 import Button from 'react-bootstrap/Button';
 
+import PointsTable from './PointsTable';
 import Spectrum from './Spectrum';
 import {
   currUserIsSpectatorSelector,
   clueSelector,
+  gameDataSelector,
   socketSelector,
-  spectrumGuessSelector,
   spectrumValueSelector,
 } from '../../store/selectors';
 import { SPECTRUM_BAND_WIDTH } from '../../constants';
 
 function RevealPhase() {
   const socket = useSelector(socketSelector);
-  const spectrumGuess = useSelector(spectrumGuessSelector);
-  const spectrumValue = useSelector(spectrumValueSelector);
+  const gameData = useSelector(gameDataSelector);
   const isSpectator = useSelector(currUserIsSpectatorSelector);
   const clue = useSelector(clueSelector);
+
+  if (!gameData) { return false; }
+
+  const { activePlayerId, spectrumGuess, spectrumValue, players } = gameData;
 
   const nextTurn = e => {
     e.preventDefault();
@@ -37,6 +41,8 @@ function RevealPhase() {
   const inThirdBand = spectrumGuess >= band3LeftBound && spectrumGuess < band4LeftBound;
   const inFourthBand = spectrumGuess >= band4LeftBound && spectrumGuess < band5LeftBound;
   const inFifthBand = spectrumGuess >= band5LeftBound && spectrumGuess < band5RightBound;
+
+  const gotPoints = inFirstBand || inSecondBand || inThirdBand || inFourthBand || inFifthBand;
 
   const bandSelections = {
     firstBand: inFirstBand,
@@ -62,18 +68,22 @@ function RevealPhase() {
         </div>
         <h3 className='my-5'>
           {
+            gotPoints && players[activePlayerId].name
+          }
+          {
             (inFirstBand || inFifthBand) &&
-              '+2 points'
+              ' +2 points'
           }
           {
             (inSecondBand || inFourthBand) &&
-              '+3 points'
+              ' +3 points'
           }
           {
             inThirdBand &&
-              '+4 points'
+              ' +4 points'
           }
         </h3>
+        <PointsTable highlightPlayerId={activePlayerId}/>
         {!isSpectator && <Button onClick={nextTurn}>Next Turn</Button>}
       </div>
     </>
