@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import cx from 'classnames';
 
 import Button from 'react-bootstrap/Button';
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
 
 import EndGameButtons from '../common/EndGameButtons';
 import PlayerGroupView from './PlayerGroupView';

@@ -10,7 +10,6 @@ import {
   clueSelector,
   gameDataSelector,
   socketSelector,
-  spectrumValueSelector,
 } from '../../store/selectors';
 import { SPECTRUM_BAND_WIDTH } from '../../constants';
 

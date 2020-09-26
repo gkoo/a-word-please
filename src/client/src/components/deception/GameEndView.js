@@ -2,8 +2,6 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import cx from 'classnames';
 
-import Button from 'react-bootstrap/Button';
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Table from 'react-bootstrap/Table';
 
 import EndGameButtons from '../common/EndGameButtons';
@@ -16,14 +14,12 @@ import {
 import {
   gameDataSelector,
   playersSelector,
-  socketSelector,
   witnessSelector,
 } from '../../store/selectors';
 
 function GameEndView() {
   const gameData = useSelector(gameDataSelector);
   const players = useSelector(playersSelector);
-  const socket = useSelector(socketSelector);
   const witness = useSelector(witnessSelector);
 
   if (witness && gameData.accusationResult) {

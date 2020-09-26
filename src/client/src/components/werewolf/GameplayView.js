@@ -22,17 +22,13 @@ import {
   currPlayerSelector,
   gameStateSelector,
   playersSelector,
-  revealingRolesSelector,
-  socketSelector,
   wakeUpRoleSelector,
 } from '../../store/selectors';
 
 function GameplayView() {
   const gameState = useSelector(gameStateSelector);
   const currPlayer = useSelector(currPlayerSelector);
-  const revealingRoles = useSelector(revealingRolesSelector);
   const players = useSelector(playersSelector);
-  const socket = useSelector(socketSelector);
   const wakeUpRole = useSelector(wakeUpRoleSelector);
   const dispatch = useDispatch();
 

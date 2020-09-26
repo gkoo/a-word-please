@@ -1,14 +1,10 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import Button from 'react-bootstrap/Button';
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
-
 import EndGameButtons from '../common/EndGameButtons';
 import * as selectors from '../../store/selectors';
 
 function GameEndView() {
-  const socket = useSelector(selectors.socketSelector);
   const numPoints = useSelector(selectors.numPointsSelector);
 
   let message = '';

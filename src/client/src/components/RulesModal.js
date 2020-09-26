@@ -1,27 +1,16 @@
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
+import { useDispatch } from 'react-redux';
 
 import Modal from 'react-bootstrap/Modal';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import { toggleRulesModal } from '../store/actions';
-import { selectedGameSelector } from '../store/selectors';
-import { GAME_WEREWOLF } from '../constants';
-
-const getKey = gameId => {
-  return gameId === GAME_WEREWOLF ? 'werewolf-rules' : 'a-word-please-rules';
-};
 
 function RulesModal({ onClose, show }) {
   const dispatch = useDispatch();
-  const selectedGame = useSelector(selectedGameSelector);
-  const initialActiveKey = getKey(selectedGame);
-  const [activeKey, setActiveKey] = useState(initialActiveKey);
-  const onTabSelect = key => setActiveKey(key);
 
   const handleClose = () => {
     show && dispatch(toggleRulesModal({ show: false }))
-    setActiveKey(getKey(selectedGame)); // reset selected game to be default view
   };
 
   return (
@@ -30,7 +19,7 @@ function RulesModal({ onClose, show }) {
         <Modal.Title>How to play</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Tabs onSelect={onTabSelect}>
+        <Tabs>
           <Tab eventKey='a-word-please-rules' title='A Word, Please?'>
             <div className='pr-3 pt-3'>
               <p>

@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import Alert from 'react-bootstrap/Alert';
-import Button from 'react-bootstrap/Button';
-
 import AccusePlayerModal from './AccusePlayerModal';
 import PlayerGroupView from './PlayerGroupView';
 import SceneTileReplacedModal from './SceneTileReplacedModal';
@@ -30,8 +27,6 @@ function DeliberationView() {
     newSceneTile,
     oldSceneTile,
   } = gameData;
-
-  const onEndRound = () => socket.emit('playerAction', { action: 'endRound' });
 
   const onEndAccusation = () => socket.emit('playerAction', { action: 'endAccusation' });
 

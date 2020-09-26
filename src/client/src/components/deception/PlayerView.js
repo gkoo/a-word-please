@@ -1,6 +1,5 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import cx from 'classnames';
 
 import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button';
