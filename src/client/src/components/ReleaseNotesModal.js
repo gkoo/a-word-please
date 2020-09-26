@@ -14,6 +14,12 @@ function ReleaseNotesModal({ show }) {
         <Modal.Title>Release Notes</Modal.Title>
       </Modal.Header>
       <Modal.Body>
+        <h3>Sep 26, 2020</h3>
+        <ul>
+          <li>
+            Updated Wavelength scoring to be per-player
+          </li>
+        </ul>
         <h3>Sep 3, 2020</h3>
         <ul>
           <li>
