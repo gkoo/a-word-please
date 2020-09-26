@@ -9,9 +9,11 @@ import {
   GAME_WEREWOLF,
   GAME_WAVELENGTH,
   GAME_DECEPTION,
+  GAME_SF_ARTIST,
 } from '../constants';
 import AWordPleaseBoard from './a-word-please/AWordPleaseBoard';
 import DeceptionBoard from './deception/DeceptionBoard';
+import SfArtistBoard from './sf-artist/SfArtistBoard';
 import WerewolfBoard from './werewolf/WerewolfBoard';
 import WavelengthBoard from './wavelength/WavelengthBoard';
 import { gameIdSelector } from '../store/selectors';
@@ -38,6 +40,10 @@ function Game() {
           {
             gameId === GAME_DECEPTION &&
               <DeceptionBoard />
+          }
+          {
+            gameId === GAME_SF_ARTIST &&
+              <SfArtistBoard />
           }
         </Col>
       </Row>

@@ -8,6 +8,7 @@ export enum GameEnum {
   Werewolf,
   Wavelength,
   Deception,
+  SfArtist,
 }
 
 abstract class Game {

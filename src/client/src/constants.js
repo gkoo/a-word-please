@@ -8,6 +8,15 @@ export const GAME_A_WORD_PLEASE = 1;
 export const GAME_WEREWOLF = 2;
 export const GAME_WAVELENGTH = 3;
 export const GAME_DECEPTION = 4;
+export const GAME_SF_ARTIST = 5;
+
+export const GAME_LABELS = {
+  [GAME_A_WORD_PLEASE]: 'A Word, Please?',
+  [GAME_WEREWOLF]: 'One Night Werewolf',
+  [GAME_WAVELENGTH]: 'Wavelength',
+  [GAME_DECEPTION]: 'Deception',
+  [GAME_SF_ARTIST]: 'A Struggling Artist',
+};
 
 export const GAME_STATE_PENDING = 0;
 export const GAME_STATE_TURN_END = 1;

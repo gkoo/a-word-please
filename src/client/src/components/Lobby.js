@@ -8,29 +8,36 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Card from 'react-bootstrap/Card';
 
-import UserList from './UserList';
+import LobbyGameButton from './LobbyGameButton';
 import StartGameButton from './common/StartGameButton';
+import UserList from './UserList';
 import { toggleRulesModal } from '../store/actions';
-import { selectedGameSelector, socketSelector } from '../store/selectors';
+import { selectedGameSelector } from '../store/selectors';
 import {
   GAME_A_WORD_PLEASE,
   GAME_DECEPTION,
   GAME_WEREWOLF,
   GAME_WAVELENGTH,
+  GAME_SF_ARTIST,
 } from '../constants';
 
 function Lobby({ messages, roomCode, users }) {
   const dispatch = useDispatch();
 
   const onShowRulesModal = () => dispatch(toggleRulesModal({ show: true }));
-  const socket = useSelector(socketSelector);
   const selectedGame = useSelector(selectedGameSelector);
-
-  const onChooseGame = (gameId) => socket.emit('chooseGame', gameId);
 
   const startButtonDisabled = selectedGame === GAME_DECEPTION && users.length < 4;
 
   const startButtonHelpText = 'Requires at least 4 players';
+
+  const allGameIds = [
+    GAME_A_WORD_PLEASE,
+    GAME_DECEPTION,
+    GAME_WEREWOLF,
+    GAME_WAVELENGTH,
+    GAME_SF_ARTIST,
+  ];
 
   return (
     <>
@@ -46,50 +53,15 @@ function Lobby({ messages, roomCode, users }) {
             <Card>
               <Card.Body>
                 <h3 className='my-3'>Please choose a game</h3>
-                <Button
-                  variant='outline-info'
-                  size='lg'
-                  active={selectedGame === GAME_A_WORD_PLEASE}
-                  onClick={() => onChooseGame(GAME_A_WORD_PLEASE)}
-                  className='mr-2'
-                  block
-                >
-                  <span role='img' aria-label='A Word, Please?' className='mr-2'>📝</span>
-                  A Word, Please?
-                </Button>
-
-                <Button
-                  variant='outline-info'
-                  size='lg'
-                  active={selectedGame === GAME_WEREWOLF}
-                  onClick={() => onChooseGame(GAME_WEREWOLF)}
-                  block
-                >
-                  <span role='img' aria-label='Werewolf' className='mr-2'>🐺</span>
-                  Werewolf
-                </Button>
-
-                <Button
-                  variant='outline-info'
-                  size='lg'
-                  active={selectedGame === GAME_WAVELENGTH}
-                  onClick={() => onChooseGame(GAME_WAVELENGTH)}
-                  block
-                >
-                  <span role='img' aria-label='Wavelength' className='mr-2'>📻</span>
-                  Wavelength
-                </Button>
-
-                <Button
-                  variant='outline-info'
-                  size='lg'
-                  active={selectedGame === GAME_DECEPTION}
-                  onClick={() => onChooseGame(GAME_DECEPTION)}
-                  block
-                >
-                  <span role='img' aria-label='Deception' className='mr-2'>🔪</span>
-                  Deception
-                </Button>
+                {
+                  allGameIds.map(gameId =>
+                    <LobbyGameButton
+                      key={gameId}
+                      gameId={gameId}
+                      selected={selectedGame === gameId}
+                    />
+                  )
+                }
 
                 {
                   selectedGame &&

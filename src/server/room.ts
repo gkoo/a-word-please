@@ -1,6 +1,7 @@
 import AWPGame from './a-word-please/awp-game';
 import DeceptionGame from './deception/deceptionGame';
 import Game, { GameEnum } from './game';
+import SfArtistGame from './sf-artist/sfArtistGame';
 import WerewolfGame from './werewolf/werewolfGame';
 import WavelengthGame from './wavelength/wavelengthGame';
 import User from './user';
@@ -10,6 +11,7 @@ const VALID_GAMES: Array<number> = [
   GameEnum.Werewolf,
   GameEnum.Wavelength,
   GameEnum.Deception,
+  GameEnum.SfArtist,
 ];
 
 enum RoomState {
@@ -150,6 +152,9 @@ class Room {
         break;
       case GameEnum.Deception:
         this.game = new DeceptionGame(this.broadcastToRoom);
+        break;
+      case GameEnum.SfArtist:
+        this.game = new SfArtistGame(this.broadcastToRoom);
         break;
       default:
         throw 'Unrecognized game type chosen';
