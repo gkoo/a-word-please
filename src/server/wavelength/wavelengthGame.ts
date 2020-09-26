@@ -19,6 +19,7 @@ class WavelengthGame extends Game {
   spectrumGuess: number;
   spectrumValue: number;
   state: number;
+  totalNumRounds: number;
 
   static GAME_ID = GameEnum.Wavelength;
   static STATE_CLUE_PHASE = 3;
@@ -28,7 +29,6 @@ class WavelengthGame extends Game {
 
   static SPECTRUM_MAX_VALUE = 200;
   static SPECTRUM_BAND_WIDTH = 12;
-  static TOTAL_NUM_ROUNDS = 13;
 
   constructor(broadcastToRoom, emitToPlayer) {
     super(broadcastToRoom);
@@ -52,8 +52,20 @@ class WavelengthGame extends Game {
   newGame() {
     this.roundNum = 0;
     this.pointsForPlayer = {};
+    this.determineNumRounds();
     this.determinePlayerOrder();
     this.nextTurn();
+  }
+
+  determineNumRounds() {
+    const numPlayers = this.getConnectedPlayers().length;
+    if (numPlayers < 4) {
+      this.totalNumRounds = numPlayers * 4;
+    } else if (numPlayers === 4) {
+      this.totalNumRounds = numPlayers * 3;
+    } else {
+      this.totalNumRounds = numPlayers * 2;
+    }
   }
 
   addPlayer({ id, name }) {
@@ -90,7 +102,7 @@ class WavelengthGame extends Game {
 
     this.advancePlayerTurn();
 
-    if (this.roundNum > WavelengthGame.TOTAL_NUM_ROUNDS) {
+    if (this.roundNum > this.totalNumRounds) {
       return this.endGame();
     }
 
@@ -187,7 +199,7 @@ class WavelengthGame extends Game {
       spectrumGuess: this.spectrumGuess,
       spectrumValue: this.spectrumValue,
       state: this.state,
-      totalNumRounds: WavelengthGame.TOTAL_NUM_ROUNDS,
+      totalNumRounds: this.totalNumRounds,
     };
   }
 }
