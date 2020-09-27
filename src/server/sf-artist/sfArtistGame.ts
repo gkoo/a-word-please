@@ -27,6 +27,7 @@ class SfArtistGame extends Game {
   }
 
   newGame() {
+    this.playersReady = {};
     this.state = GameState.ExplainRules;
     this.broadcastGameDataToPlayers();
   }
@@ -35,12 +36,27 @@ class SfArtistGame extends Game {
   }
 
   handlePlayerAction(socket: SocketIO.Socket, data: { [key: string]: any }) {
+    const playerId = socket.id;
+
     switch (data.action) {
+      case 'ready':
+        return this.playerReady(playerId);
       case 'newStroke':
         return this.newStroke(socket, data);
       default:
         throw new Error(`Unrecognized player action: ${data.action}!`);
     }
+  }
+
+  onPlayersReady() {
+    switch (this.state) {
+      case GameState.ExplainRules:
+        this.state = GameState.DrawingPhase;
+        break;
+      default:
+        throw 'Unexpected state change!'
+    }
+    setTimeout(() => this.broadcastGameDataToPlayers(), 500);
   }
 
   newStroke(socket: SocketIO.Socket, data: any) {
@@ -60,6 +76,8 @@ class SfArtistGame extends Game {
   serialize() {
     return {
       gameId: GameEnum.SfArtist,
+      playersReady: this.playersReady,
+      spectators: this.spectators,
       state: this.state,
     };
   }

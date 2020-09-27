@@ -20,9 +20,7 @@ function RulesView() {
 
   const { includeAccomplice, includeWitness, playersReady } = gameData;
 
-  const onReady = () => {
-    socket.emit('playerAction', { action: 'ready' });
-  };
+  const onReady = () => socket.emit('playerAction', { action: 'ready' });
 
   const togglePlayWithWitness = () => {
     socket.emit('playerAction', {

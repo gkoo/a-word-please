@@ -17,6 +17,7 @@ abstract class Game {
   players: object;
   playerClass: any;
   playerOrder: Array<string>;
+  playersReady?: { [playerId: string]: boolean };
   spectators: { [playerId: string]: Player };
   state: number;
 
@@ -52,6 +53,23 @@ abstract class Game {
     const playerIds = this.getConnectedPlayers().map(player => player.id);
     this.playerOrder = _.shuffle(playerIds);
     this.activePlayerId = this.playerOrder[0];
+  }
+
+  playerReady(playerId) {
+    this.playersReady[playerId] = true;
+    this.broadcastGameDataToPlayers();
+
+    if (Object.keys(this.playersReady).length < this.getConnectedPlayers().length) {
+      return;
+    }
+
+    // Everyone is ready!
+    this.onPlayersReady();
+    this.playersReady = {};
+  }
+
+  onPlayersReady() {
+    throw new Error('onPlayersReady not implemented!');
   }
 
   advancePlayerTurn() {

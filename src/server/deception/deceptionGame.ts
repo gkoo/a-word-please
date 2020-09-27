@@ -98,7 +98,6 @@ class DeceptionGame extends Game {
   newSceneTile?: Tile;
   oldSceneTile?: Tile;
   players: { [id: string]: DeceptionPlayer };
-  playersReady?: { [playerId: string]: boolean };
   presentationSecondsLeft: number | undefined;
   roundNum: number;
   sceneTileDeck: Deck;
@@ -313,16 +312,7 @@ class DeceptionGame extends Game {
     }
   }
 
-  playerReady(playerId) {
-    this.playersReady[playerId] = true;
-    this.broadcastGameDataToPlayers();
-
-    if (Object.keys(this.playersReady).length < this.getConnectedPlayers().length) {
-      return;
-    }
-
-    // Everyone is ready!
-    this.playersReady = {};
+  onPlayersReady() {
     switch (this.state) {
       case GameState.ExplainRules:
         this.dealCards();

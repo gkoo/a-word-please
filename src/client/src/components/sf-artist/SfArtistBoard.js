@@ -16,14 +16,16 @@ import {
   connectedPlayersSelector,
   gameDataSelector,
   gameStateSelector,
-  userPreferencesSelector,
   usersSelector,
 } from '../../store/selectors';
 
 function SfArtistBoard() {
   const connectedPlayers = useSelector(connectedPlayersSelector);
+  const gameData = useSelector(gameDataSelector);
   const gameState = useSelector(gameStateSelector);
   const users = useSelector(usersSelector);
+
+  const { playersReady } = gameData;
 
   const {
     ExplainRules,
@@ -31,6 +33,11 @@ function SfArtistBoard() {
     VotingPhase,
     Results,
   } = GameState;
+
+  const showReadyCheckmarks = [
+    ExplainRules,
+  ].includes(gameState);
+
   return (
     <Row>
       <Col sm={8} md={9} className='main-panel py-5'>
@@ -57,6 +64,7 @@ function SfArtistBoard() {
           connectedPlayers.filter(player => player.connected).map(player =>
             <div key={player.id}>
               <PlayerCheckboxLabel
+                checked={showReadyCheckmarks && !!playersReady[player.id]}
                 player={player}
               />
             </div>
