@@ -1,5 +1,16 @@
 import Game, { GameEnum } from '../game';
 
+export enum GameState {
+  Pending,
+  TurnEnd,
+  GameEnd,
+  // (optional) Explain the rules to first time players
+  ExplainRules,
+  DrawingPhase,
+  VotingPhase,
+  Results,
+}
+
 class SfArtistGame extends Game {
   allStrokes: Array<object>;
   roomCode: string;
@@ -16,7 +27,11 @@ class SfArtistGame extends Game {
   }
 
   newGame() {
+    this.state = GameState.ExplainRules;
     this.broadcastGameDataToPlayers();
+  }
+
+  assignRoles() {
   }
 
   handlePlayerAction(socket: SocketIO.Socket, data: { [key: string]: any }) {
@@ -45,6 +60,7 @@ class SfArtistGame extends Game {
   serialize() {
     return {
       gameId: GameEnum.SfArtist,
+      state: this.state,
     };
   }
 }

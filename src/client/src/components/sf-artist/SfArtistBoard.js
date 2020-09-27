@@ -1,109 +1,70 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 
-import Button from 'react-bootstrap/Button';
-import { fabric } from 'fabric';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
-import { socketSelector } from '../../store/selectors';
+import DrawingPhaseView from './DrawingPhaseView';
+import ExplainRulesView from './ExplainRulesView';
+import LeaderPanel from '../LeaderPanel';
+import ResultsView from './ResultsView';
+import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
+import VotingPhaseView from './VotingPhaseView';
+import SpectatorList from '../common/SpectatorList';
+import { GameState } from '../../constants/sfArtist';
+import {
+  connectedPlayersSelector,
+  gameDataSelector,
+  gameStateSelector,
+  userPreferencesSelector,
+  usersSelector,
+} from '../../store/selectors';
 
 function SfArtistBoard() {
-  const [canvas, setCanvas] = useState(null);
-  const [lastPath, setLastPath] = useState(null);
-  const [drawingModeEnabled, setDrawingModeEnabled] = useState(false);
-  const canvasRef = useRef(null);
+  const connectedPlayers = useSelector(connectedPlayersSelector);
+  const gameState = useSelector(gameStateSelector);
+  const users = useSelector(usersSelector);
 
-  const socket = useSelector(socketSelector);
-
-  useEffect(() => {
-    if (!socket) { return; }
-    if (!canvas) { return; }
-
-    const handleNewStroke = (data) => {
-      const path = new fabric.Path(data, {
-        fill: 'transparent',
-        strokeWidth: 1,
-        stroke: 'black',
-      });
-
-      canvas.add(path);
-    };
-
-    socket.on('newStroke', handleNewStroke);
-
-    return () => {
-      socket.removeAllListeners('newStroke');
-    };
-  }, [socket, canvas]);
-
-  useEffect(() => {
-    if (!socket) { return; }
-    const canvasEl = canvasRef.current;
-
-    if (!canvasEl) { return; }
-
-    const fabricCanvas = new fabric.Canvas(canvasEl, {
-      backgroundColor: '#fff',
-      hoverCursor: 'arrow',
-    });
-    setCanvas(fabricCanvas);
-  }, [canvasRef, socket]);
-
-  useEffect(() => {
-    if (!socket) { return; }
-    if (!canvas) { return; }
-
-    canvas.on('path:created', (evt) => {
-      // send JSON.stringify(evt.path).path
-      setLastPath(evt.path.toObject().path);
-      evt.path.set('selectable', false);
-
-      setTimeout(() => {
-        canvas.isDrawingMode = false;
-        setDrawingModeEnabled(false);
-      }, 50);
-
-      socket.emit('playerAction', {
-        action: 'newStroke',
-        path: evt.path.toObject().path,
-      });
-    });
-  }, [socket, canvas]);
-
-  const addPath = () => {
-    const path = new fabric.Path(lastPath, {
-      fill: 'transparent',
-      strokeWidth: 1,
-      stroke: 'black',
-    });
-    canvas.add(path);
-  };
-
-  const clearCanvas = () => {
-    canvas.clear();
-    canvas.setBackgroundColor('#fff');
-  };
-
-  const toggleDrawingMode = () => {
-    canvas.isDrawingMode = !drawingModeEnabled;
-    setDrawingModeEnabled(!drawingModeEnabled);
-  };
-
+  const {
+    ExplainRules,
+    DrawingPhase,
+    VotingPhase,
+    Results,
+  } = GameState;
   return (
-    <div>
-      <h1>SF Artist</h1>
-      <div style={{ border: '1px solid #00f' }}>
-        <canvas
-          id='c'
-          width='300'
-          height='300'
-          ref={canvasRef}
-        />
-      </div>
-      <p>Drawing mode is: {drawingModeEnabled ? 'on' : 'off'}</p>
-      <Button onClick={toggleDrawingMode}>Toggle Drawing Mode</Button>
-      <Button onClick={clearCanvas}>Clear Canvas</Button>
-      <Button onClick={addPath}>Add Path</Button>
-    </div>
+    <Row>
+      <Col sm={8} md={9} className='main-panel py-5'>
+        {
+          gameState === ExplainRules && <ExplainRulesView />
+        }
+        {
+          gameState === DrawingPhase && <DrawingPhaseView />
+        }
+        {
+          gameState === VotingPhase && <VotingPhaseView />
+        }
+        {
+          gameState === Results && <ResultsView />
+        }
+      </Col>
+      <Col sm={4} md={3} className='main-panel text-center py-5'>
+        <div className='mb-4'>
+          <LeaderPanel numUsers={Object.keys(users).length}/>
+        </div>
+
+        <h3><u>Players</u></h3>
+        {
+          connectedPlayers.filter(player => player.connected).map(player =>
+            <div key={player.id}>
+              <PlayerCheckboxLabel
+                player={player}
+              />
+            </div>
+          )
+        }
+        <SpectatorList />
+      </Col>
+    </Row>
   );
 }
 
