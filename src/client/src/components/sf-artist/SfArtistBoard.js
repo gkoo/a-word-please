@@ -18,6 +18,16 @@ function SfArtistBoard() {
     if (!socket) { return; }
     if (!canvas) { return; }
 
+    const handleNewStroke = (data) => {
+      const path = new fabric.Path(data, {
+        fill: 'transparent',
+        strokeWidth: 1,
+        stroke: 'black',
+      });
+
+      canvas.add(path);
+    };
+
     socket.on('newStroke', handleNewStroke);
 
     return () => {
@@ -39,25 +49,25 @@ function SfArtistBoard() {
   }, [canvasRef, socket]);
 
   useEffect(() => {
+    if (!socket) { return; }
     if (!canvas) { return; }
-    canvas.on('path:created', onPathCreated);
-  }, [canvas]);
 
-  const onPathCreated = (evt) => {
-    // send JSON.stringify(evt.path).path
-    setLastPath(evt.path.toObject().path);
-    evt.path.set('selectable', false);
+    canvas.on('path:created', (evt) => {
+      // send JSON.stringify(evt.path).path
+      setLastPath(evt.path.toObject().path);
+      evt.path.set('selectable', false);
 
-    setTimeout(() => {
-      canvas.isDrawingMode = false;
-      setDrawingModeEnabled(false);
-    }, 50);
+      setTimeout(() => {
+        canvas.isDrawingMode = false;
+        setDrawingModeEnabled(false);
+      }, 50);
 
-    socket.emit('playerAction', {
-      action: 'newStroke',
-      path: evt.path.toObject().path,
+      socket.emit('playerAction', {
+        action: 'newStroke',
+        path: evt.path.toObject().path,
+      });
     });
-  };
+  }, [socket, canvas]);
 
   const addPath = () => {
     const path = new fabric.Path(lastPath, {
@@ -76,16 +86,6 @@ function SfArtistBoard() {
   const toggleDrawingMode = () => {
     canvas.isDrawingMode = !drawingModeEnabled;
     setDrawingModeEnabled(!drawingModeEnabled);
-  };
-
-  const handleNewStroke = (data) => {
-    const path = new fabric.Path(data, {
-      fill: 'transparent',
-      strokeWidth: 1,
-      stroke: 'black',
-    });
-
-    canvas.add(path);
   };
 
   return (
