@@ -126,7 +126,7 @@ abstract class Game {
 
   abstract nextTurn(): void;
 
-  abstract handlePlayerAction(socketId: string, data: { [key: string]: any }): void;
+  abstract handlePlayerAction(socket: SocketIO.Socket, data: { [key: string]: any }): void;
 
   endGame() {
     this.state = Game.STATE_GAME_END;

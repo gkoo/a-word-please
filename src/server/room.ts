@@ -154,7 +154,7 @@ class Room {
         this.game = new DeceptionGame(this.broadcastToRoom);
         break;
       case GameEnum.SfArtist:
-        this.game = new SfArtistGame(this.broadcastToRoom);
+        this.game = new SfArtistGame(this.broadcastToRoom, this.roomCode);
         break;
       default:
         throw 'Unrecognized game type chosen';
@@ -167,13 +167,13 @@ class Room {
     this.game.nextTurn();
   }
 
-  handlePlayerAction(socket, data) {
+  handlePlayerAction(socket: SocketIO.Socket, data) {
     if (!this.game) { return; }
     if (data.action === 'backToLobby') {
       this.backToLobby();
       return;
     }
-    this.game.handlePlayerAction(socket.id, data);
+    this.game.handlePlayerAction(socket, data);
   }
 
   endGame() {

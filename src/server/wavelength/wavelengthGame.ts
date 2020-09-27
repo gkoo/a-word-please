@@ -116,7 +116,9 @@ class WavelengthGame extends Game {
     this.broadcastGameDataToPlayers();
   }
 
-  handlePlayerAction(playerId, data) {
+  handlePlayerAction(socket: SocketIO.Socket, data) {
+    const playerId = socket.id;
+
     switch (data.action) {
       case 'submitClue':
         return this.receiveClue(data.clue);

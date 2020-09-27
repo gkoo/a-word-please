@@ -268,7 +268,9 @@ class DeceptionGame extends Game {
     });
   }
 
-  handlePlayerAction(playerId, data) {
+  handlePlayerAction(socket: SocketIO.Socket, data) {
+    const playerId = socket.id
+
     switch (data.action) {
       case 'ready':
         return this.playerReady(playerId);

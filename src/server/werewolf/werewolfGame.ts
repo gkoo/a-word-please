@@ -113,8 +113,10 @@ class WerewolfGame extends Game {
     }
   }
 
-  handlePlayerAction(playerId, data) {
+  handlePlayerAction(socket: SocketIO.Socket, data) {
+    const playerId = socket.id;
     const currPlayer = this.players[playerId];
+
     switch (data.action) {
       case 'setRoleSelection':
         return this.setRoleIds(data.roleIds);
