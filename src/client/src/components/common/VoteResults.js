@@ -12,14 +12,14 @@ const renderVotedPlayerRow = (suspectPlayer, voterPlayers, isEliminated, renderS
   const shouldShowSkulls = isEliminated && renderSkulls;
 
   return (
-    <ListGroup.Item variant={isEliminated ? 'danger' : ''}>
+    <ListGroup.Item key={suspectPlayer.id} variant={isEliminated ? 'danger' : ''}>
       <h3>{shouldShowSkulls && '💀 '}{suspectPlayer.name}{shouldShowSkulls && ' 💀'}</h3>
-      {voterPlayers.map(voter => <Badge>{voter.name}</Badge>)}
+      {voterPlayers.map(voter => <Badge key={voter.id}>{voter.name}</Badge>)}
     </ListGroup.Item>
   );
 };
 
-function VoteResultTable({ voteMap, eliminatedPlayers, renderSkulls }) {
+function VoteResults({ voteMap, eliminatedPlayers, renderSkulls }) {
   const players = useSelector(playersSelector);
 
   const talliedVotes = {}
@@ -41,7 +41,6 @@ function VoteResultTable({ voteMap, eliminatedPlayers, renderSkulls }) {
     playerId => talliedVotes[playerId] === highestNumVotes
   );
 
-  console.log(highestVotedPlayers);
   return (
     <ListGroup className='text-left'>
       {
@@ -61,4 +60,4 @@ function VoteResultTable({ voteMap, eliminatedPlayers, renderSkulls }) {
   );
 }
 
-export default VoteResultTable;
+export default VoteResults;

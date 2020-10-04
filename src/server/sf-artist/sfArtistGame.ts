@@ -12,7 +12,6 @@ export enum GameState {
   DisplaySubject,
   DrawingPhase,
   VotingPhase,
-  Results,
 }
 
 const TURNS_PER_PLAYER = 2;
@@ -26,8 +25,9 @@ class SfArtistGame extends Game {
   allStrokes: Array<object>;
   entryPlayerId: string; // the player whose subject entry we used
   fakeArtistId: string;
-  roomCode: string;
   playerSubmittedEntries: object;
+  revealFake: boolean;
+  roomCode: string;
   subjectEntry: SubjectEntry;
   totalTurns: number;
   turnNum: number;
@@ -46,6 +46,7 @@ class SfArtistGame extends Game {
   }
 
   newGame() {
+    this.revealFake = false;
     this.turnNum = 0;
     this.playersReady = {};
     this.votes = {};
@@ -72,6 +73,10 @@ class SfArtistGame extends Game {
         return this.newStroke(socket, data);
       case 'vote':
         return this.vote(playerId, data);
+      case 'revealFake':
+        this.revealFake = true;
+        this.broadcastGameDataToPlayers();
+        return;
       default:
         throw new Error(`Unrecognized player action: ${data.action}!`);
     }
@@ -166,7 +171,7 @@ class SfArtistGame extends Game {
   }
 
   showResults() {
-    this.state = GameState.Results;
+    this.state = GameState.GameEnd;
     this.broadcastGameDataToPlayers();
   }
 
@@ -177,6 +182,7 @@ class SfArtistGame extends Game {
       gameId: GameEnum.SfArtist,
       players: this.players,
       playersReady: this.playersReady,
+      revealFake: this.revealFake,
       spectators: this.spectators,
       state: this.state,
       subjectEntry: this.subjectEntry,

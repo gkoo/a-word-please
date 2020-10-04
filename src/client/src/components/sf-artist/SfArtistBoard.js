@@ -30,12 +30,12 @@ function SfArtistBoard() {
   const { playersReady } = gameData;
 
   const {
+    GameEnd,
     ExplainRules,
     EnterSubjectPhase,
     DisplaySubject,
     DrawingPhase,
     VotingPhase,
-    Results,
   } = GameState;
 
   const showReadyCheckmarks = [
@@ -66,7 +66,7 @@ function SfArtistBoard() {
             gameState === VotingPhase && <VotingPhaseView />
           }
           {
-            gameState === Results && <ResultsView />
+            gameState === GameEnd && <ResultsView />
           }
         </Col>
         <Col sm={4} md={3} className='main-panel text-center py-5'>

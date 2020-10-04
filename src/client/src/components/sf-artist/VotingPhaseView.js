@@ -1,22 +1,14 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import Voting from '../common/Voting';
+import VoteWidget from '../common/VoteWidget';
 
 import {
-  currPlayerSelector,
-  currUserIsSpectatorSelector,
-  gameDataSelector,
   socketSelector,
 } from '../../store/selectors';
 
 function VotingPhaseView() {
-  const currPlayer = useSelector(currPlayerSelector);
-  const currUserIsSpectator = useSelector(currUserIsSpectatorSelector);
   const socket = useSelector(socketSelector);
-  const gameData = useSelector(gameDataSelector);
-
-  const { votes } = gameData;
 
   const onVote = (playerId) => {
     socket.emit('playerAction', {
@@ -27,15 +19,8 @@ function VotingPhaseView() {
 
   return (
     <>
-      <h1>We're voting</h1>
-      {
-        !votes[currPlayer?.id] &&
-          <Voting onVote={onVote}/>
-      }
-      {
-        !currUserIsSpectator && votes[currPlayer?.id] &&
-          <em>Waiting for others...</em>
-      }
+      <p>Vote for who you think is the fake artist!</p>
+      <VoteWidget onVote={onVote}/>
     </>
   );
 }

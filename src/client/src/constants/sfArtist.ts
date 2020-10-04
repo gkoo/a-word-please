@@ -7,5 +7,4 @@ export enum GameState {
   DisplaySubject,
   DrawingPhase,
   VotingPhase,
-  Results,
 };

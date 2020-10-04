@@ -328,3 +328,9 @@
     max-width: 800px;
   }
 }
+
+/* Fake Artist */
+
+.canvas-container {
+  margin: 0 auto;
+}
