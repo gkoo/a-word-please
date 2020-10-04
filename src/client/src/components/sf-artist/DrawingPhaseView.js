@@ -1,19 +1,30 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import Button from 'react-bootstrap/Button';
 import { fabric } from 'fabric';
 
-import { socketSelector } from '../../store/selectors';
+import SubjectCards from './SubjectCards';
+import {
+  activePlayerSelector,
+  currPlayerIsActivePlayerSelector,
+  gameDataSelector,
+  socketSelector,
+} from '../../store/selectors';
 
 function DrawingPhase() {
   const [canvas, setCanvas] = useState(null);
-  const [lastPath, setLastPath] = useState(null);
-  const [drawingModeEnabled, setDrawingModeEnabled] = useState(false);
+
   const canvasRef = useRef(null);
+
+  const activePlayer = useSelector(activePlayerSelector);
+  const currPlayerIsActivePlayer = useSelector(currPlayerIsActivePlayerSelector);
+  const gameData = useSelector(gameDataSelector);
 
   const socket = useSelector(socketSelector);
 
+  const { turnNum, totalTurns } = gameData;
+
+  // Receive path data from server and add it to canvas
   useEffect(() => {
     if (!socket) { return; }
     if (!canvas) { return; }
@@ -21,6 +32,7 @@ function DrawingPhase() {
     const handleNewStroke = (data) => {
       const path = new fabric.Path(data, {
         fill: 'transparent',
+        selectable: false,
         strokeWidth: 1,
         stroke: 'black',
       });
@@ -35,6 +47,7 @@ function DrawingPhase() {
     };
   }, [socket, canvas]);
 
+  // Set up the fabric Canvas object
   useEffect(() => {
     if (!socket) { return; }
     const canvasEl = canvasRef.current;
@@ -48,18 +61,18 @@ function DrawingPhase() {
     setCanvas(fabricCanvas);
   }, [canvasRef, socket]);
 
+  // Handle new path data created locally and send to server
   useEffect(() => {
     if (!socket) { return; }
     if (!canvas) { return; }
 
     canvas.on('path:created', (evt) => {
       // send JSON.stringify(evt.path).path
-      setLastPath(evt.path.toObject().path);
       evt.path.set('selectable', false);
 
+      // Issues having the canvas actually add the path if we disable drawing mode too early
       setTimeout(() => {
         canvas.isDrawingMode = false;
-        setDrawingModeEnabled(false);
       }, 50);
 
       socket.emit('playerAction', {
@@ -69,29 +82,16 @@ function DrawingPhase() {
     });
   }, [socket, canvas]);
 
-  const addPath = () => {
-    const path = new fabric.Path(lastPath, {
-      fill: 'transparent',
-      strokeWidth: 1,
-      stroke: 'black',
-    });
-    canvas.add(path);
-  };
-
-  const clearCanvas = () => {
-    canvas.clear();
-    canvas.setBackgroundColor('#fff');
-  };
-
-  const toggleDrawingMode = () => {
-    canvas.isDrawingMode = !drawingModeEnabled;
-    setDrawingModeEnabled(!drawingModeEnabled);
-  };
+  // Toggle drawing mode based on if it is the current player's turn
+  useEffect(() => {
+    if (!canvas) { return; }
+    canvas.isDrawingMode = currPlayerIsActivePlayer;
+  }, [currPlayerIsActivePlayer, canvas]);
 
   return (
-    <div>
-      <h1>SF Artist</h1>
-      <div style={{ border: '1px solid #00f' }}>
+    <>
+      <SubjectCards hideFromFake={true}/>
+      <div style={{ border: '1px solid #00f' }} className='text-center my-5'>
         <canvas
           id='c'
           width='300'
@@ -99,11 +99,16 @@ function DrawingPhase() {
           ref={canvasRef}
         />
       </div>
-      <p>Drawing mode is: {drawingModeEnabled ? 'on' : 'off'}</p>
-      <Button onClick={toggleDrawingMode}>Toggle Drawing Mode</Button>
-      <Button onClick={clearCanvas}>Clear Canvas</Button>
-      <Button onClick={addPath}>Add Path</Button>
-    </div>
+      <h2 className='text-center my-2'>{activePlayer?.name}'s turn</h2>
+      {
+        currPlayerIsActivePlayer &&
+          <p>
+            It's your turn to draw! You can only draw <strong>one</strong> contiguous brushstroke. Once
+            you have added that brushstroke, your turn will be over.
+          </p>
+      }
+      <p>Turns left: {totalTurns - turnNum}</p>
+    </>
   );
 }
 

@@ -1,4 +1,5 @@
 import Game, { GameEnum } from '../game';
+import Deck from '../deck';
 
 export enum GameState {
   Pending,
@@ -6,16 +7,29 @@ export enum GameState {
   GameEnd,
   // (optional) Explain the rules to first time players
   ExplainRules,
-  EnterPhrasesPhase,
+  EnterSubjectsPhase,
+  DisplaySubject,
   DrawingPhase,
   VotingPhase,
   Results,
 }
 
+const TURNS_PER_PLAYER = 2;
+
+interface SubjectEntry {
+  category: string,
+  subject: string,
+}
+
 class SfArtistGame extends Game {
   allStrokes: Array<object>;
+  entryPlayerId: string; // the player whose subject entry we used
+  fakeArtistId: string;
   roomCode: string;
   playerSubmittedEntries: object;
+  subjectEntry: SubjectEntry;
+  totalTurns: number;
+  turnNum: number;
 
   constructor(broadcastToRoom, roomCode) {
     super(broadcastToRoom);
@@ -30,6 +44,7 @@ class SfArtistGame extends Game {
   }
 
   newGame() {
+    this.turnNum = 0;
     this.playersReady = {};
     this.state = GameState.ExplainRules;
     this.broadcastGameDataToPlayers();
@@ -60,9 +75,14 @@ class SfArtistGame extends Game {
   onPlayersReady() {
     switch (this.state) {
       case GameState.ExplainRules:
-        this.state = GameState.EnterPhrasesPhase;
+        this.state = GameState.EnterSubjectsPhase;
         break;
-      case GameState.EnterPhrasesPhase:
+      case GameState.EnterSubjectsPhase:
+        this.assignRoles();
+        this.chooseSubject();
+        this.state = GameState.DisplaySubject;
+        break;
+      case GameState.DisplaySubject:
         this.enterDrawingPhase();
         break;
       default:
@@ -75,7 +95,7 @@ class SfArtistGame extends Game {
     const maxLength = 50;
     this.playerSubmittedEntries[playerId] = {
       subject: subject.substring(0, maxLength),
-      category: cateogry.substring(0, maxLength),
+      category: category.substring(0, maxLength),
     };
     this.playerReady(playerId);
   }
@@ -83,23 +103,21 @@ class SfArtistGame extends Game {
   // Choose what everyone's going to draw, out of the entries submitted by the players
   chooseSubject() {
     const realArtistIds = Object.keys(this.playerSubmittedEntries).filter(
-      playerId => playerId !== this.fakeArtist.id
+      playerId => playerId !== this.fakeArtistId
     );
-    const artistIdDeck = new Deck(artistDeck);
+    const realArtistIdDeck = new Deck(realArtistIds);
 
     // The player ID whose submitted entry we used. We'll use this later to ask them to replace
     // their entry with a new one.
-    this.entryPlayerId = artistIdDeck.drawCard();
+    this.entryPlayerId = realArtistIdDeck.drawCard();
 
     this.subjectEntry = this.playerSubmittedEntries[this.entryPlayerId];
   }
 
   enterDrawingPhase() {
     this.determinePlayerOrder();
-    this.assignRoles();
-    this.chooseSubject();
+    this.totalTurns = this.getConnectedPlayers().length * TURNS_PER_PLAYER;
     this.state = GameState.DrawingPhase;
-    this.broadcastGameDataToPlayers();
   }
 
   newStroke(socket: SocketIO.Socket, data: any) {
@@ -118,12 +136,24 @@ class SfArtistGame extends Game {
   }
 
   nextTurn() {
-    this.advancePlayerTurn();
+    // Enter voting phase after everyone has had two turns
+    if (++this.turnNum >= this.totalTurns) {
+      this.enterVotingPhase();
+    } else {
+      this.advancePlayerTurn();
+    }
+
+    this.broadcastGameDataToPlayers();
+  }
+
+  enterVotingPhase() {
+    this.state = GameState.VotingPhase;
     this.broadcastGameDataToPlayers();
   }
 
   serialize() {
     return {
+      activePlayerId: this.activePlayerId,
       fakeArtistId: this.fakeArtistId,
       gameId: GameEnum.SfArtist,
       players: this.players,
@@ -131,6 +161,8 @@ class SfArtistGame extends Game {
       spectators: this.spectators,
       state: this.state,
       subjectEntry: this.subjectEntry,
+      turnNum: this.turnNum,
+      totalTurns: this.totalTurns,
     };
   }
 }

@@ -10,13 +10,14 @@ import {
   socketSelector,
 } from '../../store/selectors';
 
-function EnterPhrasesView() {
+function EnterSubjectView() {
   const [subject, setSubject] = useState(null);
   const [category, setCategory] = useState(null);
 
   const socket = useSelector(socketSelector);
 
-  const onSubmit = () => {
+  const onSubmit = (e) => {
+    e.preventDefault();
     socket.emit('playerAction', {
       action: 'submitSubject',
       subject,
@@ -41,6 +42,7 @@ function EnterPhrasesView() {
             </Form.Group>
 
             <Button type='submit'>
+              {/* TODO: Change label after click */}
               Submit
             </Button>
           </Form>
@@ -50,4 +52,4 @@ function EnterPhrasesView() {
   );
 }
 
-export default EnterPhrasesView;
+export default EnterSubjectView;

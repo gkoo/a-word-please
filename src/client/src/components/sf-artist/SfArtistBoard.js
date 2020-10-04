@@ -4,8 +4,9 @@ import { useSelector } from 'react-redux';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
+import DisplaySubjectView from './DisplaySubjectView';
 import DrawingPhaseView from './DrawingPhaseView';
-import EnterPhrasesView from './EnterPhrasesView';
+import EnterSubjectView from './EnterSubjectView';
 import ExplainRulesView from './ExplainRulesView';
 import LeaderPanel from '../LeaderPanel';
 import ResultsView from './ResultsView';
@@ -30,7 +31,8 @@ function SfArtistBoard() {
 
   const {
     ExplainRules,
-    EnterPhrasesPhase,
+    EnterSubjectPhase,
+    DisplaySubject,
     DrawingPhase,
     VotingPhase,
     Results,
@@ -38,18 +40,23 @@ function SfArtistBoard() {
 
   const showReadyCheckmarks = [
     ExplainRules,
+    EnterSubjectPhase,
+    DisplaySubject,
   ].includes(gameState);
 
   return (
     <>
       <Row>
         <Col sm={8} md={9} className='main-panel py-5'>
-          <h1>A Fake Artist in San Francisco</h1>
+          <h3>A Fake Artist in San Francisco</h3>
           {
             gameState === ExplainRules && <ExplainRulesView />
           }
           {
-            gameState === EnterPhrasesPhase && <EnterPhrasesView />
+            gameState === EnterSubjectPhase && <EnterSubjectView />
+          }
+          {
+            gameState === DisplaySubject && <DisplaySubjectView />
           }
           {
             gameState === DrawingPhase && <DrawingPhaseView />
