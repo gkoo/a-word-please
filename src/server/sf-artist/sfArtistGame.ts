@@ -1,5 +1,6 @@
 import Game, { GameEnum } from '../game';
 import Deck from '../deck';
+import { resolveVotes } from '../utils';
 
 export enum GameState {
   Pending,
@@ -30,6 +31,7 @@ class SfArtistGame extends Game {
   subjectEntry: SubjectEntry;
   totalTurns: number;
   turnNum: number;
+  votes: object;
 
   constructor(broadcastToRoom, roomCode) {
     super(broadcastToRoom);
@@ -46,6 +48,7 @@ class SfArtistGame extends Game {
   newGame() {
     this.turnNum = 0;
     this.playersReady = {};
+    this.votes = {};
     this.state = GameState.ExplainRules;
     this.broadcastGameDataToPlayers();
   }
@@ -67,6 +70,8 @@ class SfArtistGame extends Game {
         return this.setPlayerEntry(playerId, data.subject, data.category);
       case 'newStroke':
         return this.newStroke(socket, data);
+      case 'vote':
+        return this.vote(playerId, data);
       default:
         throw new Error(`Unrecognized player action: ${data.action}!`);
     }
@@ -84,6 +89,9 @@ class SfArtistGame extends Game {
         break;
       case GameState.DisplaySubject:
         this.enterDrawingPhase();
+        break;
+      case GameState.VotingPhase:
+        this.showResults();
         break;
       default:
         throw 'Unexpected state change!'
@@ -151,6 +159,17 @@ class SfArtistGame extends Game {
     this.broadcastGameDataToPlayers();
   }
 
+  vote(playerId: string, data) {
+    this.votes[playerId] = data.votedPlayerId;
+    this.playerReady(playerId);
+    this.broadcastGameDataToPlayers();
+  }
+
+  showResults() {
+    this.state = GameState.Results;
+    this.broadcastGameDataToPlayers();
+  }
+
   serialize() {
     return {
       activePlayerId: this.activePlayerId,
@@ -163,6 +182,7 @@ class SfArtistGame extends Game {
       subjectEntry: this.subjectEntry,
       turnNum: this.turnNum,
       totalTurns: this.totalTurns,
+      votes: this.votes,
     };
   }
 }

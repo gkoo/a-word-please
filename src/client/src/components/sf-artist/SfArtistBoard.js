@@ -42,6 +42,7 @@ function SfArtistBoard() {
     ExplainRules,
     EnterSubjectPhase,
     DisplaySubject,
+    VotingPhase,
   ].includes(gameState);
 
   return (

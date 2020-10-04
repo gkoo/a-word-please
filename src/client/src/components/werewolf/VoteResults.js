@@ -115,7 +115,10 @@ function VoteResults() {
                 voterIds.push(voterId);
               }
             });
+
+            // Voters who voted for this player
             const voters = voterIds.map(voterId => players[voterId]);
+
             return renderVotedPlayerRow(players[suspectId], voters, isEliminated);
           })
         }
