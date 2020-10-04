@@ -5,6 +5,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 import DrawingPhaseView from './DrawingPhaseView';
+import EnterPhrasesView from './EnterPhrasesView';
 import ExplainRulesView from './ExplainRulesView';
 import LeaderPanel from '../LeaderPanel';
 import ResultsView from './ResultsView';
@@ -29,6 +30,7 @@ function SfArtistBoard() {
 
   const {
     ExplainRules,
+    EnterPhrasesPhase,
     DrawingPhase,
     VotingPhase,
     Results,
@@ -39,40 +41,46 @@ function SfArtistBoard() {
   ].includes(gameState);
 
   return (
-    <Row>
-      <Col sm={8} md={9} className='main-panel py-5'>
-        {
-          gameState === ExplainRules && <ExplainRulesView />
-        }
-        {
-          gameState === DrawingPhase && <DrawingPhaseView />
-        }
-        {
-          gameState === VotingPhase && <VotingPhaseView />
-        }
-        {
-          gameState === Results && <ResultsView />
-        }
-      </Col>
-      <Col sm={4} md={3} className='main-panel text-center py-5'>
-        <div className='mb-4'>
-          <LeaderPanel numUsers={Object.keys(users).length}/>
-        </div>
+    <>
+      <Row>
+        <Col sm={8} md={9} className='main-panel py-5'>
+          <h1>A Fake Artist in San Francisco</h1>
+          {
+            gameState === ExplainRules && <ExplainRulesView />
+          }
+          {
+            gameState === EnterPhrasesPhase && <EnterPhrasesView />
+          }
+          {
+            gameState === DrawingPhase && <DrawingPhaseView />
+          }
+          {
+            gameState === VotingPhase && <VotingPhaseView />
+          }
+          {
+            gameState === Results && <ResultsView />
+          }
+        </Col>
+        <Col sm={4} md={3} className='main-panel text-center py-5'>
+          <div className='mb-4'>
+            <LeaderPanel numUsers={Object.keys(users).length}/>
+          </div>
 
-        <h3><u>Players</u></h3>
-        {
-          connectedPlayers.filter(player => player.connected).map(player =>
-            <div key={player.id}>
-              <PlayerCheckboxLabel
-                checked={showReadyCheckmarks && !!playersReady[player.id]}
-                player={player}
-              />
-            </div>
-          )
-        }
-        <SpectatorList />
-      </Col>
-    </Row>
+          <h3><u>Players</u></h3>
+          {
+            connectedPlayers.filter(player => player.connected).map(player =>
+              <div key={player.id}>
+                <PlayerCheckboxLabel
+                  checked={showReadyCheckmarks && !!playersReady[player.id]}
+                  player={player}
+                />
+              </div>
+            )
+          }
+          <SpectatorList />
+        </Col>
+      </Row>
+    </>
   );
 }
 

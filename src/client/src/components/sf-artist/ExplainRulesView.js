@@ -1,40 +1,24 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 
-import Button from 'react-bootstrap/Button';
-
-import {
-  currPlayerSelector,
-  currUserIsSpectatorSelector,
-  gameDataSelector,
-  socketSelector,
-} from '../../store/selectors';
+import ReadyButton from '../common/ReadyButton';
 
 function ExplainRules() {
-  const currPlayer = useSelector(currPlayerSelector);
-  const currUserIsSpectator = useSelector(currUserIsSpectatorSelector);
-  const gameData = useSelector(gameDataSelector);
-  const socket = useSelector(socketSelector);
-
-  const { playersReady } = gameData;
-
-  const onReady = () => socket.emit('playerAction', { action: 'ready' });
-
   return (
-    <div className='text-center'>
-      {
-        !currUserIsSpectator && !playersReady[currPlayer?.id] &&
-          <Button onClick={onReady}>
-            Ready?
-          </Button>
-      }
-      {
-        !currUserIsSpectator && playersReady[currPlayer?.id] &&
-          <Button disabled>
-            Waiting for others...
-          </Button>
-      }
-    </div>
+    <>
+      <p>
+        At the beginning of each game, each player enters a phrase to draw. When the game starts,
+        one phrase is selected at random as the phrase to draw. Each player except one is shown
+        the phrase to draw except for one. That player is the <em>Fake Artist</em> and must try to
+        convince the others that they know the phrase.
+      </p>
+      <p>
+        Players take turns drawing a contiguous stroke onto the canvas to prove that they are not
+        the <em>Fake Artist</em>. After each player has drawn twice, the players vote on who is the
+        <em>Fake Artist</em>. If the <em>Fake Artist</em> is caught, they can still win by guessing
+        what the subject of the drawing was.
+      </p>
+      <ReadyButton/>
+    </>
   );
 }
 

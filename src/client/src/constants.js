@@ -15,7 +15,7 @@ export const GAME_LABELS = {
   [GAME_WEREWOLF]: 'One Night Werewolf',
   [GAME_WAVELENGTH]: 'Wavelength',
   [GAME_DECEPTION]: 'Deception',
-  [GAME_SF_ARTIST]: 'A Struggling Artist',
+  [GAME_SF_ARTIST]: 'A Fake Artist',
 };
 
 export const GAME_STATE_PENDING = 0;
