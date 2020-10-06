@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { fabric } from 'fabric';
 
 import SubjectCards from './SubjectCards';
+import { clearStrokes, saveStroke } from '../../store/actions';
 import {
   activePlayerSelector,
   currPlayerIsActivePlayerSelector,
@@ -15,6 +16,8 @@ function DrawingPhase() {
   const [canvas, setCanvas] = useState(null);
 
   const canvasRef = useRef(null);
+
+  const dispatch = useDispatch();
 
   const activePlayer = useSelector(activePlayerSelector);
   const currPlayerIsActivePlayer = useSelector(currPlayerIsActivePlayerSelector);
@@ -30,6 +33,7 @@ function DrawingPhase() {
     if (!canvas) { return; }
 
     const handleNewStroke = (data) => {
+      dispatch(saveStroke(data));
       const path = new fabric.Path(data, {
         fill: 'transparent',
         selectable: false,
@@ -45,21 +49,21 @@ function DrawingPhase() {
     return () => {
       socket.removeAllListeners('newStroke');
     };
-  }, [socket, canvas]);
+  }, [socket, canvas, dispatch]);
 
   // Set up the fabric Canvas object
   useEffect(() => {
-    if (!socket) { return; }
     const canvasEl = canvasRef.current;
 
     if (!canvasEl) { return; }
 
+    dispatch(clearStrokes());
     const fabricCanvas = new fabric.Canvas(canvasEl, {
       backgroundColor: '#fff',
       hoverCursor: 'arrow',
     });
     setCanvas(fabricCanvas);
-  }, [canvasRef, socket]);
+  }, [canvasRef, dispatch]);
 
   // Handle new path data created locally and send to server
   useEffect(() => {
@@ -75,12 +79,15 @@ function DrawingPhase() {
         canvas.isDrawingMode = false;
       }, 50);
 
+      const pathData = evt.path.toObject().path;
+
       socket.emit('playerAction', {
         action: 'newStroke',
-        path: evt.path.toObject().path,
+        path: pathData,
       });
+      dispatch(saveStroke(pathData));
     });
-  }, [socket, canvas]);
+  }, [socket, canvas, dispatch]);
 
   // Toggle drawing mode based on if it is the current player's turn
   useEffect(() => {
@@ -91,7 +98,7 @@ function DrawingPhase() {
   return (
     <>
       <SubjectCards hideFromFake={true}/>
-      <div style={{ border: '1px solid #00f' }} className='text-center my-5'>
+      <div className='text-center my-5'>
         <canvas
           id='c'
           width='300'

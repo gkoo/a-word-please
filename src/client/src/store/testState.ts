@@ -55,5 +55,6 @@ export default {
   showAboutModal: false,
   showRulesModal: false,
   socket: null,
+  strokes: [],
   userPreferences: {},
 };

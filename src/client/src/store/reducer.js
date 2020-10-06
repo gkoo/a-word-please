@@ -28,6 +28,7 @@ const initialState = {
   showRolesModal: false,
   showRulesModal: false,
   socket: null,
+  strokes: [],
   userPreferences: {},
 };
 
@@ -62,6 +63,12 @@ export default function reducer(state = stateToUse, action) {
       return {
         ...state,
         name: undefined,
+      };
+
+    case actions.CLEAR_STROKE:
+      return {
+        ...state,
+        strokes: [],
       };
 
     case actions.CONNECT_SOCKET:
@@ -270,6 +277,14 @@ export default function reducer(state = stateToUse, action) {
         debugEnabled: (name && name.toLowerCase() === 'gordon') || state.debugEnabled, // >_<
         name,
         isSpectator,
+      };
+
+    case actions.SAVE_STROKE:
+      const strokeData = action.payload;
+
+      return {
+        ...state,
+        strokes: state.strokes.concat([strokeData]),
       };
 
     case actions.SET_ROOM_CODE:

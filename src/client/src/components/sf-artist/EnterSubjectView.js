@@ -17,6 +17,8 @@ function EnterSubjectView() {
   const socket = useSelector(socketSelector);
 
   const onSubmit = (e) => {
+    if (!subject || !category) { return; }
+
     e.preventDefault();
     socket.emit('playerAction', {
       action: 'submitSubject',

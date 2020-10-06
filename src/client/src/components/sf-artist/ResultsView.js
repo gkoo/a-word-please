@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import Button from 'react-bootstrap/Button';
 
 import EndGameButtons from '../common/EndGameButtons';
+import FinalCanvas from './FinalCanvas';
 import VoteResults from '../common/VoteResults';
 
 import {
@@ -29,6 +30,7 @@ function ResultsView() {
 
   return (
     <>
+      <FinalCanvas />
       <VoteResults voteMap={gameData.votes}/>
 
       {

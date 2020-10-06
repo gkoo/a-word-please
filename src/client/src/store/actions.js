@@ -1,5 +1,6 @@
 // Action Types
 export const CLEAR_NAME = 'CLEAR_NAME';
+export const CLEAR_STROKE = 'CLEAR_STROKE';
 export const CONNECT_SOCKET = 'CONNECT_SOCKET';
 export const DISCONNECT_SOCKET = 'DISCONNECT_SOCKET';
 export const DISMISS_ALERT = 'DISMISS_ALERT';
@@ -13,6 +14,7 @@ export const RECEIVE_GAME_DATA = 'RECEIVE_GAME_DATA';
 export const RECEIVE_ROOM_DATA = 'RECEIVE_ROOM_DATA';
 export const RECEIVE_USER_ID = 'RECEIVE_USER_ID';
 export const SAVE_NAME = 'SAVE_NAME';
+export const SAVE_STROKE = 'SAVE_STROKE';
 export const SET_ROOM_CODE = 'SET_ROOM_CODE';
 export const SHOW_ALERT = 'SHOW_ALERT';
 export const TOGGLE_ABOUT_MODAL = 'TOGGLE_ABOUT_MODAL';
@@ -26,6 +28,12 @@ export const USER_DISCONNECT = 'USER_DISCONNECT';
 export function clearName() {
   return {
     type: CLEAR_NAME,
+  }
+}
+
+export function clearStrokes() {
+  return {
+    type: CLEAR_STROKE,
   }
 }
 
@@ -108,6 +116,13 @@ export function saveName({ name, isSpectator }) {
   return {
     payload: { name, isSpectator },
     type: SAVE_NAME,
+  }
+}
+
+export function saveStroke(pathObj) {
+  return {
+    payload: pathObj,
+    type: SAVE_STROKE,
   }
 }
 

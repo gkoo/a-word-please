@@ -210,3 +210,6 @@ export const currPlayerIsScientistSelector = createSelector(
   currPlayerSelector,
   (scientist, currPlayer) => scientist.id === currPlayer?.id,
 );
+
+// SfArtist
+export const strokesSelector = state => state.strokes;

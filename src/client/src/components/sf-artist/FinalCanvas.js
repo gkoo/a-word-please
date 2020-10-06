@@ -1,0 +1,48 @@
+import React, { useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
+
+import { fabric } from 'fabric';
+
+import {
+  strokesSelector,
+} from '../../store/selectors';
+
+function FinalCanvas() {
+  const canvasRef = useRef(null);
+  const strokes = useSelector(strokesSelector);
+
+  useEffect(() => {
+    const canvasEl = canvasRef.current;
+
+    if (!canvasEl) { return; }
+    if (!strokes) { return; }
+
+    const fabricCanvas = new fabric.Canvas(canvasEl, {
+      backgroundColor: '#fff',
+      hoverCursor: 'arrow',
+    });
+
+    strokes.forEach(pathData => {
+      const path = new fabric.Path(pathData, {
+        fill: 'transparent',
+        selectable: false,
+        strokeWidth: 1,
+        stroke: 'black',
+      });
+
+      fabricCanvas.add(path);
+    });
+  }, [canvasRef, strokes]);
+
+  return (
+    <div className='text-center my-5'>
+      <canvas
+        width='300'
+        height='300'
+        ref={canvasRef}
+      />
+    </div>
+  );
+}
+
+export default FinalCanvas;
