@@ -1,6 +1,5 @@
 import Game, { GameEnum } from '../game';
 import Deck from '../deck';
-import { resolveVotes } from '../utils';
 
 export enum GameState {
   Pending,

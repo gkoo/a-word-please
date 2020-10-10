@@ -5,6 +5,7 @@ import { fabric } from 'fabric';
 
 import SubjectCards from './SubjectCards';
 import { clearStrokes, saveStroke } from '../../store/actions';
+import { canvasWidth, canvasHeight } from '../../constants/sfArtist';
 import {
   activePlayerSelector,
   currPlayerIsActivePlayerSelector,
@@ -101,8 +102,8 @@ function DrawingPhase() {
       <div className='text-center my-5'>
         <canvas
           id='c'
-          width='300'
-          height='300'
+          width={canvasWidth}
+          height={canvasHeight}
           ref={canvasRef}
         />
       </div>

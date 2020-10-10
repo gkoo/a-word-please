@@ -13,18 +13,21 @@ import {
 function EnterSubjectView() {
   const [subject, setSubject] = useState(null);
   const [category, setCategory] = useState(null);
+  const [buttonDisabled, setButtonDisabled] = useState(false);
 
   const socket = useSelector(socketSelector);
 
   const onSubmit = (e) => {
+    e.preventDefault();
+
     if (!subject || !category) { return; }
 
-    e.preventDefault();
     socket.emit('playerAction', {
       action: 'submitSubject',
       subject,
       category,
     });
+    setButtonDisabled(true);
   };
 
   return (
@@ -43,7 +46,7 @@ function EnterSubjectView() {
               <Form.Control type='text' onChange={(evt) => setCategory(evt.target.value)}/>
             </Form.Group>
 
-            <Button type='submit'>
+            <Button disabled={buttonDisabled} type='submit'>
               {/* TODO: Change label after click */}
               Submit
             </Button>

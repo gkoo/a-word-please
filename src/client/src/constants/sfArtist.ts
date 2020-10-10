@@ -8,3 +8,6 @@ export enum GameState {
   DrawingPhase,
   VotingPhase,
 };
+
+export const canvasWidth = 400;
+export const canvasHeight = 400;

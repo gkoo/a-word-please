@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 
 import { fabric } from 'fabric';
 
+import { canvasWidth, canvasHeight } from '../../constants/sfArtist';
 import {
   strokesSelector,
 } from '../../store/selectors';
@@ -37,8 +38,8 @@ function FinalCanvas() {
   return (
     <div className='text-center my-5'>
       <canvas
-        width='300'
-        height='300'
+        width={canvasWidth}
+        height={canvasHeight}
         ref={canvasRef}
       />
     </div>
