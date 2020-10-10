@@ -90,6 +90,10 @@ function Homepage() {
                 <span role='img' aria-label='wavelength' className='mr-2'>🔪</span>
                 Deception
               </p>
+              <p>
+                <span role='img' aria-label='wavelength' className='mr-2'>🎨</span>
+                A Fake Artist
+              </p>
             </Jumbotron>
           </Col>
         </Row>

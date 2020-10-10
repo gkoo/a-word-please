@@ -108,6 +108,15 @@ function Lobby({ messages, roomCode, users }) {
                                 </p>
                               </>
                           }
+                          {
+                            selectedGame === GAME_SF_ARTIST &&
+                              <>
+                                <h2>A Fake Artist Goes To San Francisco</h2>
+                                <p>
+                                  <em>Fake it til you make it!</em>
+                                </p>
+                              </>
+                          }
                         </Col>
                       </Row>
                       {
