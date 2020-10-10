@@ -84,6 +84,7 @@ describe('assignRoles', () => {
 describe('dealCards', () => {
   // called as part of setup()
   it('deals cards for each player, except for the scientist', () => {
+    game.dealCards();
     Object.values(game.players).forEach((player: DeceptionPlayer) => {
       if (player.role === Role.Scientist) {
         expect(player.evidenceCards).toHaveLength(0);

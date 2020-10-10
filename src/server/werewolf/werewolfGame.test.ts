@@ -164,7 +164,7 @@ describe('performWakeUpActions', () => {
   });
 });
 
-describe('handlePlayerAction', () => {
+describe('troublemakeRoles', () => {
   beforeEach(() => {
     game.players['user1'].role = Role.Werewolf;
     game.players['user2'].role = Role.Hunter;
@@ -173,10 +173,7 @@ describe('handlePlayerAction', () => {
 
   describe('for troublemaker', () => {
     it('switches the roles provided', () => {
-      game.handlePlayerAction('user3', {
-        action: 'troublemakeRoles',
-        playerIds: ['user1', 'user2'],
-      });
+      game.troublemakeRoles(game.players['user3'], ['user1', 'user2']);
       expect(game.players['user1'].role).toBe(Role.Hunter);
       expect(game.players['user2'].role).toBe(Role.Werewolf);
     });
@@ -186,10 +183,11 @@ describe('handlePlayerAction', () => {
 describe('robRole', () => {
   beforeEach(() => {
     game.players['user1'].role = Role.Werewolf;
+    game.players['user1'].originalRole = Role.Robber;
     game.players['user2'].role = Role.Hunter;
   });
 
-  const subject = () => game.robRole('user1', 'user2');
+  const subject = () => game.robRole(game.players['user1'], game.players['user2']);
 
   it('exchanges the roles', () => {
     subject();

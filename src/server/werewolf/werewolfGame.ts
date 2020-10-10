@@ -127,16 +127,9 @@ class WerewolfGame extends Game {
       case 'beginNighttime':
         return this.beginNighttime();
       case 'troublemakeRoles':
-        if (currPlayer.originalRole === Role.Troublemaker) {
-          this.switchRoles.apply(this, data.playerIds);
-          this.nextTurn();
-        }
-        return;
+        return this.troublemakeRoles(currPlayer, data.playerIds);
       case 'robRole':
-        if (currPlayer.originalRole === Role.Robber) {
-          this.robRole(playerId, data.playerId);
-        }
-        return;
+        return this.robRole(currPlayer, this.players[data.playerId]);
       case 'startVoting':
         return this.enableVoting();
       case 'voteToEliminate':
@@ -148,6 +141,15 @@ class WerewolfGame extends Game {
       default:
         throw new Error(`Unexpected action ${data.action}`);
     }
+  }
+
+  troublemakeRoles(currPlayer, playerIds) {
+    if (currPlayer.originalRole !== Role.Troublemaker) {
+      throw new Error('tried to troublemake when not troublemaker!');
+    }
+
+    this.switchRoles.apply(this, playerIds);
+    this.nextTurn();
   }
 
   endWerewolfTurn() {
@@ -279,9 +281,12 @@ class WerewolfGame extends Game {
     }
   }
 
-  robRole(robberId, victimId) {
-    const robber = this.players[robberId];
-    this.switchRoles(robberId, victimId);
+  robRole(robber: WerewolfPlayer, victim: WerewolfPlayer) {
+    if (robber.originalRole !== Role.Robber) {
+      throw new Error('Tried to rob role when not a Robber!');
+    }
+
+    this.switchRoles(robber.id, victim.id);
     robber.setLastKnownRole(robber.role);
     this.nextTurn();
   }
