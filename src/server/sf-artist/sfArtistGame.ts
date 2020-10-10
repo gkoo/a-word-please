@@ -65,13 +65,18 @@ class SfArtistGame extends Game {
     this.state = GameState.ExplainRules;
     this.broadcastGameDataToPlayers();
 
-    if (process.env.NODE_ENV === 'development') {
+    const isProduction = process.env.NODE_ENV === 'production';
+
+    if (!isProduction) {
       this.subjectEntry = {
         category: 'Game',
         subject: 'A Fake Artist Goes To San Francisco',
       };
     } else {
-      fs.readFile(path.join(__dirname, 'subjects.txt'), 'utf8' , (err, data) => {
+      const staticPath = `../../${isProduction ? '' : '../'}static`
+      const filepath = path.join(__dirname, staticPath, 'sf-artist-subjects.txt');
+
+      fs.readFile(filepath, 'utf8' , (err, data) => {
         if (err) {
           console.error(err);
           return;
@@ -83,7 +88,7 @@ class SfArtistGame extends Game {
           category: entry[1],
           subject: entry[0],
         };
-      })
+      });
     }
   }
 
