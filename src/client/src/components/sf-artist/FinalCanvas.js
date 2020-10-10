@@ -24,12 +24,7 @@ function FinalCanvas() {
     });
 
     strokes.forEach(pathData => {
-      const path = new fabric.Path(pathData, {
-        fill: 'transparent',
-        selectable: false,
-        strokeWidth: 1,
-        stroke: 'black',
-      });
+      const path = new fabric.Path(pathData.path, pathData);
 
       fabricCanvas.add(path);
     });

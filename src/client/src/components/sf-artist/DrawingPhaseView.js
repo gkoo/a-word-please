@@ -8,6 +8,7 @@ import { clearStrokes, saveStroke } from '../../store/actions';
 import { canvasWidth, canvasHeight } from '../../constants/sfArtist';
 import {
   activePlayerSelector,
+  currPlayerSelector,
   currPlayerIsActivePlayerSelector,
   gameDataSelector,
   socketSelector,
@@ -21,6 +22,7 @@ function DrawingPhase() {
   const dispatch = useDispatch();
 
   const activePlayer = useSelector(activePlayerSelector);
+  const currPlayer = useSelector(currPlayerSelector);
   const currPlayerIsActivePlayer = useSelector(currPlayerIsActivePlayerSelector);
   const gameData = useSelector(gameDataSelector);
 
@@ -33,15 +35,9 @@ function DrawingPhase() {
     if (!socket) { return; }
     if (!canvas) { return; }
 
-    const handleNewStroke = (data) => {
-      dispatch(saveStroke(data));
-      const path = new fabric.Path(data, {
-        fill: 'transparent',
-        selectable: false,
-        strokeWidth: 1,
-        stroke: 'black',
-      });
-
+    const handleNewStroke = (pathData) => {
+      dispatch(saveStroke(pathData));
+      const path = new fabric.Path(pathData.path, pathData);
       canvas.add(path);
     };
 
@@ -63,6 +59,8 @@ function DrawingPhase() {
       backgroundColor: '#fff',
       hoverCursor: 'arrow',
     });
+    fabricCanvas.freeDrawingBrush.color = currPlayer.brushColor;
+    fabricCanvas.freeDrawingBrush.width = 2;
     setCanvas(fabricCanvas);
   }, [canvasRef, dispatch]);
 
@@ -72,15 +70,15 @@ function DrawingPhase() {
     if (!canvas) { return; }
 
     canvas.on('path:created', (evt) => {
-      // send JSON.stringify(evt.path).path
-      evt.path.set('selectable', false);
+      const { path } = evt;
+      path.set({ selectable: false, stroke: currPlayer.brushColor });
 
       // Issues having the canvas actually add the path if we disable drawing mode too early
       setTimeout(() => {
         canvas.isDrawingMode = false;
       }, 50);
 
-      const pathData = evt.path.toObject().path;
+      const pathData = path.toObject();
 
       socket.emit('playerAction', {
         action: 'newStroke',

@@ -22,6 +22,10 @@ const renderVotedPlayerRow = (suspectPlayer, voterPlayers, isEliminated, renderS
 function VoteResults({ voteMap, eliminatedPlayers, renderSkulls }) {
   const players = useSelector(playersSelector);
 
+  if (Object.keys(voteMap).length === 0) {
+    return false;
+  }
+
   const talliedVotes = {}
   Object.values(voteMap).forEach(suspectId => {
     if (!talliedVotes[suspectId]) { talliedVotes[suspectId] = 0; }

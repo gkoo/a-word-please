@@ -1,4 +1,5 @@
 import Game, { GameEnum } from '../game';
+import SfArtistPlayer from './sfArtistPlayer';
 import Deck from '../deck';
 
 export enum GameState {
@@ -13,6 +14,17 @@ export enum GameState {
   VotingPhase,
 }
 
+const COLORS = [
+  '#0000ff', // blue
+  '#b22222', // red
+  '#006400', // green
+  '#ff8c00', // orange
+  '#4b0082', // indigo
+  '#a52a2a', // brown
+  '#000000', // black
+  '#663399', // purple
+]
+
 const TURNS_PER_PLAYER = 2;
 
 interface SubjectEntry {
@@ -22,6 +34,7 @@ interface SubjectEntry {
 
 class SfArtistGame extends Game {
   allStrokes: Array<object>;
+  colorCursor: number;
   entryPlayerId: string; // the player whose subject entry we used
   fakeArtistId: string;
   playerSubmittedEntries: object;
@@ -36,6 +49,8 @@ class SfArtistGame extends Game {
     super(broadcastToRoom);
     this.roomCode = roomCode;
     this.playerSubmittedEntries = {};
+    this.playerClass = SfArtistPlayer;
+    this.colorCursor = 0;
   }
 
   setup(users) {
@@ -51,6 +66,12 @@ class SfArtistGame extends Game {
     this.votes = {};
     this.state = GameState.ExplainRules;
     this.broadcastGameDataToPlayers();
+  }
+
+  addPlayer({ id, name }) {
+    super.addPlayer({ id, name });
+    this.players[id].setBrushColor(COLORS[this.colorCursor]);
+    this.colorCursor = this.colorCursor + 1 % COLORS.length;
   }
 
   assignRoles() {

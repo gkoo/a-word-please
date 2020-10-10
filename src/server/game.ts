@@ -122,6 +122,8 @@ abstract class Game {
       id,
       name,
     });
+
+    return this.players[id];
   }
 
   addSpectator({ id, name }): void {
