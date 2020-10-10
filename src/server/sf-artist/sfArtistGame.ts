@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import Game, { GameEnum } from '../game';
 import SfArtistPlayer from './sfArtistPlayer';
 import Deck from '../deck';
@@ -8,7 +10,6 @@ export enum GameState {
   GameEnd,
   // (optional) Explain the rules to first time players
   ExplainRules,
-  EnterSubjectsPhase,
   DisplaySubject,
   DrawingPhase,
   VotingPhase,
@@ -35,9 +36,7 @@ interface SubjectEntry {
 class SfArtistGame extends Game {
   allStrokes: Array<object>;
   colorCursor: number;
-  entryPlayerId: string; // the player whose subject entry we used
   fakeArtistId: string;
-  playerSubmittedEntries: object;
   revealFake: boolean;
   roomCode: string;
   subjectEntry: SubjectEntry;
@@ -48,7 +47,6 @@ class SfArtistGame extends Game {
   constructor(broadcastToRoom, roomCode) {
     super(broadcastToRoom);
     this.roomCode = roomCode;
-    this.playerSubmittedEntries = {};
     this.playerClass = SfArtistPlayer;
     this.colorCursor = 0;
   }
@@ -66,6 +64,27 @@ class SfArtistGame extends Game {
     this.votes = {};
     this.state = GameState.ExplainRules;
     this.broadcastGameDataToPlayers();
+
+    if (process.env.NODE_ENV === 'development') {
+      this.subjectEntry = {
+        category: 'Game',
+        subject: 'A Fake Artist Goes To San Francisco',
+      };
+    } else {
+      fs.readFile(path.join(__dirname, 'subjects.txt'), 'utf8' , (err, data) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+        const subjectEntries = data.split('\n').filter(entry => entry !== '');
+        const randomIndex = Math.floor(Math.random() * subjectEntries.length);
+        const entry = subjectEntries[randomIndex].split(',');
+        this.subjectEntry = {
+          category: entry[1],
+          subject: entry[0],
+        };
+      })
+    }
   }
 
   addPlayer({ id, name }) {
@@ -87,8 +106,6 @@ class SfArtistGame extends Game {
     switch (data.action) {
       case 'ready':
         return this.playerReady(playerId);
-      case 'submitSubject':
-        return this.setPlayerEntry(playerId, data.subject, data.category);
       case 'newStroke':
         return this.newStroke(socket, data);
       case 'vote':
@@ -105,11 +122,7 @@ class SfArtistGame extends Game {
   onPlayersReady() {
     switch (this.state) {
       case GameState.ExplainRules:
-        this.state = GameState.EnterSubjectsPhase;
-        break;
-      case GameState.EnterSubjectsPhase:
         this.assignRoles();
-        this.chooseSubject();
         this.state = GameState.DisplaySubject;
         break;
       case GameState.DisplaySubject:
@@ -122,29 +135,6 @@ class SfArtistGame extends Game {
         throw 'Unexpected state change!'
     }
     setTimeout(() => this.broadcastGameDataToPlayers(), 500);
-  }
-
-  setPlayerEntry(playerId: string, subject: string, category: string) {
-    const maxLength = 50;
-    this.playerSubmittedEntries[playerId] = {
-      subject: subject.substring(0, maxLength),
-      category: category.substring(0, maxLength),
-    };
-    this.playerReady(playerId);
-  }
-
-  // Choose what everyone's going to draw, out of the entries submitted by the players
-  chooseSubject() {
-    const realArtistIds = Object.keys(this.playerSubmittedEntries).filter(
-      playerId => playerId !== this.fakeArtistId
-    );
-    const realArtistIdDeck = new Deck(realArtistIds);
-
-    // The player ID whose submitted entry we used. We'll use this later to ask them to replace
-    // their entry with a new one.
-    this.entryPlayerId = realArtistIdDeck.drawCard();
-
-    this.subjectEntry = this.playerSubmittedEntries[this.entryPlayerId];
   }
 
   enterDrawingPhase() {

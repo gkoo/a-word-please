@@ -6,7 +6,6 @@ import Col from 'react-bootstrap/Col';
 
 import DisplaySubjectView from './DisplaySubjectView';
 import DrawingPhaseView from './DrawingPhaseView';
-import EnterSubjectView from './EnterSubjectView';
 import ExplainRulesView from './ExplainRulesView';
 import LeaderPanel from '../LeaderPanel';
 import ResultsView from './ResultsView';
@@ -32,7 +31,6 @@ function SfArtistBoard() {
   const {
     GameEnd,
     ExplainRules,
-    EnterSubjectPhase,
     DisplaySubject,
     DrawingPhase,
     VotingPhase,
@@ -40,7 +38,6 @@ function SfArtistBoard() {
 
   const showReadyCheckmarks = [
     ExplainRules,
-    EnterSubjectPhase,
     DisplaySubject,
     VotingPhase,
   ].includes(gameState);
@@ -52,9 +49,6 @@ function SfArtistBoard() {
           <h3>A Fake Artist in San Francisco</h3>
           {
             gameState === ExplainRules && <ExplainRulesView />
-          }
-          {
-            gameState === EnterSubjectPhase && <EnterSubjectView />
           }
           {
             gameState === DisplaySubject && <DisplaySubjectView />

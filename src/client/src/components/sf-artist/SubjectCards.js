@@ -40,7 +40,7 @@ function SubjectCards({ hideFromFake }) {
           Category
         </Card.Header>
         <Card.Body>
-          {!shouldHide && <p>{category}</p>}
+          <p>{category}</p>
         </Card.Body>
       </Card>
     </CardGroup>

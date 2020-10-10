@@ -3,7 +3,6 @@ export enum GameState {
   TurnEnd,
   GameEnd,
   ExplainRules,
-  EnterSubjectPhase,
   DisplaySubject,
   DrawingPhase,
   VotingPhase,

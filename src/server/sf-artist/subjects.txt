@@ -1,0 +1,76 @@
+Titanic,Movie
+The Terminator,Movie
+Star Wars,Movie
+Planet of the Apes,Movie
+Lord of the Rings,Movie
+Toy Story,Movie
+300,Movie
+The Wizard of Oz,Movie
+Jaws,Movie
+Forrest Gump,Movie
+The Sixth Sense,Movie
+The Avengers,Movie
+Ghostbusters,Movie
+The Lion King,Movie
+The Little Mermaid,Movie
+The Matrix,Movie
+Back to the Future,Movie
+Jurassic Park,Movie
+
+Godzilla,Character
+Spider-man, Character
+Mario, Character
+Pikachu, Character
+Wolverine, Character
+Batman, Character
+Joker, Character
+Shrek, Character
+Homer Simpson, Character
+Mickey Mouse, Character
+James Bond, Character
+Peter Pan, Character
+King Kong, Character
+Tarzan, Character
+Jon Snow, Character
+E.T., Character
+Harry Potter, Character
+Willy Wonka, Character
+Pac-man, Character
+Pinocchio, Character
+Sherlock Holmes, Character
+
+Independence Day,Event
+Halloween,Event
+Thanksgiving,Event
+New Year's Eve,Event
+Wedding,Event
+Birthday,Event
+Graduation,Event
+
+Hockey,Activity
+Football,Activity
+Baseball,Activity
+Basketball,Activity
+Skiing,Activity
+Rock Climbing,Activity
+Scuba Diving,Activity
+Hiking,Activity
+Surfing,Activity
+Skydiving,Activity
+Bowling,Activity
+Golfing,Activity
+
+Doctor,Profession
+Police Officer,Profession
+Firefighter,Profession
+Clown,Profession
+President of the United States,Profession
+Carpenter,Profession
+Magician,Profession
+Chef,Profession
+Tailor,Profession
+Taxi Driver,Profession
+Mailman,Profession
+Pilot,Profession
+Sumo Wrestler,Profession
+Film Director,Profession

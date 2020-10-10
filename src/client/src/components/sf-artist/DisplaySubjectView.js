@@ -15,7 +15,7 @@ function DisplaySubjectView() {
 
   const { fakeArtistId } = gameData;
 
-  const currPlayerIsFake = currPlayer.id === fakeArtistId;
+  const currPlayerIsFake = currPlayer?.id === fakeArtistId;
 
   return (
     <>
