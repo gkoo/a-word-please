@@ -101,6 +101,7 @@ class SfArtistGame extends Game {
   assignRoles() {
     const players = this.getConnectedPlayers();
     const playerDeck = new Deck(players);
+    playerDeck.shuffle();
     const fakeArtist = playerDeck.drawCard();
     this.fakeArtistId = fakeArtist.id;
   }
