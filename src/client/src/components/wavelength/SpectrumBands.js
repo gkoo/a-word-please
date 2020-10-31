@@ -20,7 +20,7 @@ function SpectrumBands({ bandSelections }) {
   const leftMarginPct = (band1LeftBound + uiFix)*100/SPECTRUM_MAX_VALUE;
 
   return (
-    <div className='band-container'>
+    <div className='band-container mb-4'>
       <div className='band-group' style={{ left: `${leftMarginPct}%` }}>
         <div
           className={cx('spectrum-band band2', { selected: bandSelections?.firstBand })}

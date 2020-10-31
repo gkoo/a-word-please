@@ -11,7 +11,6 @@ import {
   gameDataSelector,
   socketSelector,
 } from '../../store/selectors';
-import { SPECTRUM_BAND_WIDTH } from '../../constants';
 
 function RevealPhase() {
   const socket = useSelector(socketSelector);
@@ -21,7 +20,7 @@ function RevealPhase() {
 
   if (!gameData) { return false; }
 
-  const { activePlayerId, spectrumGuess, spectrumValue, players } = gameData;
+  const { activePlayerId } = gameData;
 
   const nextTurn = e => {
     e.preventDefault();

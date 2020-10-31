@@ -22,13 +22,13 @@ function GuessPhasePsychicView() {
       <SpectrumBands/>
       {
         guesserPlayers.map(player =>
-          <>
-            <h4>
+          <div className='my-3 py-1' style={{ backgroundColor: '#333' }}>
+            <h4 className='text-center'>
               {player.name}
               {currTurnPoints[player.id] > 0 && ` +${currTurnPoints[player.id]}`}
             </h4>
             <Spectrum value={spectrumGuesses[player.id]} disabled={true}/>
-          </>
+          </div>
         )
       }
     </>
