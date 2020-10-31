@@ -62,7 +62,7 @@ function DrawingPhase() {
     fabricCanvas.freeDrawingBrush.color = currPlayer?.brushColor;
     fabricCanvas.freeDrawingBrush.width = 2;
     setCanvas(fabricCanvas);
-  }, [canvasRef, dispatch, currPlayer?.brushColor]);
+  }, [canvasRef, dispatch, currPlayer]);
 
   // Handle new path data created locally and send to server
   useEffect(() => {
@@ -86,7 +86,7 @@ function DrawingPhase() {
       });
       dispatch(saveStroke(pathData));
     });
-  }, [socket, canvas, dispatch, currPlayer?.brushColor]);
+  }, [socket, canvas, dispatch, currPlayer]);
 
   // Toggle drawing mode based on if it is the current player's turn
   useEffect(() => {

@@ -14,24 +14,24 @@ function ReleaseNotesModal({ show }) {
         <Modal.Title>Release Notes</Modal.Title>
       </Modal.Header>
       <Modal.Body>
+        <h3>Oct 31, 2020</h3>
+        <ul>
+          <li>Update Wavelength to allow guessers to submit independent guesses</li>
+        </ul>
+
         <h3>Oct 9, 2020</h3>
         <ul>
-          <li>
-            Added A Fake Artist game
-          </li>
+          <li>Added A Fake Artist game</li>
         </ul>
 
         <h3>Sep 26, 2020</h3>
         <ul>
-          <li>
-            Updated Wavelength scoring to be per-player
-          </li>
+          <li>Updated Wavelength scoring to be per-player</li>
         </ul>
+
         <h3>Sep 3, 2020</h3>
         <ul>
-          <li>
-            Added Deception game
-          </li>
+          <li>Added Deception game</li>
         </ul>
 
         <h3>Aug 29, 2020</h3>
