@@ -33,8 +33,9 @@ const getTeam = role => {
 const renderVotedPlayerRow = (suspectPlayer, voterPlayers, isEliminated) => {
   return (
     <ListGroup.Item variant={isEliminated ? 'danger' : ''}>
+      {voterPlayers.map(voter => <Badge key={voter.id}>{voter.name}</Badge>)}
+      <span> voted for:</span>
       <h3>{isEliminated && '💀 '}{suspectPlayer.name}{isEliminated && ' 💀'}</h3>
-      {voterPlayers.map(voter => <Badge>{voter.name}</Badge>)}
     </ListGroup.Item>
   );
 };
