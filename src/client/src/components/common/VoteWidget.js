@@ -19,7 +19,11 @@ function VoteWidget({ includeSelf, onVote }) {
 
   let candidates = players;
 
-  if (!currPlayer) { return; }
+  if (!currPlayer) {
+    return (
+      <h2>Players are voting</h2>
+    );
+  }
 
   if (!includeSelf) {
     candidates = players.filter(player => player.id !== currPlayer.id);
