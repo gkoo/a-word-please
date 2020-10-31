@@ -19,7 +19,7 @@ function PointsTable({ highlightPlayerId }) {
   });
 
   return (
-    <Table size='sm'>
+    <Table size='sm' className='text-center'>
       <tbody>
         {
           playersSortedByPoints.map(player =>

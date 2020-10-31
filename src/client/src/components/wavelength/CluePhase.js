@@ -7,6 +7,7 @@ import Form from 'react-bootstrap/Form'
 import InputGroup from 'react-bootstrap/InputGroup'
 import Button from 'react-bootstrap/Button';
 
+import PointsTable from './PointsTable';
 import Spectrum from './Spectrum';
 import SpectrumBands from './SpectrumBands';
 import * as selectors from '../../store/selectors';
@@ -36,7 +37,12 @@ function CluePhase() {
 
   if (!currPlayerIsActivePlayer) {
     return (
-      <h1 className='text-center'>Waiting for {activePlayer.name} to enter a clue...</h1>
+      <>
+        <h1 className='text-center'>Waiting for {activePlayer.name} to enter a clue...</h1>
+        <div className='text-center my-5'>
+          <PointsTable highlightPlayerId={activePlayer.id}/>
+        </div>
+      </>
     );
   }
 
@@ -66,6 +72,10 @@ function CluePhase() {
           </Form>
         </Col>
       </Row>
+
+      <div className='my-5'>
+        <PointsTable highlightPlayerId={activePlayer.id}/>
+      </div>
     </>
   );
 }

@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 
 import GuesserSpectrums from './GuesserSpectrums';
 import GuessPhaseGuesserView from './GuessPhaseGuesserView';
+import PointsTable from './PointsTable';
 import * as selectors from '../../store/selectors';
 
 function GuessPhase() {
@@ -32,6 +33,10 @@ function GuessPhase() {
         !isGuesser &&
           <p>Your teammates are choosing a point on the spectrum based on the clue you've provided.</p>
       }
+
+      <div className='my-5'>
+        <PointsTable highlightPlayerId={activePlayer.id}/>
+      </div>
     </>
   );
 }
