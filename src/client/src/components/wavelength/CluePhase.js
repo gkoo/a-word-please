@@ -8,6 +8,7 @@ import InputGroup from 'react-bootstrap/InputGroup'
 import Button from 'react-bootstrap/Button';
 
 import Spectrum from './Spectrum';
+import SpectrumBands from './SpectrumBands';
 import * as selectors from '../../store/selectors';
 
 const MAX_CLUE_LENGTH = 100;
@@ -17,6 +18,7 @@ function CluePhase() {
   const activePlayer = useSelector(selectors.activePlayerSelector);
   const currConcept = useSelector(selectors.currConceptSelector);
   const currPlayerIsActivePlayer = useSelector(selectors.currPlayerIsActivePlayerSelector);
+  const { spectrumValue } = useSelector(selectors.gameDataSelector);
   const socket = useSelector(selectors.socketSelector);
 
   const onEnterClue = e => {
@@ -41,7 +43,8 @@ function CluePhase() {
   return (
     <>
       <div className='mb-5'>
-      <Spectrum showSlider={true} showBands={true} disabled={true} />
+        <SpectrumBands />
+        <Spectrum value={spectrumValue} disabled={true} />
       </div>
 
       <Row>
