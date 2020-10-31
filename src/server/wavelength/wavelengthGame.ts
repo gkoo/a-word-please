@@ -16,7 +16,7 @@ class WavelengthGame extends Game {
   playerClass: any;
   playerOrder: Array<string>;
   roundNum: number;
-  spectrumGuess: number;
+  spectrumGuesses: object;
   spectrumValue: number;
   state: number;
   totalNumRounds: number;
@@ -52,6 +52,7 @@ class WavelengthGame extends Game {
   newGame() {
     this.roundNum = 0;
     this.pointsForPlayer = {};
+    this.spectrumGuesses = {};
     this.determineNumRounds();
     this.determinePlayerOrder();
     this.nextTurn();
@@ -111,7 +112,7 @@ class WavelengthGame extends Game {
     // either end
     const padding = WavelengthGame.SPECTRUM_BAND_WIDTH*5;
     this.spectrumValue = Math.floor(Math.random()*WavelengthGame.SPECTRUM_MAX_VALUE);
-    this.spectrumGuess = WavelengthGame.SPECTRUM_MAX_VALUE / 2;
+    this.spectrumGuesses = {};
 
     this.broadcastGameDataToPlayers();
   }
@@ -142,15 +143,12 @@ class WavelengthGame extends Game {
   }
 
   setSpectrumGuess(playerId, guess) {
-    this.spectrumGuess = guess;
-    // Don't emit back to the original player because it messes with the UI
-    const otherPlayers = this.getConnectedPlayers().filter(player => player.id !== playerId)
-    otherPlayers.forEach(player => {
-      // Don't broadcast entire game data because this might be called frequently
-      this.emitToPlayer(player.id, 'spectrumGuessUpdate', guess);
-    });
+    this.spectrumGuesses[playerId] = guess;
+    const guessData = { playerId, guess };
+    // Don't broadcast entire game data because this might be called frequently
+    this.emitToPlayer(this.activePlayerId, 'spectrumGuessUpdate', guessData);
     Object.values(this.spectators).filter(spectator => spectator.connected).forEach(spectator => {
-      this.emitToPlayer(spectator.id, 'spectrumGuessUpdate', guess);
+      this.emitToPlayer(spectator.id, 'spectrumGuessUpdate', guessData);
     });
   }
 
@@ -198,7 +196,7 @@ class WavelengthGame extends Game {
       pointsForPlayer: this.pointsForPlayer,
       roundNum: this.roundNum,
       spectators: this.spectators,
-      spectrumGuess: this.spectrumGuess,
+      spectrumGuesses: this.spectrumGuesses,
       spectrumValue: this.spectrumValue,
       state: this.state,
       totalNumRounds: this.totalNumRounds,

@@ -61,7 +61,7 @@ function Room() {
     socket.on('roomData', data => dispatch(actions.receiveRoomData(data)));
     socket.on('gameData', gameData => dispatch(actions.receiveGameData(gameData)));
     socket.on('newUser', user => dispatch(actions.newUser(user)));
-    socket.on('spectrumGuessUpdate', guess => dispatch(actions.updateSpectrumGuess(guess)));
+    socket.on('spectrumGuessUpdate', guessData => dispatch(actions.updateSpectrumGuess(guessData)));
     socket.on('userId', id => dispatch(actions.receiveUserId(id)));
     socket.on('userDisconnect', userId => dispatch(actions.userDisconnect(userId)));
 

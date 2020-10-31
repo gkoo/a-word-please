@@ -41,7 +41,7 @@ function CluePhase() {
   return (
     <>
       <div className='mb-5'>
-      <Spectrum showSlider={true} showBands={true} />
+      <Spectrum showSlider={true} showBands={true} disabled={true} />
       </div>
 
       <Row>
