@@ -13,6 +13,7 @@ import MasonView from './MasonView';
 import MinionView from './MinionView';
 import TannerView from './TannerView';
 import VillagerView from './VillagerView';
+
 import {
   ROLE_WEREWOLF,
   ROLE_MINION,
@@ -27,14 +28,20 @@ import {
   ROLE_DOPPELGANGER,
   ROLE_TANNER,
 } from '../../constants';
-import { currPlayerSelector, wakeUpRoleSelector } from '../../store/selectors';
+
+import { currPlayerSelector,
+         currUserIsSpectatorSelector,
+         wakeUpRoleSelector,
+} from '../../store/selectors';
 
 function NighttimeView() {
   const currPlayer = useSelector(currPlayerSelector);
   const wakeUpRole = useSelector(wakeUpRoleSelector);
   const isAwake = currPlayer?.originalRole === wakeUpRole;
+  const isSpectator = useSelector(currUserIsSpectatorSelector);
 
   const renderWakeUp = () => {
+    if (isSpectator) {return (<h3>You should never be awake...</h3>)}
     switch (currPlayer?.originalRole) {
       case ROLE_DOPPELGANGER:
         return <DoppelgangerView />;
