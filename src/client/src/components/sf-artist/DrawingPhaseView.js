@@ -30,6 +30,10 @@ function DrawingPhase() {
 
   const { turnNum, totalTurns } = gameData;
 
+  useEffect(() => {
+    dispatch(clearStrokes());
+  }, [dispatch]);
+
   // Receive path data from server and add it to canvas
   useEffect(() => {
     if (!socket) { return; }
@@ -54,7 +58,6 @@ function DrawingPhase() {
 
     if (!canvasEl) { return; }
 
-    dispatch(clearStrokes());
     const fabricCanvas = new fabric.Canvas(canvasEl, {
       backgroundColor: '#fff',
       hoverCursor: 'arrow',
@@ -62,16 +65,18 @@ function DrawingPhase() {
     fabricCanvas.freeDrawingBrush.color = currPlayer?.brushColor;
     fabricCanvas.freeDrawingBrush.width = 2;
     setCanvas(fabricCanvas);
-  }, [canvasRef, dispatch, currPlayer]);
+  }, [canvasRef, dispatch]);
 
   // Handle new path data created locally and send to server
   useEffect(() => {
     if (!socket) { return; }
     if (!canvas) { return; }
 
+    if (!currPlayer) { return; }
+
     canvas.on('path:created', (evt) => {
       const { path } = evt;
-      path.set({ selectable: false, stroke: currPlayer?.brushColor });
+      path.set({ selectable: false, stroke: currPlayer.brushColor });
 
       // Issues having the canvas actually add the path if we disable drawing mode too early
       setTimeout(() => {
@@ -86,7 +91,7 @@ function DrawingPhase() {
       });
       dispatch(saveStroke(pathData));
     });
-  }, [socket, canvas, dispatch, currPlayer]);
+  }, [socket, canvas, dispatch, currPlayer?.brushColor]);
 
   // Toggle drawing mode based on if it is the current player's turn
   useEffect(() => {
