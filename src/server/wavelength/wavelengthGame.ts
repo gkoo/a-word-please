@@ -64,11 +64,14 @@ class WavelengthGame extends Game {
 
   determineNumRounds() {
     const numPlayers = this.getConnectedPlayers().length;
-    if (numPlayers < 4) {
+    if (numPlayers < 3) {
+      // 8 rounds, 4 rounds per player
       this.totalNumRounds = numPlayers * 4;
-    } else if (numPlayers === 4) {
+    } else if (numPlayers === 3) {
+      // 9 rounds, 3 rounds per player
       this.totalNumRounds = numPlayers * 3;
     } else {
+      // 2 rounds per player
       this.totalNumRounds = numPlayers * 2;
     }
   }
