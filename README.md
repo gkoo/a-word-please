@@ -26,17 +26,7 @@ yarn install
 yarn start
 ```
 
-This will start the server on port 3000. Since the code for the client is normally served from the server in production, the setup is different in development. In order to develop, you'll need to change the path in [socket.js](./src/client/src/socket.js) from
-
-```js
-return io('/');
-```
-
-to
-
-```js
-return io('http://localhost:5000');
-```
+This will start the server on port 3000.
 
 ### Developing the UI
 
