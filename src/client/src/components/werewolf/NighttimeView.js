@@ -41,7 +41,7 @@ function NighttimeView() {
   const isSpectator = useSelector(currUserIsSpectatorSelector);
 
   const renderWakeUp = () => {
-    if (isSpectator) {return (<h3>You should never be awake...</h3>)}
+    if (isSpectator) { return false; }
     switch (currPlayer?.originalRole) {
       case ROLE_DOPPELGANGER:
         return <DoppelgangerView />;
