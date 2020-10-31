@@ -27,6 +27,12 @@ function DisplaySubjectView() {
             drawing.
           </p>
       }
+      {
+        !currPlayer &&
+          <p className='my-5'>
+            You are a spectator! You can also try to guess what people are drawing.
+          </p>
+      }
       <ReadyButton/>
     </>
   );

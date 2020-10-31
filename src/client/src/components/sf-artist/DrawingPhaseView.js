@@ -59,10 +59,10 @@ function DrawingPhase() {
       backgroundColor: '#fff',
       hoverCursor: 'arrow',
     });
-    fabricCanvas.freeDrawingBrush.color = currPlayer.brushColor;
+    fabricCanvas.freeDrawingBrush.color = currPlayer?.brushColor;
     fabricCanvas.freeDrawingBrush.width = 2;
     setCanvas(fabricCanvas);
-  }, [canvasRef, dispatch, currPlayer.brushColor]);
+  }, [canvasRef, dispatch, currPlayer?.brushColor]);
 
   // Handle new path data created locally and send to server
   useEffect(() => {
@@ -71,7 +71,7 @@ function DrawingPhase() {
 
     canvas.on('path:created', (evt) => {
       const { path } = evt;
-      path.set({ selectable: false, stroke: currPlayer.brushColor });
+      path.set({ selectable: false, stroke: currPlayer?.brushColor });
 
       // Issues having the canvas actually add the path if we disable drawing mode too early
       setTimeout(() => {
@@ -86,7 +86,7 @@ function DrawingPhase() {
       });
       dispatch(saveStroke(pathData));
     });
-  }, [socket, canvas, dispatch, currPlayer.brushColor]);
+  }, [socket, canvas, dispatch, currPlayer?.brushColor]);
 
   // Toggle drawing mode based on if it is the current player's turn
   useEffect(() => {
