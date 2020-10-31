@@ -59,6 +59,26 @@ export const ROLE_VILLAGER = 9;
 export const ROLE_DOPPELGANGER = 10;
 export const ROLE_TANNER = 11;
 
+export const WEREWOLF_CARD_IDS = {
+  'werewolf1': ROLE_WEREWOLF,
+  'werewolf2': ROLE_WEREWOLF,
+  'werewolf3': ROLE_WEREWOLF,
+  'minion': ROLE_MINION,
+  'tanner': ROLE_TANNER,
+  'mason1': ROLE_MASON,
+  'mason2': ROLE_MASON,
+  'seer': ROLE_SEER,
+  'robber': ROLE_ROBBER,
+  'troublemaker': ROLE_TROUBLEMAKER,
+  'drunk': ROLE_DRUNK,
+  'insomniac': ROLE_INSOMNIAC,
+  'hunter': ROLE_HUNTER,
+  'doppelganger': ROLE_DOPPELGANGER,
+  'villager1': ROLE_VILLAGER,
+  'villager2': ROLE_VILLAGER,
+  'villager3': ROLE_VILLAGER,
+};
+
 export const WEREWOLF_ROLE_LABELS = {
   [ROLE_WEREWOLF]: 'Werewolf',
   [ROLE_MINION]: 'Minion',
