@@ -105,7 +105,9 @@ function DrawingPhase() {
           ref={canvasRef}
         />
       </div>
-      <h2 className='text-center my-2'>{activePlayer?.name}'s turn</h2>
+      <h2 className='text-center my-2'>
+        <span style={{color: activePlayer?.brushColor}}>● </span>
+        {activePlayer?.name}'s turn</h2>
       {
         currPlayerIsActivePlayer &&
           <p>

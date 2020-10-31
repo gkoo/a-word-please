@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
+import BrushColorLabels from './BrushColorLabels';
 import DisplaySubjectView from './DisplaySubjectView';
 import DrawingPhaseView from './DrawingPhaseView';
 import ExplainRulesView from './ExplainRulesView';
@@ -61,6 +62,10 @@ function SfArtistBoard() {
           }
           {
             gameState === GameEnd && <ResultsView />
+          }
+          {
+            [DrawingPhase, VotingPhase, GameEnd].includes(gameState) &&
+            <BrushColorLabels connectedPlayers={connectedPlayers}/>
           }
         </Col>
         <Col sm={4} md={3} className='main-panel text-center py-5'>
