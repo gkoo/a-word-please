@@ -25,6 +25,7 @@ function FinalCanvas() {
 
     strokes.forEach(pathData => {
       const path = new fabric.Path(pathData.path, pathData);
+      path.set({ selectable: false });
 
       fabricCanvas.add(path);
     });

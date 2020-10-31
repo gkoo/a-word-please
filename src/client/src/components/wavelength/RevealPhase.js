@@ -19,8 +19,6 @@ function RevealPhase() {
 
   if (!gameData) { return false; }
 
-  const { activePlayerId } = gameData;
-
   const nextTurn = e => {
     e.preventDefault();
     socket.emit('playerAction', { action: 'nextTurn' });

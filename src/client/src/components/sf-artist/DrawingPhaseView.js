@@ -42,6 +42,7 @@ function DrawingPhase() {
     const handleNewStroke = (pathData) => {
       dispatch(saveStroke(pathData));
       const path = new fabric.Path(pathData.path, pathData);
+      path.set({ selectable: false });
       canvas.add(path);
     };
 
@@ -62,10 +63,15 @@ function DrawingPhase() {
       backgroundColor: '#fff',
       hoverCursor: 'arrow',
     });
-    fabricCanvas.freeDrawingBrush.color = currPlayer?.brushColor;
-    fabricCanvas.freeDrawingBrush.width = 2;
     setCanvas(fabricCanvas);
   }, [canvasRef, dispatch]);
+
+  // Set the brush color and width
+  useEffect(() => {
+    if (!canvas) { return; }
+    canvas.freeDrawingBrush.color = currPlayer?.brushColor;
+    canvas.freeDrawingBrush.width = 2;
+  }, [canvas]);
 
   // Handle new path data created locally and send to server
   useEffect(() => {
@@ -91,7 +97,7 @@ function DrawingPhase() {
       });
       dispatch(saveStroke(pathData));
     });
-  }, [socket, canvas, dispatch, currPlayer?.brushColor]);
+  }, [socket, canvas, dispatch]);
 
   // Toggle drawing mode based on if it is the current player's turn
   useEffect(() => {
