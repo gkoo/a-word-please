@@ -29,9 +29,10 @@ import {
   ROLE_TANNER,
 } from '../../constants';
 
-import { currPlayerSelector,
-         currUserIsSpectatorSelector,
-         wakeUpRoleSelector,
+import {
+  currPlayerSelector,
+  currUserIsSpectatorSelector,
+  wakeUpRoleSelector,
 } from '../../store/selectors';
 
 function NighttimeView() {
