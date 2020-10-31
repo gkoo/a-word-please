@@ -9,6 +9,8 @@ class WavelengthGame extends Game {
   clue: string | null;
   concepts: Array<[string, string]>;
   currConcept: [string, string];
+  // currTurnPoints: for displaying the number of points each player got this round
+  currTurnPoints: object;
   deck: Deck;
   emitToPlayer: (playerId: string, eventName: string, data: any) => void;
   pointsForPlayer: object;
@@ -51,6 +53,8 @@ class WavelengthGame extends Game {
 
   newGame() {
     this.roundNum = 0;
+    this.currTurnPoints = {};
+    this.playersReady = {};
     this.pointsForPlayer = {};
     this.spectrumGuesses = {};
     this.determineNumRounds();
@@ -94,6 +98,8 @@ class WavelengthGame extends Game {
   }
 
   nextTurn(shouldIncrementRound = true) {
+    this.playersReady = {};
+    this.currTurnPoints = {};
     this.clue = null;
     this.state = WavelengthGame.STATE_CLUE_PHASE;
 
@@ -126,7 +132,7 @@ class WavelengthGame extends Game {
       case 'setSpectrumGuess':
         return this.setSpectrumGuess(playerId, data.spectrumGuess);
       case 'submitGuess':
-        return this.submitGuess();
+        return this.submitGuess(playerId);
       case 'nextTurn':
         return this.nextTurn();
       case 'newGame':
@@ -152,9 +158,28 @@ class WavelengthGame extends Game {
     });
   }
 
-  submitGuess() {
-    const { spectrumGuess, spectrumValue } = this;
+  submitGuess(playerId) {
+    this.playerReady(playerId);
+
+    // Check if all players are ready (don't count the psychic)
+    if (Object.keys(this.playersReady).length < this.getConnectedPlayers().length - 1) {
+      return;
+    }
+
     this.state = WavelengthGame.STATE_REVEAL_PHASE;
+
+    this.calculatePoints();
+
+    this.broadcastGameDataToPlayers();
+  }
+
+  calculatePoints() {
+    const { spectrumValue } = this;
+
+    let allGuessersPoints = 0;
+    const guesserPlayers = this.getConnectedPlayers().filter(
+      player => player.id !== this.activePlayerId
+    );
 
     const band1LeftBound = spectrumValue - WavelengthGame.SPECTRUM_BAND_WIDTH * 5/2;
     const band2LeftBound = spectrumValue - WavelengthGame.SPECTRUM_BAND_WIDTH * 3/2;
@@ -167,16 +192,30 @@ class WavelengthGame extends Game {
       this.pointsForPlayer[this.activePlayerId] = 0;
     }
 
-    if (spectrumGuess >= band3LeftBound && spectrumGuess < band4LeftBound) {
-      // within first band
-      this.pointsForPlayer[this.activePlayerId] += 4;
-    } else if (spectrumGuess >= band2LeftBound && spectrumGuess < band5LeftBound) {
-      this.pointsForPlayer[this.activePlayerId] += 3;
-    } else if (spectrumGuess >= band1LeftBound && spectrumGuess < band5RightBound) {
-      this.pointsForPlayer[this.activePlayerId] += 2;
-    }
+    guesserPlayers.forEach(player => {
+      const spectrumGuess = this.spectrumGuesses[player.id];
+      let points = 0;
 
-    this.broadcastGameDataToPlayers();
+      if (this.pointsForPlayer[player.id] === undefined) {
+        this.pointsForPlayer[player.id] = 0;
+      }
+
+      if (spectrumGuess >= band3LeftBound && spectrumGuess < band4LeftBound) {
+        // within first band
+        points = 4;
+      } else if (spectrumGuess >= band2LeftBound && spectrumGuess < band5LeftBound) {
+        points = 3;
+      } else if (spectrumGuess >= band1LeftBound && spectrumGuess < band5RightBound) {
+        points = 2;
+      }
+
+      this.pointsForPlayer[player.id] += points;
+      this.currTurnPoints[player.id] = points;
+      allGuessersPoints += points;
+    });
+
+    this.pointsForPlayer[this.activePlayerId] += allGuessersPoints;
+    this.currTurnPoints[this.activePlayerId] = allGuessersPoints;
   }
 
   endGame() {
@@ -191,8 +230,10 @@ class WavelengthGame extends Game {
       activePlayerId,
       clue: this.clue,
       currConcept: this.currConcept,
+      currTurnPoints: this.currTurnPoints,
       gameId: WavelengthGame.GAME_ID,
       players: this.players,
+      playersReady: this.playersReady,
       pointsForPlayer: this.pointsForPlayer,
       roundNum: this.roundNum,
       spectators: this.spectators,

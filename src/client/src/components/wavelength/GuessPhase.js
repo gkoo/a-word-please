@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import GuessPhasePsychicView from './GuessPhasePsychicView';
+import GuesserSpectrums from './GuesserSpectrums';
 import GuessPhaseGuesserView from './GuessPhaseGuesserView';
 import * as selectors from '../../store/selectors';
 
@@ -23,7 +23,7 @@ function GuessPhase() {
         <h2 className='spectrum-clue'>"{clue}"</h2>
       </div>
       {
-        (currPlayerIsActivePlayer || currUserIsSpectator) && <GuessPhasePsychicView/>
+        (currPlayerIsActivePlayer || currUserIsSpectator) && <GuesserSpectrums/>
       }
       {
         isGuesser && <GuessPhaseGuesserView/>

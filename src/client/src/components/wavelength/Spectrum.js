@@ -28,12 +28,10 @@ function Spectrum({ disabled, value }) {
   const onChange = e => {
     const newGuess = e.target.value;
     setControlledSpectrumGuess(newGuess);
-    window.requestAnimationFrame(() => {
-      socket.emit('playerAction', {
-        action: 'setSpectrumGuess',
-        spectrumGuess: controlledSpectrumGuess,
-      });
-    })
+    socket.emit('playerAction', {
+      action: 'setSpectrumGuess',
+      spectrumGuess: controlledSpectrumGuess,
+    });
   };
 
   return (

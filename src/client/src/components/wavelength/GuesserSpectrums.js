@@ -8,6 +8,7 @@ import SpectrumBands from './SpectrumBands';
 import * as selectors from '../../store/selectors';
 
 function GuessPhasePsychicView() {
+  const { currTurnPoints } = useSelector(selectors.gameDataSelector);
   const spectrumGuesses = useSelector(selectors.spectrumGuessesSelector);
   const connectedPlayers = useSelector(selectors.connectedPlayersSelector);
   const activePlayer = useSelector(selectors.activePlayerSelector);
@@ -22,7 +23,10 @@ function GuessPhasePsychicView() {
       {
         guesserPlayers.map(player =>
           <>
-            <h4>{player.name}</h4>
+            <h4>
+              {player.name}
+              {currTurnPoints[player.id] > 0 && ` +${currTurnPoints[player.id]}`}
+            </h4>
             <Spectrum value={spectrumGuesses[player.id]} disabled={true}/>
           </>
         )
