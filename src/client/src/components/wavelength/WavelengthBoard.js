@@ -8,7 +8,7 @@ import CluePhase from './CluePhase';
 import GameEndPhase from './GameEndPhase';
 import GuessPhase from './GuessPhase';
 import LeaderPanel from '../LeaderPanel';
-import PlayerLabel from '../common/PlayerLabel';
+import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
 import RevealPhase from './RevealPhase';
 import SpectatorList from '../common/SpectatorList';
 import * as selectors from '../../store/selectors';
@@ -24,6 +24,7 @@ function WavelengthBoard() {
   const currUserIsSpectator = useSelector(selectors.currUserIsSpectatorSelector);
   const gameState = useSelector(selectors.gameStateSelector);
   const numRoundsLeft = useSelector(selectors.numRoundsLeftSelector);
+  const { playersReady } = useSelector(selectors.gameDataSelector);
   const users = useSelector(selectors.usersSelector);
   let wavelengthGuessers = useSelector(selectors.wavelengthGuessersSelector);
   wavelengthGuessers = wavelengthGuessers.filter(player => player.connected);
@@ -60,7 +61,10 @@ function WavelengthBoard() {
           {
             wavelengthGuessers.map(wavelengthGuesser =>
               <>
-                <PlayerLabel player={wavelengthGuesser} />
+                <PlayerCheckboxLabel
+                  player={wavelengthGuesser}
+                  checked={playersReady[wavelengthGuesser.id]}
+                />
                 <br />
               </>
             )

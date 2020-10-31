@@ -175,9 +175,9 @@ export function toggleRulesModal({ show }) {
   }
 }
 
-export function updateSpectrumGuess(guess) {
+export function updateSpectrumGuess(guessData) {
   return {
-    payload: { guess },
+    payload: { guessData },
     type: UPDATE_SPECTRUM_GUESS,
   }
 }

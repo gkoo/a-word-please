@@ -6,6 +6,7 @@ const { Scientist, Murderer, Accomplice, Witness } = deceptionConstants.Role;
 export const alertMessageSelector = state => state.alertMessage;
 export const debugEnabledSelector = state => state.debugEnabled;
 export const usersSelector = state => state.roomData?.users;
+export const gameDataSelector = state => state.gameData;
 export const connectedUsersSelector = createSelector(
   usersSelector,
   users => users && Object.values(users).filter(user => user.connected),
@@ -14,12 +15,30 @@ export const messagesSelector = state => state.messages;
 export const nameSelector = state => state.name;
 export const socketSelector = state => state.socket;
 export const currUserIdSelector = state => state.currUserId;
+export const playersSelector = createSelector(
+  gameDataSelector,
+  gameData => gameData?.players
+);
+export const currPlayerSelector = createSelector(
+  currUserIdSelector,
+  playersSelector,
+  (currUserId, players) => players && players[currUserId],
+);
+export const currUserIsSpectatorSelector = state => state.isSpectator;
+export const currPlayerIsActivePlayerSelector = createSelector(
+  gameDataSelector,
+  currPlayerSelector,
+  currUserIsSpectatorSelector,
+  (gameData, currPlayer, isSpectator) => {
+    if (isSpectator) { return false; }
+    return gameData?.activePlayerId === currPlayer?.id;
+  }
+);
 export const currUserSelector = createSelector(
   currUserIdSelector,
   usersSelector,
   (currUserId, users) => users[currUserId],
 );
-export const currUserIsSpectatorSelector = state => state.isSpectator;
 export const roomCodeSelector = state => state.roomCode;
 export const selectedGameSelector = state => state.roomData?.selectedGame;
 export const showRulesModalSelector = state => state.showRulesModal;
@@ -32,7 +51,6 @@ export const userPreferencesSelector = state => state.userPreferences;
 
 // Game Data
 // A Word, Please?
-export const gameDataSelector = state => state.gameData;
 export const gameIdSelector = createSelector(
   gameDataSelector,
   gameData => gameData && gameData.gameId
@@ -56,10 +74,6 @@ export const gameStateSelector = createSelector(
 export const numPointsSelector = createSelector(
   gameDataSelector,
   gameData => gameData && gameData.numPoints
-);
-export const playersSelector = createSelector(
-  gameDataSelector,
-  gameData => gameData?.players
 );
 export const connectedPlayersSelector = createSelector(
   playersSelector,
@@ -91,11 +105,6 @@ export const totalNumRoundsSelector = createSelector(
   gameData => gameData && gameData.totalNumRounds
 );
 
-export const currPlayerSelector = createSelector(
-  currUserIdSelector,
-  playersSelector,
-  (currUserId, players) => players && players[currUserId],
-);
 export const numRoundsLeftSelector = createSelector(
   roundNumSelector,
   totalNumRoundsSelector,
@@ -169,18 +178,9 @@ export const clueSelector = createSelector(
   gameDataSelector,
   gameData => gameData?.clue,
 );
-export const currPlayerIsActivePlayerSelector = createSelector(
+export const spectrumGuessesSelector = createSelector(
   gameDataSelector,
-  currPlayerSelector,
-  currUserIsSpectatorSelector,
-  (gameData, currPlayer, isSpectator) => {
-    if (isSpectator) { return false; }
-    return gameData?.activePlayerId === currPlayer?.id;
-  }
-);
-export const spectrumGuessSelector = createSelector(
-  gameDataSelector,
-  gameData => gameData?.spectrumGuess,
+  gameData => gameData?.spectrumGuesses,
 );
 
 // Deception

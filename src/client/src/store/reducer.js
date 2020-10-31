@@ -330,14 +330,19 @@ export default function reducer(state = stateToUse, action) {
       };
 
     case actions.UPDATE_SPECTRUM_GUESS:
-      const newGameData = {
-        ...state.gameData,
-        spectrumGuess: action.payload.guess,
-      };
+      const { gameData } = state;
+      const spectrumGuesses = gameData.spectrumGuesses || {};
+      const { guessData } = action.payload;
 
       return {
         ...state,
-        gameData: newGameData,
+        gameData: {
+          ...gameData,
+          spectrumGuesses: {
+            ...spectrumGuesses,
+            [guessData.playerId]: guessData.guess,
+          },
+        }
       };
 
     case actions.UPDATE_USER_PREFERENCE:

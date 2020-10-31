@@ -1,73 +1,59 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import cx from 'classnames';
 
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Form from 'react-bootstrap/Form'
 
 import * as selectors from '../../store/selectors';
-import { SPECTRUM_MAX_VALUE, SPECTRUM_BAND_WIDTH } from '../../constants';
+import { SPECTRUM_MAX_VALUE } from '../../constants';
 
-function Spectrum({ guessValue, showBands, showSlider, bandSelections }) {
+function Spectrum({ disabled, value }) {
+
   const currConcept = useSelector(selectors.currConceptSelector);
-  const spectrumValue = useSelector(selectors.spectrumValueSelector);
+  const socket = useSelector(selectors.socketSelector);
 
-  const band1LeftBound = (spectrumValue - (SPECTRUM_BAND_WIDTH*5/2));
-  // + 1/4 -----> - 1/4
-  //
-  // Adjust for UI toggle weirdness
-  // very left edge needs to add SPECTRUM_BAND_WIDTH * 1/4
-  // very right edge needs to subtract SPECTRUM_BAND_WIDTH * 1/4
-  const uiFix = SPECTRUM_BAND_WIDTH * (SPECTRUM_MAX_VALUE/2 - spectrumValue)/400;
-  //const band1Midpoint = band1LeftBound + SPECTRUM_BAND_WIDTH/2;
-  const leftMarginPct = (band1LeftBound + uiFix)*100/SPECTRUM_MAX_VALUE;
-  let sliderValueToDisplay;
+  const [controlledSpectrumGuess, setControlledSpectrumGuess] = useState(SPECTRUM_MAX_VALUE / 2);
 
-  if (showSlider) {
-    sliderValueToDisplay = spectrumValue;
-  } else if (guessValue !== undefined && guessValue !== null) {
-    sliderValueToDisplay = guessValue;
-  }
+  // Enable updates from props
+  useEffect(() => {
+    // Only allowed if the player isn't able to control the spectrum
+    if (!disabled) { return; }
+
+    if (value !== controlledSpectrumGuess) {
+      setControlledSpectrumGuess(value);
+    }
+  }, [disabled, value, controlledSpectrumGuess]);
+
+  const onChange = e => {
+    const newGuess = e.target.value;
+    setControlledSpectrumGuess(newGuess);
+    socket.emit('playerAction', {
+      action: 'setSpectrumGuess',
+      spectrumGuess: controlledSpectrumGuess,
+    });
+  };
 
   return (
     <>
-      <div className='band-container'>
-        {
-          showBands &&
-            <div className='band-group' style={{ left: `${leftMarginPct}%` }}>
-              <div
-                className={cx('spectrum-band band2', { selected: bandSelections?.firstBand })}
-              />
-              <div className={cx('spectrum-band band3', { selected: bandSelections?.secondBand })}/>
-              <div className={cx('spectrum-band band4', { selected: bandSelections?.thirdBand })}/>
-              <div className={cx('spectrum-band band3', { selected: bandSelections?.fourthBand })}/>
-              <div className={cx('spectrum-band band2', { selected: bandSelections?.fifthBand })}/>
-            </div>
-        }
-      </div>
-      {
-        (showSlider || (guessValue !== undefined && guessValue !== null)) &&
-          <>
-            <Form>
-              <Form.Control
-                type="range"
-                min={0}
-                max={SPECTRUM_MAX_VALUE}
-                value={sliderValueToDisplay}
-                disabled
-              />
-            </Form>
-            <Row>
-              <Col md={{ span: 6 }} className='text-left'>
-                {currConcept[0]}
-              </Col>
-              <Col md={{ span: 6 }} className='text-right'>
-                {currConcept[1]}
-              </Col>
-            </Row>
-          </>
-      }
+      <Form>
+        <Form.Control
+          type="range"
+          onChange={onChange}
+          min={0}
+          max={SPECTRUM_MAX_VALUE}
+          value={controlledSpectrumGuess}
+          disabled={disabled}
+        />
+      </Form>
+      <Row>
+        <Col md={{ span: 6 }} className='text-left'>
+          {currConcept[0]}
+        </Col>
+        <Col md={{ span: 6 }} className='text-right'>
+          {currConcept[1]}
+        </Col>
+      </Row>
     </>
   );
 }
