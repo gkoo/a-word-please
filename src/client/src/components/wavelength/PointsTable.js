@@ -3,10 +3,11 @@ import { useSelector } from 'react-redux';
 
 import Table from 'react-bootstrap/Table';
 
-import { gameDataSelector, } from '../../store/selectors';
+import { activePlayerSelector, gameDataSelector } from '../../store/selectors';
 
 function PointsTable({ highlightPlayerId }) {
   const gameData = useSelector(gameDataSelector);
+  const activePlayer = useSelector(activePlayerSelector);
 
   if (!gameData) { return false; }
 
@@ -19,11 +20,11 @@ function PointsTable({ highlightPlayerId }) {
   });
 
   return (
-    <Table size='sm' className='text-center'>
+    <Table size='sm' className='text-center mb-5'>
       <tbody>
         {
           playersSortedByPoints.map(player =>
-            <tr key={player.id} className={highlightPlayerId === player.id ? 'text-success' : ''}>
+            <tr key={player.id} className={activePlayer.id === player.id ? 'text-success' : ''}>
               <td>{player.name}</td>
               <td>{pointsForPlayer[player.id] || 0}</td>
             </tr>

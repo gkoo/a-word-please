@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 import Button from 'react-bootstrap/Button';
 
 import GuesserSpectrums from './GuesserSpectrums';
-import PointsTable from './PointsTable';
 import {
   currUserIsSpectatorSelector,
   clueSelector,
@@ -38,7 +37,6 @@ function RevealPhase() {
           <GuesserSpectrums/>
         </div>
 
-        <PointsTable highlightPlayerId={activePlayerId}/>
         {!isSpectator && <Button onClick={nextTurn}>Next Turn</Button>}
       </div>
     </>

@@ -9,6 +9,7 @@ import GameEndPhase from './GameEndPhase';
 import GuessPhase from './GuessPhase';
 import LeaderPanel from '../LeaderPanel';
 import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
+import PointsTable from './PointsTable';
 import RevealPhase from './RevealPhase';
 import SpectatorList from '../common/SpectatorList';
 import * as selectors from '../../store/selectors';
@@ -33,6 +34,7 @@ function WavelengthBoard() {
     <div className='board py-5'>
       <Row>
         <Col sm={8} className='main-panel py-5'>
+          {gameState !== STATE_WAVELENGTH_GAME_END_PHASE && <PointsTable/>}
           { gameState === STATE_WAVELENGTH_CLUE_PHASE && <CluePhase /> }
           { gameState === STATE_WAVELENGTH_GUESS_PHASE && <GuessPhase /> }
           { gameState === STATE_WAVELENGTH_REVEAL_PHASE && <RevealPhase /> }

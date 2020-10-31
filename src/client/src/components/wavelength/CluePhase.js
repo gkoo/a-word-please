@@ -7,7 +7,6 @@ import Form from 'react-bootstrap/Form'
 import InputGroup from 'react-bootstrap/InputGroup'
 import Button from 'react-bootstrap/Button';
 
-import PointsTable from './PointsTable';
 import Spectrum from './Spectrum';
 import SpectrumBands from './SpectrumBands';
 import * as selectors from '../../store/selectors';
@@ -37,12 +36,7 @@ function CluePhase() {
 
   if (!currPlayerIsActivePlayer) {
     return (
-      <>
-        <h1 className='text-center'>Waiting for {activePlayer.name} to enter a clue...</h1>
-        <div className='text-center my-5'>
-          <PointsTable highlightPlayerId={activePlayer.id}/>
-        </div>
-      </>
+      <h1 className='text-center'>Waiting for {activePlayer.name} to enter a clue...</h1>
     );
   }
 
@@ -56,8 +50,8 @@ function CluePhase() {
       <Row>
         <Col md={{ span: 8, offset: 2 }}>
           <p>
-            Enter a clue or phrase that will help your teammates guess the correct point on the spectrum
-            from <em>{currConcept[0]}</em> to <em>{currConcept[1]}</em>.
+            Enter a clue or phrase that will help the other players guess the correct point on the
+            spectrum from <em>{currConcept[0]}</em> to <em>{currConcept[1]}</em>.
           </p>
           <Form onSubmit={onSubmit}>
             <InputGroup>
@@ -72,10 +66,6 @@ function CluePhase() {
           </Form>
         </Col>
       </Row>
-
-      <div className='my-5'>
-        <PointsTable highlightPlayerId={activePlayer.id}/>
-      </div>
     </>
   );
 }
