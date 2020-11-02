@@ -13,8 +13,9 @@ const renderVotedPlayerRow = (suspectPlayer, voterPlayers, isEliminated, renderS
 
   return (
     <ListGroup.Item key={suspectPlayer.id} variant={isEliminated ? 'danger' : ''}>
-      <h3>{shouldShowSkulls && '💀 '}{suspectPlayer.name}{shouldShowSkulls && ' 💀'}</h3>
       {voterPlayers.map(voter => <Badge key={voter.id}>{voter.name}</Badge>)}
+      <span> voted for:</span>
+      <h3>{shouldShowSkulls && '💀 '}{suspectPlayer.name}{shouldShowSkulls && ' 💀'}</h3>
     </ListGroup.Item>
   );
 };
