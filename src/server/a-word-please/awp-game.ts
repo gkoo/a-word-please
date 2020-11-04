@@ -47,6 +47,7 @@ class AWPGame extends Game {
   setup(users) {
     super.setup(users);
     this.deck = new Deck(wordlist);
+    this.deck.shuffle();
     this.determinePlayerOrder();
     this.newGame();
   }
