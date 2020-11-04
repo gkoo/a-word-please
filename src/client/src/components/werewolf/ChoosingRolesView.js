@@ -19,18 +19,9 @@ import {
   socketSelector,
 } from '../../store/selectors';
 import {
-  ROLE_WEREWOLF,
-  ROLE_MINION,
   ROLE_MASON,
-  ROLE_SEER,
-  ROLE_ROBBER,
-  ROLE_TROUBLEMAKER,
-  ROLE_DRUNK,
-  ROLE_INSOMNIAC,
-  ROLE_HUNTER,
-  ROLE_VILLAGER,
   ROLE_DOPPELGANGER,
-  ROLE_TANNER,
+  WEREWOLF_CARD_IDS,
 } from '../../constants';
 
 function ChoosingRolesView() {
@@ -81,6 +72,10 @@ function ChoosingRolesView() {
       alert(`Please choose exactly ${numRolesToChoose} roles before continuing.`);
       return;
     }
+    if (roleIds.filter(x => WEREWOLF_CARD_IDS[x] === ROLE_MASON).length === 1) {
+      alert('Please include both masons if you want to play with that role!');
+      return;
+    }
     socket.emit('playerAction', { action: 'beginNighttime' });
   };
 
@@ -91,7 +86,7 @@ function ChoosingRolesView() {
       );
       return;
     }
-    if (toggledRoleId === ROLE_DOPPELGANGER) {
+    if (WEREWOLF_CARD_IDS[toggledRoleId] === ROLE_DOPPELGANGER) {
       alert('Please upgrade to premium to access the Doppelganger role by buying me a coffee.');
       return;
     }
@@ -127,6 +122,7 @@ function ChoosingRolesView() {
     return (
       <RoleCard
         id={id}
+        key={id}
         role={role}
         chooseMode={true}
         callback={onToggleRole}
@@ -199,23 +195,11 @@ function ChoosingRolesView() {
 
       <div className='gallery'>
         <CardDeck>
-          {renderRoleCard('werewolf1', ROLE_WEREWOLF)}
-          {renderRoleCard('werewolf2', ROLE_WEREWOLF)}
-          {renderRoleCard('werewolf3', ROLE_WEREWOLF)}
-          {renderRoleCard('minion', ROLE_MINION)}
-          {renderRoleCard('tanner', ROLE_TANNER)}
-          {renderRoleCard('mason1', ROLE_MASON)}
-          {renderRoleCard('mason2', ROLE_MASON)}
-          {renderRoleCard('seer', ROLE_SEER)}
-          {renderRoleCard('robber', ROLE_ROBBER)}
-          {renderRoleCard('troublemaker', ROLE_TROUBLEMAKER)}
-          {renderRoleCard('drunk', ROLE_DRUNK)}
-          {renderRoleCard('insomniac', ROLE_INSOMNIAC)}
-          {renderRoleCard('hunter', ROLE_HUNTER)}
-          {renderRoleCard('doppelganger', ROLE_DOPPELGANGER)}
-          {renderRoleCard('villager1', ROLE_VILLAGER)}
-          {renderRoleCard('villager2', ROLE_VILLAGER)}
-          {renderRoleCard('villager3', ROLE_VILLAGER)}
+          {
+            Object.keys(WEREWOLF_CARD_IDS).map(card_id =>
+              renderRoleCard(card_id, WEREWOLF_CARD_IDS[card_id])
+            )
+          }
         </CardDeck>
       </div>
       <div className={cx('fixed-header text-center', { show: showFixedHeader })}>

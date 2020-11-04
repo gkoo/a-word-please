@@ -38,7 +38,7 @@ function MasonView() {
           </div>
       }
       {
-        ready &&
+        ready && otherMason &&
           <em>Waiting for {otherMason.name} to end turn...</em>
       }
     </>
