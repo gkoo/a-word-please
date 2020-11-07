@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 
 import Button from 'react-bootstrap/Button';
 
+import BrushColorLabels from './BrushColorLabels';
 import EndGameButtons from '../common/EndGameButtons';
 import FinalCanvas from './FinalCanvas';
 import VoteResults from '../common/VoteResults';
@@ -23,6 +24,7 @@ function ResultsView() {
   const onReveal = () => socket.emit('playerAction', {
     action: 'revealFake'
   });
+  const playersInOrder = gameData.playerOrder.map(playerId => players[playerId]);
 
   if (!fakeArtistId) {
     return <EndGameButtons/>;
@@ -31,6 +33,7 @@ function ResultsView() {
   return (
     <>
       <FinalCanvas />
+      <BrushColorLabels players={playersInOrder}/>
       <VoteResults voteMap={gameData.votes}/>
 
       {
