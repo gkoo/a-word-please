@@ -162,6 +162,10 @@ class WavelengthGame extends Game {
   }
 
   submitGuess(playerId) {
+    if (!this.spectrumGuesses[playerId]) {
+      this.spectrumGuesses[playerId] = WavelengthGame.SPECTRUM_MAX_VALUE / 2;
+    }
+
     this.playerReady(playerId);
 
     // Check if all players are ready (don't count the psychic)
