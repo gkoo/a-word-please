@@ -334,3 +334,8 @@
 .canvas-container {
   margin: 0 auto;
 }
+
+.sf-artist-player-dot {
+  margin-right: 10px;
+  -webkit-text-stroke: 2px #fff;
+}

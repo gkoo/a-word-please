@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { fabric } from 'fabric';
 
+import BrushColorLabels from './BrushColorLabels';
 import SubjectCards from './SubjectCards';
 import { clearStrokes, saveStroke } from '../../store/actions';
 import { canvasWidth, canvasHeight } from '../../constants/sfArtist';
@@ -11,6 +12,7 @@ import {
   currPlayerSelector,
   currPlayerIsActivePlayerSelector,
   gameDataSelector,
+  playersSelector,
   socketSelector,
 } from '../../store/selectors';
 
@@ -25,6 +27,7 @@ function DrawingPhase() {
   const currPlayer = useSelector(currPlayerSelector);
   const currPlayerIsActivePlayer = useSelector(currPlayerIsActivePlayerSelector);
   const gameData = useSelector(gameDataSelector);
+  const players = useSelector(playersSelector);
 
   const socket = useSelector(socketSelector);
 
@@ -105,6 +108,19 @@ function DrawingPhase() {
     canvas.isDrawingMode = currPlayerIsActivePlayer;
   }, [currPlayerIsActivePlayer, canvas]);
 
+  if (!activePlayer) { return false; }
+
+  let displayOrder = [];
+  const { playerOrder } = gameData;
+  const activePlayerIdx = gameData.playerOrder.indexOf(activePlayer.id);
+  const firstHalf = playerOrder.slice(activePlayerIdx + 1);
+  const playerIdsInOrder = displayOrder.concat(
+    playerOrder.slice(activePlayerIdx + 1)
+  ).concat(
+    playerOrder.slice(0, activePlayerIdx)
+  );
+  const playersInOrder = playerIdsInOrder.map(playerId => players[playerId]);
+
   return (
     <>
       <SubjectCards hideFromFake={true}/>
@@ -116,17 +132,19 @@ function DrawingPhase() {
           ref={canvasRef}
         />
       </div>
-      <h2 className='text-center my-2'>
-        <span style={{color: activePlayer?.brushColor}}>● </span>
-        {activePlayer?.name}'s turn</h2>
+      <p className='text-center'>Turns left: {totalTurns - turnNum}</p>
       {
         currPlayerIsActivePlayer &&
           <p>
-            It's your turn to draw! You can only draw <strong>one</strong> contiguous brushstroke. Once
-            you have added that brushstroke, your turn will be over.
+            It's your turn to draw! You can only draw <strong>one</strong> contiguous brushstroke.
+            Once you have added that brushstroke, your turn will be over.
           </p>
       }
-      <p>Turns left: {totalTurns - turnNum}</p>
+      <h2 className='text-center my-2'>
+        <span className='sf-artist-player-dot' style={{color: activePlayer?.brushColor}}>● </span>
+        {activePlayer.name}'s turn
+      </h2>
+      <BrushColorLabels players={playersInOrder}/>
     </>
   );
 }
