@@ -1,17 +1,15 @@
 import React from 'react';
 
-function BrushColorLabels({ connectedPlayers }) {
+function BrushColorLabels({ players }) {
   return (
-    <div>
-      <br/>
-      <h3>Here are your brush colors!</h3>
+    <div className='text-center'>
       {
-      	connectedPlayers.filter(player => player.connected).map(player =>
-	      	<span key={player.id} style={{backgroundColor: 'white'}}>
-	        	<span style={{color: player.brushColor}}>●</span>
-	        	<span style={{color: 'black'}}>: {player.name} </span>
-	      	</span>
-	    	)
+        players.map(player =>
+          <p>
+            <span className='sf-artist-player-dot' style={{color: player.brushColor}}>● </span>
+            {player.name}
+          </p>
+        )
       }
     </div>
   );

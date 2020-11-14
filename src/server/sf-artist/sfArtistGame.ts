@@ -20,8 +20,7 @@ const COLORS = [
   '#b22222', // red
   '#006400', // green
   '#ff8c00', // orange
-  '#4b0082', // indigo
-  '#a52a2a', // brown
+  '#ff1493', // pink
   '#000000', // black
   '#663399', // purple
   '#ff7f50', // corral
@@ -197,6 +196,7 @@ class SfArtistGame extends Game {
       activePlayerId: this.activePlayerId,
       fakeArtistId: this.fakeArtistId,
       gameId: GameEnum.SfArtist,
+      playerOrder: this.playerOrder,
       players: this.players,
       playersReady: this.playersReady,
       revealFake: this.revealFake,
