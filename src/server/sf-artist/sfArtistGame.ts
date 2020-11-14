@@ -24,6 +24,7 @@ const COLORS = [
   '#a52a2a', // brown
   '#000000', // black
   '#663399', // purple
+  '#ff7f50', // corral
 ]
 
 const TURNS_PER_PLAYER = 2;
