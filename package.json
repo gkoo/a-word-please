@@ -34,6 +34,7 @@
     "dev": "NODE_ENV=development ts-node-dev --respawn src/server/index.ts",
     "heroku-postbuild": "yarn build && cd src/client && yarn && yarn run build",
     "start": "NODE_ENV=production node built/index.js",
+    "client": "cd src/client && yarn start",
     "test": "jest",
     "lint": "eslint src/server/*"
   }

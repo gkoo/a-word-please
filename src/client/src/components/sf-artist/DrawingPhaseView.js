@@ -113,7 +113,6 @@ function DrawingPhase() {
   let displayOrder = [];
   const { playerOrder } = gameData;
   const activePlayerIdx = gameData.playerOrder.indexOf(activePlayer.id);
-  const firstHalf = playerOrder.slice(activePlayerIdx + 1);
   const playerIdsInOrder = displayOrder.concat(
     playerOrder.slice(activePlayerIdx + 1)
   ).concat(

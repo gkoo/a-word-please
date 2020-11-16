@@ -54,10 +54,10 @@ class SfArtistGame extends Game {
   setup(users) {
     super.setup(users);
     this.newGame();
-    this.allStrokes = [];
   }
 
   newGame() {
+    this.allStrokes = [];
     this.revealFake = false;
     this.turnNum = 0;
     this.playersReady = {};
