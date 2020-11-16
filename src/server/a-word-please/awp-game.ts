@@ -1,10 +1,12 @@
+import fs from 'fs';
+import path from 'path';
+
 import _ from 'lodash';
 import uuid from 'uuid';
 
 import Deck from '../deck';
 import Game, { GameEnum } from '../game';
 import Player from '../player';
-import wordlist from './wordlist';
 
 interface Clue {
   clue: string;
@@ -46,8 +48,7 @@ class AWPGame extends Game {
 
   setup(users) {
     super.setup(users);
-    this.deck = new Deck(wordlist);
-    this.deck.shuffle();
+    this.constructDeck();
     this.determinePlayerOrder();
     this.newGame();
   }
@@ -56,6 +57,24 @@ class AWPGame extends Game {
     this.roundNum = 0;
     this.numPoints = 0;
     this.nextTurn();
+  }
+
+  constructDeck() {
+    const isProduction = process.env.NODE_ENV === 'production';
+    let wordlist = [];
+
+    if (!isProduction) {
+      wordlist = ['dog', 'cat', 'pig', 'horse', 'rat', 'snake'];
+    } else {
+      const staticPath = `../../${isProduction ? '' : '../'}static`
+      const filepath = path.join(__dirname, staticPath, 'a-word-please-clues.txt');
+
+      const data = fs.readFileSync(filepath, 'utf8');
+      wordlist = data.split('\n');
+    }
+
+    this.deck = new Deck(wordlist);
+    this.deck.shuffle();
   }
 
   addPlayer({ id, name }) {
