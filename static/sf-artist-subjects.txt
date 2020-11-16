@@ -16,28 +16,32 @@ The Little Mermaid,Movie
 The Matrix,Movie
 Back to the Future,Movie
 Jurassic Park,Movie
+Inception,Movie
+Pacific Rim,Movie
 
 Godzilla,Character
-Spider-man, Character
-Mario, Character
-Pikachu, Character
-Wolverine, Character
-Batman, Character
-Joker, Character
-Shrek, Character
-Homer Simpson, Character
-Mickey Mouse, Character
-James Bond, Character
-Peter Pan, Character
-King Kong, Character
-Tarzan, Character
-Jon Snow, Character
-E.T., Character
-Harry Potter, Character
-Willy Wonka, Character
-Pac-man, Character
-Pinocchio, Character
-Sherlock Holmes, Character
+Spider-man,Character
+Mario,Character
+Pikachu,Character
+Wolverine,Character
+Batman,Character
+Joker,Character
+Shrek,Character
+Homer Simpson,Character
+Mickey Mouse,Character
+James Bond,Character
+Peter Pan,Character
+King Kong,Character
+Tarzan,Character
+Jon Snow,Character
+E.T.,Character
+Harry Potter,Character
+Willy Wonka,Character
+Pac-man,Character
+Pinocchio,Character
+Sherlock Holmes,Character
+Santa Claus,Character
+Yoda,Character
 
 Independence Day,Event
 Halloween,Event
@@ -74,3 +78,22 @@ Mailman,Profession
 Pilot,Profession
 Sumo Wrestler,Profession
 Film Director,Profession
+
+School,Location
+Church,Location
+Grocery Store,Location
+Baseball Diamond,Location
+Airport,Location
+Casino,Location
+Aquarium,Location
+Bar,Location
+Gym,Location
+Movie Theater,Location
+Hospital,Location
+Jail,Location
+North Pole,Location
+The Moon,Location
+Beach,Location
+Laboratory,Location
+Library,Location
+Death Star,Location
