@@ -24,7 +24,7 @@ const COLORS = [
   '#000000', // black
   '#663399', // purple
   '#ff7f50', // corral
-]
+];
 
 const TURNS_PER_PLAYER = 2;
 
@@ -95,7 +95,7 @@ class SfArtistGame extends Game {
   addPlayer({ id, name }) {
     super.addPlayer({ id, name });
     this.players[id].setBrushColor(COLORS[this.colorCursor]);
-    this.colorCursor = this.colorCursor + 1 % COLORS.length;
+    this.colorCursor = (this.colorCursor + 1) % COLORS.length;
   }
 
   assignRoles() {
