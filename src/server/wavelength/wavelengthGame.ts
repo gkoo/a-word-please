@@ -1,7 +1,9 @@
+import fs from 'fs';
+import path from 'path';
+
 import Deck from '../deck';
 import Game, { GameEnum } from '../game';
 import Player from '../player';
-import { easyConcepts, advancedConcepts } from './concepts';
 
 class WavelengthGame extends Game {
   activePlayerId: string;
@@ -40,15 +42,39 @@ class WavelengthGame extends Game {
 
   setup(users) {
     super.setup(users);
+    this.constructDeck();
+    this.newGame();
+  }
+
+  constructDeck() {
+    const isProduction = process.env.NODE_ENV === 'production';
+    let conceptList = [];
     const developmentConcepts = [
       ['Bad', 'Good'],
       ['Old', 'New'],
       ['Short', 'Tall'],
     ];
-    const allConcepts = easyConcepts.concat(advancedConcepts);
-    const concepts = process.env.NODE_ENV === 'development' ? developmentConcepts : allConcepts;
-    this.deck = new Deck(concepts);
-    this.newGame();
+
+    if (!isProduction) {
+      conceptList = developmentConcepts;
+    } else {
+      const staticPath = `../../${isProduction ? '' : '../'}static`
+
+      let filepath = path.join(__dirname, staticPath, 'wavelength-concepts-easy.txt');
+      let data = fs.readFileSync(filepath, 'utf8');
+      conceptList = conceptList.concat(
+        data.split('\n').map((conceptPair: string) => conceptPair.split(','))
+      );
+
+      filepath = path.join(__dirname, staticPath, 'wavelength-concepts-advanced.txt');
+      data = fs.readFileSync(filepath, 'utf8');
+      conceptList = conceptList.concat(
+        data.split('\n').map((conceptPair: string) => conceptPair.split(','))
+      );
+    }
+
+    this.deck = new Deck(conceptList);
+    this.deck.shuffle();
   }
 
   newGame() {

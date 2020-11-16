@@ -1,0 +1,176 @@
+Rare,Common
+Bad movie,Good movie
+Traditionally masculine,Traditionally feminine
+Quiet place,Loud place
+Comedy,Drama
+Better hot,Better cold
+Underrated letter of the alphabet,Overrated letter of the alphabet
+Inessential,Essential
+Messy food,Clean food
+Evil,Good
+Fantasy,Sci-fi
+Job,Career
+Rough,Smooth
+Sad song,Happy song
+Flavorless,Flavorful
+Underrated thing to do,Overrated thing to do
+Useless in an emergency,Useful in an emergency
+Failure,Masterpiece
+Easy to spell,Hard to spell
+Ineffective,Effective
+Useless invention,Useful invention
+Unsexy animal,Sexy animal
+Good president,Bad President
+Introvert,Extrovert
+Unexpected,Expected
+Unsexy color,Sexy color
+True,False
+Bad actor,Good actor
+Hard to find,Easy to find
+Bad Disney character,Good Disney character
+Unpopular activity,Popular activity
+Untalented,Talented
+Sustenance,Haute cuisine
+Normal pet,Exotic pet
+Inclusive,Exclusive
+Hard to pronounce,Easy to pronounce
+The worst,The best
+Underrated thing to own,Overrated thing to own
+Cheap,Expensive
+Wise,Intelligent
+Round,Pointy
+Unimportant,Important
+Temporary,Permanent
+Underrated book,Overrated book
+Disgusting cereal,Delicious cereal
+Dangerous job,Safe job
+Worst year in history,Best year in history
+Endangered species,Overpopulated species
+Out of control,In control
+Useless,Useful
+Not enough,Too much
+Soft,Hard
+Ugly man,Beautiful man
+Secret,Public knowledge
+Sport,Game
+Bad superpower,Good superpower
+Boring,Exciting
+Sad song,Happy song
+Worst day of the year,Best day of the year
+Popular,Elitist
+Snack,Meal
+Unhealthy,Healthy
+For kids,For adults
+Bad habit,Good habit
+Bad pizza topping,Good pizza topping
+Uncool,Cool
+Hard to remember,Easy to remember
+Illegal,Prohibited
+Difficult to use,Easy to use
+Limited,Infinite
+Weak,Strong
+Uncontroversial topic,Controversial topic
+Gryffindor,Slytherin
+80s,90s
+Scary animal,Nice animal
+Colorless,Colorful
+Blue,Green
+Mild,Spicy
+Ordinary,Extraordinary
+Derivative,Original
+Underrated,Overrated
+Traditional,Radical
+Short,Long
+Artisanal,Mass produced
+Low calorie,High calorie
+Not a sandwich,A sandwich
+Has a bad reputation,Has a good reputation
+Mainstream,Niche
+Unfashionable,Fashionable
+Similar,Identical
+Genuine person,Phony person
+Stationary,Mobile
+Nobody does it,Everybody does it
+Optional,Mandatory
+Basic,Hipster
+Unstable,Stable
+Culturally significant,Culturally insignificant
+Least powerful god,Most powerful god
+Easy to kill,Hard to kill
+Too small,Too big
+Talent,Skill
+Dog name,Cat name
+Underrated game,Overrated game
+Tastes bad,Tastes good
+Book was better,Movie was better
+Peaceful,Warlike
+Dirty,Clean
+Bad TV show,Good TV show
+Underrated skill,Overrated skill
+Unsexy emoji,Sexy emoji
+Local issue,Global issue
+Geek,Dork
+Star Wars,Star Trek
+Funny topic,Serious topic
+Stupid,Brilliant
+Villain,Hero
+Inflexible,Flexible
+Mean person,Nice person
+Worst era to time travel,Best era to time travel
+Bad dog breed,Good dog breed
+Liberal,Conservative
+Famous,Infamous
+Dry,Wet
+Fruit,Vegetable
+Unethical to eat,Ethical to eat
+Unforgiveable,Forgiveable
+Waste of time,Good use of time
+Freedom fighter,Terrorist
+Etiquette,Manners
+Bop,Jam
+Movie Godzilla would improve,Movie Godzilla would ruin
+Unelectable,Electable
+Just one date,Marriage material
+Accurate,Inaccurate
+Gossip,News
+Basic,Awesome
+Winner,Loser
+Public,Private
+Religious,Secular
+Voluntary,Compulsory
+Jack of all trades,One trick pony
+Annoying sound,Wonderful sound
+Useless major,Useful major
+Legend,Myth
+Movie,Film
+Bad gift,Good gift
+Unpopular in the 80s,Popular in the 80s
+Funny animal,Serious animal
+Need,Want
+Underrated city,Overrated city
+Role model,Bad influence
+Always on time,Never on time
+Conventional wisdom,Fringe theory
+Underrated activity,Overrated activity
+Hairless,Hairy
+Bad for you,Good for you
+Could defeat a shark,Couldn\'t defeat a shark
+Wobbly,Still
+Bad investment,Good investment
+Doesn\'t vape,Vapes
+Weird,Strange
+Worst thing on the internet,Best thing on the internet
+Ugly color,Beautiful color
+Socialist,Capitalist
+Divided,Whole
+Feels bad,Feels good
+Believable,Unbelievable
+Not OK to eat,OK to eat
+Immature,Mature
+Least evil company,Most evil company
+Looks like a person,Doesn\'t look like a person
+Lowbrow,Highbrow
+Boring topic,Fascinating topic
+Vice,Virtue
+Normal thing to own,Weird thing to own
+Boring person,Fun person
