@@ -10,7 +10,7 @@ import {
   GAME_WAVELENGTH,
   GAME_DECEPTION,
   GAME_SF_ARTIST,
-  GAME_LABELS
+  GAME_SHORT_LABELS
 } from '../constants';
 
 const emojiForGame = (gameId) => {
@@ -43,10 +43,10 @@ function LobbyGameButton({ gameId, selected }) {
       onClick={() => onChooseGame(gameId)}
       block
     >
-      <span role='img' aria-label={GAME_LABELS[gameId]} className='mr-2'>
+      <span role='img' aria-label={GAME_SHORT_LABELS[gameId]} className='mr-2'>
         {emojiForGame(gameId)}
       </span>
-      {GAME_LABELS[gameId]}
+      {GAME_SHORT_LABELS[gameId]}
     </Button>
   );
 }
