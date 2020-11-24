@@ -14,6 +14,12 @@ function ReleaseNotesModal({ show }) {
         <Modal.Title>Release Notes</Modal.Title>
       </Modal.Header>
       <Modal.Body>
+        <h3>Nov 24, 2020</h3>
+        <ul>
+          <li>Update game names</li>
+          <li>Remove rules modal, add initial rules screens to A Word Please, Waveform</li>
+        </ul>
+
         <h3>Oct 31, 2020</h3>
         <ul>
           <li>Update Wavelength to allow guessers to submit independent guesses</li>
