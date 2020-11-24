@@ -17,6 +17,7 @@ export enum GameState {
   Pending,
   TurnEnd,
   GameEnd,
+  ExplainRules,
   EnteringClues,
   ReviewingClues,
   EnteringGuess,
@@ -49,11 +50,13 @@ class AWPGame extends Game {
   setup(users) {
     super.setup(users);
     this.constructDeck();
-    this.determinePlayerOrder();
-    this.newGame();
+    this.playersReady = {};
+    this.state = GameState.ExplainRules;
+    this.broadcastGameDataToPlayers();
   }
 
   newGame() {
+    this.determinePlayerOrder();
     this.roundNum = 0;
     this.numPoints = 0;
     this.nextTurn();
@@ -84,15 +87,17 @@ class AWPGame extends Game {
   }
 
   disconnectPlayer(id) {
-    const playerOrderIdx = this.playerOrder.indexOf(id);
+    if (this.playerOrder) {
+      const playerOrderIdx = this.playerOrder.indexOf(id);
 
-    // For some reason, players get disconnected without being in the game
-    if (playerOrderIdx >= 0) {
-      this.playerOrder.splice(playerOrderIdx, 1);
+      // For some reason, players get disconnected without being in the game
+      if (playerOrderIdx >= 0) {
+        this.playerOrder.splice(playerOrderIdx, 1);
+      }
     }
 
     // Remove clue from clues
-    if (this.clues[id]) { delete this.clues[id]; }
+    if (this.clues && this.clues[id]) { delete this.clues[id]; }
 
     if (id === this.activePlayerId) {
       this.nextTurn(false);
@@ -108,6 +113,7 @@ class AWPGame extends Game {
 
   nextTurn(shouldIncrementRound = true) {
     this.clues = {};
+    this.playersReady = {};
     this.currGuess = null;
     this.skippedTurn = false;
 
@@ -134,6 +140,8 @@ class AWPGame extends Game {
     const playerId = socket.id;
 
     switch (data.action) {
+      case 'ready':
+        return this.playerReady(playerId);
       case 'submitClue':
         return this.receiveClue(playerId, data.clue);
       case 'revealClues':
@@ -144,6 +152,14 @@ class AWPGame extends Game {
         return this.skipTurn();
       default:
         throw new Error(`Unexpected action ${data.action}`);
+    }
+  }
+
+  onPlayersReady() {
+    // only called for ExplainRules state
+    if (this.state === GameState.ExplainRules) {
+      this.playersReady = {};
+      this.newGame();
     }
   }
 
@@ -163,6 +179,7 @@ class AWPGame extends Game {
     };
 
     this.broadcastGameDataToPlayers();
+    this.playerReady(playerId);
 
     setTimeout(() => this.checkIfAllCluesAreIn(), 500);
   }
@@ -230,6 +247,7 @@ class AWPGame extends Game {
       gameId: AWPGame.GAME_ID,
       numPoints,
       players,
+      playersReady: this.playersReady,
       playerOrder,
       roundNum,
       skippedTurn,

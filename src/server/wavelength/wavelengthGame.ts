@@ -119,12 +119,14 @@ class WavelengthGame extends Game {
   }
 
   disconnectPlayer(id: string) {
-    // Remove from player order
-    const playerOrderIdx = this.playerOrder.indexOf(id);
+    if (this.playerOrder) {
+      // Remove from player order
+      const playerOrderIdx = this.playerOrder.indexOf(id);
 
-    // For some reason, players get disconnected without being in the game
-    if (playerOrderIdx >= 0) {
-      this.playerOrder.splice(playerOrderIdx, 1);
+      // For some reason, players get disconnected without being in the game
+      if (playerOrderIdx >= 0) {
+        this.playerOrder.splice(playerOrderIdx, 1);
+      }
     }
 
     if (id === this.activePlayerId) {

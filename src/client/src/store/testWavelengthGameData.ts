@@ -19,9 +19,10 @@ export default {
   },
   roundNum: 13,
   spectators: [],
+  state: constants.STATE_WAVELENGTH_EXPLAIN_RULES,
   //state: constants.STATE_WAVELENGTH_CLUE_PHASE,
   //state: constants.STATE_WAVELENGTH_GUESS_PHASE,
-  state: constants.STATE_WAVELENGTH_REVEAL_PHASE,
+  //state: constants.STATE_WAVELENGTH_REVEAL_PHASE,
   //state: constants.STATE_WAVELENGTH_GAME_END_PHASE,
   spectrumGuesses: {
     yuriko: 200,

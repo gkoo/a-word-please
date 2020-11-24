@@ -26,7 +26,6 @@ const initialState = {
   showAboutModal: false,
   showReleaseNotesModal: false,
   showRolesModal: false,
-  showRulesModal: false,
   socket: null,
   strokes: [],
   userPreferences: {},
@@ -321,12 +320,6 @@ export default function reducer(state = stateToUse, action) {
           ...state.gameData,
           showRolesModal: action.payload.show,
         },
-      };
-
-    case actions.TOGGLE_RULES_MODAL:
-      return {
-        ...state,
-        showRulesModal: action.payload.show,
       };
 
     case actions.UPDATE_SPECTRUM_GUESS:

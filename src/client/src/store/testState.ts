@@ -1,18 +1,18 @@
 import * as constants from '../constants';
-//import testAwpGameData from './testWavelengthGameData';
+import testAwpGameData from './testAwpGameData';
 //import testDeceptionGameData from './testDeceptionGameData';
 //import testPlayersData from './testPlayersData';
-import testSfArtistGameData from './testSfArtistGameData';
+//import testSfArtistGameData from './testSfArtistGameData';
 //import testWavelengthGameData from './testWavelengthGameData';
 //import testWerewolfGameData from './testWerewolfGameData';
 
 const { env } = constants;
 
-//const testGameDataToUse = testAwpGameData;
-//const testGameDataToUse = testWerewolfGameData;
-//const testGameDataToUse = testWavelengthGameData;
+const testGameDataToUse = testAwpGameData;
 //const testGameDataToUse = testDeceptionGameData;
-const testGameDataToUse = testSfArtistGameData;
+//const testGameDataToUse = testSfArtistGameData;
+//const testGameDataToUse = testWavelengthGameData;
+//const testGameDataToUse = testWerewolfGameData;
 
 export default {
   alerts: [

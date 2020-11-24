@@ -14,7 +14,6 @@ show accomplice means & evidence chosen
 
 remove point if wrong guess on last turn
 
-
 # Werewolf
 
 Option to randomize roles
@@ -22,8 +21,6 @@ Option to randomize + x werewolves
 
 warnings when including:
 * insomniac but no troublemaker/robber
-
-conditionally show rules based on which game you're playing
 
 Show multiple in non-wake roles
 
@@ -33,7 +30,7 @@ voting
 
 # Fake Artist
 
-* disable submit button on EnterSubjectView
+* show spectators
 
 # General
 
@@ -42,3 +39,5 @@ investigate bug w/ "Clean up room after everyone has left"
 fix "undefined has connected" -- usually when user w/out name has reconnected
 
 remove spectator who has disconnected
+
+check playersReady when a player disconnects

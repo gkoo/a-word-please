@@ -5,6 +5,7 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 
 import {
+  STATE_AWP_EXPLAIN_RULES,
   STATE_AWP_ENTERING_CLUES,
   STATE_AWP_REVIEWING_CLUES,
   STATE_AWP_ENTERING_GUESS,
@@ -14,6 +15,7 @@ import {
 import DuplicatesModal from './DuplicatesModal';
 import EnteringCluesView from './EnteringCluesView';
 import EnteringGuessView from './EnteringGuessView';
+import ExplainRulesView from './ExplainRulesView';
 import GameEndView from './GameEndView';
 import LeaderPanel from '../LeaderPanel';
 import TurnEndView from './TurnEndView';
@@ -26,6 +28,7 @@ function AWordPleaseBoard() {
   const currPlayer = useSelector(selectors.currPlayerSelector);
   const currPlayerIsGuesser = useSelector(selectors.currPlayerIsActivePlayerSelector);
   const currWord = useSelector(selectors.currWordSelector);
+  const gameData = useSelector(selectors.gameDataSelector);
   const gameState = useSelector(selectors.gameStateSelector);
   const activePlayer = useSelector(selectors.activePlayerSelector);
   const numPoints = useSelector(selectors.numPointsSelector);
@@ -33,19 +36,19 @@ function AWordPleaseBoard() {
   const players = useSelector(selectors.playersSelector);
   const users = useSelector(selectors.usersSelector);
 
-  let clueGivers;
-  if (activePlayer) {
-    clueGivers = Object.values(players).filter(player =>
-      player.id !== activePlayer.id && player.connected
-    );
-  } else {
-    clueGivers = [];
-  }
+  const { playersReady } = gameData;
+  const clueGivers = Object.values(players).filter(player =>
+    player.id !== activePlayer?.id && player.connected
+  );
 
   return (
     <div className='board py-5'>
       <Row>
         <Col sm={8} className='main-panel py-5'>
+          {
+            gameState === STATE_AWP_EXPLAIN_RULES &&
+              <ExplainRulesView/>
+          }
           {
             [STATE_AWP_ENTERING_CLUES, STATE_AWP_REVIEWING_CLUES].includes(gameState) &&
               <EnteringCluesView
@@ -99,12 +102,16 @@ function AWordPleaseBoard() {
                 </div>
               </>
           }
-          <h3 className='mt-5'><u>Clue Givers</u></h3>
+          <h3 className='mt-5'>
+            <u>
+              {gameState === STATE_AWP_EXPLAIN_RULES ? 'Players' : 'Clue Givers'}
+            </u>
+          </h3>
           {
             clueGivers.map(clueGiver =>
               <>
                 <PlayerCheckboxLabel
-                  checked={!!clues[clueGiver.id]}
+                  checked={!!playersReady[clueGiver.id]}
                   player={clueGiver}
                 />
                 <br />

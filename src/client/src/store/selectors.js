@@ -41,7 +41,6 @@ export const currUserSelector = createSelector(
 );
 export const roomCodeSelector = state => state.roomCode;
 export const selectedGameSelector = state => state.roomData?.selectedGame;
-export const showRulesModalSelector = state => state.showRulesModal;
 export const showAboutModalSelector = state => state.showAboutModal;
 export const showReleaseNotesModalSelector = state => state.showReleaseNotesModal;
 export const alertsSelector = state => state.alerts;

@@ -20,7 +20,6 @@ export const SHOW_ALERT = 'SHOW_ALERT';
 export const TOGGLE_ABOUT_MODAL = 'TOGGLE_ABOUT_MODAL';
 export const TOGGLE_RELEASE_NOTES_MODAL = 'TOGGLE_RELEASE_NOTES_MODAL';
 export const TOGGLE_ROLES_MODAL = 'TOGGLE_ROLES_MODAL';
-export const TOGGLE_RULES_MODAL = 'TOGGLE_RULES_MODAL';
 export const UPDATE_SPECTRUM_GUESS = 'UPDATE_SPECTRUM_GUESS';
 export const UPDATE_USER_PREFERENCE = 'UPDATE_USER_PREFERENCE';
 export const USER_DISCONNECT = 'USER_DISCONNECT';
@@ -165,13 +164,6 @@ export function toggleRolesModal({ show }) {
   return {
     payload: { show },
     type: TOGGLE_ROLES_MODAL,
-  }
-}
-
-export function toggleRulesModal({ show }) {
-  return {
-    payload: { show },
-    type: TOGGLE_RULES_MODAL,
   }
 }
 

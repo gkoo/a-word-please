@@ -1,7 +1,6 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
-import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
@@ -11,7 +10,6 @@ import Card from 'react-bootstrap/Card';
 import LobbyGameButton from './LobbyGameButton';
 import StartGameButton from './common/StartGameButton';
 import UserList from './UserList';
-import { toggleRulesModal } from '../store/actions';
 import { selectedGameSelector } from '../store/selectors';
 import {
   GAME_A_WORD_PLEASE,
@@ -23,9 +21,6 @@ import {
 } from '../constants';
 
 function Lobby({ messages, roomCode, users }) {
-  const dispatch = useDispatch();
-
-  const onShowRulesModal = () => dispatch(toggleRulesModal({ show: true }));
   const selectedGame = useSelector(selectedGameSelector);
 
   const startButtonDisabled = selectedGame === GAME_DECEPTION && users.length < 4;
@@ -120,14 +115,6 @@ function Lobby({ messages, roomCode, users }) {
                           }
                         </Col>
                       </Row>
-                      {
-                        [GAME_WAVELENGTH, GAME_A_WORD_PLEASE].includes(selectedGame) &&
-                          <Row>
-                            <Col className='text-center'>
-                              <Button variant='link' onClick={onShowRulesModal}>How to play</Button>
-                            </Col>
-                          </Row>
-                      }
                       <Row>
                         <Col className='text-center'>
                           {
