@@ -5,6 +5,7 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 
 import CluePhase from './CluePhase';
+import ExplainRulesPhase from './ExplainRulesPhase';
 import GameEndPhase from './GameEndPhase';
 import GuessPhase from './GuessPhase';
 import LeaderPanel from '../LeaderPanel';
@@ -14,11 +15,12 @@ import RevealPhase from './RevealPhase';
 import SpectatorList from '../common/SpectatorList';
 import * as selectors from '../../store/selectors';
 import {
+  STATE_WAVELENGTH_EXPLAIN_RULES,
   STATE_WAVELENGTH_CLUE_PHASE,
   STATE_WAVELENGTH_GUESS_PHASE,
   STATE_WAVELENGTH_REVEAL_PHASE,
-  STATE_WAVELENGTH_GAME_END_PHASE,
   GAME_LABELS,
+  GAME_STATE_GAME_END,
   GAME_WAVELENGTH,
 } from '../../constants';
 
@@ -37,11 +39,15 @@ function WavelengthBoard() {
       <Row>
         <Col sm={8} className='main-panel py-5'>
           <h3 className='mb-4'>{GAME_LABELS[GAME_WAVELENGTH]}</h3>
-          {gameState !== STATE_WAVELENGTH_GAME_END_PHASE && <PointsTable/>}
+          {
+            ![STATE_WAVELENGTH_EXPLAIN_RULES, GAME_STATE_GAME_END].includes(gameState) &&
+              <PointsTable/>
+          }
+          { gameState === STATE_WAVELENGTH_EXPLAIN_RULES && <ExplainRulesPhase /> }
           { gameState === STATE_WAVELENGTH_CLUE_PHASE && <CluePhase /> }
           { gameState === STATE_WAVELENGTH_GUESS_PHASE && <GuessPhase /> }
           { gameState === STATE_WAVELENGTH_REVEAL_PHASE && <RevealPhase /> }
-          { gameState === STATE_WAVELENGTH_GAME_END_PHASE && <GameEndPhase /> }
+          { gameState === GAME_STATE_GAME_END && <GameEndPhase /> }
         </Col>
         <Col sm={4} className='main-panel text-center py-5'>
           {
@@ -62,7 +68,11 @@ function WavelengthBoard() {
                 </div>
               </>
           }
-          <h3 className='mt-5'><u>Guessers</u></h3>
+          <h3 className='mt-5'>
+            <u>
+              {gameState === STATE_WAVELENGTH_EXPLAIN_RULES ? 'Players' : 'Guessers'}
+            </u>
+          </h3>
           {
             wavelengthGuessers.map(wavelengthGuesser =>
               <>

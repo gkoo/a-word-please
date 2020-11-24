@@ -96,7 +96,7 @@ function Lobby({ messages, roomCode, users }) {
                               <>
                                 <h2>{GAME_LABELS[GAME_WAVELENGTH]}</h2>
                                 <p>
-                                  <em>Are you and your friends on the same wavelength?</em>
+                                  <em>Are you and your friends on the same waveform?</em>
                                 </p>
                               </>
                           }

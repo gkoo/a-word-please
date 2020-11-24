@@ -5,6 +5,16 @@ import Deck from '../deck';
 import Game, { GameEnum } from '../game';
 import Player from '../player';
 
+export enum GameState {
+  Pending,
+  TurnEnd,
+  GameEnd,
+  ExplainRules,
+  CluePhase,
+  GuessPhase,
+  RevealPhase,
+}
+
 class WavelengthGame extends Game {
   activePlayerId: string;
   broadcastToRoom: (eventName: string, data: any) => void;
@@ -26,10 +36,6 @@ class WavelengthGame extends Game {
   totalNumRounds: number;
 
   static GAME_ID = GameEnum.Wavelength;
-  static STATE_CLUE_PHASE = 3;
-  static STATE_GUESS_PHASE = 4;
-  static STATE_REVEAL_PHASE = 5;
-  static STATE_GAME_END_PHASE = 6;
 
   static SPECTRUM_MAX_VALUE = 200;
   static SPECTRUM_BAND_WIDTH = 12;
@@ -42,8 +48,10 @@ class WavelengthGame extends Game {
 
   setup(users) {
     super.setup(users);
+    this.playersReady = {};
     this.constructDeck();
-    this.newGame();
+    this.state = GameState.ExplainRules;
+    this.broadcastGameDataToPlayers();
   }
 
   constructDeck() {
@@ -130,7 +138,7 @@ class WavelengthGame extends Game {
     this.playersReady = {};
     this.currTurnPoints = {};
     this.clue = null;
-    this.state = WavelengthGame.STATE_CLUE_PHASE;
+    this.state = GameState.CluePhase;
 
     if (shouldIncrementRound) {
       ++this.roundNum;
@@ -156,6 +164,8 @@ class WavelengthGame extends Game {
     const playerId = socket.id;
 
     switch (data.action) {
+      case 'ready':
+        return this.playerReady(playerId);
       case 'submitClue':
         return this.receiveClue(data.clue);
       case 'setSpectrumGuess':
@@ -171,9 +181,14 @@ class WavelengthGame extends Game {
     }
   }
 
+  onPlayersReady() {
+    // only called for ExplainRules state
+    this.newGame();
+  }
+
   receiveClue(clue) {
     this.clue = clue;
-    this.state = WavelengthGame.STATE_GUESS_PHASE;
+    this.state = GameState.GuessPhase;
     this.broadcastGameDataToPlayers();
   }
 
@@ -199,7 +214,7 @@ class WavelengthGame extends Game {
       return;
     }
 
-    this.state = WavelengthGame.STATE_REVEAL_PHASE;
+    this.state = GameState.RevealPhase;
 
     this.calculatePoints();
 
@@ -252,7 +267,7 @@ class WavelengthGame extends Game {
   }
 
   endGame() {
-    this.state = WavelengthGame.STATE_GAME_END_PHASE;
+    this.state = GameState.GameEnd;
     this.broadcastGameDataToPlayers();
   }
 
