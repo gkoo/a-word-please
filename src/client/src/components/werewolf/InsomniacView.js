@@ -7,7 +7,7 @@ import Button from 'react-bootstrap/Button';
 
 import RoleCard from './RoleCard';
 import { currPlayerSelector, socketSelector, wakeUpRoleSelector } from '../../store/selectors';
-import { WEREWOLF_ROLE_LABELS, ROLE_INSOMNIAC } from '../../constants';
+import { WEREWOLF_ROLE_LABELS, ROLE_INSOMNIAC } from '../../constants/werewolf';
 
 function InsomniacView() {
   const currPlayer = useSelector(currPlayerSelector);

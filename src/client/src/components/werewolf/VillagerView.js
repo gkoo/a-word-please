@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { WEREWOLF_ROLE_LABELS, ROLE_VILLAGER } from '../../constants';
+import { WEREWOLF_ROLE_LABELS, ROLE_VILLAGER } from '../../constants/werewolf';
 
 function VillagerView() {
   return (

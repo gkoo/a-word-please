@@ -25,7 +25,7 @@ import {
   ROLE_DOPPELGANGER,
   ROLE_TANNER,
   STATE_WW_VOTING,
-} from '../../constants';
+} from '../../constants/werewolf';
 import * as selectors from '../../store/selectors';
 
 const nonWakeUpRoles = [

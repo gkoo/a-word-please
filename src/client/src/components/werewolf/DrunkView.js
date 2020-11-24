@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import Button from 'react-bootstrap/Button';
 
 import { socketSelector } from '../../store/selectors';
-import { WEREWOLF_ROLE_LABELS, ROLE_DRUNK } from '../../constants';
+import { WEREWOLF_ROLE_LABELS, ROLE_DRUNK } from '../../constants/werewolf';
 
 function DrunkView() {
   const socket = useSelector(socketSelector);

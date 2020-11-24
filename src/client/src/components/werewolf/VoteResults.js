@@ -18,7 +18,7 @@ import {
   ROLE_MINION,
   ROLE_TANNER,
   ROLE_VILLAGER,
-} from '../../constants';
+} from '../../constants/werewolf';
 
 const getTeam = role => {
   if ([ROLE_WEREWOLF, ROLE_MINION].includes(role)) {

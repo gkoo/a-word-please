@@ -7,7 +7,7 @@ import Col from 'react-bootstrap/Col'
 import ChoosingRolesView from './ChoosingRolesView';
 import GameplayView from './GameplayView';
 import RolesModal from './RolesModal';
-import { STATE_WW_CHOOSING_ROLES, } from '../../constants';
+import { STATE_WW_CHOOSING_ROLES, } from '../../constants/werewolf';
 import * as selectors from '../../store/selectors';
 
 function WerewolfBoard() {

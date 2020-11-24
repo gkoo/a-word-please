@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { WEREWOLF_ROLE_LABELS, ROLE_HUNTER } from '../../constants';
+import { WEREWOLF_ROLE_LABELS, ROLE_HUNTER } from '../../constants/werewolf';
 
 function HunterView() {
   return (

@@ -18,7 +18,7 @@ import {
   ROLE_VILLAGER,
   ROLE_DOPPELGANGER,
   ROLE_TANNER,
-} from '../../constants';
+} from '../../constants/werewolf';
 import { toggleRolesModal } from '../../store/actions';
 
 const roles = [

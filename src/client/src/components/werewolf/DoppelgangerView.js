@@ -10,7 +10,7 @@ import RobberView from './RobberView';
 import SeerView from './SeerView';
 import TroublemakerView from './TroublemakerView';
 import { currPlayerSelector, playersSelector, socketSelector } from '../../store/selectors';
-import { WEREWOLF_ROLE_LABELS, ROLE_SEER, ROLE_TROUBLEMAKER, ROLE_ROBBER, ROLE_INSOMNIAC } from '../../constants';
+import { WEREWOLF_ROLE_LABELS, ROLE_SEER, ROLE_TROUBLEMAKER, ROLE_ROBBER, ROLE_INSOMNIAC } from '../../constants/werewolf';
 
 function DoppelgangerView() {
   const [copyPlayerId, setCopyPlayerId] = useState(null);

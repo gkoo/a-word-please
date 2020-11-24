@@ -22,7 +22,7 @@ import {
   ROLE_MASON,
   ROLE_DOPPELGANGER,
   WEREWOLF_CARD_IDS,
-} from '../../constants';
+} from '../../constants/werewolf';
 
 function ChoosingRolesView() {
   const [showOnlySelected, setShowOnlySelected] = useState(false);

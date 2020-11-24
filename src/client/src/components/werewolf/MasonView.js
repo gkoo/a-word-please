@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 
 import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
 import { currPlayerSelector, playersSelector, socketSelector } from '../../store/selectors';
-import { WEREWOLF_ROLE_LABELS, ROLE_MASON } from '../../constants';
+import { WEREWOLF_ROLE_LABELS, ROLE_MASON } from '../../constants/werewolf';
 
 function MasonView() {
   const [ready, setReady] = useState(false);

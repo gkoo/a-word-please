@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 
 import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
 import { currPlayerSelector, playersSelector, socketSelector } from '../../store/selectors';
-import { WEREWOLF_ROLE_LABELS, ROLE_MINION, ROLE_WEREWOLF } from '../../constants';
+import { WEREWOLF_ROLE_LABELS, ROLE_MINION, ROLE_WEREWOLF } from '../../constants/werewolf';
 
 function MinionView() {
   const currPlayer = useSelector(currPlayerSelector);

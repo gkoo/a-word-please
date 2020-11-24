@@ -16,7 +16,7 @@ import {
   STATE_WW_DAYTIME,
   STATE_WW_VOTING,
   STATE_WW_VOTE_RESULTS,
-} from '../../constants';
+} from '../../constants/werewolf';
 import { toggleRolesModal } from '../../store/actions';
 import {
   currPlayerSelector,

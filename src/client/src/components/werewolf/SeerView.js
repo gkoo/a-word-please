@@ -9,7 +9,7 @@ import Col from 'react-bootstrap/Col';
 import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
 import RoleCard from './RoleCard';
 import { currPlayerSelector, playersSelector, socketSelector, unclaimedRolesSelector } from '../../store/selectors';
-import { WEREWOLF_ROLE_LABELS } from '../../constants';
+import { WEREWOLF_ROLE_LABELS } from '../../constants/werewolf';
 
 function SeerView() {
   const [revealedPlayerId, setRevealedPlayerId] = useState(null);
