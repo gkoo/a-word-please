@@ -18,6 +18,8 @@ import {
   STATE_WAVELENGTH_GUESS_PHASE,
   STATE_WAVELENGTH_REVEAL_PHASE,
   STATE_WAVELENGTH_GAME_END_PHASE,
+  GAME_LABELS,
+  GAME_WAVELENGTH,
 } from '../../constants';
 
 function WavelengthBoard() {
@@ -34,6 +36,7 @@ function WavelengthBoard() {
     <div className='board py-5'>
       <Row>
         <Col sm={8} className='main-panel py-5'>
+          <h3 className='mb-4'>{GAME_LABELS[GAME_WAVELENGTH]}</h3>
           {gameState !== STATE_WAVELENGTH_GAME_END_PHASE && <PointsTable/>}
           { gameState === STATE_WAVELENGTH_CLUE_PHASE && <CluePhase /> }
           { gameState === STATE_WAVELENGTH_GUESS_PHASE && <GuessPhase /> }

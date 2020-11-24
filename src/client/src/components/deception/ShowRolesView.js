@@ -91,7 +91,7 @@ function ShowRolesView() {
             <Card>
               <Card.Body>
                 <Card.Title>
-                  <u>{RoleLabels[Witness]}</u>
+                  {RoleLabels[Witness]}
                 </Card.Title>
                 <Card.Text>
                   {witness.name}

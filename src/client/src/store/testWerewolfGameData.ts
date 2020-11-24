@@ -1,11 +1,12 @@
-import * as constants from '../constants';
+import { GAME_WEREWOLF } from '../constants';
+import * as constants from '../constants/werewolf';
 
 const roleToTest = constants.ROLE_MINION;
 
 export default {
   eliminatedPlayerIds: ['gordon'],
   wakeUpRole: constants.ROLE_ROBBER,
-  gameId: constants.GAME_WEREWOLF,
+  gameId: GAME_WEREWOLF,
   players: {
     gordon: {
       id: 'gordon',
@@ -61,11 +62,11 @@ export default {
     'robber',
     'tanner',
   ],
-  //state: constants.STATE_WW_CHOOSING_ROLES,
+  state: constants.STATE_WW_CHOOSING_ROLES,
   //state: constants.STATE_WW_NIGHTTIME,
   //state: constants.STATE_WW_DAYTIME,
   //state: constants.STATE_WW_VOTING,
-  state: constants.STATE_WW_VOTE_RESULTS,
+  //state: constants.STATE_WW_VOTE_RESULTS,
   unclaimedRoles: [constants.ROLE_WEREWOLF, constants.ROLE_DRUNK, constants.ROLE_DOPPELGANGER],
   votes: {
     'gordon': 'willy',

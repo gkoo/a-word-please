@@ -12,6 +12,7 @@ import ResultsView from './ResultsView';
 import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
 import VotingPhaseView from './VotingPhaseView';
 import SpectatorList from '../common/SpectatorList';
+import { GAME_LABELS, GAME_SF_ARTIST } from '../../constants';
 import { GameState } from '../../constants/sfArtist';
 import {
   connectedPlayersSelector,
@@ -46,7 +47,7 @@ function SfArtistBoard() {
     <>
       <Row>
         <Col sm={8} md={9} className='main-panel py-5'>
-          <h3>A Fake Artist in San Francisco</h3>
+          <h3>{GAME_LABELS[GAME_SF_ARTIST]}</h3>
           {
             gameState === ExplainRules && <ExplainRulesView />
           }

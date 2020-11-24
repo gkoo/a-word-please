@@ -14,7 +14,7 @@ import Jumbotron from 'react-bootstrap/Jumbotron';
 import Row from 'react-bootstrap/Row';
 
 import Layout from './Layout';
-import { routePrefix } from './constants';
+import * as constants from './constants';
 import {
   clearName,
   disconnectSocket,
@@ -29,6 +29,7 @@ function Homepage() {
   const socketConnected = useSelector(socketConnectedSelector);
   const dispatch = useDispatch();
 
+  const { routePrefix } = constants;
   const maxRoomCodeLength = 4;
   const history = useHistory();
   const [newRoomCode, setNewRoomCode] = useState('');
@@ -76,23 +77,23 @@ function Homepage() {
               <h3>Games</h3>
               <p>
                 <span role='img' aria-label='pencil icon' className='mr-2'>📝</span>
-                A Word, Please?
+                {constants.GAME_LABELS[constants.GAME_A_WORD_PLEASE]}
               </p>
               <p>
-                <span role='img' aria-label='werewolf' className='mr-2'>🐺</span>
-                One Night Werewolf
+                <span role='img' aria-label='werepig' className='mr-2'>🐺</span>
+                {constants.GAME_LABELS[constants.GAME_WEREWOLF]}
               </p>
               <p>
                 <span role='img' aria-label='wavelength' className='mr-2'>📻</span>
-                Wavelength
+                {constants.GAME_LABELS[constants.GAME_WAVELENGTH]}
               </p>
               <p>
-                <span role='img' aria-label='wavelength' className='mr-2'>🔪</span>
-                Deception
+                <span role='img' aria-label='deception' className='mr-2'>🔪</span>
+                {constants.GAME_LABELS[constants.GAME_DECEPTION]}
               </p>
               <p>
-                <span role='img' aria-label='wavelength' className='mr-2'>🎨</span>
-                A Fake Artist
+                <span role='img' aria-label='fake-artist' className='mr-2'>🎨</span>
+                {constants.GAME_LABELS[constants.GAME_SF_ARTIST]}
               </p>
             </Jumbotron>
           </Col>

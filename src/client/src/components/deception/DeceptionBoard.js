@@ -21,6 +21,7 @@ import ReplaceSceneView from './ReplaceSceneView';
 import ShowRolesView from './ShowRolesView';
 import SpectatorList from '../common/SpectatorList';
 import Timer from './Timer';
+import { GAME_LABELS, GAME_DECEPTION } from '../../constants';
 import { GameState } from '../../constants/deception';
 
 import {
@@ -76,6 +77,7 @@ function DeceptionBoard() {
     <>
       <Row>
         <Col sm={8} md={9} className='main-panel py-5'>
+          <h3 className='mb-4'>{GAME_LABELS[GAME_DECEPTION]}</h3>
           {
             gameState === ExplainRules && <RulesView />
           }

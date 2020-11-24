@@ -12,10 +12,10 @@ export const GAME_SF_ARTIST = 5;
 
 export const GAME_LABELS = {
   [GAME_A_WORD_PLEASE]: 'A Word, Please?',
-  [GAME_WEREWOLF]: 'One Night Werewolf',
-  [GAME_WAVELENGTH]: 'Wavelength',
-  [GAME_DECEPTION]: 'Deception',
-  [GAME_SF_ARTIST]: 'A Fake Artist',
+  [GAME_WEREWOLF]: 'Werepig',
+  [GAME_WAVELENGTH]: 'Waveform',
+  [GAME_DECEPTION]: 'Deceit: Homicide in Washington, D.C.',
+  [GAME_SF_ARTIST]: 'A Fake Artist Goes To San Francisco',
 };
 
 export const GAME_STATE_PENDING = 0;

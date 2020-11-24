@@ -40,7 +40,6 @@ function RulesView() {
 
   return (
     <div>
-      <h1>Welcome to Deception: Murder in Hong Kong</h1>
       <RoleExplanations />
 
       <div className='text-center my-3'>

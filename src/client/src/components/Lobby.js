@@ -19,6 +19,7 @@ import {
   GAME_WEREWOLF,
   GAME_WAVELENGTH,
   GAME_SF_ARTIST,
+  GAME_LABELS,
 } from '../constants';
 
 function Lobby({ messages, roomCode, users }) {
@@ -71,7 +72,7 @@ function Lobby({ messages, roomCode, users }) {
                           {
                             selectedGame === GAME_A_WORD_PLEASE &&
                               <>
-                                <h2>A Word, Please?</h2>
+                                <h2>{GAME_LABELS[GAME_A_WORD_PLEASE]}</h2>
                                 <p>Work together to guess all of the words!</p>
                                 <p>
                                   But make sure your clues aren't the same, or else they'll be hidden!
@@ -81,7 +82,7 @@ function Lobby({ messages, roomCode, users }) {
                           {
                             selectedGame === GAME_WEREWOLF &&
                               <>
-                                <h2>One Night Werewolf</h2>
+                                <h2>{GAME_LABELS[GAME_WEREWOLF]}</h2>
                                 <p>
                                   <em>
                                     You either die a Villager or live long enough to see yourself
@@ -93,7 +94,7 @@ function Lobby({ messages, roomCode, users }) {
                           {
                             selectedGame === GAME_WAVELENGTH &&
                               <>
-                                <h2>Wavelength</h2>
+                                <h2>{GAME_LABELS[GAME_WAVELENGTH]}</h2>
                                 <p>
                                   <em>Are you and your friends on the same wavelength?</em>
                                 </p>
@@ -102,7 +103,7 @@ function Lobby({ messages, roomCode, users }) {
                           {
                             selectedGame === GAME_DECEPTION &&
                               <>
-                                <h2>Deception</h2>
+                                <h2>{GAME_LABELS[GAME_DECEPTION]}</h2>
                                 <p>
                                   <em>Analyze the evidence to find the murderer!</em>
                                 </p>
@@ -111,7 +112,7 @@ function Lobby({ messages, roomCode, users }) {
                           {
                             selectedGame === GAME_SF_ARTIST &&
                               <>
-                                <h2>A Fake Artist Goes To San Francisco</h2>
+                                <h2>{GAME_LABELS[GAME_SF_ARTIST]}</h2>
                                 <p>
                                   <em>Fake it til you make it!</em>
                                 </p>
