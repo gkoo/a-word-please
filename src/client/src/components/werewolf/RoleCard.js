@@ -35,7 +35,7 @@ const getDescription = role => {
     case ROLE_WEREWOLF:
       return 'Avoid suspicion and cast doubt on the villagers';
     case ROLE_MINION:
-      return 'Help the werewolves win';
+      return 'Help the werepigs win';
     case ROLE_TANNER:
       return 'Win if you are eliminated';
     case ROLE_MASON:

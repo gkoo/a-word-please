@@ -39,7 +39,7 @@ export const WEREWOLF_CARD_IDS = {
 };
 
 export const WEREWOLF_ROLE_LABELS = {
-  [ROLE_WEREWOLF]: 'Werewolf',
+  [ROLE_WEREWOLF]: 'Werepig',
   [ROLE_MINION]: 'Minion',
   [ROLE_MASON]: 'Mason',
   [ROLE_SEER]: 'Seer',

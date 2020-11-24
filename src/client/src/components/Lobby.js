@@ -81,7 +81,7 @@ function Lobby({ messages, roomCode, users }) {
                                 <p>
                                   <em>
                                     You either die a Villager or live long enough to see yourself
-                                    become a Werewolf...
+                                    become a Werepig...
                                   </em>
                                 </p>
                               </>

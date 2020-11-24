@@ -18,6 +18,14 @@ export const GAME_LABELS = {
   [GAME_SF_ARTIST]: 'A Fake Artist Goes To San Francisco',
 };
 
+export const GAME_SHORT_LABELS = {
+  [GAME_A_WORD_PLEASE]: 'A Word, Please?',
+  [GAME_WEREWOLF]: 'Werepig',
+  [GAME_WAVELENGTH]: 'Waveform',
+  [GAME_DECEPTION]: 'Deceit',
+  [GAME_SF_ARTIST]: 'A Fake Artist',
+};
+
 export const GAME_STATE_PENDING = 0;
 export const GAME_STATE_TURN_END = 1;
 export const GAME_STATE_GAME_END = 2;

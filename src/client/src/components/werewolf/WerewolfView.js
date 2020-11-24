@@ -29,13 +29,13 @@ function WerewolfView() {
       {
         otherWerewolves.length > 0 &&
           <p>
-            Your fellow {otherWerewolves.length > 1 ? 'werewolves are' : 'werewolf is'}:{' '}
+            Your fellow {otherWerewolves.length > 1 ? 'werepigs are' : 'werepig is'}:{' '}
             {otherWerewolves.map(player => <PlayerCheckboxLabel player={player}/>)}
           </p>
       }
       {
         otherWerewolves.length === 0 &&
-          <p>It seems there aren't any other werewolves...</p>
+          <p>It seems there aren't any other werepigs...</p>
       }
       {
         !ready &&
@@ -45,7 +45,7 @@ function WerewolfView() {
       }
       {
         ready &&
-          <em>Waiting for other werewolves to end turn...</em>
+          <em>Waiting for other werepigs to end turn...</em>
       }
     </>
   );

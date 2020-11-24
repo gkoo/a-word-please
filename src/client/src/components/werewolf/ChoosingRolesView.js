@@ -164,7 +164,7 @@ function ChoosingRolesView() {
           type='checkbox'
           inline
           id={`${domId}-ensure-werewolf`}
-          label='Ensure at least one werewolf'
+          label='Ensure at least one werepig'
           checked={ensureWerewolf}
           onChange={onEnsureWerewolfChange}
         />
