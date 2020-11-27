@@ -50,6 +50,7 @@ class AWPGame extends Game {
   setup(users) {
     super.setup(users);
     this.constructDeck();
+    this.roundNum = 0;
     this.playersReady = {};
     this.state = GameState.ExplainRules;
     this.broadcastGameDataToPlayers();
