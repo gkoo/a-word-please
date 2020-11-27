@@ -15,7 +15,7 @@ function GuessPhaseGuesserView() {
     socket.emit('playerAction', { action: 'submitGuess' });
   };
 
-  const submitted = playersReady[currPlayer.id];
+  const submitted = playersReady[currPlayer?.id];
 
   return (
     <>
