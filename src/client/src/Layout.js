@@ -20,6 +20,7 @@ function Layout({ children }) {
   const onShowAboutModal = () => dispatch(actions.toggleAboutModal({ show: true }));
   const onShowReleaseNotesModal = () => dispatch(actions.toggleReleaseNotesModal({ show: true }));
 
+  const roomCode = useSelector(selectors.roomCodeSelector);
   const showAboutModal = useSelector(selectors.showAboutModalSelector);
   const showReleaseNotesModal = useSelector(selectors.showReleaseNotesModalSelector);
 
@@ -35,7 +36,7 @@ function Layout({ children }) {
           </Nav.Link>
         </Nav>
       </NavBar>
-      <AlertGroup />
+      {roomCode && <AlertGroup />}
       {children}
       <AboutModal show={showAboutModal} />
       <ReleaseNotesModal show={showReleaseNotesModal} />

@@ -1,26 +1,29 @@
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import BootstrapAlert from 'react-bootstrap/Alert'
-
+import Toast from 'react-bootstrap/Toast';
 import { dismissAlert } from '../store/actions';
 
 const DELAY = 5000;
 
 function Alert({ id, message, type }) {
+  const [isShowing, setIsShowing] = useState(true);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    setTimeout(() => {
-      dispatch(dismissAlert(id));
-    }, DELAY);
-  }, [id, dispatch]);
+  const onClose = () => {
+    setIsShowing(false);
+    setTimeout(() => dispatch(dismissAlert(id)), 1000);
+  };
+
+  const bgClass = type === 'danger' ? 'bg-danger' : 'bg-info';
 
   // https://react-bootstrap.github.io/components/alerts/
   return (
-    <BootstrapAlert variant={type}>
-      {message}
-    </BootstrapAlert>
+    <Toast show={isShowing} autohide delay={DELAY} onClose={onClose} className={bgClass}>
+      <Toast.Body>
+        {message}
+      </Toast.Body>
+    </Toast>
   );
 }
 

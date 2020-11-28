@@ -19,7 +19,6 @@ import {
   clearName,
   disconnectSocket,
   receiveGameData,
-  setRoomCode,
 } from './store/actions';
 import { socketConnectedSelector } from './store/selectors';
 
@@ -56,7 +55,6 @@ function Homepage() {
   const joinRoom = () => {
     dispatch(receiveGameData({}));
     dispatch(clearName());
-    dispatch(setRoomCode(newRoomCode));
     history.push(`${routePrefix}/rooms/${newRoomCode}`);
   };
 

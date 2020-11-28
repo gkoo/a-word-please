@@ -47,6 +47,8 @@ function Room() {
     }
 
     socket.emit('joinRoom', socketIoRoomName);
+    dispatch(actions.setRoomCode(roomCodeParam));
+    return () => dispatch(actions.setRoomCode(null));
   }, [socket, dispatch, socketConnected, socketIoRoomName]);
 
   useEffect(() => {
