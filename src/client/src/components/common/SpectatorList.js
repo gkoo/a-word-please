@@ -19,9 +19,7 @@ function SpectatorList({ user }) {
       {
         Object.values(connectedSpectatorUsers).filter(user => user.connected).map(spectatorUser =>
           <>
-            <PlayerCheckboxLabel
-              player={spectatorUser}
-            />
+            <PlayerCheckboxLabel player={spectatorUser} />
             <br />
           </>
         )

@@ -44,16 +44,22 @@ class Room {
     const existingUser = this.users[originalSocketId];
     let user: User;
 
+    console.log('=====================================');
+    console.log(`[addUser] name: ${name}, originalSocketId: ${originalSocketId}`);
     if (!existingUser) {
+      console.log('[addUser] no existing user');
       user = new User({ id, name });
     } else {
       // we are reconnecting
+      console.log('[addUser] existing user: reconnecting');
       user = existingUser;
       user.id = id;
+      console.log(`[addUser] deleting socket ${originalSocketId}`);
       delete this.users[originalSocketId];
     }
 
     if (this.game) {
+      console.log('[addUser] game.maybeReconnect');
       this.game.maybeReconnect(user, originalSocketId);
     }
 

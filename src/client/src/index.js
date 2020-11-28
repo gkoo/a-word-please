@@ -15,7 +15,9 @@ import { env, routePrefix, sessionsPrefix } from './constants';
 import * as serviceWorker from './serviceWorker';
 import store from './store';
 
-if (env === 'production' && !window.location.href.match(/koofitness\.club/)) {
+const debug = window.location.search.indexOf('debug=1') >= 0;
+
+if (!debug && env === 'production' && !window.location.href.match(/koofitness\.club/)) {
   // Redirect to new URL
   const pathMatch = window.location.href.match(/https?:\/\/[^/]+\/?(.*)/);
   window.location.href = `http://koofitness.club/${pathMatch[1]}`;
