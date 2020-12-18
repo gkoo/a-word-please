@@ -5,6 +5,8 @@ import ReadyButton from '../common/ReadyButton';
 function ExplainRulesView() {
   return (
     <>
+      <ReadyButton />
+
       <p>
         <em>A Word, Please?</em> is a cooperative game where everyone works together to
         guess as many mystery words as possible.
@@ -83,8 +85,6 @@ function ExplainRulesView() {
       <p>
         Each game starts with 13 turns. The game ends when there are no more turns left.
       </p>
-
-      <ReadyButton />
     </>
   );
 }
