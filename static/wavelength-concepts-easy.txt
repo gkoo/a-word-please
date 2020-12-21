@@ -154,10 +154,10 @@ Conventional wisdom,Fringe theory
 Underrated activity,Overrated activity
 Hairless,Hairy
 Bad for you,Good for you
-Could defeat a shark,Couldn\'t defeat a shark
+Could defeat a shark,Couldn't defeat a shark
 Wobbly,Still
 Bad investment,Good investment
-Doesn\'t vape,Vapes
+Doesn't vape,Vapes
 Weird,Strange
 Worst thing on the internet,Best thing on the internet
 Ugly color,Beautiful color
@@ -168,7 +168,7 @@ Believable,Unbelievable
 Not OK to eat,OK to eat
 Immature,Mature
 Least evil company,Most evil company
-Looks like a person,Doesn\'t look like a person
+Looks like a person,Doesn't look like a person
 Lowbrow,Highbrow
 Boring topic,Fascinating topic
 Vice,Virtue
