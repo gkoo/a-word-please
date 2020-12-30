@@ -9,7 +9,6 @@ import * as selectors from '../../store/selectors';
 import { SPECTRUM_MAX_VALUE } from '../../constants';
 
 function Spectrum({ disabled, value }) {
-
   const currConcept = useSelector(selectors.currConceptSelector);
   const socket = useSelector(selectors.socketSelector);
 
@@ -30,7 +29,7 @@ function Spectrum({ disabled, value }) {
     setControlledSpectrumGuess(newGuess);
     socket.emit('playerAction', {
       action: 'setSpectrumGuess',
-      spectrumGuess: controlledSpectrumGuess,
+      spectrumGuess: newGuess,
     });
   };
 

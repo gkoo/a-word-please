@@ -75,13 +75,13 @@ function WavelengthBoard() {
           </h3>
           {
             wavelengthGuessers.map(wavelengthGuesser =>
-              <>
+              <div key={wavelengthGuesser.id}>
                 <PlayerCheckboxLabel
                   player={wavelengthGuesser}
                   checked={playersReady[wavelengthGuesser.id]}
                 />
                 <br />
-              </>
+              </div>
             )
           }
           <SpectatorList />
