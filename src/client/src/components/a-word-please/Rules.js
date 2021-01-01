@@ -1,17 +1,8 @@
 import React from 'react';
 
-import ReadyButton from '../common/ReadyButton';
-
-function ExplainRulesView() {
+function Rules() {
   return (
     <>
-      <ReadyButton />
-
-      <p>
-        <em>A Word, Please?</em> is a cooperative game where everyone works together to
-        guess as many mystery words as possible.
-      </p>
-
       <h5><u>Turns</u></h5>
 
       <p>
@@ -89,4 +80,4 @@ function ExplainRulesView() {
   );
 }
 
-export default ExplainRulesView;
+export default Rules;

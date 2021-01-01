@@ -25,7 +25,7 @@ function ExplainRulesPhase() {
         hoping that their team will guess a spot on the spectrum closer to "Hot".
       </p>
 
-      <ReadyButton />
+      <ReadyButton className='mt-5'/>
     </>
   );
 }

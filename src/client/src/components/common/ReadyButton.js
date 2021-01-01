@@ -10,7 +10,7 @@ import {
   socketSelector,
 } from '../../store/selectors';
 
-function ReadyButton() {
+function ReadyButton({ className }) {
   const currPlayer = useSelector(currPlayerSelector);
   const currUserIsSpectator = useSelector(currUserIsSpectatorSelector);
   const gameData = useSelector(gameDataSelector);
@@ -20,7 +20,7 @@ function ReadyButton() {
   const currPlayerIsReady = gameData.playersReady[currPlayer?.id];
 
   return (
-    <div className='text-center mt-5'>
+    <div className={`text-center ${className}`}>
       {
         !currUserIsSpectator &&
           <Button onClick={onReady} disabled={currPlayerIsReady}>

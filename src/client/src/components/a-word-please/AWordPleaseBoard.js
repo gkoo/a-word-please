@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 
+import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
+import Modal from 'react-bootstrap/Modal';
 
 import {
-  STATE_AWP_EXPLAIN_RULES,
   STATE_AWP_ENTERING_CLUES,
   STATE_AWP_REVIEWING_CLUES,
   STATE_AWP_ENTERING_GUESS,
@@ -15,15 +16,16 @@ import {
 import DuplicatesModal from './DuplicatesModal';
 import EnteringCluesView from './EnteringCluesView';
 import EnteringGuessView from './EnteringGuessView';
-import ExplainRulesView from './ExplainRulesView';
 import GameEndView from './GameEndView';
 import LeaderPanel from '../LeaderPanel';
+import Rules from './Rules';
 import TurnEndView from './TurnEndView';
 import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
 import SpectatorList from '../common/SpectatorList';
 import * as selectors from '../../store/selectors';
 
 function AWordPleaseBoard() {
+  const [showRulesModal, setShowRulesModal] = useState(false);
   const clues = useSelector(selectors.cluesSelector);
   const currPlayer = useSelector(selectors.currPlayerSelector);
   const currPlayerIsGuesser = useSelector(selectors.currPlayerIsActivePlayerSelector);
@@ -41,14 +43,13 @@ function AWordPleaseBoard() {
     player.id !== activePlayer?.id && player.connected
   );
 
+  const toggleShowRules = () => setShowRulesModal(!showRulesModal);
+  const hideRulesModal = () => setShowRulesModal(false);
+
   return (
     <div className='board py-5'>
       <Row>
         <Col sm={8} className='main-panel py-5'>
-          {
-            gameState === STATE_AWP_EXPLAIN_RULES &&
-              <ExplainRulesView/>
-          }
           {
             [STATE_AWP_ENTERING_CLUES, STATE_AWP_REVIEWING_CLUES].includes(gameState) &&
               <EnteringCluesView
@@ -81,7 +82,7 @@ function AWordPleaseBoard() {
         </Col>
         <Col sm={4} className='main-panel text-center py-5'>
           <LeaderPanel numUsers={Object.keys(users).length}/>
-          <Row className='py-4'>
+          <Row className='mt-4 mb-2'>
             <Col sm={6}>
               <u>Points</u>
               <br />
@@ -93,6 +94,13 @@ function AWordPleaseBoard() {
               {numRoundsLeft}
             </Col>
           </Row>
+
+          <p>
+            <Button variant='link' onClick={toggleShowRules}>
+              Show Rules
+            </Button>
+          </p>
+
           {
             activePlayer &&
               <>
@@ -103,9 +111,7 @@ function AWordPleaseBoard() {
               </>
           }
           <h3 className='mt-5'>
-            <u>
-              {gameState === STATE_AWP_EXPLAIN_RULES ? 'Players' : 'Clue Givers'}
-            </u>
+            <u>Clue Givers</u>
           </h3>
           {
             clueGivers.map(clueGiver =>
@@ -121,7 +127,19 @@ function AWordPleaseBoard() {
           <SpectatorList />
         </Col>
       </Row>
+
       <DuplicatesModal show={gameState === STATE_AWP_REVIEWING_CLUES}/>
+
+      <Modal show={showRulesModal} onHide={hideRulesModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>
+            How to Play
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Rules/>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 }

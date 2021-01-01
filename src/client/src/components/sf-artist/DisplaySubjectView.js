@@ -33,7 +33,7 @@ function DisplaySubjectView() {
             You are a spectator! You can also try to guess what people are drawing.
           </p>
       }
-      <ReadyButton/>
+      <ReadyButton className='mt-5'/>
     </>
   );
 }

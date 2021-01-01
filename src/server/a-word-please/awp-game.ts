@@ -1,9 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 
-import _ from 'lodash';
-import uuid from 'uuid';
-
 import Deck from '../deck';
 import Game, { GameEnum } from '../game';
 import Player from '../player';
@@ -17,7 +14,6 @@ export enum GameState {
   Pending,
   TurnEnd,
   GameEnd,
-  ExplainRules,
   EnteringClues,
   ReviewingClues,
   EnteringGuess,
@@ -52,7 +48,8 @@ class AWPGame extends Game {
     this.constructDeck();
     this.roundNum = 0;
     this.playersReady = {};
-    this.state = GameState.ExplainRules;
+    this.state = GameState.EnteringClues;
+    this.newGame();
     this.broadcastGameDataToPlayers();
   }
 
@@ -153,14 +150,6 @@ class AWPGame extends Game {
         return this.skipTurn();
       default:
         throw new Error(`Unexpected action ${data.action}`);
-    }
-  }
-
-  onPlayersReady() {
-    // only called for ExplainRules state
-    if (this.state === GameState.ExplainRules) {
-      this.playersReady = {};
-      this.newGame();
     }
   }
 

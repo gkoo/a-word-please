@@ -34,10 +34,9 @@ export const ROOM_STATE_LOBBY = 1;
 export const ROOM_STATE_GAME = 2;
 
 // A Word, Please?
-export const STATE_AWP_EXPLAIN_RULES = 3;
-export const STATE_AWP_ENTERING_CLUES = 4;
-export const STATE_AWP_REVIEWING_CLUES = 5;
-export const STATE_AWP_ENTERING_GUESS = 6;
+export const STATE_AWP_ENTERING_CLUES = 3;
+export const STATE_AWP_REVIEWING_CLUES = 4;
+export const STATE_AWP_ENTERING_GUESS = 5;
 
 // Wavelength
 export const STATE_WAVELENGTH_EXPLAIN_RULES = 3;
