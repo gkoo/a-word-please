@@ -11,6 +11,7 @@ import Table from 'react-bootstrap/Table';
 
 import EndGameButtons from '../common/EndGameButtons';
 import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
+import renderVotedPlayerRow from '../common/VoteResults';
 import * as selectors from '../../store/selectors';
 import {
   WEREWOLF_ROLE_LABELS,
@@ -30,15 +31,15 @@ const getTeam = role => {
   return ROLE_VILLAGER;
 };
 
-const renderVotedPlayerRow = (suspectPlayer, voterPlayers, isEliminated) => {
-  return (
-    <ListGroup.Item variant={isEliminated ? 'danger' : ''}>
-      {voterPlayers.map(voter => <Badge key={voter.id}>{voter.name}</Badge>)}
-      <span> voted for:</span>
-      <h3>{isEliminated && '💀 '}{suspectPlayer.name}{isEliminated && ' 💀'}</h3>
-    </ListGroup.Item>
-  );
-};
+// const renderVotedPlayerRow = (suspectPlayer, voterPlayers, isEliminated) => {
+//   return (
+//     <ListGroup.Item variant={isEliminated ? 'danger' : ''}>
+//       {voterPlayers.map(voter => <Badge key={voter.id}>{voter.name}</Badge>)}
+//       <span> voted for:</span>
+//       <h3>{isEliminated && '💀 '}{suspectPlayer.name}{isEliminated && ' 💀'}</h3>
+//     </ListGroup.Item>
+//   );
+// };
 
 const renderPlayerRow = (player, eliminatedPlayers) => {
   const team = getTeam(player.role);
@@ -69,7 +70,7 @@ const renderPlayerRow = (player, eliminatedPlayers) => {
   );
 };
 
-function VoteResults() {
+function VoteResultsWerewolf() {
   const eliminatedPlayers = useSelector(selectors.eliminatedPlayersSelector);
   const players = useSelector(selectors.playersSelector);
   const revealingRoles = useSelector(selectors.revealingRolesSelector);
@@ -119,8 +120,9 @@ function VoteResults() {
 
             // Voters who voted for this player
             const voters = voterIds.map(voterId => players[voterId]);
-
-            return renderVotedPlayerRow(players[suspectId], voters, isEliminated);
+            const renderSkulls = true;
+            return renderVotedPlayerRow(players[suspectId], voters,
+                                        isEliminated, renderSkulls);
           })
         }
       </ListGroup>
@@ -173,4 +175,4 @@ function VoteResults() {
   );
 }
 
-export default VoteResults;
+export default VoteResultsWerewolf;

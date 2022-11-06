@@ -9,7 +9,7 @@ import DaytimeView from './DaytimeView';
 import NighttimeView from './NighttimeView';
 import PlayerCheckboxLabel from '../common/PlayerCheckboxLabel';
 import RoleCard from './RoleCard';
-import VoteResults from './VoteResults';
+import VoteResultsWerewolf from './VoteResults';
 import {
   ROLE_DRUNK,
   STATE_WW_NIGHTTIME,
@@ -51,7 +51,7 @@ function GameplayView() {
         }
         {
           gameState === STATE_WW_VOTE_RESULTS &&
-            <VoteResults />
+            <VoteResultsWerewolf />
         }
       </Col>
       <Col sm={4} className='main-panel py-5 text-center'>
@@ -75,7 +75,7 @@ function GameplayView() {
         <div><Button variant='link' onClick={onShowRolesModal}>Show role guide</Button></div>
         <h4>Players</h4>
         {
-          Object.values(players).map(player => <PlayerCheckboxLabel player={player}/>)
+          Object.values(players).map(player => <PlayerCheckboxLabel player={player} key={player.id}/>)
         }
       </Col>
     </Row>

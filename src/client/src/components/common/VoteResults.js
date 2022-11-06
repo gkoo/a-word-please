@@ -8,7 +8,7 @@ import {
   playersSelector,
 } from '../../store/selectors';
 
-const renderVotedPlayerRow = (suspectPlayer, voterPlayers, isEliminated, renderSkulls) => {
+export function renderVotedPlayerRow(suspectPlayer, voterPlayers, isEliminated, renderSkulls) {
   const shouldShowSkulls = isEliminated && renderSkulls;
 
   return (
