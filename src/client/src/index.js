@@ -17,7 +17,8 @@ import store from './store';
 
 const debug = window.location.search.indexOf('debug=1') >= 0;
 
-if (!debug && env === 'production' && !window.location.href.match(/koofitness\.club/)) {
+//if (!debug && env === 'production' && !window.location.href.match(/koofitness\.club/)) {
+if (false) {
   // Redirect to new URL
   const pathMatch = window.location.href.match(/https?:\/\/[^/]+\/?(.*)/);
   window.location.href = `http://koofitness.club/${pathMatch[1]}`;

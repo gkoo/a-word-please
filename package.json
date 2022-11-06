@@ -5,7 +5,7 @@
   "author": "Gordon Koo <gordon@gordonkoo.com>",
   "license": "MIT",
   "engines": {
-    "node": "14.3.x",
+    "node": "14.x.x",
     "yarn": "1.15.x"
   },
   "dependencies": {

@@ -52,7 +52,7 @@ function AboutModal({ show }) {
             </a>!
           </p>
           <p>
-            <em>One Night Werewolf</em> is based on the tabletop game{' '} of the same name. {' '}
+            <em>Werepig</em> is based on the tabletop game{' '}. {' '}
             <a
               href='https://smile.amazon.com/dp/B00HS7GG5G/ref=cm_sw_em_r_mt_dp_U_MB57Eb04K9MD3'
               target='_blank'
